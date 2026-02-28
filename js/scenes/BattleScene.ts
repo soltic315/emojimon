@@ -136,6 +136,8 @@ export class BattleScene extends Phaser.Scene {
     this.time.timeScale = this.battleSpeedMultiplier;
     this.autoAdvanceMessagesEnabled = !!gameState.gameplaySettings?.autoAdvanceMessages;
     this.messageAutoAdvanceEvent = null;
+    this.messageFastForwardHoldMs = 0;
+    this.messageFastForwardCooldownMs = 0;
 
     // BGM
     audioManager.playBattleBgm();
@@ -146,7 +148,7 @@ export class BattleScene extends Phaser.Scene {
     this.bindInput();
 
     // PostFX: ビネット + ブルーム
-    addCameraVignette(this.cameras.main, { radius: 0.45, strength: 0.35 });
+    addCameraVignette(this.cameras.main, { radius: 0.45, strength: 0.2 });
     this._battleBloom = addCameraBloom(this.cameras.main, {
       strength: 1.2, blurStrength: 0.8, steps: 4,
     });
@@ -235,7 +237,7 @@ export class BattleScene extends Phaser.Scene {
     this._createBattleAtmosphere(width, height);
 
     const vignette = this.add.graphics();
-    vignette.fillStyle(0x020617, 0.2);
+    vignette.fillStyle(0x020617, 0.12);
     vignette.fillRect(0, 0, width, 24);
     vignette.fillRect(0, height * 0.72, width, height * 0.28);
     vignette.fillRect(0, 0, 20, height);
@@ -880,6 +882,9 @@ export class BattleScene extends Phaser.Scene {
     });
     this.keys.SPACE.on("down", () => this.handleConfirm());
     this.keys.X.on("down", () => this.handleCancel());
+
+    this.keys.Z.on("up", () => this._resetMessageFastForward());
+    this.keys.SPACE.on("up", () => this._resetMessageFastForward());
   }
 
   /** エモ・スキップが発動可能なフェーズか */
@@ -912,6 +917,38 @@ export class BattleScene extends Phaser.Scene {
       if (!this.currentMessage || this.state === BattleState.ANIMATING) return;
       this.showNextMessage();
     });
+  }
+
+  _resetMessageFastForward() {
+    this.messageFastForwardHoldMs = 0;
+    this.messageFastForwardCooldownMs = 0;
+  }
+
+  _isFastForwardHeld() {
+    const keyboardHold = this.keys?.Z?.isDown || this.keys?.SPACE?.isDown;
+    const touchHold = this.touchControls?.visible && this.touchControls.isConfirmHeld();
+    return !!(keyboardHold || touchHold);
+  }
+
+  _updateMessageFastForward(delta) {
+    if (!this.currentMessage || this.state === BattleState.ANIMATING) {
+      this._resetMessageFastForward();
+      return;
+    }
+    if (!this._isFastForwardHeld()) {
+      this._resetMessageFastForward();
+      return;
+    }
+
+    this.messageFastForwardHoldMs += delta;
+    if (this.messageFastForwardHoldMs < 220) return;
+
+    this.messageFastForwardCooldownMs -= delta;
+    if (this.messageFastForwardCooldownMs > 0) return;
+
+    this._clearMessageAutoAdvanceEvent();
+    this.showNextMessage();
+    this.messageFastForwardCooldownMs = 65;
   }
 
   // ── メッセージキュー ──
@@ -1058,6 +1095,8 @@ export class BattleScene extends Phaser.Scene {
   }
 
   update(time, delta) {
+    this._updateMessageFastForward(delta);
+
     // ── エモ・スキップ 長押し判定 ──
     if (this.emoSkipAvailable && !this.emoSkipTriggered && this._isEmoSkipPhase()) {
       if (this.keys.Z.isDown) {
@@ -2937,7 +2976,9 @@ export class BattleScene extends Phaser.Scene {
     // キーリスナーを解除
     if (this.keys) {
       this.keys.Z.removeAllListeners("down");
+      this.keys.Z.removeAllListeners("up");
       this.keys.SPACE.removeAllListeners("down");
+      this.keys.SPACE.removeAllListeners("up");
       this.keys.X.removeAllListeners("down");
     }
 

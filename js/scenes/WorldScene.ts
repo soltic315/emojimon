@@ -90,7 +90,7 @@ export class WorldScene extends Phaser.Scene {
     this._renderFieldActionMarkers();
 
     // PostFX: ビネット + ブルームで映像美を向上
-    addCameraVignette(this.cameras.main, { radius: 0.5, strength: 0.3 });
+    addCameraVignette(this.cameras.main, { radius: 0.5, strength: 0.18 });
     addCameraBloom(this.cameras.main, { strength: 0.8, blurStrength: 0.5, steps: 3 });
 
     // フェードイン
@@ -577,7 +577,7 @@ export class WorldScene extends Phaser.Scene {
     }
 
     const vignette = this.add.graphics().setScrollFactor(0).setDepth(39);
-    vignette.fillStyle(0x000000, 0.14);
+    vignette.fillStyle(0x000000, 0.08);
     vignette.fillRect(0, 0, width, 26);
     vignette.fillRect(0, height - 34, width, 34);
     vignette.fillRect(0, 0, 24, height);

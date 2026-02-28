@@ -45,7 +45,7 @@ export class MenuScene extends Phaser.Scene {
     this.boxPendingIndex = -1; // ボックス交換待ちのインデックス
 
     // 半透明オーバーレイ
-    this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.66);
+    this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.5);
     const overlayGlow = this.add.graphics();
     overlayGlow.fillStyle(0x0f172a, 0.22);
     overlayGlow.fillCircle(width / 2, height / 2, Math.max(width, height) * 0.62);

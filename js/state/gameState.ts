@@ -6,6 +6,7 @@ import {
 } from "../data/monsters.ts";
 
 const SAVE_KEY = "emojimon_save_v2";
+const SAVE_BACKUP_KEY = "emojimon_save_v2_backup";
 const SETTINGS_KEY = "emojimon_settings_v1";
 
 const DEFAULT_GAMEPLAY_SETTINGS = {
@@ -791,7 +792,12 @@ class GameState {
         storyFlags: { ...(this.storyFlags || {}) },
         savedAt: Date.now(),
       };
-      localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+      const serialized = JSON.stringify(data);
+      const previous = localStorage.getItem(SAVE_KEY);
+      if (previous) {
+        localStorage.setItem(SAVE_BACKUP_KEY, previous);
+      }
+      localStorage.setItem(SAVE_KEY, serialized);
       return true;
     } catch (e) {
       console.warn("セーブに失敗:", e);
@@ -801,11 +807,7 @@ class GameState {
 
   /** セーブデータをロード */
   load() {
-    try {
-      const raw = localStorage.getItem(SAVE_KEY);
-      if (!raw) return false;
-      const data = JSON.parse(raw);
-
+    const applyLoadedData = (data) => {
       this.playerName = typeof data.playerName === "string" && data.playerName.trim().length > 0
         ? data.playerName.trim().slice(0, 16)
         : "ユウ";
@@ -910,10 +912,30 @@ class GameState {
         this.storyFlags.tutorialMenuDone = true;
         this.storyFlags.momFarewellDone = true;
       }
-
       return true;
+    };
+
+    const rawPrimary = localStorage.getItem(SAVE_KEY);
+    if (!rawPrimary) return false;
+
+    try {
+      const data = JSON.parse(rawPrimary);
+      return applyLoadedData(data);
     } catch (e) {
-      console.warn("ロードに失敗:", e);
+      console.warn("メインセーブのロードに失敗:", e);
+    }
+
+    try {
+      const rawBackup = localStorage.getItem(SAVE_BACKUP_KEY);
+      if (!rawBackup) return false;
+      const backupData = JSON.parse(rawBackup);
+      const loaded = applyLoadedData(backupData);
+      if (loaded) {
+        console.warn("バックアップセーブから復旧しました。");
+      }
+      return loaded;
+    } catch (e) {
+      console.warn("バックアップセーブのロードに失敗:", e);
       return false;
     }
   }
@@ -922,6 +944,7 @@ class GameState {
   deleteSave() {
     try {
       localStorage.removeItem(SAVE_KEY);
+      localStorage.removeItem(SAVE_BACKUP_KEY);
     } catch {
       // 無視
     }

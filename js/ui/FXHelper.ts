@@ -10,7 +10,7 @@ export function addCameraVignette(camera: Phaser.Cameras.Scene2D.Camera, opts: {
   radius?: number;
   strength?: number;
 } = {}) {
-  const { radius = 0.5, strength = 0.42 } = opts;
+  const { radius = 0.5, strength = 0.24 } = opts;
   try {
     camera.postFX.addVignette(0.5, 0.5, radius, strength);
   } catch { /* WebGL未対応環境では無視 */ }

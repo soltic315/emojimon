@@ -100,7 +100,7 @@ export class TitleScene extends Phaser.Scene {
     addShine(title, { speed: 0.3, lineWidth: 0.4, gradient: 4 });
 
     // PostFX: カメラにビネット + ブルーム
-    addCameraVignette(this.cameras.main, { radius: 0.4, strength: 0.45 });
+    addCameraVignette(this.cameras.main, { radius: 0.4, strength: 0.22 });
     addCameraBloom(this.cameras.main, { strength: 1.0, blurStrength: 0.6, steps: 3 });
 
     this.tweens.add({

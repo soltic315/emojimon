@@ -19,6 +19,16 @@ export class TouchControls {
     this._lastConfirm = false;
     this._lastCancel = false;
     this._isTouchDevice = this.detectTouch();
+    this._activePointerIds = {
+      up: new Set(),
+      down: new Set(),
+      left: new Set(),
+      right: new Set(),
+      confirm: new Set(),
+      cancel: new Set(),
+    };
+    this._globalPointerUpHandler = null;
+    this._globalGameOutHandler = null;
   }
 
   /** タッチデバイスかどうかを検出 */
@@ -65,6 +75,47 @@ export class TouchControls {
     this._createActionButton(actionX + 20, actionY - 30, 32, "A", "confirm", 0xfbbf24);
     // Bボタン（キャンセル / X）
     this._createActionButton(actionX - 30, actionY + 20, 28, "B", "cancel", 0x6b7280);
+
+    this._bindGlobalPointerHandlers();
+  }
+
+  _setVirtualInputByPointer(action, pointerId, pressed) {
+    const pointerSet = this._activePointerIds[action];
+    if (!pointerSet) return;
+
+    if (pressed) {
+      pointerSet.add(pointerId);
+    } else {
+      pointerSet.delete(pointerId);
+    }
+    this.virtualInput[action] = pointerSet.size > 0;
+  }
+
+  _releasePointer(pointerId) {
+    Object.keys(this._activePointerIds).forEach((action) => {
+      this._setVirtualInputByPointer(action, pointerId, false);
+    });
+  }
+
+  _releaseAllPointers() {
+    Object.keys(this._activePointerIds).forEach((action) => {
+      this._activePointerIds[action].clear();
+      this.virtualInput[action] = false;
+    });
+    this._lastConfirm = false;
+    this._lastCancel = false;
+  }
+
+  _bindGlobalPointerHandlers() {
+    if (!this.scene?.input) return;
+    this._globalPointerUpHandler = (pointer) => {
+      this._releasePointer(pointer.id);
+    };
+    this._globalGameOutHandler = () => {
+      this._releaseAllPointers();
+    };
+    this.scene.input.on("pointerup", this._globalPointerUpHandler);
+    this.scene.input.on("gameout", this._globalGameOutHandler);
   }
 
   _createDpadButton(x, y, size, label, direction) {
@@ -78,16 +129,24 @@ export class TouchControls {
       color: "#9ca3af",
     }).setOrigin(0.5);
 
-    btn.on("pointerdown", () => {
-      this.virtualInput[direction] = true;
+    btn.on("pointerdown", (pointer) => {
+      this._setVirtualInputByPointer(direction, pointer.id, true);
       btn.setFillStyle(0x374151, 0.9);
     });
-    btn.on("pointerup", () => {
-      this.virtualInput[direction] = false;
+    btn.on("pointerup", (pointer) => {
+      this._setVirtualInputByPointer(direction, pointer.id, false);
       btn.setFillStyle(0x1f2937, 0.7);
     });
-    btn.on("pointerout", () => {
-      this.virtualInput[direction] = false;
+    btn.on("pointerout", (pointer) => {
+      this._setVirtualInputByPointer(direction, pointer.id, false);
+      btn.setFillStyle(0x1f2937, 0.7);
+    });
+    btn.on("pointerupoutside", (pointer) => {
+      this._setVirtualInputByPointer(direction, pointer.id, false);
+      btn.setFillStyle(0x1f2937, 0.7);
+    });
+    btn.on("pointercancel", (pointer) => {
+      this._setVirtualInputByPointer(direction, pointer.id, false);
       btn.setFillStyle(0x1f2937, 0.7);
     });
 
@@ -108,16 +167,24 @@ export class TouchControls {
       fontStyle: "bold",
     }).setOrigin(0.5);
 
-    btn.on("pointerdown", () => {
-      this.virtualInput[action] = true;
+    btn.on("pointerdown", (pointer) => {
+      this._setVirtualInputByPointer(action, pointer.id, true);
       btn.setAlpha(1);
     });
-    btn.on("pointerup", () => {
-      this.virtualInput[action] = false;
+    btn.on("pointerup", (pointer) => {
+      this._setVirtualInputByPointer(action, pointer.id, false);
       btn.setAlpha(0.7);
     });
-    btn.on("pointerout", () => {
-      this.virtualInput[action] = false;
+    btn.on("pointerout", (pointer) => {
+      this._setVirtualInputByPointer(action, pointer.id, false);
+      btn.setAlpha(0.7);
+    });
+    btn.on("pointerupoutside", (pointer) => {
+      this._setVirtualInputByPointer(action, pointer.id, false);
+      btn.setAlpha(0.7);
+    });
+    btn.on("pointercancel", (pointer) => {
+      this._setVirtualInputByPointer(action, pointer.id, false);
       btn.setAlpha(0.7);
     });
 
@@ -137,6 +204,11 @@ export class TouchControls {
     const pressed = this.virtualInput.cancel && !this._lastCancel;
     this._lastCancel = this.virtualInput.cancel;
     return pressed;
+  }
+
+  /** 決定ボタンが押下中か */
+  isConfirmHeld() {
+    return !!this.virtualInput.confirm;
   }
 
   /** 方向入力状態を返す */
@@ -165,6 +237,15 @@ export class TouchControls {
 
   /** コンテナを破棄 */
   destroy() {
+    if (this.scene?.input) {
+      if (this._globalPointerUpHandler) {
+        this.scene.input.off("pointerup", this._globalPointerUpHandler);
+      }
+      if (this._globalGameOutHandler) {
+        this.scene.input.off("gameout", this._globalGameOutHandler);
+      }
+    }
+    this._releaseAllPointers();
     if (this.container) {
       this.container.destroy(true);
       this.container = null;
