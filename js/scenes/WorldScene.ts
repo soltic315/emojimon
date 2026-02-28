@@ -12,7 +12,7 @@ import { createWildMonsterForEncounter, rollWeatherForMap } from "../data/mapRul
 import { audioManager } from "../audio/AudioManager.ts";
 import { TouchControls } from "../ui/TouchControls.ts";
 import { FONT, COLORS, TEXT_COLORS, drawPanel } from "../ui/UIHelper.ts";
-import { addCameraVignette, addCameraBloom } from "../ui/FXHelper.ts";
+import { addCameraBloom } from "../ui/FXHelper.ts";
 import {
   TILE_SIZE,
   T,
@@ -89,8 +89,7 @@ export class WorldScene extends Phaser.Scene {
     this.createUi();
     this._renderFieldActionMarkers();
 
-    // PostFX: ビネット + ブルームで映像美を向上
-    addCameraVignette(this.cameras.main, { radius: 0.5, strength: 0.18 });
+    // PostFX: ブルームで映像美を向上
     addCameraBloom(this.cameras.main, { strength: 0.8, blurStrength: 0.5, steps: 3 });
 
     // フェードイン
@@ -576,12 +575,6 @@ export class WorldScene extends Phaser.Scene {
       });
     }
 
-    const vignette = this.add.graphics().setScrollFactor(0).setDepth(39);
-    vignette.fillStyle(0x000000, 0.08);
-    vignette.fillRect(0, 0, width, 26);
-    vignette.fillRect(0, height - 34, width, 34);
-    vignette.fillRect(0, 0, 24, height);
-    vignette.fillRect(width - 24, 0, 24, height);
   }
 
   createPlayer() {
