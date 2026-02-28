@@ -66,6 +66,7 @@ npm run preview
 
 ## GitHub Pages デプロイ運用
 
+- 公開URL: https://soltic315.github.io/emojimon/
 - `main` ブランチへの push で `.github/workflows/deploy.yml` が実行されます。
 - ワークフローは Pages サイト未作成時に自動有効化を試みます。
 - 自動有効化に失敗した場合は、リポジトリ設定の **Pages > Build and deployment** を `GitHub Actions` に設定してください。
