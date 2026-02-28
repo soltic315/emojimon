@@ -5,11 +5,17 @@ import { audioManager } from "../../audio/AudioManager.ts";
 import { FONT, drawPanel, drawSelection } from "../../ui/UIHelper.ts";
 import { MENU_ITEMS, GUIDE_PAGES } from "./menuConstants.ts";
 
+const MAIN_MENU_PANEL_WIDTH = 220;
+const MAIN_MENU_RIGHT_MARGIN = 10;
+const SUB_PANEL_LEFT_MARGIN = 10;
+const MAIN_SUB_PANEL_GAP = 10;
+const SUB_PANEL_WIDTH_OFFSET = MAIN_MENU_PANEL_WIDTH + MAIN_MENU_RIGHT_MARGIN + SUB_PANEL_LEFT_MARGIN + MAIN_SUB_PANEL_GAP;
+
 export function renderMainMenu(scene) {
   scene.menuPanel.removeAll(true);
   const { width } = scene.scale;
-  const panelW = 200;
-  const panelX = width - panelW - 10;
+  const panelW = MAIN_MENU_PANEL_WIDTH;
+  const panelX = width - panelW - MAIN_MENU_RIGHT_MARGIN;
   const panelY = 10;
   const panelH = MENU_ITEMS.length * 36 + 20;
 
@@ -72,7 +78,7 @@ export function renderSubMenu(scene) {
 
 export function renderPartyView(scene) {
   const { width, height } = scene.scale;
-  const panelW = width - 230;
+  const panelW = width - SUB_PANEL_WIDTH_OFFSET;
   const panelX = 10;
   const panelY = 10;
 
@@ -293,7 +299,7 @@ function _drawMonRow(scene, mon, index, selected, panelX, panelW, y) {
 
 export function renderBoxView(scene) {
   const { width, height } = scene.scale;
-  const panelW = width - 230;
+  const panelW = width - SUB_PANEL_WIDTH_OFFSET;
   const panelX = 10;
   const panelY = 10;
 
@@ -342,7 +348,7 @@ export function renderBoxView(scene) {
 
 export function renderBoxSwapView(scene) {
   const { width, height } = scene.scale;
-  const panelW = width - 230;
+  const panelW = width - SUB_PANEL_WIDTH_OFFSET;
   const panelX = 10;
   const panelY = 10;
 
@@ -387,7 +393,7 @@ export function showBoxMessage(scene, text) {
 
 export function renderBagView(scene) {
   const { width, height } = scene.scale;
-  const panelW = width - 230;
+  const panelW = width - SUB_PANEL_WIDTH_OFFSET;
   const panelX = 10;
   const panelY = 10;
 
@@ -468,7 +474,7 @@ export function renderBagView(scene) {
 
 export function renderBagTargetView(scene) {
   const { width, height } = scene.scale;
-  const panelW = width - 230;
+  const panelW = width - SUB_PANEL_WIDTH_OFFSET;
   const panelX = 10;
   const panelY = 10;
 
@@ -544,7 +550,7 @@ export function showBagMessage(scene, text) {
 
 export function renderPokedexView(scene) {
   const { width, height } = scene.scale;
-  const panelW = width - 230;
+  const panelW = width - SUB_PANEL_WIDTH_OFFSET;
   const panelX = 10;
   const panelY = 10;
 
@@ -636,7 +642,7 @@ export function renderPokedexView(scene) {
 
 export function renderTrainerView(scene) {
   const { width, height } = scene.scale;
-  const panelW = width - 230;
+  const panelW = width - SUB_PANEL_WIDTH_OFFSET;
   const panelX = 10;
   const panelY = 10;
 
@@ -700,7 +706,7 @@ export function renderTrainerView(scene) {
 
 export function renderGuideView(scene) {
   const { width, height } = scene.scale;
-  const panelW = width - 230;
+  const panelW = width - SUB_PANEL_WIDTH_OFFSET;
   const panelX = 10;
   const panelY = 10;
 
@@ -738,7 +744,7 @@ export function renderGuideView(scene) {
 
 export function renderSettingsView(scene) {
   const { width, height } = scene.scale;
-  const panelW = width - 230;
+  const panelW = width - SUB_PANEL_WIDTH_OFFSET;
   const panelX = 10;
   const panelY = 10;
 
