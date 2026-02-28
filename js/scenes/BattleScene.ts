@@ -106,7 +106,7 @@ export class BattleScene extends Phaser.Scene {
     this.emoSkipTriggered = false;
     this.emoSkipHoldThreshold = EMO_SKIP_HOLD_MS;
 
-    // 天候初期化（マップに応じたランダム）
+    // 天候初期化（マップ単位で保持された天候を引き継ぐ）
     this.weather = this._rollInitialWeather();
     this.weatherTurnCounter = 0;
     this.weatherDuration = 4 + Math.floor(Math.random() * 4); // 4〜7ターン
@@ -333,9 +333,20 @@ export class BattleScene extends Phaser.Scene {
     }
   }
 
-  /** 天候初期化：マップに応じたランダム天候を決定 */
+  /** 天候初期化：マップ単位の天候を取得（未設定時のみ決定して保持） */
   _rollInitialWeather() {
-    return rollWeatherForMap(gameState.currentMap);
+    if (this.battle?.weather) {
+      return this.battle.weather;
+    }
+
+    const existingMapWeather = gameState.getMapWeather(gameState.currentMap);
+    if (existingMapWeather) {
+      return existingMapWeather;
+    }
+
+    const rolledWeather = rollWeatherForMap(gameState.currentMap);
+    gameState.setMapWeather(gameState.currentMap, rolledWeather);
+    return rolledWeather;
   }
 
   /** 天候表示UIを生成 */

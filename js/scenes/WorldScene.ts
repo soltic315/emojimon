@@ -8,7 +8,7 @@ import {
   getMonsterMoves,
   syncMonsterMoves,
 } from "../data/monsters.ts";
-import { createWildMonsterForEncounter } from "../data/mapRules.ts";
+import { createWildMonsterForEncounter, rollWeatherForMap } from "../data/mapRules.ts";
 import { audioManager } from "../audio/AudioManager.ts";
 import { TouchControls } from "../ui/TouchControls.ts";
 import { FONT, COLORS, TEXT_COLORS, drawPanel } from "../ui/UIHelper.ts";
@@ -47,6 +47,7 @@ export class WorldScene extends Phaser.Scene {
 
   create() {
     gameState.currentMap = this.mapKey;
+    gameState.ensureMapWeather(this.mapKey, () => rollWeatherForMap(this.mapKey));
     audioManager.applySettings(gameState.audioSettings || {});
 
     const mapDef = MAPS[this.mapKey] || MAPS.EMOJI_TOWN;

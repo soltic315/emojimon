@@ -19,6 +19,7 @@ const MAX_ITEM_QUANTITY = 999;
 const MAX_MONEY = 9_999_999;
 const MAX_COUNTER = 999_999;
 const MAX_PLAY_TIME_MS = 31_536_000_000; // 365日分
+const VALID_WEATHER_KEYS = ["NONE", "SUNNY", "RAINY", "WINDY"];
 
 function sanitizeGameplaySettings(raw) {
   const speed = raw?.battleSpeed;
@@ -153,6 +154,7 @@ class GameState {
     this.playerPosition = { x: 8, y: 10 };
     this.playerDirection = "down";
     this.currentMap = "EMOJI_TOWN";
+    this.mapWeatherByMap = {};
     this.inBattle = false;
     this.activeBattle = null;
     this.party = [];
@@ -226,6 +228,7 @@ class GameState {
     this.playerPosition = { x: 8, y: 10 };
     this.playerDirection = "down";
     this.currentMap = "EMOJI_TOWN";
+    this.mapWeatherByMap = {};
     this.inBattle = false;
     this.activeBattle = null;
 
@@ -388,7 +391,48 @@ class GameState {
 
   setBattle(battlePayload) {
     this.inBattle = !!battlePayload;
+    if (!battlePayload) {
+      this.activeBattle = null;
+      return;
+    }
+
+    const mapWeather = this.getMapWeather(this.currentMap);
+    if (mapWeather && !battlePayload.weather) {
+      battlePayload.weather = mapWeather;
+    }
     this.activeBattle = battlePayload;
+  }
+
+  _normalizeMapWeatherKey(mapKey) {
+    return mapKey || "EMOJI_TOWN";
+  }
+
+  _normalizeWeatherKey(weather) {
+    return VALID_WEATHER_KEYS.includes(weather) ? weather : null;
+  }
+
+  getMapWeather(mapKey) {
+    const key = this._normalizeMapWeatherKey(mapKey);
+    return this._normalizeWeatherKey(this.mapWeatherByMap?.[key]);
+  }
+
+  setMapWeather(mapKey, weather) {
+    const key = this._normalizeMapWeatherKey(mapKey);
+    const normalizedWeather = this._normalizeWeatherKey(weather);
+    if (!normalizedWeather) return null;
+    if (!this.mapWeatherByMap || typeof this.mapWeatherByMap !== "object") {
+      this.mapWeatherByMap = {};
+    }
+    this.mapWeatherByMap[key] = normalizedWeather;
+    return normalizedWeather;
+  }
+
+  ensureMapWeather(mapKey, weatherFactory) {
+    const existing = this.getMapWeather(mapKey);
+    if (existing) return existing;
+
+    const rolledWeather = typeof weatherFactory === "function" ? weatherFactory() : null;
+    return this.setMapWeather(mapKey, rolledWeather);
   }
 
   /** 図鑑: モンスターを見た */
@@ -693,6 +737,7 @@ class GameState {
         playerPosition: { ...this.playerPosition },
         playerDirection: this.playerDirection,
         currentMap: this.currentMap,
+        mapWeatherByMap: { ...(this.mapWeatherByMap || {}) },
         party: this.party.map((m) => ({
           speciesId: m.species ? m.species.id : null,
           level: m.level,
@@ -759,6 +804,17 @@ class GameState {
         ? loadedDirection
         : "down";
       this.currentMap = data.currentMap || "EMOJI_TOWN";
+      const rawMapWeather = data.mapWeatherByMap;
+      this.mapWeatherByMap = {};
+      if (rawMapWeather && typeof rawMapWeather === "object") {
+        Object.entries(rawMapWeather).forEach(([mapKey, weather]) => {
+          const normalizedMapKey = this._normalizeMapWeatherKey(mapKey);
+          const normalizedWeather = this._normalizeWeatherKey(weather);
+          if (normalizedMapKey && normalizedWeather) {
+            this.mapWeatherByMap[normalizedMapKey] = normalizedWeather;
+          }
+        });
+      }
       this.inBattle = false;
       this.activeBattle = null;
 
