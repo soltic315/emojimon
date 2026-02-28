@@ -105,6 +105,7 @@ export class WorldScene extends Phaser.Scene {
     // キー入力
     this.keys.Z.on("down", () => {
       if (this._dialogActive) return; // ダイアログ表示中は NPC 会話をスキップ
+      if (this._trainerBattlePending) return;
       if (this.isMoving || this.shopActive || this.isEncounterTransitioning) return;
       this.checkNpcInteraction();
     });
@@ -828,7 +829,7 @@ export class WorldScene extends Phaser.Scene {
     if (this.touchControls && this.touchControls.visible) {
       if (this.touchControls.justPressedConfirm()) {
         if (!this.isMoving && !this.shopActive && !this.isEncounterTransitioning
-          && !this._dialogActive && !this._starterChoiceActive) {
+          && !this._dialogActive && !this._starterChoiceActive && !this._trainerBattlePending) {
           this.checkNpcInteraction();
         }
       }
@@ -904,6 +905,8 @@ export class WorldScene extends Phaser.Scene {
   }
 
   checkNpcInteraction() {
+    if (this._trainerBattlePending) return false;
+
     const px = gameState.playerPosition.x;
     const py = gameState.playerPosition.y;
 
