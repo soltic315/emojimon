@@ -1,0 +1,329 @@
+{
+  "items": [
+    {
+      "id": "POTION",
+      "name": "ヒールジェル",
+      "emoji": "🧪",
+      "description": "モンスター1体のHPを20回復する。",
+      "battleUsable": true,
+      "price": 50,
+      "effect": {
+        "type": "heal",
+        "amount": 20
+      }
+    },
+    {
+      "id": "SUPER_POTION",
+      "name": "ハイヒールジェル",
+      "emoji": "💊",
+      "description": "モンスター1体のHPを50回復する。",
+      "battleUsable": true,
+      "price": 150,
+      "effect": {
+        "type": "heal",
+        "amount": 50
+      }
+    },
+    {
+      "id": "HYPER_POTION",
+      "name": "メガヒールジェル",
+      "emoji": "🧴",
+      "description": "モンスター1体のHPを100回復する。",
+      "battleUsable": true,
+      "price": 360,
+      "effect": {
+        "type": "heal",
+        "amount": 100
+      }
+    },
+    {
+      "id": "MEGA_POTION",
+      "name": "アルティメットジェル",
+      "emoji": "💉",
+      "description": "モンスター1体のHPを160回復する。",
+      "battleUsable": true,
+      "price": 700,
+      "effect": {
+        "type": "heal",
+        "amount": 160
+      }
+    },
+    {
+      "id": "FULL_HEAL",
+      "name": "エリクサー",
+      "emoji": "✨",
+      "description": "モンスター1体のHPを80回復する。",
+      "battleUsable": true,
+      "price": 260,
+      "effect": {
+        "type": "heal",
+        "amount": 80
+      }
+    },
+    {
+      "id": "POWER_SEED",
+      "name": "ちからのタネ",
+      "emoji": "🌱",
+      "description": "バトル中に使うとこうげきを1段階アップ。",
+      "battleUsable": true,
+      "price": 100,
+      "effect": {
+        "type": "buffAttack",
+        "stages": 1
+      }
+    },
+    {
+      "id": "RAGE_CANDY",
+      "name": "げきりんキャンディ",
+      "emoji": "🍬",
+      "description": "バトル中に使うとこうげきを1段階アップ。",
+      "battleUsable": true,
+      "price": 180,
+      "effect": {
+        "type": "buffAttack",
+        "stages": 1
+      }
+    },
+    {
+      "id": "IRON_SEED",
+      "name": "てつのタネ",
+      "emoji": "🛡️",
+      "description": "バトル中に使うとぼうぎょを1段階アップ。",
+      "battleUsable": true,
+      "price": 100,
+      "effect": {
+        "type": "buffDefense",
+        "stages": 1
+      }
+    },
+    {
+      "id": "GUARD_CHARM",
+      "name": "ガードチャーム",
+      "emoji": "🪬",
+      "description": "バトル中に使うとぼうぎょを1段階アップ。",
+      "battleUsable": true,
+      "price": 180,
+      "effect": {
+        "type": "buffDefense",
+        "stages": 1
+      }
+    },
+    {
+      "id": "EMO_BALL",
+      "name": "エモボール",
+      "emoji": "⚪",
+      "description": "野生のモンスターをつかまえるためのボール。",
+      "battleUsable": false,
+      "price": 120,
+      "effect": null,
+      "catchBonus": 1.0
+    },
+    {
+      "id": "GREAT_BALL",
+      "name": "ハイキャッチボール",
+      "emoji": "🔵",
+      "description": "エモボールより捕獲率が高いボール。",
+      "battleUsable": false,
+      "price": 300,
+      "effect": null,
+      "catchBonus": 1.4
+    },
+    {
+      "id": "ULTRA_BALL",
+      "name": "エリートボール",
+      "emoji": "🟡",
+      "description": "非常に高性能な捕獲用ボール。",
+      "battleUsable": false,
+      "price": 650,
+      "effect": null,
+      "catchBonus": 1.8
+    },
+    {
+      "id": "REVIVE",
+      "name": "リバイブシャード",
+      "emoji": "💖",
+      "description": "ひんしのモンスターをHP半分で復活させる。",
+      "battleUsable": true,
+      "price": 500,
+      "effect": {
+        "type": "revive",
+        "amount": 0.5
+      }
+    },
+    {
+      "id": "BURN_HEAL",
+      "name": "ヒートケア",
+      "emoji": "💦",
+      "description": "やけど状態を回復する。",
+      "battleUsable": true,
+      "price": 80,
+      "effect": {
+        "type": "cureStatus",
+        "status": "BURN"
+      }
+    },
+    {
+      "id": "PARALYZE_HEAL",
+      "name": "スパークケア",
+      "emoji": "🔋",
+      "description": "まひ状態を回復する。",
+      "battleUsable": true,
+      "price": 80,
+      "effect": {
+        "type": "cureStatus",
+        "status": "PARALYSIS"
+      }
+    },
+    {
+      "id": "ICE_HEAL",
+      "name": "フリーズケア",
+      "emoji": "🫧",
+      "description": "こおり状態を回復する。",
+      "battleUsable": true,
+      "price": 80,
+      "effect": {
+        "type": "cureStatus",
+        "status": "FREEZE"
+      }
+    },
+    {
+      "id": "AWAKENING",
+      "name": "めざましくすり",
+      "emoji": "☕",
+      "description": "ねむり状態を回復する。",
+      "battleUsable": true,
+      "price": 80,
+      "effect": {
+        "type": "cureStatus",
+        "status": "SLEEP"
+      }
+    },
+    {
+      "id": "ANTIDOTE",
+      "name": "デトックスハーブ",
+      "emoji": "💚",
+      "description": "どく状態を回復する。",
+      "battleUsable": true,
+      "price": 80,
+      "effect": {
+        "type": "cureStatus",
+        "status": "POISON"
+      }
+    },
+    {
+      "id": "FULL_RESTORE",
+      "name": "パーフェクトケア",
+      "emoji": "🌟",
+      "description": "HPを全回復し、すべての状態異常も治す。",
+      "battleUsable": true,
+      "price": 950,
+      "effect": {
+        "type": "fullRestore"
+      }
+    },
+    {
+      "id": "X_SPEED",
+      "name": "クイックステップ",
+      "emoji": "💨",
+      "description": "バトル中に使うとすばやさを1段階アップ。",
+      "battleUsable": true,
+      "price": 120,
+      "effect": {
+        "type": "buffSpeed",
+        "stages": 1
+      }
+    },
+    {
+      "id": "MASTER_BALL",
+      "name": "インフィニティボール",
+      "emoji": "🟣",
+      "description": "どんなモンスターも必ず捕まえられる最高級ボール。",
+      "battleUsable": false,
+      "price": 9999,
+      "effect": null,
+      "catchBonus": 100.0
+    },
+    {
+      "id": "SPEED_CANDY",
+      "name": "スピードキャンディ",
+      "emoji": "🍭",
+      "description": "バトル中に使うとすばやさを2段階アップ。",
+      "battleUsable": true,
+      "price": 200,
+      "effect": {
+        "type": "buffSpeed",
+        "stages": 2
+      }
+    },
+    {
+      "id": "POWER_CHARM",
+      "name": "パワーチャーム",
+      "emoji": "💪",
+      "description": "バトル中に使うとこうげきを2段階アップ。",
+      "battleUsable": true,
+      "price": 250,
+      "effect": {
+        "type": "buffAttack",
+        "stages": 2
+      }
+    },
+    {
+      "id": "IRON_WALL",
+      "name": "てっぺきチャーム",
+      "emoji": "🔱",
+      "description": "バトル中に使うとぼうぎょを2段階アップ。",
+      "battleUsable": true,
+      "price": 250,
+      "effect": {
+        "type": "buffDefense",
+        "stages": 2
+      }
+    },
+    {
+      "id": "FULL_REVIVE",
+      "name": "かんぜんリバイブ",
+      "emoji": "💗",
+      "description": "ひんしのモンスターをHP全回復で復活させる。",
+      "battleUsable": true,
+      "price": 1200,
+      "effect": {
+        "type": "revive",
+        "amount": 1.0
+      }
+    },
+    {
+      "id": "HYPER_BALL",
+      "name": "ハイパーボール",
+      "emoji": "🟠",
+      "description": "エリートボールを超える高性能捕獲ボール。",
+      "battleUsable": false,
+      "price": 1200,
+      "effect": null,
+      "catchBonus": 2.5
+    },
+    {
+      "id": "ETHER",
+      "name": "エーテル",
+      "emoji": "🫙",
+      "description": "モンスター1体のすべての技のPPを10回復する。",
+      "battleUsable": true,
+      "price": 200,
+      "effect": {
+        "type": "healAllPP",
+        "amount": 10
+      }
+    },
+    {
+      "id": "MAX_ELIXIR",
+      "name": "マックスエリクサー",
+      "emoji": "🧫",
+      "description": "モンスター1体のすべての技のPPを完全に回復する。",
+      "battleUsable": true,
+      "price": 600,
+      "effect": {
+        "type": "healAllPP",
+        "amount": -1
+      }
+    }
+  ]
+}

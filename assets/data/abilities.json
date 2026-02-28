@@ -1,0 +1,44 @@
+{
+  "abilities": [
+    {
+      "id": "BLAZE",
+      "name": "えんしん",
+      "description": "HPが1/3以下のとき、ほのおわざの威力が上がる。"
+    },
+    {
+      "id": "TORRENT",
+      "name": "りゅうすい",
+      "description": "HPが1/3以下のとき、みずわざの威力が上がる。"
+    },
+    {
+      "id": "OVERGROW",
+      "name": "しげみ",
+      "description": "HPが1/3以下のとき、くさわざの威力が上がる。"
+    },
+    {
+      "id": "STURDY",
+      "name": "いわかべ",
+      "description": "受けるダメージを少し軽減する。"
+    },
+    {
+      "id": "MOTOR_DRIVE",
+      "name": "らいどう",
+      "description": "HPが1/3以下のとき、でんきわざの威力が上がる。"
+    },
+    {
+      "id": "ICE_BODY",
+      "name": "ひょうがい",
+      "description": "HPが1/3以下のとき、こおりわざの威力が上がる。"
+    },
+    {
+      "id": "INTIMIDATE",
+      "name": "あつりょく",
+      "description": "威圧感で相手の攻撃を弱め、受けるダメージを軽減する。"
+    },
+    {
+      "id": "SWIFT_SWIM",
+      "name": "かそくひれ",
+      "description": "素早い身のこなしで、受けるダメージを少し軽減する。"
+    }
+  ]
+}

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>EMOJIMON - ブラウザRPG</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#050511" />
+    <meta
+      name="description"
+      content="絵文字モンスターを育成してバトル！ブラウザで遊べるポケモン風RPG『EMOJIMON』"
+    />
+    <!-- Google Fonts: M PLUS Rounded 1c（日本語対応ゲーム向けフォント） -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background: #040612;
+        color: #fff;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        overflow: hidden;
+        touch-action: none;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+
+      #game-container {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background:
+          radial-gradient(1100px 500px at 18% 16%, rgba(99, 102, 241, 0.26), transparent 56%),
+          radial-gradient(900px 420px at 82% 24%, rgba(56, 189, 248, 0.16), transparent 58%),
+          linear-gradient(165deg, #070c1d 0%, #050a17 48%, #02040a 100%);
+        position: relative;
+      }
+
+      #game-container::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.03) 45%, transparent 100%);
+        pointer-events: none;
+      }
+
+      .game-frame {
+        width: min(900px, 100vw);
+        height: min(600px, 100vh);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        box-shadow:
+          0 0 0 1px rgba(255,255,255,0.03),
+          0 18px 42px rgba(0, 0, 0, 0.58),
+          0 0 120px rgba(99, 102, 241, 0.16),
+          inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        overflow: hidden;
+        background: #000;
+        position: relative;
+        backdrop-filter: blur(5px);
+      }
+
+      /* フルスクリーン時 */
+      :fullscreen .game-frame,
+      :-webkit-full-screen .game-frame {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+      }
+
+      /* フルスクリーンボタン */
+      #fullscreen-btn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 1000;
+        background: rgba(15, 23, 42, 0.72);
+        border: 1px solid rgba(148, 163, 184, 0.42);
+        color: #dbeafe;
+        font-size: 16px;
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow:
+          0 8px 20px rgba(0, 0, 0, 0.35),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        transition: transform 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+      }
+
+      #fullscreen-btn:hover {
+        transform: translateY(-1px);
+        background: rgba(37, 99, 235, 0.56);
+        color: #fff;
+        box-shadow:
+          0 12px 24px rgba(15, 23, 42, 0.45),
+          0 0 18px rgba(96, 165, 250, 0.25);
+      }
+
+      /* モバイル対応 */
+      @media (max-width: 900px) {
+        .game-frame {
+          width: 100vw;
+          height: 100vh;
+          border-radius: 0;
+          box-shadow: none;
+        }
+      }
+
+      @media (orientation: portrait) and (max-width: 600px) {
+        .game-frame {
+          width: 100vw;
+          height: 100vh;
+        }
+      }
+
+      /* ローディング画面 */
+      #loading-screen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #050511;
+        z-index: 9999;
+        transition: opacity 0.5s;
+      }
+
+      #loading-screen.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .loading-text {
+        color: #fde68a;
+        font-family: 'M PLUS Rounded 1c', system-ui, sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+        margin-top: 16px;
+        animation: pulse 1.5s infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 0.4; }
+        50% { opacity: 1; }
+      }
+    </style>
+    <!-- Phaser CDN (product build) -->
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.min.js"></script>
+    <script type="module" src="./js/main.ts"></script>
+  </head>
+  <body>
+    <div id="game-container">
+      <div id="game-frame" class="game-frame">
+        <div id="loading-screen">
+          <div class="loading-text">読み込み中...</div>
+        </div>
+      </div>
+      <button id="fullscreen-btn" title="フルスクリーン">⛶</button>
+    </div>
+    <script>
+      // フルスクリーン切り替え
+      document.getElementById('fullscreen-btn').addEventListener('click', () => {
+        const el = document.getElementById('game-container');
+        if (!document.fullscreenElement) {
+          el.requestFullscreen?.() || el.webkitRequestFullscreen?.();
+        } else {
+          document.exitFullscreen?.() || document.webkitExitFullscreen?.();
+        }
+      });
+
+      // ローディング画面を消す
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          const ls = document.getElementById('loading-screen');
+          if (ls) {
+            ls.classList.add('fade-out');
+            setTimeout(() => ls.remove(), 600);
+          }
+        }, 500);
+      });
+    </script>
+  </body>
+</html>
+
