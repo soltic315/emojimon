@@ -112,6 +112,8 @@ export interface MonsterInstance {
   /** エレメント連鎖用状態 */
   isWet?: boolean;
   lastUsedMoveType?: MonsterType;
+  /** キズナ (0-100) */
+  bond?: number;
 }
 
 // ── アイテム ──

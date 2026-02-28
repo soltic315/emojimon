@@ -1417,6 +1417,14 @@ export class BattleScene extends Phaser.Scene {
     this._updateElementStatesAtTurnStart(monster);
     if (!monster.statusCondition || monster.statusCondition === StatusCondition.NONE) return "act";
 
+    // キズナによる状態異常回復 (bond 80以上, プレイヤー側のみ, 20%で発動)
+    if (monster === this.battle?.player && (monster.bond || 0) >= 80 && Math.random() < 0.2) {
+      monster.statusCondition = StatusCondition.NONE;
+      this.enqueueMessage(`❤️ ${monster.species.name}は キズナのちからで じょうたいを なおした！`);
+      this.updateStatusDisplays();
+      return "act";
+    }
+
     if (monster.statusCondition === StatusCondition.BURN) {
       const stats = calcStats(monster.species, monster.level || 1);
       const burnDamage = Math.max(1, Math.floor(stats.maxHp * BURN_DAMAGE_RATIO));
@@ -1705,12 +1713,23 @@ export class BattleScene extends Phaser.Scene {
     // 攻撃演出
     this.playAttackAnimation(opponent, player, move, () => {
       const result = this.calculateDamage(opponent, player, move);
-      const damage = result.damage;
+      let damage = result.damage;
+      let bondSurvived = false;
+
+      if ((player.bond || 0) >= 70 && player.currentHp <= damage && Math.random() < 0.2) {
+        damage = player.currentHp - 1;
+        bondSurvived = true;
+      }
       player.currentHp = Math.max(0, player.currentHp - damage);
 
-      const reaction = this._applyElementReaction(opponent, player, move, damage);
+      const reaction = this._applyElementReaction(opponent, player, move, result.damage);
       if (reaction.extraDamage > 0) {
-        player.currentHp = Math.max(0, player.currentHp - reaction.extraDamage);
+        let extraDam = reaction.extraDamage;
+        if (!bondSurvived && (player.bond || 0) >= 70 && player.currentHp <= extraDam && Math.random() < 0.2) {
+          extraDam = player.currentHp - 1;
+          bondSurvived = true;
+        }
+        player.currentHp = Math.max(0, player.currentHp - extraDam);
       }
 
       const effectiveness = result.effectiveness;
@@ -1727,7 +1746,10 @@ export class BattleScene extends Phaser.Scene {
       this.updateHud(true);
 
       const label = this._getOpponentLabel();
-      this.enqueueMessage(`${label} ${opponent.species.name}の ${move.name}！ ${damage}ダメージ！`);
+      this.enqueueMessage(`${label} ${opponent.species.name}の ${move.name}！ ${result.damage}ダメージ！`);
+      if (bondSurvived) {
+        this.enqueueMessage(`❤️ ${player.species.name}は キズナのちからで もちこたえた！`);
+      }
       reaction.messages.forEach((msg) => this.enqueueMessage(msg));
       if (result.critical) this.enqueueMessage("きゅうしょに あたった！");
       (result.abilityMessages || []).forEach((msg) => this.enqueueMessage(msg));
@@ -1845,10 +1867,13 @@ export class BattleScene extends Phaser.Scene {
 
     // パーティ全員に経験値を分配（先頭: 100%、他: 30%）
     const levelUpResult = gameState.addExpToMonsterDetailed(leader, expGain);
+    gameState.addBond(leader, 2); // 戦闘に出たのでキズナ+2
+    
     gameState.party.forEach((m) => {
       if (m !== leader && m.species && m.currentHp > 0) {
         const shareExp = Math.max(1, Math.floor(expGain * SHARED_EXP_RATIO));
         gameState.addExpToMonster(m, shareExp);
+        gameState.addBond(m, 1); // 一緒に戦ったのでキズナ+1
       }
     });
 
@@ -2232,7 +2257,13 @@ export class BattleScene extends Phaser.Scene {
     const effectiveness = this.getEffectiveness(move.type, defender.species.primaryType);
     const stab = move.type === attacker.species.primaryType ? STAB_BONUS : 1;
     const randomFactor = Phaser.Math.FloatBetween(DAMAGE_RANDOM_MIN, DAMAGE_RANDOM_MAX);
-    const critical = Math.random() < CRITICAL_HIT_RATE;
+    
+    let critRate = CRITICAL_HIT_RATE;
+    if (attacker === this.battle?.player && (attacker.bond || 0) >= 90) {
+      critRate += 0.1; // キズナによる急所率アップ
+    }
+    const critical = Math.random() < critRate;
+    
     const criticalMul = critical ? CRITICAL_HIT_MULTIPLIER : 1;
     const weatherMul = this._getWeatherModifier(move.type);
     const abilityMod = this.getAbilityDamageModifier(attacker, defender, move);

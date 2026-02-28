@@ -70,6 +70,7 @@ function buildLoadedMonster(saved) {
     exp: clampInt(saved?.exp, 0, 99_999_999, 0),
     nextLevelExp: Math.max(baseNextLevelExp, clampInt(saved?.nextLevelExp, 1, 99_999_999, baseNextLevelExp)),
     currentHp: clampInt(saved?.currentHp, 0, maxHp, maxHp),
+    bond: clampInt(saved?.bond, 0, 100, 0),
     attackStage: 0,
     defenseStage: 0,
     moveIds: Array.isArray(saved?.moveIds)
@@ -486,6 +487,9 @@ class GameState {
 
       const stats = calcStats(monster.species, monster.level);
       monster.currentHp = stats.maxHp;
+      
+      // レベルアップでキズナが深まる
+      this.addBond(monster, 5);
     }
 
     syncMonsterMoves(monster);
@@ -495,7 +499,17 @@ class GameState {
       learnedMoves,
     };
   }
+  /** モンスターにキズナポイントを追加（0〜100に収める） */
+  addBond(monster, amount) {
+    if (!monster) return;
+    const current = monster.bond || 0;
+    monster.bond = Math.max(0, Math.min(100, current + amount));
+  }
 
+  /** 手持ちのモンスター全員にキズナポイントを追加 */
+  addBondToParty(amount) {
+    this.party.forEach((m) => this.addBond(m, amount));
+  }
   /** 指定モンスターに経験値を追加、レベルアップ数を返す */
   addExpToMonster(monster, amount) {
     return this.addExpToMonsterDetailed(monster, amount).levelsGained;
@@ -744,8 +758,7 @@ class GameState {
           exp: m.exp,
           nextLevelExp: m.nextLevelExp,
           currentHp: m.currentHp,
-          attackStage: 0,
-          defenseStage: 0,
+          bond: m.bond || 0,
           moveIds: m.moveIds || [],
           pp: m.pp || [],
         })),
@@ -755,6 +768,7 @@ class GameState {
           exp: m.exp,
           nextLevelExp: m.nextLevelExp,
           currentHp: m.currentHp,
+          bond: m.bond || 0,
           moveIds: m.moveIds || [],
           pp: m.pp || [],
         })),

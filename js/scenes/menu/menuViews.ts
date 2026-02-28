@@ -137,7 +137,8 @@ export function renderPartyView(scene) {
     }
 
     const cursor = selected ? "▶" : " ";
-    const nameStr = `${cursor} ${mon.species.emoji} ${mon.species.name}  Lv.${mon.level}`;
+    const bondMarker = (mon.bond || 0) >= 80 ? "❤️" : "";
+    const nameStr = `${cursor} ${mon.species.emoji} ${mon.species.name}${bondMarker}  Lv.${mon.level}`;
     const nameText = scene.add.text(panelX + 16, y, nameStr, {
       fontFamily: FONT.UI,
       fontSize: 15,
@@ -176,7 +177,7 @@ export function renderPartyView(scene) {
     });
     scene.subPanel.add(hpText);
 
-    const statStr = `ATK:${stats.attack} DEF:${stats.defense} SPD:${stats.speed}  EXP:${mon.exp || 0}/${mon.nextLevelExp}`;
+    const statStr = `ATK:${stats.attack} DEF:${stats.defense} SPD:${stats.speed}  EXP:${mon.exp || 0}/${mon.nextLevelExp}  キズナ:${mon.bond || 0}`;
     const statText = scene.add.text(panelX + 38, y + 36, statStr, {
       fontFamily: FONT.UI,
       fontSize: 10,
@@ -502,8 +503,9 @@ export function renderBagTargetView(scene) {
 
     const cursor = selected ? "▶" : " ";
     const alive = mon.currentHp > 0;
+    const bondMarker = (mon.bond || 0) >= 80 ? "❤️" : "";
     const statusStr = alive ? `HP ${mon.currentHp}/${stats.maxHp} (${hpPct}%)` : "ひんし";
-    const nameStr = `${cursor} ${mon.species.emoji} ${mon.species.name} Lv.${mon.level}`;
+    const nameStr = `${cursor} ${mon.species.emoji} ${mon.species.name}${bondMarker} Lv.${mon.level}`;
     const nameText = scene.add.text(panelX + 16, y, nameStr, {
       fontFamily: FONT.UI,
       fontSize: 14,
