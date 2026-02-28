@@ -61,7 +61,15 @@ export function renderShopMenu(scene) {
   scene.shopContainer = scene.add.container(0, 0).setScrollFactor(0);
   const { width, height } = scene.scale;
 
-  const panelH = (scene.shopItems.length + 2) * 26 + 20;
+  const totalEntries = scene.shopItems.length + 1;
+  const maxVisibleEntries = 9;
+  const visibleEntries = Math.min(totalEntries, maxVisibleEntries);
+  const halfWindow = Math.floor(visibleEntries / 2);
+  const maxStartIndex = Math.max(0, totalEntries - visibleEntries);
+  const startIndex = Math.max(0, Math.min(scene.shopSelectedIndex - halfWindow, maxStartIndex));
+  const endIndex = startIndex + visibleEntries;
+
+  const panelH = (visibleEntries + 2) * 26 + 20;
   const panelY = height - 54 - panelH;
   const bg = scene.add.graphics();
   drawPanel(bg, width / 2 - 160, panelY, 320, panelH, { radius: 10 });
@@ -74,11 +82,17 @@ export function renderShopMenu(scene) {
   }).setOrigin(0.5, 0);
   scene.shopContainer.add(titleText);
 
-  scene.shopItems.forEach((entry, i) => {
-    const item = getItemById(entry.itemId);
-    const label = `${item ? item.emoji : ""} ${item ? item.name : entry.itemId} — ${entry.price}G`;
-    const y = panelY + 36 + i * 26;
+  let row = 0;
+  for (let i = startIndex; i < endIndex; i++) {
+    const y = panelY + 36 + row * 26;
     const selected = i === scene.shopSelectedIndex;
+
+    let label = "やめる";
+    if (i < scene.shopItems.length) {
+      const entry = scene.shopItems[i];
+      const item = getItemById(entry.itemId);
+      label = `${item ? item.emoji : ""} ${item ? item.name : entry.itemId} — ${entry.price}G`;
+    }
 
     if (selected) {
       const selBg = scene.add.graphics();
@@ -92,21 +106,8 @@ export function renderShopMenu(scene) {
       color: selected ? "#fbbf24" : "#d1d5db",
     }).setOrigin(0.5, 0);
     scene.shopContainer.add(text);
-  });
-
-  const exitY = panelY + 36 + scene.shopItems.length * 26;
-  const exitSelected = scene.shopSelectedIndex === scene.shopItems.length;
-  if (exitSelected) {
-    const selBg = scene.add.graphics();
-    drawSelection(selBg, width / 2 - 145, exitY - 2, 290, 24, { radius: 4 });
-    scene.shopContainer.add(selBg);
+    row += 1;
   }
-  const exitText = scene.add.text(width / 2, exitY, exitSelected ? "▶ やめる" : "  やめる", {
-    fontFamily: FONT.UI,
-    fontSize: 14,
-    color: exitSelected ? "#fbbf24" : "#9ca3af",
-  }).setOrigin(0.5, 0);
-  scene.shopContainer.add(exitText);
 }
 
 export function handleShopInput(scene) {

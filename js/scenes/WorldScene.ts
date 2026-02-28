@@ -2107,6 +2107,7 @@ export class WorldScene extends Phaser.Scene {
   }
 
   handleDoorTransition(x, y) {
+    this.isEncounterTransitioning = true;
     audioManager.playDoor();
     const transitions = DOOR_TRANSITIONS[this.mapKey] || [];
     const match = transitions.find((t) => t.doorCheck(x, y));
@@ -2114,11 +2115,13 @@ export class WorldScene extends Phaser.Scene {
       const gateMessage = this._getTransitionGateMessage(match.target);
       if (gateMessage) {
         this.showMessage(gateMessage, 2800);
+        this.isEncounterTransitioning = false;
         return;
       }
       // 天空の花園はクリア後のみ入れる
       if (match.target === "CELESTIAL_GARDEN" && !gameState.storyFlags.ruinsFinalDone) {
         this.showMessage("強大な力が行く手を阻んでいる… まだその時ではないようだ。");
+        this.isEncounterTransitioning = false;
         return;
       }
       // マップ遷移時にオートセーブ
@@ -2127,7 +2130,9 @@ export class WorldScene extends Phaser.Scene {
       this.cameras.main.once("camerafadeoutcomplete", () => {
         this.scene.restart({ mapKey: match.target, startX: match.startX, startY: match.startY });
       });
+      return;
     }
+    this.isEncounterTransitioning = false;
   }
 
   handleRandomEncounter(tileX, tileY) {

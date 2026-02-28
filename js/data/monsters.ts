@@ -48,6 +48,21 @@ const DEFAULT_ABILITIES = {
 
 export const ABILITIES = {};
 
+function repairMojibakeText(value) {
+  if (typeof value !== "string" || value.length === 0) return value;
+  const mojibakePattern = /(?:Ã.|ã.|â.|ï.)/;
+  if (!mojibakePattern.test(value)) return value;
+
+  try {
+    const bytes = Uint8Array.from(value, (char) => char.charCodeAt(0) & 0xff);
+    const repaired = new TextDecoder("utf-8", { fatal: false }).decode(bytes);
+    if (!repaired || repaired.includes("�")) return value;
+    return repaired;
+  } catch {
+    return value;
+  }
+}
+
 const DEFAULT_ABILITY_BY_TYPE = {
   FIRE: "BLAZE",
   WATER: "TORRENT",
@@ -120,10 +135,12 @@ export function initAbilitiesFromJson(json) {
 
   json.abilities.forEach((raw) => {
     if (!raw || !raw.id) return;
+    const repairedName = repairMojibakeText(raw.name || raw.id);
+    const repairedDescription = repairMojibakeText(raw.description || "");
     ABILITIES[raw.id] = {
       id: raw.id,
-      name: raw.name || raw.id,
-      description: raw.description || "",
+      name: repairedName,
+      description: repairedDescription,
     };
   });
 
