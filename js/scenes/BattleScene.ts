@@ -56,6 +56,16 @@ import {
   clearMenuTexts,
 } from "./battle/battleMenu.ts";
 import { gsap } from "gsap";
+import {
+  addCameraVignette,
+  addCameraBloom,
+  flashDamage,
+  flashSuperHit,
+  flashLevelUp,
+  flashVictory,
+  createParticleBurst,
+  createTypeHitEffect,
+} from "../ui/FXHelper.ts";
 
 export class BattleScene extends Phaser.Scene {
   constructor() {
@@ -134,6 +144,12 @@ export class BattleScene extends Phaser.Scene {
     this.setupMonsters();
     this._initializeElementStates();
     this.bindInput();
+
+    // PostFX: ビネット + ブルーム
+    addCameraVignette(this.cameras.main, { radius: 0.45, strength: 0.35 });
+    this._battleBloom = addCameraBloom(this.cameras.main, {
+      strength: 1.2, blurStrength: 0.8, steps: 4,
+    });
 
     // イントロ演出
     this.cameras.main.fadeIn(400, 0, 0, 0);
@@ -1273,23 +1289,8 @@ export class BattleScene extends Phaser.Scene {
   }
 
   spawnHitParticles(x, y, moveType) {
-    const particleKey = TYPE_PARTICLE[moveType] || "particle-hit";
-    const count = 8;
-    for (let i = 0; i < count; i++) {
-      const angle = (Math.PI * 2 * i) / count;
-      const dist = 30 + Math.random() * 20;
-      const p = this.add.sprite(x, y, particleKey).setScale(0.8).setAlpha(0.9);
-      this.tweens.add({
-        targets: p,
-        x: x + Math.cos(angle) * dist,
-        y: y + Math.sin(angle) * dist,
-        alpha: 0,
-        scale: 0.2,
-        duration: 400,
-        ease: "power2.out",
-        onComplete: () => p.destroy(),
-      });
-    }
+    // Phaser ParticleEmitter ベースの高品質ヒットエフェクト
+    createTypeHitEffect(this, x, y, moveType, false);
   }
 
   showFloatingDamage(x, y, damage, isSuper = false) {
@@ -1596,14 +1597,19 @@ export class BattleScene extends Phaser.Scene {
       const effectiveness = result.effectiveness;
       const isSuper = effectiveness >= 1.5;
 
-      // 効果音
-      if (isSuper) audioManager.playSuperEffective();
-      else if (effectiveness < 1.0 && effectiveness > 0) audioManager.playNotEffective();
+      // 効果音 + PostFX演出
+      if (isSuper) {
+        audioManager.playSuperEffective();
+        flashSuperHit(this.cameras.main);
+        createTypeHitEffect(this, this.opponentEmojiText.x, this.opponentEmojiText.y, move.type, true);
+      } else if (effectiveness < 1.0 && effectiveness > 0) {
+        audioManager.playNotEffective();
+      }
 
-      // 急所やばつぐんでカメラシェイク
+      // 急所やばつぐんでカメラシェイク + ダメージフラッシュ
       if (result.critical || isSuper) {
-        const intensity = isSuper && result.critical ? 0.012 : 0.007;
-        this.cameras.main.shake(300, intensity);
+        const intensity = isSuper && result.critical ? 0.5 : 0.3;
+        flashDamage(this.cameras.main, { intensity });
       }
 
       // ダメージ数字表示
@@ -1809,6 +1815,7 @@ export class BattleScene extends Phaser.Scene {
     this.resultType = "win";
     this.state = BattleState.RESULT;
     audioManager.playVictory();
+    flashVictory(this.cameras.main);
 
     // 相手の消滅エフェクト
     this._playDefeatEffect(this.opponentEmojiText);
@@ -1916,6 +1923,15 @@ export class BattleScene extends Phaser.Scene {
   /** 倒れたモンスターの消滅エフェクト */
   _playDefeatEffect(emojiText) {
     if (!emojiText) return;
+    // パーティクルバーストで消滅演出
+    createParticleBurst(this, emojiText.x, emojiText.y, {
+      textureKey: "particle-white",
+      count: 16,
+      speed: 150,
+      lifespan: 700,
+      scale: { start: 1.5, end: 0 },
+      gravityY: 60,
+    });
     this.tweens.add({
       targets: emojiText,
       y: emojiText.y + 40,
@@ -1927,34 +1943,59 @@ export class BattleScene extends Phaser.Scene {
     });
   }
 
-  /** レベルアップのキラキラエフェクト */
+  /** レベルアップのキラキラエフェクト（PostFX + パーティクルバースト） */
   _playLevelUpEffect(emojiText) {
     if (!emojiText) return;
     const x = emojiText.x;
     const y = emojiText.y;
-    for (let i = 0; i < 12; i++) {
-      const angle = (Math.PI * 2 * i) / 12;
-      const dist = 40 + Math.random() * 20;
-      const p = this.add.sprite(x, y, "particle-star").setScale(0.6).setAlpha(0.9);
-      this.tweens.add({
-        targets: p,
-        x: x + Math.cos(angle) * dist,
-        y: y + Math.sin(angle) * dist - 30,
-        alpha: 0,
-        scale: 0,
-        duration: 800,
-        ease: "power2.out",
-        delay: i * 40,
-        onComplete: () => p.destroy(),
-      });
-    }
-    // 光のフラッシュ
-    this.cameras.main.flash(200, 255, 255, 200, true);
+
+    // ParticleEmitter による金色パーティクルバースト
+    createParticleBurst(this, x, y, {
+      textureKey: "particle-star",
+      count: 20,
+      speed: 200,
+      lifespan: 1000,
+      scale: { start: 1.5, end: 0 },
+      tint: 0xfde68a,
+      gravityY: -40,
+    });
+
+    // 白い光のバースト
+    createParticleBurst(this, x, y, {
+      textureKey: "particle-white",
+      count: 10,
+      speed: 120,
+      lifespan: 600,
+      scale: { start: 2.0, end: 0 },
+      gravityY: 0,
+    });
+
+    // PostFX フラッシュ
+    flashLevelUp(this.cameras.main);
   }
 
-  /** 進化の演出 — 光のバーストと絵文字チェンジ */
+  /** 進化の演出 — 光のバーストと絵文字チェンジ（強化版） */
   _playEvolutionEffect(emojiText, newEmoji) {
     if (!emojiText) return;
+    const x = emojiText.x;
+    const y = emojiText.y;
+
+    // 進化パーティクル（虹色バースト）
+    const colors = [0xf97316, 0x3b82f6, 0x22c55e, 0xeab308, 0xa855f7, 0xec4899];
+    colors.forEach((tint, i) => {
+      this.time.delayedCall(i * 80, () => {
+        createParticleBurst(this, x, y, {
+          textureKey: "particle-star",
+          count: 6,
+          speed: 160 + i * 20,
+          lifespan: 800,
+          scale: { start: 1.2, end: 0 },
+          tint,
+          gravityY: -20,
+        });
+      });
+    });
+
     // 白く光る
     this.cameras.main.flash(600, 255, 255, 255, true);
     // スケールアニメーション

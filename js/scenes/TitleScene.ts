@@ -1,6 +1,7 @@
 import { gameState } from "../state/gameState.ts";
 import { audioManager } from "../audio/AudioManager.ts";
 import { FONT, COLORS, TEXT_COLORS, drawPanel, drawSelection, createAmbientParticles } from "../ui/UIHelper.ts";
+import { addCameraVignette, addCameraBloom, addGlow, addShine } from "../ui/FXHelper.ts";
 import { gsap } from "gsap";
 
 export class TitleScene extends Phaser.Scene {
@@ -93,6 +94,14 @@ export class TitleScene extends Phaser.Scene {
       strokeThickness: 6,
       shadow: { offsetX: 0, offsetY: 4, color: "#000000", blur: 16, fill: true },
     }).setOrigin(0.5);
+
+    // PostFX: タイトルにグロー + シャインエフェクト
+    addGlow(title, { color: 0xfbbf24, outerStrength: 6, innerStrength: 2 });
+    addShine(title, { speed: 0.3, lineWidth: 0.4, gradient: 4 });
+
+    // PostFX: カメラにビネット + ブルーム
+    addCameraVignette(this.cameras.main, { radius: 0.4, strength: 0.45 });
+    addCameraBloom(this.cameras.main, { strength: 1.0, blurStrength: 0.6, steps: 3 });
 
     this.tweens.add({
       targets: [title, titleShadow],

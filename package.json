@@ -25,6 +25,7 @@
     "gsap": "^3.14.2",
     "phaser": "^3.80.0",
     "phaser3-rex-plugins": "^1.80.19",
+    "tone": "^15.1.22",
     "zod": "^4.3.6"
   },
   "devDependencies": {

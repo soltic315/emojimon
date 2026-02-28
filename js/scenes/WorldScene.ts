@@ -12,6 +12,7 @@ import { createWildMonsterForEncounter, rollWeatherForMap } from "../data/mapRul
 import { audioManager } from "../audio/AudioManager.ts";
 import { TouchControls } from "../ui/TouchControls.ts";
 import { FONT, COLORS, TEXT_COLORS, drawPanel } from "../ui/UIHelper.ts";
+import { addCameraVignette, addCameraBloom } from "../ui/FXHelper.ts";
 import {
   TILE_SIZE,
   T,
@@ -87,6 +88,10 @@ export class WorldScene extends Phaser.Scene {
     this.createNpcSprites();
     this.createUi();
     this._renderFieldActionMarkers();
+
+    // PostFX: ビネット + ブルームで映像美を向上
+    addCameraVignette(this.cameras.main, { radius: 0.5, strength: 0.3 });
+    addCameraBloom(this.cameras.main, { strength: 0.8, blurStrength: 0.5, steps: 3 });
 
     // フェードイン
     this.cameras.main.fadeIn(400, 0, 0, 0);
