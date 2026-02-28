@@ -16,6 +16,7 @@ import {
   TILE_SIZE,
   T,
   MAPS,
+  MAP_FACILITY_MARKERS,
   getMapNpcs,
   createMapLayout,
   DOOR_TRANSITIONS,
@@ -353,6 +354,35 @@ export class WorldScene extends Phaser.Scene {
         repeat: -1,
       });
       this.fieldMarkers.push(marker);
+    });
+
+    const facilityMarkers = MAP_FACILITY_MARKERS[this.mapKey] || [];
+    facilityMarkers.forEach((facility) => {
+      const wx = facility.x * TILE_SIZE + TILE_SIZE / 2;
+      const wy = facility.y * TILE_SIZE + TILE_SIZE / 2;
+
+      const badge = this.add.rectangle(wx, wy + 10, 30, 12, 0x0f172a, 0.72)
+        .setStrokeStyle(1, 0x93c5fd, 0.55)
+        .setDepth(3);
+      const icon = this.add.text(wx, wy - 3, facility.emoji, { fontSize: 16 })
+        .setOrigin(0.5)
+        .setDepth(4);
+      const label = this.add.text(wx, wy + 10, facility.label, {
+        fontFamily: FONT.UI,
+        fontSize: 8,
+        color: "#dbeafe",
+      }).setOrigin(0.5).setDepth(4);
+
+      this.tweens.add({
+        targets: icon,
+        y: icon.y - 2,
+        duration: 700,
+        yoyo: true,
+        repeat: -1,
+        ease: "sine.inOut",
+      });
+
+      this.fieldMarkers.push(badge, icon, label);
     });
   }
 
@@ -737,6 +767,13 @@ export class WorldScene extends Phaser.Scene {
         g.fillRect(mx + x * scale, my + y * scale, scale - 0.5, scale - 0.5);
       }
     }
+
+    const facilityMarkers = MAP_FACILITY_MARKERS[this.mapKey] || [];
+    facilityMarkers.forEach((facility) => {
+      if (facility.x < 0 || facility.y < 0 || facility.x >= mapW || facility.y >= mapH) return;
+      g.fillStyle(0xfacc15, 0.95);
+      g.fillRect(mx + facility.x * scale, my + facility.y * scale, scale, scale);
+    });
 
     this.uiContainer.add(g);
 

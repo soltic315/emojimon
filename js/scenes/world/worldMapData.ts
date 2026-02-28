@@ -716,6 +716,13 @@ export function createMapLayout(mapKey) {
   return map;
 }
 
+export const MAP_FACILITY_MARKERS = {
+  EMOJI_TOWN: [
+    { x: 6, y: 3, emoji: "💖", label: "回復" },
+    { x: 14, y: 3, emoji: "🛒", label: "ショップ" },
+  ],
+};
+
 // ドア遷移先の定義
 export const DOOR_TRANSITIONS = {
   EMOJI_TOWN: [
