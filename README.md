@@ -64,6 +64,15 @@ npm run preview
 
 ---
 
+## GitHub Pages デプロイ運用
+
+- `main` ブランチへの push で `.github/workflows/deploy.yml` が実行されます。
+- ワークフローは Pages サイト未作成時に自動有効化を試みます。
+- 自動有効化に失敗した場合は、リポジトリ設定の **Pages > Build and deployment** を `GitHub Actions` に設定してください。
+- 必要権限が不足している場合（管理者権限なしなど）は、リポジトリ管理者による設定が必要です。
+
+---
+
 ## ディレクトリ概要
 
 ```
