@@ -932,7 +932,9 @@ export class WorldScene extends Phaser.Scene {
       if (npc.heal) {
         gameState.party.forEach((m) => {
           if (m.species) {
-            m.currentHp = m.species.baseStats.maxHp + 3 * (m.level - 1);
+            // calcStats を使用して正しい最大HPを算出
+            const stats = calcStats(m.species, m.level);
+            m.currentHp = stats.maxHp;
             // PP全回復
             syncMonsterMoves(m);
             m.pp = getMonsterMoves(m).map((mv) => mv.pp || 10);

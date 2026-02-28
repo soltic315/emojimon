@@ -76,11 +76,11 @@
       "id": "RAGE_CANDY",
       "name": "げきりんキャンディ",
       "emoji": "🍬",
-      "description": "バトル中に使うとこうげきを1段階アップ。",
+      "description": "バトル中に使うとこうげきとすばやさを1段階アップ。",
       "battleUsable": true,
       "price": 180,
       "effect": {
-        "type": "buffAttack",
+        "type": "buffAttackSpeed",
         "stages": 1
       }
     },
@@ -100,12 +100,13 @@
       "id": "GUARD_CHARM",
       "name": "ガードチャーム",
       "emoji": "🪬",
-      "description": "バトル中に使うとぼうぎょを1段階アップ。",
+      "description": "バトル中に使うとぼうぎょを1段階アップし、HPを少し回復する。",
       "battleUsable": true,
       "price": 180,
       "effect": {
-        "type": "buffDefense",
-        "stages": 1
+        "type": "buffDefenseHeal",
+        "stages": 1,
+        "healPercent": 0.15
       }
     },
     {

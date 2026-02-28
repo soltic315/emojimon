@@ -26,6 +26,7 @@ export const WEATHER = {
   SUNNY: "SUNNY",
   RAINY: "RAINY",
   WINDY: "WINDY",
+  SNOWY: "SNOWY",
 };
 
 const DEFAULT_MAP_KEY = MAP_KEYS.EMOJI_TOWN;
@@ -53,10 +54,10 @@ const WEATHER_ROLL_TABLE_BY_MAP = {
     { weather: WEATHER.RAINY, threshold: 1 },
   ],
   [MAP_KEYS.FROZEN_PEAK]: [
-    { weather: WEATHER.WINDY, threshold: 0.4 },
-    { weather: WEATHER.RAINY, threshold: 0.6 },
-    { weather: WEATHER.NONE, threshold: 0.8 },
-    { weather: WEATHER.SUNNY, threshold: 1 },
+    { weather: WEATHER.SNOWY, threshold: 0.45 },
+    { weather: WEATHER.WINDY, threshold: 0.65 },
+    { weather: WEATHER.NONE, threshold: 0.85 },
+    { weather: WEATHER.RAINY, threshold: 1 },
   ],
   [MAP_KEYS.CELESTIAL_GARDEN]: [
     { weather: WEATHER.SUNNY, threshold: 0.5 },

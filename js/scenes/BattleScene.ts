@@ -24,6 +24,8 @@ import {
   getStatusEmoji,
   getStatusColor,
   RUN_SUCCESS_RATE,
+  RUN_RATE_MIN,
+  RUN_RATE_MAX,
   CRITICAL_HIT_RATE,
   CRITICAL_HIT_MULTIPLIER,
   DAMAGE_RANDOM_MIN,
@@ -506,6 +508,45 @@ export class BattleScene extends Phaser.Scene {
         },
       });
       this._weatherParticles.push(windGfx, { destroy: () => windTimer.destroy() });
+
+    } else if (this.weather === WEATHER.SNOWY) {
+      // 雪パーティクル
+      const snowGfx = this.add.graphics();
+      snowGfx.setDepth(5);
+      const flakes = [];
+      const flakeCount = 30;
+      for (let i = 0; i < flakeCount; i++) {
+        flakes.push({
+          x: Math.random() * width,
+          y: Math.random() * battleFieldHeight,
+          speed: 1 + Math.random() * 2,
+          size: 1.5 + Math.random() * 2.5,
+          alpha: 0.3 + Math.random() * 0.4,
+          wobble: Math.random() * Math.PI * 2,
+        });
+      }
+      const snowTimer = this.time.addEvent({
+        delay: 33,
+        loop: true,
+        callback: () => {
+          snowGfx.clear();
+          for (const flake of flakes) {
+            flake.y += flake.speed;
+            flake.x += Math.sin(flake.wobble) * 0.6;
+            flake.wobble += 0.04;
+            if (flake.y > battleFieldHeight) {
+              flake.y = -flake.size;
+              flake.x = Math.random() * width;
+            }
+            snowGfx.fillStyle(0xffffff, flake.alpha);
+            snowGfx.fillCircle(flake.x, flake.y, flake.size);
+          }
+        },
+      });
+      // 薄い青白オーバーレイ
+      const snowOverlay = this.add.rectangle(width / 2, battleFieldHeight / 2, width, battleFieldHeight, 0x93c5fd, 0.05);
+      snowOverlay.setDepth(4);
+      this._weatherParticles.push(snowGfx, snowOverlay, { destroy: () => snowTimer.destroy() });
     }
   }
 
@@ -537,7 +578,7 @@ export class BattleScene extends Phaser.Scene {
       this.enqueueMessage(`${oldWeather.emoji} ${oldWeather.label}が おさまった！`);
     } else if (this.weather === WEATHER.NONE && Math.random() < 0.08) {
       // 低確率で新天候発生
-      const candidates = [WEATHER.SUNNY, WEATHER.RAINY, WEATHER.WINDY];
+      const candidates = [WEATHER.SUNNY, WEATHER.RAINY, WEATHER.WINDY, WEATHER.SNOWY];
       this.weather = candidates[Math.floor(Math.random() * candidates.length)];
       this.weatherTurnCounter = 0;
       this.weatherDuration = 3 + Math.floor(Math.random() * 3);
@@ -1259,7 +1300,16 @@ export class BattleScene extends Phaser.Scene {
   // ── 逃走 ──
 
   tryRun() {
-    const success = Math.random() < RUN_SUCCESS_RATE;
+    // 速度差による逃走確率補正: 速いほど逃げやすい
+    const player = this.battle.player;
+    const opponent = this.battle.opponent;
+    const playerSpeed = calcStats(player.species, player.level).speed;
+    const opponentSpeed = calcStats(opponent.species, opponent.level).speed;
+    const speedDiff = playerSpeed - opponentSpeed;
+    // 速度差10ごとに±10%
+    const speedBonus = (speedDiff / 10) * 0.1;
+    const runRate = Math.min(RUN_RATE_MAX, Math.max(RUN_RATE_MIN, RUN_SUCCESS_RATE + speedBonus));
+    const success = Math.random() < runRate;
     if (success) {
       audioManager.playRunAway();
       this.resultType = "run";
@@ -2163,6 +2213,38 @@ export class BattleScene extends Phaser.Scene {
       if (player.speedStage !== before) {
         this.enqueueMessage(`${def.name}で ${player.species.name}の すばやさが あがった！`);
         itemConsumed = true;
+      } else {
+        this.enqueueMessage("しかし これいじょう あがらない！");
+      }
+    } else if (def.effect.type === "buffAttackSpeed") {
+      // げきりんキャンディ: 攻撃+1 & 速度+1
+      const aBefore = player.attackStage || 0;
+      const sBefore = player.speedStage || 0;
+      player.attackStage = this.clampStage(aBefore + (def.effect.stages || 1));
+      player.speedStage = this.clampStage(sBefore + (def.effect.stages || 1));
+      if (player.attackStage !== aBefore || player.speedStage !== sBefore) {
+        this.enqueueMessage(`${def.name}で ${player.species.name}の こうげきと すばやさが あがった！`);
+        itemConsumed = true;
+      } else {
+        this.enqueueMessage("しかし これいじょう あがらない！");
+      }
+    } else if (def.effect.type === "buffDefenseHeal") {
+      // ガードチャーム: 防御+1 & HP回復
+      const dBefore = player.defenseStage || 0;
+      player.defenseStage = this.clampStage(dBefore + (def.effect.stages || 1));
+      const stats = calcStats(player.species, player.level || 1);
+      const healAmount = Math.floor(stats.maxHp * (def.effect.healPercent || 0.15));
+      const hpBefore = player.currentHp;
+      player.currentHp = Math.min(stats.maxHp, player.currentHp + healAmount);
+      const healed = player.currentHp - hpBefore;
+      if (player.defenseStage !== dBefore || healed > 0) {
+        audioManager.playHeal();
+        const msgs = [];
+        if (player.defenseStage !== dBefore) msgs.push("ぼうぎょが あがった");
+        if (healed > 0) msgs.push(`HPが ${healed} かいふくした`);
+        this.enqueueMessage(`${def.name}で ${player.species.name}の ${msgs.join("！ ")}！`);
+        itemConsumed = true;
+        this.updateHud(true);
       } else {
         this.enqueueMessage("しかし これいじょう あがらない！");
       }

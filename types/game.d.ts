@@ -12,7 +12,7 @@ export type MonsterType = "NORMAL" | "FIRE" | "WATER" | "GRASS" | "ELECTRIC" | "
 export type StatusConditionType = "NONE" | "BURN" | "POISON" | "PARALYSIS" | "FREEZE" | "SLEEP";
 
 /** 天候 */
-export type WeatherType = "NONE" | "SUNNY" | "RAINY" | "WINDY";
+export type WeatherType = "NONE" | "SUNNY" | "RAINY" | "WINDY" | "SNOWY";
 
 /** バトル状態 */
 export type BattleStateType =

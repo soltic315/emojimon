@@ -23,8 +23,12 @@ const STAGE_MIN = -6;
 const STAGE_MAX = 6;
 
 // ── バトルバランス定数 ──
-/** 逃走成功確率 */
+/** 逃走基礎成功確率 */
 export const RUN_SUCCESS_RATE = 0.6;
+/** 逃走確率の下限 */
+export const RUN_RATE_MIN = 0.35;
+/** 逃走確率の上限 */
+export const RUN_RATE_MAX = 0.85;
 /** 急所発生確率 */
 export const CRITICAL_HIT_RATE = 0.125;
 /** 急所ダメージ倍率 */
@@ -78,6 +82,7 @@ export const WEATHER_INFO = {
   SUNNY: { label: "はれ", emoji: "☀️", color: "#f97316" },
   RAINY: { label: "あめ", emoji: "🌧️", color: "#3b82f6" },
   WINDY: { label: "かぜ", emoji: "🌪️", color: "#22c55e" },
+  SNOWY: { label: "ゆき", emoji: "❄️", color: "#93c5fd" },
 };
 
 // 天候によるタイプダメージ補正
@@ -85,6 +90,7 @@ export const WEATHER_TYPE_MODIFIER = {
   SUNNY: { FIRE: 1.3, WATER: 0.7, GRASS: 1.0, NORMAL: 1.0, ELECTRIC: 1.0, ICE: 0.7 },
   RAINY: { FIRE: 0.7, WATER: 1.3, GRASS: 1.0, NORMAL: 1.0, ELECTRIC: 1.3, ICE: 1.0 },
   WINDY: { FIRE: 1.0, WATER: 1.0, GRASS: 1.3, NORMAL: 0.9, ELECTRIC: 1.0, ICE: 1.0 },
+  SNOWY: { FIRE: 0.7, WATER: 1.0, GRASS: 0.7, NORMAL: 1.0, ELECTRIC: 1.0, ICE: 1.3 },
   NONE: { FIRE: 1.0, WATER: 1.0, GRASS: 1.0, NORMAL: 1.0, ELECTRIC: 1.0, ICE: 1.0 },
 };
 

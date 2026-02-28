@@ -121,6 +121,13 @@
 
 - 行動順の判定結果（例: 「〜のほうがはやい」）は戦闘メッセージとして表示しない。
 
+### 6.2.1 逃走
+
+- 基礎成功率: 60%
+- プレイヤーのすばやさが相手より高いほど成功率上昇（速度差10ごとに±10%）
+- 下限: 35%、上限: 85%
+- ボス・トレーナー・闘技場からは逃走不可
+
 ### 6.3 ダメージ計算
 
 $$
@@ -148,10 +155,17 @@ $$
 
 ### 6.5 天候
 
-- SUNNY / RAINY / WINDY / NONE
+- SUNNY / RAINY / WINDY / SNOWY / NONE
 - マップごとに発生確率を持ち、マップ入場時に1回だけ抽選
 - 抽選された天候は同一マップ内の戦闘へ引き継ぐ
 - ダメージ倍率へ影響
+
+| 天候 | 強化タイプ(+30%) | 弱体化タイプ(-30%) | 備考 |
+|------|-----------------|---------------------|------|
+| SUNNY | FIRE | WATER, ICE | |
+| RAINY | WATER, ELECTRIC | FIRE | |
+| WINDY | GRASS | NORMAL(-10%) | |
+| SNOWY | ICE | FIRE, GRASS | 氷峰で発生しやすい |
 
 ### 6.6 特性
 
@@ -215,9 +229,17 @@ nextLevelExp = 10 + 8 × level
 ### 8.3 コンテンツ拡張（2026-03-01）
 
 - 追加モンスター: `CINDLO` / `CINDRAKE` / `RILLY` / `RILLARGO` / `BRAMBIT` / `ARCWOLF` / `ICELARK`
-- 追加技: `EMBER_SWEEP` / `RIVER_SONG` / `BRAMBLE_EDGE` / `ARC_SPIN` / `POLAR_PULSE`
+- 追加技: `EMBER_SWEEP` / `RIVER_SONG` / `BRAMBLE_EDGE` / `ARC_SPIN` / `POLAR_PULSE` / `ICY_WIND`
 - 追加アイテム: `MEGA_ETHER` / `RESCUE_GEL` / `DUSK_BALL`
 - 出現プール（町・森・洞窟・火山・遺跡・ダークタワー・氷峰・天空の花園）とショップ在庫へ反映
+
+### 8.5 バランス調整（2026-03-01）
+
+- ICEタイプ相性: ICE→WATER を 0.5→1.0（半減→等倍）、ICE→NORMAL を 1.0→1.5（等倍→効果抜群）に変更
+- 天候SNOWY追加: ICE+30%、FIRE-30%、GRASS-30%。氷峰マップで45%の確率で発生
+- 逃走確率: 固定60%→速度差による可変（35%〜85%）
+- アイテム差別化: げきりんキャンディ→攻撃+1&速度+1、ガードチャーム→防御+1&HP15%回復
+- ICE型モンスター4種に新技`ICY_WIND`を習得追加
 
 ### 8.4 起動時検証
 

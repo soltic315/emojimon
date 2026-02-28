@@ -549,7 +549,7 @@
       "emoji": "🐱",
       "primaryType": "ICE",
       "baseStats": { "maxHp": 42, "attack": 48, "defense": 50, "speed": 55 },
-      "learnset": ["TACKLE", "ICE_SHARD", "FROST_BITE", "GROWL"],
+      "learnset": ["TACKLE", "ICE_SHARD", "FROST_BITE", "GROWL", "ICY_WIND"],
       "catchRate": 0.30,
       "description": "冷気をまとった子猫。息は白く凍る。",
       "abilityId": "ICE_BODY",
@@ -573,7 +573,7 @@
       "emoji": "🐧",
       "primaryType": "ICE",
       "baseStats": { "maxHp": 50, "attack": 45, "defense": 60, "speed": 40 },
-      "learnset": ["TACKLE", "ICE_SHARD", "DEFENSE_CURL", "ICE_BEAM"],
+      "learnset": ["TACKLE", "ICE_SHARD", "DEFENSE_CURL", "ICE_BEAM", "ICY_WIND"],
       "catchRate": 0.28,
       "description": "氷の上を滑るように歩くペンギン型モンスター。",
       "abilityId": "ICE_BODY"
@@ -801,7 +801,7 @@
       "emoji": "⛄",
       "primaryType": "ICE",
       "baseStats": { "maxHp": 60, "attack": 50, "defense": 65, "speed": 45 },
-      "learnset": ["ICE_SHARD", "FROST_BREATH", "HAIL_SHELL", "FROST_QUAKE"],
+      "learnset": ["ICE_SHARD", "FROST_BREATH", "HAIL_SHELL", "FROST_QUAKE", "ICY_WIND"],
       "catchRate": 0.22,
       "description": "永久凍土で生まれた雪の精霊。冷気の盾で身を守る。",
       "abilityId": "ICE_BODY"
@@ -904,7 +904,7 @@
       "emoji": "🐦",
       "primaryType": "ICE",
       "baseStats": { "maxHp": 54, "attack": 50, "defense": 56, "speed": 78 },
-      "learnset": ["ICE_SHARD", "FROST_BREATH", "POLAR_PULSE", "AURORA_VEIL"],
+      "learnset": ["ICE_SHARD", "FROST_BREATH", "POLAR_PULSE", "AURORA_VEIL", "ICY_WIND"],
       "catchRate": 0.14,
       "description": "氷風に乗って鳴く冬の渡り鳥。",
       "abilityId": "ICE_BODY"

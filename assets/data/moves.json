@@ -788,6 +788,17 @@
       "description": "極寒の波動を放ち、相手の動きを凍りつかせる。"
     },
     {
+      "id": "ICY_WIND",
+      "name": "こごえるかぜ",
+      "type": "ICE",
+      "power": 50,
+      "accuracy": 0.95,
+      "category": "special",
+      "pp": 15,
+      "targetDefenseStage": -1,
+      "description": "凍てつく風で攻撃し、相手の防御を下げる。"
+    },
+    {
       "id": "ETERNAL_LIGHT",
       "name": "エターナルライト",
       "type": "NORMAL",

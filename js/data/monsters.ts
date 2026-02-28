@@ -91,8 +91,8 @@ export const TYPE_EFFECTIVENESS = {
     GRASS: 0.5, ELECTRIC: 0.5,
   },
   ICE: {
-    GRASS: 2,
-    FIRE: 0.5, WATER: 0.5, ICE: 0.5,
+    GRASS: 2, NORMAL: 1.5,
+    FIRE: 0.5, ICE: 0.5,
   },
 };
 
