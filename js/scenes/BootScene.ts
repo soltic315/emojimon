@@ -77,10 +77,15 @@ export class BootScene extends Phaser.Scene {
     });
 
     // データ JSON を読み込む
-    this.load.json("moves", "assets/data/moves.json");
-    this.load.json("monsters", "assets/data/monsters.json");
-    this.load.json("items", "assets/data/items.json");
-    this.load.json("abilities", "assets/data/abilities.json");
+    const movesJsonUrl = new URL("../../assets/data/moves.json", import.meta.url).href;
+    const monstersJsonUrl = new URL("../../assets/data/monsters.json", import.meta.url).href;
+    const itemsJsonUrl = new URL("../../assets/data/items.json", import.meta.url).href;
+    const abilitiesJsonUrl = new URL("../../assets/data/abilities.json", import.meta.url).href;
+
+    this.load.json("moves", movesJsonUrl);
+    this.load.json("monsters", monstersJsonUrl);
+    this.load.json("items", itemsJsonUrl);
+    this.load.json("abilities", abilitiesJsonUrl);
   }
 
   create() {
