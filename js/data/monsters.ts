@@ -196,8 +196,11 @@ export function syncMonsterMoves(monsterEntry) {
   monsterEntry.moveIds = levelMoves.map((move) => move.id);
   monsterEntry.pp = levelMoves.map((move) => {
     const prev = ppById.get(move.id);
-    if (typeof prev === "number") return Math.max(0, prev);
-    return move.pp || 10;
+    const maxPp = Math.max(1, move.pp || 10);
+    if (typeof prev === "number") {
+      return Math.min(maxPp, Math.max(0, Math.floor(prev)));
+    }
+    return maxPp;
   });
 
   return levelMoves;

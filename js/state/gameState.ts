@@ -14,6 +14,12 @@ const DEFAULT_GAMEPLAY_SETTINGS = {
   shortEncounterEffect: false,
 };
 
+const MAX_MONSTER_LEVEL = 100;
+const MAX_ITEM_QUANTITY = 999;
+const MAX_MONEY = 9_999_999;
+const MAX_COUNTER = 999_999;
+const MAX_PLAY_TIME_MS = 31_536_000_000; // 365日分
+
 function sanitizeGameplaySettings(raw) {
   const speed = raw?.battleSpeed;
   return {
@@ -21,6 +27,59 @@ function sanitizeGameplaySettings(raw) {
     autoAdvanceMessages: !!raw?.autoAdvanceMessages,
     shortEncounterEffect: !!raw?.shortEncounterEffect,
   };
+}
+
+function clampInt(value, min, max, fallback = min) {
+  if (!Number.isFinite(value)) return fallback;
+  return Math.min(max, Math.max(min, Math.floor(value)));
+}
+
+function sanitizeIdList(raw) {
+  if (!Array.isArray(raw)) return [];
+  return [...new Set(raw.filter((id) => typeof id === "string" && id.length > 0))];
+}
+
+function sanitizeInventory(raw) {
+  if (!Array.isArray(raw)) return [];
+  const merged = new Map();
+
+  raw.forEach((entry) => {
+    const itemId = entry?.itemId;
+    if (typeof itemId !== "string" || itemId.length === 0) return;
+    const quantity = clampInt(entry?.quantity, 1, MAX_ITEM_QUANTITY, 1);
+    const prev = merged.get(itemId) || 0;
+    merged.set(itemId, Math.min(MAX_ITEM_QUANTITY, prev + quantity));
+  });
+
+  return [...merged.entries()].map(([itemId, quantity]) => ({ itemId, quantity }));
+}
+
+function buildLoadedMonster(saved) {
+  const species = MONSTERS[saved?.speciesId] || null;
+  if (!species) return null;
+
+  const level = clampInt(saved?.level, 1, MAX_MONSTER_LEVEL, 1);
+  const stats = calcStats(species, level);
+  const maxHp = Math.max(1, clampInt(stats?.maxHp, 1, 9999, 1));
+  const baseNextLevelExp = 10 + 8 * level;
+
+  const loaded = {
+    species,
+    level,
+    exp: clampInt(saved?.exp, 0, 99_999_999, 0),
+    nextLevelExp: Math.max(baseNextLevelExp, clampInt(saved?.nextLevelExp, 1, 99_999_999, baseNextLevelExp)),
+    currentHp: clampInt(saved?.currentHp, 0, maxHp, maxHp),
+    attackStage: 0,
+    defenseStage: 0,
+    moveIds: Array.isArray(saved?.moveIds)
+      ? saved.moveIds.filter((moveId) => typeof moveId === "string")
+      : [],
+    pp: Array.isArray(saved?.pp) ? saved.pp : [],
+  };
+
+  syncMonsterMoves(loaded);
+  loaded.currentHp = clampInt(loaded.currentHp, 0, maxHp, maxHp);
+  return loaded;
 }
 
 const DAILY_CHALLENGE_DEFS = [
@@ -688,73 +747,42 @@ class GameState {
       if (!raw) return false;
       const data = JSON.parse(raw);
 
-      this.playerName = data.playerName || "ユウ";
-      this.playerPosition = data.playerPosition || { x: 8, y: 10 };
-      this.playerDirection = data.playerDirection || "down";
+      this.playerName = typeof data.playerName === "string" && data.playerName.trim().length > 0
+        ? data.playerName.trim().slice(0, 16)
+        : "ユウ";
+      this.playerPosition = {
+        x: clampInt(data.playerPosition?.x, 0, 255, 8),
+        y: clampInt(data.playerPosition?.y, 0, 255, 10),
+      };
+      const loadedDirection = data.playerDirection;
+      this.playerDirection = ["up", "down", "left", "right"].includes(loadedDirection)
+        ? loadedDirection
+        : "down";
       this.currentMap = data.currentMap || "EMOJI_TOWN";
       this.inBattle = false;
       this.activeBattle = null;
 
-      this.party = (data.party || []).map((saved) => {
-        const species = MONSTERS[saved.speciesId] || null;
-        if (!species) return null; // 無効なモンスターデータは除外
-        const level = saved.level || 1;
-        const maxHp = calcStats(species, level).maxHp;
-        // PP復元: セーブデータになければ種族のlearnsetから最大値で初期化
-        const pp = saved.pp && saved.pp.length > 0
-          ? saved.pp
-          : (species?.learnset || []).map(m => m.pp || 10);
-        const loaded = {
-          species,
-          level,
-          exp: saved.exp || 0,
-          nextLevelExp: saved.nextLevelExp || 10 + 8 * level,
-          currentHp: Math.min(saved.currentHp || maxHp, maxHp),
-          attackStage: 0,
-          defenseStage: 0,
-          moveIds: Array.isArray(saved.moveIds) ? saved.moveIds : [],
-          pp,
-        };
-        syncMonsterMoves(loaded);
-        return loaded;
-      }).filter(Boolean);
-      this.box = (data.box || []).map((saved) => {
-        const species = MONSTERS[saved.speciesId] || null;
-        if (!species) return null; // 無効なモンスターデータは除外
-        const level = saved.level || 1;
-        const maxHp = calcStats(species, level).maxHp;
-        const pp = saved.pp && saved.pp.length > 0
-          ? saved.pp
-          : (species?.learnset || []).map(m => m.pp || 10);
-        const loaded = {
-          species,
-          level,
-          exp: saved.exp || 0,
-          nextLevelExp: saved.nextLevelExp || 10 + 8 * level,
-          currentHp: Math.min(saved.currentHp || maxHp, maxHp),
-          attackStage: 0,
-          defenseStage: 0,
-          moveIds: Array.isArray(saved.moveIds) ? saved.moveIds : [],
-          pp,
-        };
-        syncMonsterMoves(loaded);
-        return loaded;
-      }).filter(Boolean);
+      this.party = (Array.isArray(data.party) ? data.party : [])
+        .map((saved) => buildLoadedMonster(saved))
+        .filter(Boolean);
+      this.box = (Array.isArray(data.box) ? data.box : [])
+        .map((saved) => buildLoadedMonster(saved))
+        .filter(Boolean);
 
-      this.inventory = data.inventory || [];
-      this.money = data.money || 0;
+      this.inventory = sanitizeInventory(data.inventory);
+      this.money = clampInt(data.money, 0, MAX_MONEY, 0);
       this.starQuestDone = !!data.starQuestDone;
       this.gymCleared = !!data.gymCleared;
-      this.arenaWins = data.arenaWins || 0;
-      this.arenaHighScore = data.arenaHighScore || 0;
-      this.caughtIds = data.caughtIds || [];
-      this.seenIds = data.seenIds || [];
-      this.totalBattles = data.totalBattles || 0;
-      this.totalCatches = data.totalCatches || 0;
-      this.playTimeMs = data.playTimeMs || 0;
-      this.wildWinStreak = Math.max(0, Math.floor(data.wildWinStreak || 0));
+      this.arenaWins = clampInt(data.arenaWins, 0, MAX_COUNTER, 0);
+      this.arenaHighScore = clampInt(data.arenaHighScore, 0, MAX_COUNTER, 0);
+      this.caughtIds = sanitizeIdList(data.caughtIds);
+      this.seenIds = sanitizeIdList(data.seenIds);
+      this.totalBattles = clampInt(data.totalBattles, 0, MAX_COUNTER, 0);
+      this.totalCatches = clampInt(data.totalCatches, 0, MAX_COUNTER, 0);
+      this.playTimeMs = clampInt(data.playTimeMs, 0, MAX_PLAY_TIME_MS, 0);
+      this.wildWinStreak = clampInt(data.wildWinStreak, 0, MAX_COUNTER, 0);
       this.discoveredFusionRecipes = Array.isArray(data.discoveredFusionRecipes)
-        ? data.discoveredFusionRecipes.filter((v) => typeof v === "string")
+        ? [...new Set(data.discoveredFusionRecipes.filter((v) => typeof v === "string"))]
         : [];
       this.dailyChallenge = data.dailyChallenge || null;
       this.refreshDailyChallenge();
