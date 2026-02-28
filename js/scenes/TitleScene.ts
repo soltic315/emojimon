@@ -430,9 +430,22 @@ export class TitleScene extends Phaser.Scene {
   _updateNameDisplay() {
     if (!this._nameInputText) return;
     const hasText = Array.from(this._nameInput || "").length > 0;
-    const display = hasText ? this._nameInput : "なまえ";
+    const display = hasText ? this._formatNameForDisplay(this._nameInput, 5) : "なまえ";
     this._nameInputText.setText(display);
+    this._nameInputText.setFontSize(display.includes("\n") ? 18 : 24);
     this._nameInputText.setColor(hasText ? "#e5e7eb" : "#94a3b8");
+  }
+
+  _formatNameForDisplay(value, chunkSize) {
+    const chars = Array.from(value || "");
+    if (chars.length <= chunkSize) return chars.join("");
+
+    const lines = [];
+    for (let i = 0; i < chars.length; i += chunkSize) {
+      lines.push(chars.slice(i, i + chunkSize).join(""));
+    }
+
+    return lines.join("\n");
   }
 
   _confirmName() {
