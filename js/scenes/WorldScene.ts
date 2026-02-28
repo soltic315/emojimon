@@ -110,10 +110,12 @@ export class WorldScene extends Phaser.Scene {
     // メニューキー（X / ESC）
     this.keys.X.on("down", () => {
       if (this.shopActive || this.isMoving || this.isEncounterTransitioning) return;
+      if (this._dialogActive || this._starterChoiceActive) return;
       this.openMenu();
     });
     this.keys.ESC.on("down", () => {
       if (this.shopActive || this.isMoving || this.isEncounterTransitioning) return;
+      if (this._dialogActive || this._starterChoiceActive) return;
       this.openMenu();
     });
 
@@ -825,7 +827,8 @@ export class WorldScene extends Phaser.Scene {
         }
       }
       if (this.touchControls.justPressedCancel()) {
-        if (!this.shopActive && !this.isMoving && !this.isEncounterTransitioning) {
+        if (!this.shopActive && !this.isMoving && !this.isEncounterTransitioning
+          && !this._dialogActive && !this._starterChoiceActive) {
           this.openMenu();
         } else if (this.shopActive) {
           this.closeShopMenu();
@@ -1347,6 +1350,7 @@ export class WorldScene extends Phaser.Scene {
 
     const confirmMsg = `${starterName} に けってい！ (Z:はい  X:やめる)`;
     this.setInfoText(confirmMsg);
+    this._starterChoiceActive = true;
 
     const yesHandler = () => {
       cleanup();
@@ -1360,6 +1364,7 @@ export class WorldScene extends Phaser.Scene {
     const cleanup = () => {
       this.keys.Z.off("down", yesHandler);
       this.keys.X.off("down", noHandler);
+      this._starterChoiceActive = false;
     };
 
     this.keys.Z.once("down", yesHandler);
