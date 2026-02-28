@@ -622,7 +622,6 @@ export class WorldScene extends Phaser.Scene {
     this.uiContainer = this.add.container(0, 0).setScrollFactor(0);
 
     const { width, height } = this.scale;
-    const mapDef = MAPS[this.mapKey] || { name: "???" };
     const partyAlive = gameState.party.filter((m) => m.currentHp > 0).length;
 
     // ── 上部HUD ──
@@ -634,14 +633,6 @@ export class WorldScene extends Phaser.Scene {
       glow: true,
     });
     this.uiContainer.add(topBg);
-
-    const locationText = this.add.text(20, 15, `📍 ${mapDef.name}`, {
-      fontFamily: FONT.UI,
-      fontSize: 15,
-      color: "#fde68a",
-      fontStyle: "700",
-    });
-    this.uiContainer.add(locationText);
 
     const hudHint = this.add.text(20, 36, "移動: WASD / 会話: Z / メニュー: X / セーブ: P", {
       fontFamily: FONT.UI,
@@ -679,9 +670,6 @@ export class WorldScene extends Phaser.Scene {
     });
     this.infoText.setVisible(false);
     this.uiContainer.add(this.infoText);
-
-    // ── ミニマップ ──
-    this._renderMinimap();
 
     this.updateDefaultInfoMessage();
   }

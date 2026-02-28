@@ -117,6 +117,9 @@ export class MenuScene extends Phaser.Scene {
       case "trainer":
         this.openSubMenu("trainer");
         break;
+      case "globalMap":
+        this.openSubMenu("globalMap");
+        break;
       case "guide":
         this.openSubMenu("guide");
         break;

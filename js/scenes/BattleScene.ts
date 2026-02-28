@@ -170,15 +170,6 @@ export class BattleScene extends Phaser.Scene {
       this.enqueueMessage(`${wInfo.emoji} てんきは ${wInfo.label}だ！`);
     }
 
-    const playerAbility = this.getMonsterAbility(this.battle.player);
-    if (playerAbility) {
-      this.enqueueMessage(`${this.battle.player.species.name}の とくせい: ${playerAbility.name}`);
-    }
-    const opponentAbility = this.getMonsterAbility(this.battle.opponent);
-    if (opponentAbility) {
-      this.enqueueMessage(`${this.battle.opponent.species.name}の とくせい: ${opponentAbility.name}`);
-    }
-
     // 統計更新
     gameState.totalBattles++;
     const dailyBattleProgress = gameState.updateDailyChallengeProgress("BATTLE", 1);
@@ -1552,7 +1543,6 @@ export class BattleScene extends Phaser.Scene {
       });
     } else {
       // 相手先攻
-      this.enqueueMessage(`相手の ${opponent.species.name}の ほうが はやい！`);
       this._executeOpponentAttackDirect(opponent, player, this._pendingOpponentMove, () => {
         if (player.currentHp <= 0) {
           if (!this.switchToNextAlive()) {
@@ -1625,7 +1615,6 @@ export class BattleScene extends Phaser.Scene {
       this.enqueueMessage(`${player.species.name}の ${move.name}！ ${damage}ダメージ！`);
       reaction.messages.forEach((msg) => this.enqueueMessage(msg));
       if (result.critical) this.enqueueMessage("きゅうしょに あたった！");
-      (result.abilityMessages || []).forEach((msg) => this.enqueueMessage(msg));
 
       if (opponent.currentHp > 0 && this.tryApplyMoveStatus(opponent, move)) {
         const statusLabel = this.getStatusLabel(opponent.statusCondition) || "じょうたいいじょう";
@@ -1752,7 +1741,6 @@ export class BattleScene extends Phaser.Scene {
       }
       reaction.messages.forEach((msg) => this.enqueueMessage(msg));
       if (result.critical) this.enqueueMessage("きゅうしょに あたった！");
-      (result.abilityMessages || []).forEach((msg) => this.enqueueMessage(msg));
 
       if (player.currentHp > 0 && this.tryApplyMoveStatus(player, move)) {
         const statusLabel = this.getStatusLabel(player.statusCondition) || "じょうたいいじょう";
@@ -2239,7 +2227,7 @@ export class BattleScene extends Phaser.Scene {
 
   calculateDamage(attacker, defender, move) {
     const basePower = move.power || 0;
-    if (basePower <= 0) return { damage: 0, effectiveness: 1, critical: false, abilityMessages: [] };
+    if (basePower <= 0) return { damage: 0, effectiveness: 1, critical: false };
 
     const level = attacker.level || 1;
     const atkStats = calcStats(attacker.species, level);
@@ -2277,7 +2265,6 @@ export class BattleScene extends Phaser.Scene {
       critical,
       weatherBoosted: weatherMul > 1.0,
       weatherWeakened: weatherMul < 1.0,
-      abilityMessages: abilityMod.messages,
     };
   }
 
@@ -2292,11 +2279,6 @@ export class BattleScene extends Phaser.Scene {
     return getAbilityById(monster.species.abilityId);
   }
 
-  getMonsterAbilityName(monster) {
-    const ability = this.getMonsterAbility(monster);
-    return ability ? ability.name : "なし";
-  }
-
   isLowHp(monster) {
     if (!monster || !monster.species) return false;
     const stats = calcStats(monster.species, monster.level || 1);
@@ -2306,48 +2288,34 @@ export class BattleScene extends Phaser.Scene {
   getAbilityDamageModifier(attacker, defender, move) {
     let attackerMul = 1;
     let defenderMul = 1;
-    const messages = [];
 
     const attackerAbility = this.getMonsterAbility(attacker);
     if (attackerAbility && this.isLowHp(attacker)) {
       if (attackerAbility.id === "BLAZE" && move.type === "FIRE") {
         attackerMul *= 1.25;
-        messages.push(`${attacker.species.name}の とくせい「${attackerAbility.name}」が はつどう！`);
       } else if (attackerAbility.id === "TORRENT" && move.type === "WATER") {
         attackerMul *= 1.25;
-        messages.push(`${attacker.species.name}の とくせい「${attackerAbility.name}」が はつどう！`);
       } else if (attackerAbility.id === "OVERGROW" && move.type === "GRASS") {
         attackerMul *= 1.25;
-        messages.push(`${attacker.species.name}の とくせい「${attackerAbility.name}」が はつどう！`);
       } else if (attackerAbility.id === "MOTOR_DRIVE" && move.type === "ELECTRIC") {
         attackerMul *= 1.25;
-        messages.push(`${attacker.species.name}の とくせい「${attackerAbility.name}」が はつどう！`);
       } else if (attackerAbility.id === "ICE_BODY" && move.type === "ICE") {
         attackerMul *= 1.25;
-        messages.push(`${attacker.species.name}の とくせい「${attackerAbility.name}」が はつどう！`);
       }
     }
 
     const defenderAbility = this.getMonsterAbility(defender);
     if (defenderAbility) {
-      // 常時発動の防御特性（メッセージは初回のみ表示）
-      const defAbilityKey = `_abilityShown_${defender.species.id}_${defenderAbility.id}`;
-      const showMsg = !this[defAbilityKey];
-      if (showMsg) this[defAbilityKey] = true;
-
       if (defenderAbility.id === "STURDY") {
         defenderMul *= 0.9;
-        if (showMsg) messages.push(`${defender.species.name}の とくせい「${defenderAbility.name}」で ダメージを おさえた！`);
       } else if (defenderAbility.id === "INTIMIDATE") {
         defenderMul *= 0.92;
-        if (showMsg) messages.push(`${defender.species.name}の とくせい「${defenderAbility.name}」で ダメージを おさえた！`);
       } else if (defenderAbility.id === "SWIFT_SWIM") {
         defenderMul *= 0.9;
-        if (showMsg) messages.push(`${defender.species.name}の とくせい「${defenderAbility.name}」で ダメージを おさえた！`);
       }
     }
 
-    return { attackerMul, defenderMul, messages };
+    return { attackerMul, defenderMul };
   }
 
   // ── HUD 更新 ──
@@ -2424,12 +2392,10 @@ export class BattleScene extends Phaser.Scene {
     const atkStg = player.attackStage || 0;
     const defStg = player.defenseStage || 0;
     const playerStatus = this.getStatusLabel(player.statusCondition);
-    const playerAbilityName = this.getMonsterAbilityName(player);
     let stageStr = "";
     if (atkStg !== 0) stageStr += `攻${atkStg > 0 ? "+" : ""}${atkStg} `;
     if (defStg !== 0) stageStr += `防${defStg > 0 ? "+" : ""}${defStg}`;
     if (playerStatus) stageStr += `${stageStr ? " " : ""}状:${playerStatus}`;
-    if (playerAbilityName) stageStr += `${stageStr ? " " : ""}特:${playerAbilityName}`;
     this.playerStageText.setText(stageStr.trim());
 
     // 相手情報
@@ -2438,8 +2404,7 @@ export class BattleScene extends Phaser.Scene {
     this.opponentNameText.setText(this._truncateLabel(opponentLabel, 16));
     this.opponentHpText.setText(`${opponent.currentHp}/${oppStats.maxHp}`);
     const opponentStatus = this.getStatusLabel(opponent.statusCondition);
-    const opponentAbilityName = this.getMonsterAbilityName(opponent);
-    this.opponentStatusText.setText(opponentStatus ? `特:${opponentAbilityName} / 状:${opponentStatus}` : `特:${opponentAbilityName}`);
+    this.opponentStatusText.setText(opponentStatus ? `状:${opponentStatus}` : "");
 
     // 相手タイプバッジ
     const oType = opponent.species.primaryType || "NORMAL";

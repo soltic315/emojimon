@@ -4,6 +4,7 @@ import { getAllMonsters, calcStats, getMonsterMoves } from "../../data/monsters.
 import { audioManager } from "../../audio/AudioManager.ts";
 import { FONT, drawPanel, drawSelection } from "../../ui/UIHelper.ts";
 import { MENU_ITEMS, GUIDE_PAGES } from "./menuConstants.ts";
+import { MAPS, DOOR_TRANSITIONS } from "../world/worldMapData.ts";
 
 const MAIN_MENU_PANEL_WIDTH = 220;
 const MAIN_MENU_RIGHT_MARGIN = 10;
@@ -66,6 +67,9 @@ export function renderSubMenu(scene) {
       break;
     case "trainer":
       renderTrainerView(scene);
+      break;
+    case "globalMap":
+      renderGlobalMapView(scene);
       break;
     case "guide":
       renderGuideView(scene);
@@ -702,6 +706,102 @@ export function renderTrainerView(scene) {
     scene.subPanel.add(text);
     y += 22;
   });
+}
+
+export function renderGlobalMapView(scene) {
+  const { width, height } = scene.scale;
+  const panelW = width - SUB_PANEL_WIDTH_OFFSET;
+  const panelX = 10;
+  const panelY = 10;
+
+  const bg = scene.add.graphics();
+  drawPanel(bg, panelX, panelY, panelW, height - 20, { radius: 12, headerHeight: 24 });
+  scene.subPanel.add(bg);
+
+  const title = scene.add.text(panelX + 16, panelY + 10, "🗺️ グローバルマップ", {
+    fontFamily: FONT.UI,
+    fontSize: 18,
+    color: "#fbbf24",
+  });
+  scene.subPanel.add(title);
+
+  const mapKeys = Object.keys(MAPS);
+  const currentMapKey = gameState.currentMap || "EMOJI_TOWN";
+  const currentMapName = MAPS[currentMapKey]?.name || "???";
+  scene.subMenuIndex = Phaser.Math.Clamp(scene.subMenuIndex, 0, Math.max(0, mapKeys.length - 1));
+  const selectedMapKey = mapKeys[scene.subMenuIndex] || currentMapKey;
+
+  const currentLine = scene.add.text(panelX + panelW - 300, panelY + 12, `現在地: ${currentMapName}`, {
+    fontFamily: FONT.UI,
+    fontSize: 12,
+    color: "#cbd5e1",
+  });
+  scene.subPanel.add(currentLine);
+
+  const listTop = panelY + 44;
+  const rowH = 30;
+  const listHeight = 230;
+  const visibleCount = Math.max(1, Math.floor(listHeight / rowH));
+  const scrollStart = Math.max(0, Math.min(scene.subMenuIndex - Math.floor(visibleCount / 2), mapKeys.length - visibleCount));
+
+  for (let vi = 0; vi < visibleCount; vi++) {
+    const index = scrollStart + vi;
+    if (index >= mapKeys.length) break;
+    const mapKey = mapKeys[index];
+    const selected = index === scene.subMenuIndex;
+    const isCurrent = mapKey === currentMapKey;
+    const y = listTop + vi * rowH;
+
+    if (selected) {
+      const selBg = scene.add.graphics();
+      drawSelection(selBg, panelX + 12, y - 4, panelW - 24, 26, { radius: 6 });
+      scene.subPanel.add(selBg);
+    }
+
+    const prefix = isCurrent ? "📍" : "  ";
+    const mapName = MAPS[mapKey]?.name || mapKey;
+    const rowText = scene.add.text(panelX + 24, y, `${selected ? "▶" : " "} ${prefix} ${mapName}`, {
+      fontFamily: FONT.UI,
+      fontSize: 14,
+      color: selected ? "#fbbf24" : (isCurrent ? "#93c5fd" : "#e5e7eb"),
+    });
+    scene.subPanel.add(rowText);
+  }
+
+  const divider = scene.add.graphics();
+  divider.fillStyle(0x334155, 0.65);
+  divider.fillRoundedRect(panelX + 12, panelY + 286, panelW - 24, 2, 1);
+  scene.subPanel.add(divider);
+
+  const selectedName = MAPS[selectedMapKey]?.name || selectedMapKey;
+  const connectionTitle = scene.add.text(panelX + 20, panelY + 300, `接続先: ${selectedName}`, {
+    fontFamily: FONT.UI,
+    fontSize: 13,
+    color: "#93c5fd",
+  });
+  scene.subPanel.add(connectionTitle);
+
+  const targets = Array.from(new Set((DOOR_TRANSITIONS[selectedMapKey] || []).map((transition) => {
+    return MAPS[transition.target]?.name || transition.target;
+  })));
+
+  const connectionLines = targets.length > 0
+    ? targets.map((name) => `・${name}`)
+    : ["・接続先なし"];
+  const connectionBody = scene.add.text(panelX + 24, panelY + 326, connectionLines.join("\n"), {
+    fontFamily: FONT.UI,
+    fontSize: 13,
+    color: "#cbd5e1",
+    lineSpacing: 6,
+  });
+  scene.subPanel.add(connectionBody);
+
+  const hint = scene.add.text(panelX + 16, height - 30, "↑↓:エリア選択  X:もどる", {
+    fontFamily: FONT.UI,
+    fontSize: 11,
+    color: "#6b7280",
+  });
+  scene.subPanel.add(hint);
 }
 
 export function renderGuideView(scene) {
