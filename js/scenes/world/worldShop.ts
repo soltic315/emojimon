@@ -23,9 +23,12 @@ export function getShopInventory() {
     { itemId: "EMO_BALL", price: 120 },
     { itemId: "GREAT_BALL", price: 300 },
     { itemId: "ULTRA_BALL", price: 600 },
+    { itemId: "DUSK_BALL", price: 900 },
     { itemId: "MASTER_BALL", price: 9999 },
     { itemId: "REVIVE", price: 500 },
+    { itemId: "RESCUE_GEL", price: 900 },
     { itemId: "ETHER", price: 200 },
+    { itemId: "MEGA_ETHER", price: 420 },
     { itemId: "MAX_ELIXIR", price: 600 },
   ];
 }

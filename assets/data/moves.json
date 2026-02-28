@@ -730,6 +730,64 @@
       "description": "凍てつく大地を揺るがし氷の衝撃波を放つ。"
     },
     {
+      "id": "EMBER_SWEEP",
+      "name": "エンバースイープ",
+      "type": "FIRE",
+      "power": 68,
+      "accuracy": 0.9,
+      "category": "physical",
+      "pp": 12,
+      "inflictStatus": "BURN",
+      "statusChance": 0.1,
+      "description": "炎をまとった尻尾で広くなぎ払う。"
+    },
+    {
+      "id": "RIVER_SONG",
+      "name": "リバーソング",
+      "type": "WATER",
+      "power": 0,
+      "accuracy": 1,
+      "category": "status",
+      "pp": 12,
+      "selfDefenseStage": 1,
+      "selfHealPercent": 0.2,
+      "description": "川の調べで心を整え、防御を高めながら回復する。"
+    },
+    {
+      "id": "BRAMBLE_EDGE",
+      "name": "ブランブルエッジ",
+      "type": "GRASS",
+      "power": 70,
+      "accuracy": 0.9,
+      "category": "physical",
+      "pp": 12,
+      "description": "硬いトゲを刃のようにして切り裂く。"
+    },
+    {
+      "id": "ARC_SPIN",
+      "name": "アークスピン",
+      "type": "ELECTRIC",
+      "power": 68,
+      "accuracy": 0.9,
+      "category": "physical",
+      "pp": 12,
+      "inflictStatus": "PARALYSIS",
+      "statusChance": 0.15,
+      "description": "電流を纏って旋回突撃する。"
+    },
+    {
+      "id": "POLAR_PULSE",
+      "name": "ポーラーパルス",
+      "type": "ICE",
+      "power": 80,
+      "accuracy": 0.86,
+      "category": "special",
+      "pp": 8,
+      "inflictStatus": "FREEZE",
+      "statusChance": 0.1,
+      "description": "極寒の波動を放ち、相手の動きを凍りつかせる。"
+    },
+    {
       "id": "ETERNAL_LIGHT",
       "name": "エターナルライト",
       "type": "NORMAL",

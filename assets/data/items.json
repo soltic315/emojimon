@@ -324,6 +324,40 @@
         "type": "healAllPP",
         "amount": -1
       }
+    },
+    {
+      "id": "MEGA_ETHER",
+      "name": "メガエーテル",
+      "emoji": "🔮",
+      "description": "モンスター1体のすべての技のPPを20回復する。",
+      "battleUsable": true,
+      "price": 420,
+      "effect": {
+        "type": "healAllPP",
+        "amount": 20
+      }
+    },
+    {
+      "id": "RESCUE_GEL",
+      "name": "レスキュージェル",
+      "emoji": "🩹",
+      "description": "ひんしのモンスターをHP75%で復活させる。",
+      "battleUsable": true,
+      "price": 900,
+      "effect": {
+        "type": "revive",
+        "amount": 0.75
+      }
+    },
+    {
+      "id": "DUSK_BALL",
+      "name": "ダスクボール",
+      "emoji": "⚫",
+      "description": "薄暗い場所で頼れる高性能捕獲ボール。",
+      "battleUsable": false,
+      "price": 900,
+      "effect": null,
+      "catchBonus": 2.2
     }
   ]
 }

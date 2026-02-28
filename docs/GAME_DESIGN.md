@@ -181,7 +181,14 @@ nextLevelExp = 10 + 8 × level
 - `assets/data/items.json`
 - `assets/data/abilities.json`
 
-### 8.3 起動時検証
+### 8.3 コンテンツ拡張（2026-03-01）
+
+- 追加モンスター: `CINDLO` / `CINDRAKE` / `RILLY` / `RILLARGO` / `BRAMBIT` / `ARCWOLF` / `ICELARK`
+- 追加技: `EMBER_SWEEP` / `RIVER_SONG` / `BRAMBLE_EDGE` / `ARC_SPIN` / `POLAR_PULSE`
+- 追加アイテム: `MEGA_ETHER` / `RESCUE_GEL` / `DUSK_BALL`
+- 出現プール（町・森・洞窟・火山・遺跡・ダークタワー・氷峰・天空の花園）とショップ在庫へ反映
+
+### 8.4 起動時検証
 
 - `js/data/dataValidation.ts` のスキーマ検証を通過すること
 
