@@ -1,5 +1,6 @@
 import { BootScene } from "./scenes/BootScene.ts";
 import { TitleScene } from "./scenes/TitleScene.ts";
+import { PrologueScene } from "./scenes/PrologueScene.ts";
 import { WorldScene } from "./scenes/WorldScene.ts";
 import { BattleScene } from "./scenes/BattleScene.ts";
 import { MenuScene } from "./scenes/MenuScene.ts";
@@ -38,7 +39,7 @@ const config = {
       },
     ],
   },
-  scene: [BootScene, TitleScene, WorldScene, BattleScene, MenuScene],
+  scene: [BootScene, TitleScene, PrologueScene, WorldScene, BattleScene, MenuScene],
 };
 
 window.addEventListener("load", () => {

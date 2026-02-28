@@ -550,7 +550,7 @@ export class TitleScene extends Phaser.Scene {
     gameState.playerName = playerName;
     this.cameras.main.fadeOut(500, 0, 0, 0);
     this.cameras.main.once("camerafadeoutcomplete", () => {
-      this.scene.start("WorldScene");
+      this.scene.start("PrologueScene");
     });
   }
 
