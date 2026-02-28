@@ -68,6 +68,7 @@ export class WorldScene extends Phaser.Scene {
     this.keys.ESC.removeAllListeners("down");
     this.isMoving = false;
     this.isEncounterTransitioning = false;
+    this._trainerBattlePending = false;
     this.encounterCooldown = 0;
     this.stepsSinceLastEncounter = 0;
     this.stepCount = 0;
@@ -78,6 +79,7 @@ export class WorldScene extends Phaser.Scene {
     this.hiddenItems = this._buildHiddenItems();
     this.fieldMarkers = [];
     this._shownFieldHints = new Set();
+    this._labIntroTriggered = false;
 
     this.createTilemap();
     this.createFieldAtmosphere();
@@ -130,6 +132,9 @@ export class WorldScene extends Phaser.Scene {
 
     // ── 初回ナレーション自動発火 ──
     this._checkAutoIntro();
+
+    // ── 研究所の博士説明自動発火 ──
+    this._checkLabProfessorIntro();
   }
 
   /**
@@ -160,10 +165,27 @@ export class WorldScene extends Phaser.Scene {
     });
   }
 
+  /**
+   * プロローグ後に研究所へ到着したら、博士説明を自動で開始
+   */
+  _checkLabProfessorIntro() {
+    const sf = gameState.storyFlags;
+    if (this.mapKey !== "LAB") return;
+    if (sf.prologueDone || sf.starterChosen) return;
+    if (this._labIntroTriggered) return;
+
+    this._labIntroTriggered = true;
+    this.time.delayedCall(420, () => {
+      if (this._dialogActive || this._starterChoiceActive) return;
+      this._doProfessorPrologue();
+    });
+  }
+
   handleSceneResume() {
     this.cameras.main.fadeIn(250, 0, 0, 0);
     this.isMoving = false;
     this.isEncounterTransitioning = false;
+    this._trainerBattlePending = false;
     this.shopActive = false;
     this.clearShopMenu();
     if (this.messageTimer) {
@@ -249,6 +271,10 @@ export class WorldScene extends Phaser.Scene {
     const catches = gameState.caughtIds?.length || 0;
     const battles = gameState.totalBattles || 0;
     const hasParty = Array.isArray(gameState.party) && gameState.party.length > 0;
+
+    if (this.mapKey === "LAB" && targetMapKey === "EMOJI_TOWN" && !sf.starterChosen) {
+      return "博士: まずは研究所で相棒を選ぶんじゃ。モンスターを選ぶまで外には出られんぞ。";
+    }
 
     if (targetMapKey === "FOREST" && !hasParty) {
       return "モンスターを持たずにフィールドへは出られない。研究所で相棒を選ぼう。";
@@ -629,32 +655,6 @@ export class WorldScene extends Phaser.Scene {
     this.uiContainer = this.add.container(0, 0).setScrollFactor(0);
 
     const { width, height } = this.scale;
-    const partyAlive = gameState.party.filter((m) => m.currentHp > 0).length;
-
-    // ── 上部HUD ──
-    const topBg = this.add.graphics();
-    drawPanel(topBg, 8, 8, width - 16, 52, {
-      radius: 12,
-      headerHeight: 18,
-      bgAlpha: 0.92,
-      glow: true,
-    });
-    this.uiContainer.add(topBg);
-
-    const hudHint = this.add.text(20, 36, "移動: WASD / 会話: Z / メニュー: X / セーブ: P", {
-      fontFamily: FONT.UI,
-      fontSize: 10,
-      color: "#9fb4d9",
-    });
-    this.uiContainer.add(hudHint);
-
-    const rightStatus = this.add.text(width - 20, 16, `G ${gameState.money}   PARTY ${partyAlive}/${gameState.party.length}`, {
-      fontFamily: FONT.MONO,
-      fontSize: 12,
-      color: "#dbeafe",
-      fontStyle: "700",
-    }).setOrigin(1, 0);
-    this.uiContainer.add(rightStatus);
 
     // ── 一時メッセージ（通常時は非表示） ──
     const bottomBg = this.add.graphics();
@@ -827,7 +827,8 @@ export class WorldScene extends Phaser.Scene {
     // タッチ操作のconfirm/cancel
     if (this.touchControls && this.touchControls.visible) {
       if (this.touchControls.justPressedConfirm()) {
-        if (!this.isMoving && !this.shopActive && !this.isEncounterTransitioning) {
+        if (!this.isMoving && !this.shopActive && !this.isEncounterTransitioning
+          && !this._dialogActive && !this._starterChoiceActive) {
           this.checkNpcInteraction();
         }
       }
@@ -1527,6 +1528,10 @@ export class WorldScene extends Phaser.Scene {
   // ═══════════════════════════════════════════
 
   handleTrainerInteraction(npc) {
+    if (this._trainerBattlePending) {
+      return;
+    }
+
     // バトル前の台詞を表示してからバトル開始
     const preBattleText = npc.text || "バトルだ！";
 
@@ -1541,6 +1546,7 @@ export class WorldScene extends Phaser.Scene {
       return;
     }
 
+    this._trainerBattlePending = true;
     this.showMessage(preBattleText);
     this.time.delayedCall(1500, () => {
       this._launchTrainerBattle(npc);
@@ -1549,12 +1555,16 @@ export class WorldScene extends Phaser.Scene {
 
   _launchTrainerBattle(npc) {
     const activeMon = gameState.getFirstAlive();
-    if (!activeMon) return;
+    if (!activeMon) {
+      this._trainerBattlePending = false;
+      return;
+    }
 
     if (npc?.rivalBattle === "ruins_final") {
       const gateMessage = this._getRuinsFinalGateMessage();
       if (gateMessage) {
         this.showMessage(gateMessage, 3000);
+        this._trainerBattlePending = false;
         return;
       }
     }
@@ -1562,6 +1572,7 @@ export class WorldScene extends Phaser.Scene {
     const opponentMon = this._buildTrainerOpponent(npc.rivalBattle, npc.rivalLevel || 10);
     if (!opponentMon) {
       this.showMessage("相手のモンスターが みつからない…");
+      this._trainerBattlePending = false;
       return;
     }
 
