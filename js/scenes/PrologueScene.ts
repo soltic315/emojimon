@@ -89,7 +89,7 @@ export class PrologueScene extends Phaser.Scene {
     audioManager.playConfirm();
     this.cameras.main.fadeOut(380, 0, 0, 0);
     this.cameras.main.once("camerafadeoutcomplete", () => {
-      this.scene.start("WorldScene");
+      this.scene.start("WorldScene", { mapKey: "LAB", startX: 7, startY: 8 });
     });
   }
 }

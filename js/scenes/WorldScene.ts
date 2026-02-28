@@ -248,6 +248,11 @@ export class WorldScene extends Phaser.Scene {
     const avgLevel = this._getPartyAverageLevel();
     const catches = gameState.caughtIds?.length || 0;
     const battles = gameState.totalBattles || 0;
+    const hasParty = Array.isArray(gameState.party) && gameState.party.length > 0;
+
+    if (targetMapKey === "FOREST" && !hasParty) {
+      return "モンスターを持たずにフィールドへは出られない。研究所で相棒を選ぼう。";
+    }
 
     if (targetMapKey === "CRYSTAL_CAVE") {
       if (!sf.forestScoutBeaten) return "洞窟へ進む前に、森のレンジャー試験を突破しよう。";
