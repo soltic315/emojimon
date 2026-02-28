@@ -818,6 +818,11 @@ export class WorldScene extends Phaser.Scene {
       return;
     }
 
+    if (this._dialogActive) {
+      if (this.encounterCooldown > 0) this.encounterCooldown -= delta;
+      return;
+    }
+
     if (this.moveInputCooldown > 0) {
       this.moveInputCooldown -= delta;
     }
