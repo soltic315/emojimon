@@ -293,6 +293,96 @@ nextLevelExp = 10 + 8 × level
 - アイテム差別化: げきりんキャンディ→攻撃+1&速度+1、ガードチャーム→防御+1&HP15%回復
 - ICE型モンスター4種に新技`ICY_WIND`を習得追加
 
+### 8.6 全モンスターパラメータバランス調整（2026-03-01）
+
+全74体のbaseStats・baseExpYieldをティア基準に統一調整。
+
+- **ティアBST目標**:
+  - 進化前（スターター）: ~200
+  - 進化前（中盤）: ~200-210
+  - 進化前（後半）: ~210-218
+  - 序盤非進化: ~210-220
+  - 中盤非進化: ~235-255
+  - スターター進化後: ~270
+  - 中盤進化後: ~275-280
+  - 後半進化後: ~285-295
+  - レア/ボス: ~270-280
+  - 伝説（ETERNIA）: ~330
+- **主要変更**:
+  - LEAFLING: BST 188→200（+12）スターター均衡化
+  - ICEPECK: BST 195→215（+20）序盤ICE底上げ
+  - CRYSTEEL: BST 210→230（+20）中盤ICE底上げ
+  - FROSTVEIL: BST 267→280（+13）進化後ICE底上げ
+  - FUNGORIA: BST 270→280（+10）進化後GRASS底上げ
+  - MOSSHORN: BST 263→250（-13）非進化GRASS過剰修正
+  - TEMPESTEL: BST 305→295（-10）進化後ELECTRIC過剰修正
+  - ARCWOLF: BST 264→255（-9）非進化ELECTRIC過剰修正
+  - VOLCANOX: BST 288→280（-8）中盤進化FIRE過剰修正
+  - WHALORD: BST 264→275（+11）レアWATER底上げ
+  - COSMOWL: BST 262→275（+13）レアNORMAL底上げ
+- **タイプ別BST平均（調整後）**: FIRE=245, WATER=244, GRASS=239, ELECTRIC=244, ICE=243, NORMAL=254
+- **baseExpYield**: BSTに比例するよう全体を再調整。伝説ETERNIA: 61→65
+
+### 8.7 全フィールド総合調整（2026-03-01）
+
+全77体のsecondaryType / learnset / catchRate / ability / spawnRate / heldItems / sizeScale / recipe を一括調整。進化用アイテム3種を追加。
+
+#### 複合タイプ（secondaryType）
+- 31体に副タイプを付与（約40%）。進化後・レア系を中心に戦略的多様性を追加。
+- 例: AQUASHELL→WATER/ICE, ZAPDRAKE→ELECTRIC/FIRE, SOLFLARE→FIRE/ELECTRIC, GLACIDRAKE→ICE/WATER, AURORO→NORMAL/ELECTRIC, RUNEFOX→NORMAL/FIRE, COSMOWL→NORMAL/ICE
+- 副タイプを持つモンスターには、そのタイプの技をlearnsetに追加。
+
+#### 技構成（learnset）
+- 複合タイプモンスター: 副タイプ技を1〜2枠追加（例: SOLFLARE→THUNDERBOLT, AURORO→THUNDERBOLT, COSMOWL→ICE_BEAM, ZAPDRAKE→FIRE_FANG, GLACIDRAKE→AQUA_JET）
+- レベル配分を調整: 基本技Lv1→中級Lv4-6→上級Lv8-12→最終Lv13-16
+
+#### 捕獲率（catchRate）
+- ティア相関に統一:
+  - 進化前（序盤）: 0.23〜0.40
+  - 非進化（中盤）: 0.14〜0.22
+  - 進化後: 0.07〜0.15
+  - レア/ボス: 0.05〜0.12
+  - 伝説（ETERNIA）: 0.03
+
+#### 特性（ability）
+- 約35体に複数特性を付与。第1特性60〜70%、第2特性30〜40%の取得率。
+- 例: PYREBEAR→BLAZE(0.7)/INTIMIDATE(0.3), AQUASHELL→TORRENT(0.5)/STURDY(0.5), ZAPDRAKE→MOTOR_DRIVE(0.5)/BLAZE(0.5)
+
+#### 出現率（spawnRate）
+- 差別化を導入:
+  - 一般: 1.0〜1.2
+  - やや希少: 0.7〜0.9
+  - 希少: 0.4〜0.6
+  - 超希少: 0.1〜0.3
+
+#### 所持アイテム（heldItems）
+- 38体にドロップアイテムを設定。ドロップ率3〜15%。
+- テーマ別: 攻撃的→POWER_SEED/RAGE_CANDY, 防御的→IRON_SEED/GUARD_CHARM, 速度→X_SPEED, 回復→POTION/ETHER
+
+#### 表示サイズ（sizeScale）
+- 範囲: 0.70（SPARKBUG）〜1.40（ETERNIA）
+- 進化前: 0.7〜0.85, 中間: 0.85〜1.0, 進化後: 1.1〜1.25, 大型: 1.3〜1.4
+
+#### 合成レシピ（recipe）
+- 全77体にrecipeフィールドを定義（未設定は空配列）
+- 新規レシピ5件追加:
+  - SOLFLARE = PYREBEAR + BLAZEBIRD
+  - WHALORD = TIDALON + AQUASHELL
+  - COSMOWL = MOONMITE + SKYPIP
+  - SPIRALHORN = MOSSHORN + CRYSTALINE
+  - GLACIDRAKE = BLIZZCAT + TUNDRABEAR
+- 既存5件は維持（BRAMBLEON, GLACIERA, MISTRAY, AURORO, RUNEFOX）
+
+#### 進化用アイテム追加
+- items.jsonに3種追加:
+  - FIRE_CRYSTAL（ほのおの結晶）: 1500G
+  - THUNDER_CRYSTAL（いかずちの結晶）: 1500G
+  - ICE_CRYSTAL（こおりの結晶）: 1500G
+- 3体の進化条件をLEVEL→ITEMに変更:
+  - CHARCOIL → SERPYRO（FIRE_CRYSTAL）
+  - LIGHTNIX → THUNDAGLE（THUNDER_CRYSTAL）
+  - SNOWFAWN → FROSTVEIL（ICE_CRYSTAL）
+
 ### 8.4 起動時検証
 
 - `js/data/dataValidation.ts` のスキーマ検証を通過すること

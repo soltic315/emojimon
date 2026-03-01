@@ -7,10 +7,10 @@
       "primaryType": "FIRE",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 39,
+        "maxHp": 40,
         "attack": 52,
-        "defense": 43,
-        "speed": 65
+        "defense": 44,
+        "speed": 64
       },
       "learnset": [
         {
@@ -27,7 +27,7 @@
         },
         {
           "move": "FIRE_FANG",
-          "level": 7
+          "level": 8
         }
       ],
       "catchRate": 0.3,
@@ -43,25 +43,30 @@
       "ability": [
         {
           "abilityId": "BLAZE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.7
+        },
+        {
+          "abilityId": "INTIMIDATE",
+          "acquisitionRate": 0.3
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 40,
+      "baseExpYield": 39,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.8,
+      "recipe": []
     },
     {
       "id": "PYREBEAR",
       "name": "パイロベア",
       "emoji": "🔥",
       "primaryType": "FIRE",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
-        "maxHp": 58,
-        "attack": 74,
-        "defense": 58,
-        "speed": 72
+        "maxHp": 60,
+        "attack": 76,
+        "defense": 60,
+        "speed": 74
       },
       "learnset": [
         {
@@ -88,13 +93,23 @@
       "ability": [
         {
           "abilityId": "BLAZE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.7
+        },
+        {
+          "abilityId": "INTIMIDATE",
+          "acquisitionRate": 0.3
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 51,
-      "heldItems": [],
-      "sizeScale": 1
+      "baseExpYield": 50,
+      "heldItems": [
+        {
+          "itemId": "POWER_SEED",
+          "dropRate": 0.15
+        }
+      ],
+      "sizeScale": 1.1,
+      "recipe": []
     },
     {
       "id": "DROPLET",
@@ -123,10 +138,10 @@
         },
         {
           "move": "BUBBLE_BEAM",
-          "level": 7
+          "level": 8
         }
       ],
-      "catchRate": 0.4,
+      "catchRate": 0.35,
       "description": "体のほとんどが水でできたモンスター。のんびり屋。",
       "evolution": {
         "evolvesTo": "TIDALON",
@@ -139,13 +154,18 @@
       "ability": [
         {
           "abilityId": "TORRENT",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.7
+        },
+        {
+          "abilityId": "STURDY",
+          "acquisitionRate": 0.3
         }
       ],
       "spawnRate": 1,
       "baseExpYield": 39,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.8,
+      "recipe": []
     },
     {
       "id": "TIDALON",
@@ -154,10 +174,10 @@
       "primaryType": "WATER",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 68,
-        "attack": 62,
+        "maxHp": 70,
+        "attack": 64,
         "defense": 82,
-        "speed": 52
+        "speed": 54
       },
       "learnset": [
         {
@@ -166,15 +186,15 @@
         },
         {
           "move": "HYDRO_PUMP",
-          "level": 3
-        },
-        {
-          "move": "BODY_SLAM",
           "level": 5
         },
         {
+          "move": "BODY_SLAM",
+          "level": 10
+        },
+        {
           "move": "HEAL_PULSE",
-          "level": 7
+          "level": 14
         }
       ],
       "catchRate": 0.12,
@@ -184,13 +204,23 @@
       "ability": [
         {
           "abilityId": "TORRENT",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.7
+        },
+        {
+          "abilityId": "STURDY",
+          "acquisitionRate": 0.3
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 49,
-      "heldItems": [],
-      "sizeScale": 1
+      "baseExpYield": 50,
+      "heldItems": [
+        {
+          "itemId": "IRON_SEED",
+          "dropRate": 0.15
+        }
+      ],
+      "sizeScale": 1.1,
+      "recipe": []
     },
     {
       "id": "LEAFLING",
@@ -199,10 +229,10 @@
       "primaryType": "GRASS",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 45,
-        "attack": 49,
-        "defense": 49,
-        "speed": 45
+        "maxHp": 48,
+        "attack": 52,
+        "defense": 50,
+        "speed": 50
       },
       "learnset": [
         {
@@ -219,10 +249,10 @@
         },
         {
           "move": "GROWL",
-          "level": 7
+          "level": 8
         }
       ],
-      "catchRate": 0.35,
+      "catchRate": 0.32,
       "description": "風に乗って素早く動く草の妖精。森を守っている。",
       "evolution": {
         "evolvesTo": "THORNKING",
@@ -235,13 +265,18 @@
       "ability": [
         {
           "abilityId": "OVERGROW",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.7
+        },
+        {
+          "abilityId": "SWIFT_SWIM",
+          "acquisitionRate": 0.3
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 35,
+      "baseExpYield": 39,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.8,
+      "recipe": []
     },
     {
       "id": "THORNKING",
@@ -250,10 +285,10 @@
       "primaryType": "GRASS",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 72,
-        "attack": 68,
-        "defense": 70,
-        "speed": 55
+        "maxHp": 73,
+        "attack": 70,
+        "defense": 71,
+        "speed": 56
       },
       "learnset": [
         {
@@ -262,15 +297,15 @@
         },
         {
           "move": "SOLAR_BEAM",
-          "level": 3
-        },
-        {
-          "move": "BODY_SLAM",
           "level": 5
         },
         {
+          "move": "BODY_SLAM",
+          "level": 10
+        },
+        {
           "move": "DEFENSE_CURL",
-          "level": 7
+          "level": 14
         }
       ],
       "catchRate": 0.1,
@@ -280,13 +315,23 @@
       "ability": [
         {
           "abilityId": "OVERGROW",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.7
+        },
+        {
+          "abilityId": "STURDY",
+          "acquisitionRate": 0.3
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 48,
-      "heldItems": [],
-      "sizeScale": 1
+      "baseExpYield": 50,
+      "heldItems": [
+        {
+          "itemId": "ANTIDOTE",
+          "dropRate": 0.15
+        }
+      ],
+      "sizeScale": 1.15,
+      "recipe": []
     },
     {
       "id": "STARLITE",
@@ -295,10 +340,10 @@
       "primaryType": "NORMAL",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 35,
-        "attack": 60,
-        "defense": 35,
-        "speed": 80
+        "maxHp": 38,
+        "attack": 62,
+        "defense": 38,
+        "speed": 82
       },
       "learnset": [
         {
@@ -311,10 +356,10 @@
         },
         {
           "move": "FOCUS",
-          "level": 5
+          "level": 6
         }
       ],
-      "catchRate": 0.5,
+      "catchRate": 0.4,
       "description": "夜空から落ちてきた星のかけら。きらめく光で敵をひるませると言われている。",
       "evolution": null,
       "sub_emoji": [],
@@ -324,22 +369,23 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 43,
+      "spawnRate": 1.2,
+      "baseExpYield": 42,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.7,
+      "recipe": []
     },
     {
       "id": "BLAZEBIRD",
       "name": "ブレイズバード",
       "emoji": "🐦‍🔥",
       "primaryType": "FIRE",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
-        "maxHp": 38,
-        "attack": 58,
-        "defense": 40,
-        "speed": 72
+        "maxHp": 40,
+        "attack": 60,
+        "defense": 42,
+        "speed": 73
       },
       "learnset": [
         {
@@ -352,39 +398,44 @@
         },
         {
           "move": "FLAME_BURST",
-          "level": 5
+          "level": 6
         },
         {
           "move": "FOCUS",
-          "level": 7
+          "level": 8
         }
       ],
-      "catchRate": 0.3,
+      "catchRate": 0.28,
       "description": "炎の翼を持つ高速の鳥。空から急降下して獲物を狩る。",
       "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
           "abilityId": "BLAZE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "SWIFT_SWIM",
+          "acquisitionRate": 0.4
         }
       ],
-      "spawnRate": 1,
+      "spawnRate": 0.9,
       "baseExpYield": 42,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.9,
+      "recipe": []
     },
     {
       "id": "AQUASHELL",
       "name": "アクアシェル",
       "emoji": "🐢",
       "primaryType": "WATER",
-      "secondaryType": null,
+      "secondaryType": "ICE",
       "baseStats": {
-        "maxHp": 55,
+        "maxHp": 58,
         "attack": 46,
-        "defense": 75,
-        "speed": 32
+        "defense": 76,
+        "speed": 35
       },
       "learnset": [
         {
@@ -397,27 +448,36 @@
         },
         {
           "move": "BUBBLE_BEAM",
-          "level": 5
+          "level": 6
         },
         {
           "move": "DEFENSE_CURL",
-          "level": 7
+          "level": 8
+        },
+        {
+          "move": "ICE_SHARD",
+          "level": 10
         }
       ],
-      "catchRate": 0.35,
+      "catchRate": 0.3,
       "description": "硬い甲羅に守られた水亀。動きは遅いが守りは鉄壁。",
       "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
           "abilityId": "TORRENT",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.5
+        },
+        {
+          "abilityId": "STURDY",
+          "acquisitionRate": 0.5
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 38,
+      "spawnRate": 0.8,
+      "baseExpYield": 42,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.9,
+      "recipe": []
     },
     {
       "id": "THORNVINE",
@@ -426,10 +486,10 @@
       "primaryType": "GRASS",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 50,
-        "attack": 55,
-        "defense": 48,
-        "speed": 50
+        "maxHp": 53,
+        "attack": 57,
+        "defense": 52,
+        "speed": 53
       },
       "learnset": [
         {
@@ -442,14 +502,14 @@
         },
         {
           "move": "TOXIC_STING",
-          "level": 5
+          "level": 6
         },
         {
           "move": "GROWL",
-          "level": 7
+          "level": 8
         }
       ],
-      "catchRate": 0.4,
+      "catchRate": 0.35,
       "description": "つるを自在に操る植物モンスター。素早い連続攻撃が得意。",
       "evolution": null,
       "sub_emoji": [],
@@ -460,9 +520,10 @@
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 38,
+      "baseExpYield": 42,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.9,
+      "recipe": []
     },
     {
       "id": "SHADOWPAW",
@@ -471,10 +532,10 @@
       "primaryType": "NORMAL",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 42,
+        "maxHp": 44,
         "attack": 65,
-        "defense": 38,
-        "speed": 75
+        "defense": 40,
+        "speed": 71
       },
       "learnset": [
         {
@@ -487,27 +548,32 @@
         },
         {
           "move": "VENOM_BITE",
-          "level": 5
+          "level": 6
         },
         {
           "move": "FOCUS",
-          "level": 7
+          "level": 8
         }
       ],
-      "catchRate": 0.25,
+      "catchRate": 0.22,
       "description": "影に潜む謎の獣。夜になると活発になる素早いハンター。",
       "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
           "abilityId": "INTIMIDATE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "SWIFT_SWIM",
+          "acquisitionRate": 0.4
         }
       ],
-      "spawnRate": 1,
+      "spawnRate": 0.8,
       "baseExpYield": 44,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.9,
+      "recipe": []
     },
     {
       "id": "CRYSTALINE",
@@ -516,10 +582,10 @@
       "primaryType": "NORMAL",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 48,
-        "attack": 45,
+        "maxHp": 50,
+        "attack": 47,
         "defense": 80,
-        "speed": 35
+        "speed": 38
       },
       "learnset": [
         {
@@ -532,11 +598,11 @@
         },
         {
           "move": "DEFENSE_CURL",
-          "level": 5
+          "level": 6
         },
         {
           "move": "BODY_SLAM",
-          "level": 7
+          "level": 9
         }
       ],
       "catchRate": 0.2,
@@ -549,10 +615,11 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 40,
+      "spawnRate": 0.8,
+      "baseExpYield": 42,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.9,
+      "recipe": []
     },
     {
       "id": "MAGMOG",
@@ -562,9 +629,9 @@
       "secondaryType": null,
       "baseStats": {
         "maxHp": 64,
-        "attack": 78,
-        "defense": 62,
-        "speed": 40
+        "attack": 76,
+        "defense": 60,
+        "speed": 42
       },
       "learnset": [
         {
@@ -573,15 +640,15 @@
         },
         {
           "move": "FLAME_BURST",
-          "level": 3
+          "level": 4
         },
         {
           "move": "BLAZE_RUSH",
-          "level": 5
+          "level": 7
         },
         {
           "move": "INFERNO",
-          "level": 7
+          "level": 10
         }
       ],
       "catchRate": 0.14,
@@ -591,13 +658,18 @@
       "ability": [
         {
           "abilityId": "BLAZE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.7
+        },
+        {
+          "abilityId": "STURDY",
+          "acquisitionRate": 0.3
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 45,
+      "spawnRate": 0.7,
+      "baseExpYield": 46,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 1.1,
+      "recipe": []
     },
     {
       "id": "RIPPLYNX",
@@ -618,15 +690,15 @@
         },
         {
           "move": "BUBBLE_BEAM",
-          "level": 3
+          "level": 4
         },
         {
           "move": "TIDAL_WAVE",
-          "level": 5
+          "level": 7
         },
         {
           "move": "HEAL_PULSE",
-          "level": 7
+          "level": 10
         }
       ],
       "catchRate": 0.2,
@@ -636,20 +708,25 @@
       "ability": [
         {
           "abilityId": "TORRENT",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.7
+        },
+        {
+          "abilityId": "SWIFT_SWIM",
+          "acquisitionRate": 0.3
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 45,
+      "spawnRate": 0.7,
+      "baseExpYield": 46,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 1,
+      "recipe": []
     },
     {
       "id": "BRAMBLEON",
       "name": "ブランブルオン",
       "emoji": "🍀",
       "primaryType": "GRASS",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
         "maxHp": 66,
         "attack": 64,
@@ -663,15 +740,15 @@
         },
         {
           "move": "SOLAR_BEAM",
-          "level": 3
+          "level": 4
         },
         {
           "move": "NATURE_GUARD",
-          "level": 5
+          "level": 7
         },
         {
           "move": "TOXIC_STING",
-          "level": 7
+          "level": 10
         }
       ],
       "catchRate": 0.18,
@@ -681,11 +758,15 @@
       "ability": [
         {
           "abilityId": "OVERGROW",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.7
+        },
+        {
+          "abilityId": "STURDY",
+          "acquisitionRate": 0.3
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 45,
+      "spawnRate": 0.7,
+      "baseExpYield": 47,
       "heldItems": [],
       "sizeScale": 1,
       "recipe": [
@@ -704,12 +785,12 @@
       "name": "ムーンマイト",
       "emoji": "🌙",
       "primaryType": "NORMAL",
-      "secondaryType": null,
+      "secondaryType": "ELECTRIC",
       "baseStats": {
         "maxHp": 52,
-        "attack": 72,
+        "attack": 68,
         "defense": 48,
-        "speed": 82
+        "speed": 80
       },
       "learnset": [
         {
@@ -722,11 +803,15 @@
         },
         {
           "move": "STONE_BASH",
-          "level": 5
+          "level": 6
         },
         {
           "move": "FOCUS",
-          "level": 7
+          "level": 8
+        },
+        {
+          "move": "SPARK",
+          "level": 10
         }
       ],
       "catchRate": 0.12,
@@ -736,13 +821,23 @@
       "ability": [
         {
           "abilityId": "INTIMIDATE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.5
+        },
+        {
+          "abilityId": "SWIFT_SWIM",
+          "acquisitionRate": 0.5
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 50,
-      "heldItems": [],
-      "sizeScale": 1
+      "spawnRate": 0.5,
+      "baseExpYield": 48,
+      "heldItems": [
+        {
+          "itemId": "ETHER",
+          "dropRate": 0.08
+        }
+      ],
+      "sizeScale": 0.95,
+      "recipe": []
     },
     {
       "id": "CINDERCUB",
@@ -753,7 +848,7 @@
       "baseStats": {
         "maxHp": 42,
         "attack": 56,
-        "defense": 40,
+        "defense": 42,
         "speed": 60
       },
       "learnset": [
@@ -767,14 +862,14 @@
         },
         {
           "move": "CINDER_SPIN",
-          "level": 5
+          "level": 6
         },
         {
           "move": "FOCUS",
-          "level": 7
+          "level": 8
         }
       ],
-      "catchRate": 0.33,
+      "catchRate": 0.32,
       "description": "火の粉をまとって走る幼い炎狐。",
       "evolution": {
         "evolvesTo": "VOLCANOX",
@@ -790,21 +885,22 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 39,
+      "spawnRate": 0.9,
+      "baseExpYield": 40,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.8,
+      "recipe": []
     },
     {
       "id": "VOLCANOX",
       "name": "ヴォルカノックス",
       "emoji": "🗻",
       "primaryType": "FIRE",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
-        "maxHp": 76,
-        "attack": 84,
-        "defense": 66,
+        "maxHp": 74,
+        "attack": 80,
+        "defense": 64,
         "speed": 62
       },
       "learnset": [
@@ -814,15 +910,15 @@
         },
         {
           "move": "FLAME_BURST",
-          "level": 3
+          "level": 4
         },
         {
           "move": "PHOENIX_FLARE",
-          "level": 5
+          "level": 8
         },
         {
           "move": "IRON_HIDE",
-          "level": 7
+          "level": 12
         }
       ],
       "catchRate": 0.09,
@@ -832,25 +928,35 @@
       "ability": [
         {
           "abilityId": "BLAZE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "INTIMIDATE",
+          "acquisitionRate": 0.4
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 53,
-      "heldItems": [],
-      "sizeScale": 1
+      "baseExpYield": 52,
+      "heldItems": [
+        {
+          "itemId": "RAGE_CANDY",
+          "dropRate": 0.1
+        }
+      ],
+      "sizeScale": 1.2,
+      "recipe": []
     },
     {
       "id": "ASHHOUND",
       "name": "アッシュハウンド",
       "emoji": "🐺",
       "primaryType": "FIRE",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
         "maxHp": 58,
-        "attack": 76,
-        "defense": 52,
-        "speed": 74
+        "attack": 72,
+        "defense": 54,
+        "speed": 71
       },
       "learnset": [
         {
@@ -863,11 +969,11 @@
         },
         {
           "move": "BLAZE_RUSH",
-          "level": 5
+          "level": 6
         },
         {
           "move": "COMET_KICK",
-          "level": 7
+          "level": 9
         }
       ],
       "catchRate": 0.17,
@@ -877,13 +983,23 @@
       "ability": [
         {
           "abilityId": "BLAZE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "INTIMIDATE",
+          "acquisitionRate": 0.4
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 50,
-      "heldItems": [],
-      "sizeScale": 1
+      "spawnRate": 0.7,
+      "baseExpYield": 49,
+      "heldItems": [
+        {
+          "itemId": "POWER_SEED",
+          "dropRate": 0.1
+        }
+      ],
+      "sizeScale": 1,
+      "recipe": []
     },
     {
       "id": "FINBUB",
@@ -893,8 +1009,8 @@
       "secondaryType": null,
       "baseStats": {
         "maxHp": 46,
-        "attack": 47,
-        "defense": 57,
+        "attack": 48,
+        "defense": 56,
         "speed": 52
       },
       "learnset": [
@@ -908,14 +1024,14 @@
         },
         {
           "move": "STEAM_BLAST",
-          "level": 5
+          "level": 6
         },
         {
           "move": "DEFENSE_CURL",
-          "level": 7
+          "level": 8
         }
       ],
-      "catchRate": 0.36,
+      "catchRate": 0.34,
       "description": "泡の尾びれで跳ねる川辺の小魚。",
       "evolution": {
         "evolvesTo": "GLACIERA",
@@ -931,22 +1047,23 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 39,
+      "spawnRate": 0.9,
+      "baseExpYield": 40,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.75,
+      "recipe": []
     },
     {
       "id": "GLACIERA",
       "name": "グラシエラ",
       "emoji": "🧊",
       "primaryType": "WATER",
-      "secondaryType": null,
+      "secondaryType": "ICE",
       "baseStats": {
         "maxHp": 74,
-        "attack": 67,
-        "defense": 86,
-        "speed": 49
+        "attack": 68,
+        "defense": 84,
+        "speed": 52
       },
       "learnset": [
         {
@@ -955,15 +1072,19 @@
         },
         {
           "move": "FROST_TIDE",
-          "level": 3
+          "level": 4
         },
         {
           "move": "HYDRO_PUMP",
-          "level": 5
+          "level": 8
         },
         {
           "move": "OCEAN_BLESS",
-          "level": 7
+          "level": 12
+        },
+        {
+          "move": "ICE_BEAM",
+          "level": 15
         }
       ],
       "catchRate": 0.11,
@@ -973,13 +1094,22 @@
       "ability": [
         {
           "abilityId": "TORRENT",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.5
+        },
+        {
+          "abilityId": "ICE_BODY",
+          "acquisitionRate": 0.5
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 50,
-      "heldItems": [],
-      "sizeScale": 1,
+      "baseExpYield": 52,
+      "heldItems": [
+        {
+          "itemId": "GUARD_CHARM",
+          "dropRate": 0.1
+        }
+      ],
+      "sizeScale": 1.15,
       "recipe": [
         [
           {
@@ -996,12 +1126,12 @@
       "name": "ミストレイ",
       "emoji": "🐬",
       "primaryType": "WATER",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
-        "maxHp": 57,
-        "attack": 61,
+        "maxHp": 58,
+        "attack": 62,
         "defense": 60,
-        "speed": 79
+        "speed": 72
       },
       "learnset": [
         {
@@ -1010,15 +1140,15 @@
         },
         {
           "move": "STEAM_BLAST",
-          "level": 3
+          "level": 4
         },
         {
           "move": "HEAL_PULSE",
-          "level": 5
+          "level": 7
         },
         {
           "move": "MOONBEAM",
-          "level": 7
+          "level": 10
         }
       ],
       "catchRate": 0.16,
@@ -1028,12 +1158,21 @@
       "ability": [
         {
           "abilityId": "TORRENT",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "SWIFT_SWIM",
+          "acquisitionRate": 0.4
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 50,
-      "heldItems": [],
+      "spawnRate": 0.6,
+      "baseExpYield": 48,
+      "heldItems": [
+        {
+          "itemId": "ETHER",
+          "dropRate": 0.1
+        }
+      ],
       "sizeScale": 1,
       "recipe": [
         [
@@ -1053,10 +1192,10 @@
       "primaryType": "GRASS",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 44,
-        "attack": 50,
+        "maxHp": 46,
+        "attack": 52,
         "defense": 52,
-        "speed": 48
+        "speed": 50
       },
       "learnset": [
         {
@@ -1069,14 +1208,14 @@
         },
         {
           "move": "ROOT_TRAP",
-          "level": 5
+          "level": 6
         },
         {
           "move": "GROWL",
-          "level": 7
+          "level": 8
         }
       ],
-      "catchRate": 0.34,
+      "catchRate": 0.32,
       "description": "芽吹きの音で仲間を呼ぶ草の精。",
       "evolution": {
         "evolvesTo": "BLOOMRA",
@@ -1092,22 +1231,23 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 37,
+      "spawnRate": 0.9,
+      "baseExpYield": 38,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.8,
+      "recipe": []
     },
     {
       "id": "BLOOMRA",
       "name": "ブルームラ",
       "emoji": "🌺",
       "primaryType": "GRASS",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
-        "maxHp": 73,
-        "attack": 71,
-        "defense": 72,
-        "speed": 57
+        "maxHp": 75,
+        "attack": 72,
+        "defense": 73,
+        "speed": 58
       },
       "learnset": [
         {
@@ -1116,15 +1256,15 @@
         },
         {
           "move": "PETAL_STORM",
-          "level": 3
+          "level": 4
         },
         {
           "move": "SOLAR_BEAM",
-          "level": 5
+          "level": 8
         },
         {
           "move": "NATURE_GUARD",
-          "level": 7
+          "level": 12
         }
       ],
       "catchRate": 0.1,
@@ -1134,25 +1274,35 @@
       "ability": [
         {
           "abilityId": "OVERGROW",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.7
+        },
+        {
+          "abilityId": "SWIFT_SWIM",
+          "acquisitionRate": 0.3
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 50,
-      "heldItems": [],
-      "sizeScale": 1
+      "baseExpYield": 52,
+      "heldItems": [
+        {
+          "itemId": "ETHER",
+          "dropRate": 0.1
+        }
+      ],
+      "sizeScale": 1.1,
+      "recipe": []
     },
     {
       "id": "MOSSHORN",
       "name": "モスホーン",
       "emoji": "🫎",
       "primaryType": "GRASS",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
-        "maxHp": 70,
-        "attack": 73,
-        "defense": 69,
-        "speed": 51
+        "maxHp": 68,
+        "attack": 68,
+        "defense": 66,
+        "speed": 48
       },
       "learnset": [
         {
@@ -1161,15 +1311,15 @@
         },
         {
           "move": "RAZOR_LEAF",
-          "level": 3
+          "level": 4
         },
         {
           "move": "STONE_BASH",
-          "level": 5
+          "level": 7
         },
         {
           "move": "IRON_HIDE",
-          "level": 7
+          "level": 10
         }
       ],
       "catchRate": 0.14,
@@ -1179,13 +1329,23 @@
       "ability": [
         {
           "abilityId": "INTIMIDATE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "OVERGROW",
+          "acquisitionRate": 0.4
         }
       ],
-      "spawnRate": 1,
+      "spawnRate": 0.6,
       "baseExpYield": 48,
-      "heldItems": [],
-      "sizeScale": 1
+      "heldItems": [
+        {
+          "itemId": "IRON_SEED",
+          "dropRate": 0.1
+        }
+      ],
+      "sizeScale": 1.15,
+      "recipe": []
     },
     {
       "id": "SKYPIP",
@@ -1194,10 +1354,10 @@
       "primaryType": "NORMAL",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 41,
+        "maxHp": 42,
         "attack": 52,
-        "defense": 39,
-        "speed": 84
+        "defense": 40,
+        "speed": 80
       },
       "learnset": [
         {
@@ -1210,14 +1370,14 @@
         },
         {
           "move": "FOCUS",
-          "level": 5
+          "level": 6
         },
         {
           "move": "BRIGHT_HEART",
-          "level": 7
+          "level": 8
         }
       ],
-      "catchRate": 0.31,
+      "catchRate": 0.3,
       "description": "空高く舞う風の案内役。",
       "evolution": {
         "evolvesTo": "AURORO",
@@ -1230,25 +1390,30 @@
       "ability": [
         {
           "abilityId": "INTIMIDATE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "SWIFT_SWIM",
+          "acquisitionRate": 0.4
         }
       ],
-      "spawnRate": 1,
+      "spawnRate": 0.9,
       "baseExpYield": 43,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.75,
+      "recipe": []
     },
     {
       "id": "AURORO",
       "name": "オーロロ",
       "emoji": "🪽",
       "primaryType": "NORMAL",
-      "secondaryType": null,
+      "secondaryType": "ELECTRIC",
       "baseStats": {
-        "maxHp": 69,
-        "attack": 77,
-        "defense": 59,
-        "speed": 90
+        "maxHp": 68,
+        "attack": 76,
+        "defense": 60,
+        "speed": 86
       },
       "learnset": [
         {
@@ -1257,15 +1422,19 @@
         },
         {
           "move": "HYPER_VOICE",
-          "level": 3
+          "level": 4
         },
         {
           "move": "COMET_KICK",
-          "level": 5
+          "level": 8
         },
         {
           "move": "SPIRIT_HOWL",
-          "level": 7
+          "level": 12
+        },
+        {
+          "move": "THUNDERBOLT",
+          "level": 15
         }
       ],
       "catchRate": 0.08,
@@ -1275,13 +1444,22 @@
       "ability": [
         {
           "abilityId": "SWIFT_SWIM",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.5
+        },
+        {
+          "abilityId": "MOTOR_DRIVE",
+          "acquisitionRate": 0.5
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 56,
-      "heldItems": [],
-      "sizeScale": 1,
+      "baseExpYield": 55,
+      "heldItems": [
+        {
+          "itemId": "X_SPEED",
+          "dropRate": 0.05
+        }
+      ],
+      "sizeScale": 1.2,
       "recipe": [
         [
           {
@@ -1306,12 +1484,12 @@
       "name": "ルーンフォックス",
       "emoji": "🦝",
       "primaryType": "NORMAL",
-      "secondaryType": null,
+      "secondaryType": "FIRE",
       "baseStats": {
-        "maxHp": 62,
-        "attack": 79,
-        "defense": 55,
-        "speed": 76
+        "maxHp": 64,
+        "attack": 76,
+        "defense": 58,
+        "speed": 74
       },
       "learnset": [
         {
@@ -1320,15 +1498,19 @@
         },
         {
           "move": "MOONBEAM",
-          "level": 3
+          "level": 4
         },
         {
           "move": "COMET_KICK",
-          "level": 5
+          "level": 7
         },
         {
           "move": "BRIGHT_HEART",
-          "level": 7
+          "level": 10
+        },
+        {
+          "move": "FIRE_FANG",
+          "level": 13
         }
       ],
       "catchRate": 0.12,
@@ -1338,13 +1520,22 @@
       "ability": [
         {
           "abilityId": "INTIMIDATE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.5
+        },
+        {
+          "abilityId": "BLAZE",
+          "acquisitionRate": 0.5
         }
       ],
-      "spawnRate": 1,
+      "spawnRate": 0.5,
       "baseExpYield": 52,
-      "heldItems": [],
-      "sizeScale": 1,
+      "heldItems": [
+        {
+          "itemId": "ETHER",
+          "dropRate": 0.1
+        }
+      ],
+      "sizeScale": 1.05,
       "recipe": [
         [
           {
@@ -1383,10 +1574,10 @@
         },
         {
           "move": "THUNDER_FANG",
-          "level": 7
+          "level": 8
         }
       ],
-      "catchRate": 0.32,
+      "catchRate": 0.3,
       "description": "体毛に静電気を宿した子犬。走ると火花が散る。",
       "evolution": {
         "evolvesTo": "SHOCKHOUND",
@@ -1405,14 +1596,15 @@
       "spawnRate": 1,
       "baseExpYield": 40,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.8,
+      "recipe": []
     },
     {
       "id": "SHOCKHOUND",
       "name": "ショックハウンド",
       "emoji": "🐕",
       "primaryType": "ELECTRIC",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
         "maxHp": 65,
         "attack": 72,
@@ -1426,15 +1618,15 @@
         },
         {
           "move": "THUNDERBOLT",
-          "level": 3
-        },
-        {
-          "move": "BODY_SLAM",
           "level": 5
         },
         {
+          "move": "BODY_SLAM",
+          "level": 9
+        },
+        {
           "move": "DISCHARGE",
-          "level": 7
+          "level": 13
         }
       ],
       "catchRate": 0.14,
@@ -1444,13 +1636,23 @@
       "ability": [
         {
           "abilityId": "MOTOR_DRIVE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "INTIMIDATE",
+          "acquisitionRate": 0.4
         }
       ],
       "spawnRate": 1,
       "baseExpYield": 52,
-      "heldItems": [],
-      "sizeScale": 1
+      "heldItems": [
+        {
+          "itemId": "X_SPEED",
+          "dropRate": 0.1
+        }
+      ],
+      "sizeScale": 1.1,
+      "recipe": []
     },
     {
       "id": "SPARKBUG",
@@ -1459,10 +1661,10 @@
       "primaryType": "ELECTRIC",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 38,
-        "attack": 55,
-        "defense": 35,
-        "speed": 70
+        "maxHp": 42,
+        "attack": 56,
+        "defense": 40,
+        "speed": 72
       },
       "learnset": [
         {
@@ -1479,10 +1681,10 @@
         },
         {
           "move": "THUNDERBOLT",
-          "level": 7
+          "level": 8
         }
       ],
-      "catchRate": 0.38,
+      "catchRate": 0.36,
       "description": "夜の草むらで光る小さな甲虫。",
       "evolution": null,
       "sub_emoji": [],
@@ -1492,10 +1694,11 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1,
+      "spawnRate": 1.2,
       "baseExpYield": 40,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.7,
+      "recipe": []
     },
     {
       "id": "THUNDERAM",
@@ -1520,14 +1723,14 @@
         },
         {
           "move": "BODY_SLAM",
-          "level": 5
+          "level": 6
         },
         {
           "move": "DISCHARGE",
-          "level": 7
+          "level": 9
         }
       ],
-      "catchRate": 0.25,
+      "catchRate": 0.24,
       "description": "角に雷を溜め、強力な突進を放つ。",
       "evolution": {
         "evolvesTo": "STORMRAM",
@@ -1540,25 +1743,30 @@
       "ability": [
         {
           "abilityId": "INTIMIDATE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "MOTOR_DRIVE",
+          "acquisitionRate": 0.4
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 40,
+      "spawnRate": 0.8,
+      "baseExpYield": 41,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.9,
+      "recipe": []
     },
     {
       "id": "STORMRAM",
       "name": "ストームラム",
       "emoji": "⛈️",
       "primaryType": "ELECTRIC",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
         "maxHp": 72,
-        "attack": 82,
+        "attack": 80,
         "defense": 70,
-        "speed": 58
+        "speed": 60
       },
       "learnset": [
         {
@@ -1567,15 +1775,15 @@
         },
         {
           "move": "THUNDER",
-          "level": 3
-        },
-        {
-          "move": "BODY_SLAM",
           "level": 5
         },
         {
+          "move": "BODY_SLAM",
+          "level": 9
+        },
+        {
           "move": "VOLT_TACKLE",
-          "level": 7
+          "level": 13
         }
       ],
       "catchRate": 0.1,
@@ -1585,25 +1793,35 @@
       "ability": [
         {
           "abilityId": "INTIMIDATE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.5
+        },
+        {
+          "abilityId": "MOTOR_DRIVE",
+          "acquisitionRate": 0.5
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 52,
-      "heldItems": [],
-      "sizeScale": 1
+      "baseExpYield": 54,
+      "heldItems": [
+        {
+          "itemId": "POWER_SEED",
+          "dropRate": 0.1
+        }
+      ],
+      "sizeScale": 1.2,
+      "recipe": []
     },
     {
       "id": "ZAPDRAKE",
       "name": "ザップドレイク",
       "emoji": "🐲",
       "primaryType": "ELECTRIC",
-      "secondaryType": null,
+      "secondaryType": "FIRE",
       "baseStats": {
-        "maxHp": 55,
-        "attack": 68,
-        "defense": 52,
-        "speed": 75
+        "maxHp": 56,
+        "attack": 66,
+        "defense": 54,
+        "speed": 74
       },
       "learnset": [
         {
@@ -1612,15 +1830,19 @@
         },
         {
           "move": "THUNDERBOLT",
-          "level": 3
+          "level": 4
         },
         {
           "move": "DISCHARGE",
-          "level": 5
+          "level": 7
         },
         {
           "move": "THUNDER",
-          "level": 7
+          "level": 10
+        },
+        {
+          "move": "FIRE_FANG",
+          "level": 13
         }
       ],
       "catchRate": 0.1,
@@ -1630,13 +1852,23 @@
       "ability": [
         {
           "abilityId": "MOTOR_DRIVE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.5
+        },
+        {
+          "abilityId": "BLAZE",
+          "acquisitionRate": 0.5
         }
       ],
-      "spawnRate": 1,
+      "spawnRate": 0.4,
       "baseExpYield": 48,
-      "heldItems": [],
-      "sizeScale": 1
+      "heldItems": [
+        {
+          "itemId": "ETHER",
+          "dropRate": 0.1
+        }
+      ],
+      "sizeScale": 1.1,
+      "recipe": []
     },
     {
       "id": "PLASMOTH",
@@ -1645,10 +1877,10 @@
       "primaryType": "ELECTRIC",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 52,
-        "attack": 60,
-        "defense": 48,
-        "speed": 72
+        "maxHp": 55,
+        "attack": 62,
+        "defense": 50,
+        "speed": 73
       },
       "learnset": [
         {
@@ -1657,15 +1889,15 @@
         },
         {
           "move": "THUNDERBOLT",
-          "level": 3
+          "level": 4
         },
         {
           "move": "DISCHARGE",
-          "level": 5
+          "level": 7
         },
         {
           "move": "CHARGE",
-          "level": 7
+          "level": 10
         }
       ],
       "catchRate": 0.18,
@@ -1675,13 +1907,18 @@
       "ability": [
         {
           "abilityId": "SWIFT_SWIM",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.5
+        },
+        {
+          "abilityId": "MOTOR_DRIVE",
+          "acquisitionRate": 0.5
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 45,
+      "spawnRate": 0.6,
+      "baseExpYield": 46,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.95,
+      "recipe": []
     },
     {
       "id": "FROSTKIT",
@@ -1690,10 +1927,10 @@
       "primaryType": "ICE",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 42,
-        "attack": 48,
+        "maxHp": 44,
+        "attack": 50,
         "defense": 50,
-        "speed": 55
+        "speed": 56
       },
       "learnset": [
         {
@@ -1706,18 +1943,18 @@
         },
         {
           "move": "FROST_BITE",
-          "level": 5
+          "level": 6
         },
         {
           "move": "GROWL",
-          "level": 7
+          "level": 8
         },
         {
           "move": "ICY_WIND",
-          "level": 9
+          "level": 10
         }
       ],
-      "catchRate": 0.3,
+      "catchRate": 0.28,
       "description": "冷気をまとった子猫。息は白く凍る。",
       "evolution": {
         "evolvesTo": "BLIZZCAT",
@@ -1733,17 +1970,18 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 38,
+      "spawnRate": 0.9,
+      "baseExpYield": 39,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.8,
+      "recipe": []
     },
     {
       "id": "BLIZZCAT",
       "name": "ブリザキャット",
       "emoji": "❄️",
       "primaryType": "ICE",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
         "maxHp": 68,
         "attack": 70,
@@ -1757,15 +1995,15 @@
         },
         {
           "move": "ICE_BEAM",
-          "level": 3
-        },
-        {
-          "move": "BODY_SLAM",
           "level": 5
         },
         {
+          "move": "BODY_SLAM",
+          "level": 9
+        },
+        {
           "move": "AURORA_VEIL",
-          "level": 7
+          "level": 13
         }
       ],
       "catchRate": 0.12,
@@ -1775,13 +2013,23 @@
       "ability": [
         {
           "abilityId": "ICE_BODY",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "INTIMIDATE",
+          "acquisitionRate": 0.4
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 51,
-      "heldItems": [],
-      "sizeScale": 1
+      "baseExpYield": 52,
+      "heldItems": [
+        {
+          "itemId": "ICE_HEAL",
+          "dropRate": 0.15
+        }
+      ],
+      "sizeScale": 1.1,
+      "recipe": []
     },
     {
       "id": "ICEPECK",
@@ -1790,10 +2038,10 @@
       "primaryType": "ICE",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 50,
-        "attack": 45,
-        "defense": 60,
-        "speed": 40
+        "maxHp": 55,
+        "attack": 48,
+        "defense": 62,
+        "speed": 50
       },
       "learnset": [
         {
@@ -1810,27 +2058,32 @@
         },
         {
           "move": "ICE_BEAM",
-          "level": 7
+          "level": 8
         },
         {
           "move": "ICY_WIND",
-          "level": 9
+          "level": 10
         }
       ],
-      "catchRate": 0.28,
+      "catchRate": 0.26,
       "description": "氷の上を滑るように歩くペンギン型モンスター。",
       "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
           "abilityId": "ICE_BODY",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.7
+        },
+        {
+          "abilityId": "STURDY",
+          "acquisitionRate": 0.3
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 36,
+      "spawnRate": 0.9,
+      "baseExpYield": 40,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.85,
+      "recipe": []
     },
     {
       "id": "CRYSTEEL",
@@ -1839,10 +2092,10 @@
       "primaryType": "ICE",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 45,
-        "attack": 62,
-        "defense": 55,
-        "speed": 48
+        "maxHp": 50,
+        "attack": 64,
+        "defense": 60,
+        "speed": 56
       },
       "learnset": [
         {
@@ -1855,11 +2108,11 @@
         },
         {
           "move": "FROST_BREATH",
-          "level": 5
+          "level": 6
         },
         {
           "move": "BLIZZARD",
-          "level": 7
+          "level": 9
         }
       ],
       "catchRate": 0.2,
@@ -1869,13 +2122,18 @@
       "ability": [
         {
           "abilityId": "INTIMIDATE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.5
+        },
+        {
+          "abilityId": "ICE_BODY",
+          "acquisitionRate": 0.5
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 41,
+      "spawnRate": 0.6,
+      "baseExpYield": 43,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.95,
+      "recipe": []
     },
     {
       "id": "SNOWFAWN",
@@ -1884,10 +2142,10 @@
       "primaryType": "ICE",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 46,
-        "attack": 44,
-        "defense": 52,
-        "speed": 60
+        "maxHp": 48,
+        "attack": 46,
+        "defense": 55,
+        "speed": 61
       },
       "learnset": [
         {
@@ -1900,20 +2158,20 @@
         },
         {
           "move": "FROST_BREATH",
-          "level": 5
+          "level": 6
         },
         {
           "move": "HAIL_SHELL",
-          "level": 7
+          "level": 9
         }
       ],
-      "catchRate": 0.24,
+      "catchRate": 0.23,
       "description": "雪原を優雅に駆ける小鹿。角は氷で透き通る。",
       "evolution": {
         "evolvesTo": "FROSTVEIL",
         "condition": {
-          "type": "LEVEL",
-          "value": 16
+          "type": "ITEM",
+          "value": "ICE_CRYSTAL"
         }
       },
       "sub_emoji": [],
@@ -1923,22 +2181,23 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 39,
+      "spawnRate": 0.8,
+      "baseExpYield": 40,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.85,
+      "recipe": []
     },
     {
       "id": "FROSTVEIL",
       "name": "フロストヴェール",
       "emoji": "🦋",
       "primaryType": "ICE",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
-        "maxHp": 65,
-        "attack": 62,
-        "defense": 68,
-        "speed": 72
+        "maxHp": 68,
+        "attack": 65,
+        "defense": 72,
+        "speed": 75
       },
       "learnset": [
         {
@@ -1947,15 +2206,15 @@
         },
         {
           "move": "BLIZZARD",
-          "level": 3
-        },
-        {
-          "move": "AURORA_VEIL",
           "level": 5
         },
         {
+          "move": "AURORA_VEIL",
+          "level": 9
+        },
+        {
           "move": "FROST_BREATH",
-          "level": 7
+          "level": 13
         }
       ],
       "catchRate": 0.1,
@@ -1965,25 +2224,35 @@
       "ability": [
         {
           "abilityId": "SWIFT_SWIM",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.5
+        },
+        {
+          "abilityId": "ICE_BODY",
+          "acquisitionRate": 0.5
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 50,
-      "heldItems": [],
-      "sizeScale": 1
+      "baseExpYield": 52,
+      "heldItems": [
+        {
+          "itemId": "ETHER",
+          "dropRate": 0.1
+        }
+      ],
+      "sizeScale": 1.1,
+      "recipe": []
     },
     {
       "id": "TUNDRABEAR",
       "name": "ツンドラベア",
       "emoji": "🐻‍❄️",
       "primaryType": "ICE",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
-        "maxHp": 70,
-        "attack": 65,
+        "maxHp": 72,
+        "attack": 66,
         "defense": 70,
-        "speed": 38
+        "speed": 40
       },
       "learnset": [
         {
@@ -1992,15 +2261,15 @@
         },
         {
           "move": "ICE_BEAM",
-          "level": 3
+          "level": 4
         },
         {
           "move": "BODY_SLAM",
-          "level": 5
+          "level": 7
         },
         {
           "move": "HAIL_SHELL",
-          "level": 7
+          "level": 10
         }
       ],
       "catchRate": 0.1,
@@ -2010,13 +2279,23 @@
       "ability": [
         {
           "abilityId": "ICE_BODY",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "STURDY",
+          "acquisitionRate": 0.4
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 43,
-      "heldItems": [],
-      "sizeScale": 1
+      "spawnRate": 0.5,
+      "baseExpYield": 46,
+      "heldItems": [
+        {
+          "itemId": "POTION",
+          "dropRate": 0.15
+        }
+      ],
+      "sizeScale": 1.2,
+      "recipe": []
     },
     {
       "id": "CHARCOIL",
@@ -2026,7 +2305,7 @@
       "secondaryType": null,
       "baseStats": {
         "maxHp": 44,
-        "attack": 58,
+        "attack": 56,
         "defense": 42,
         "speed": 62
       },
@@ -2041,20 +2320,20 @@
         },
         {
           "move": "HEAT_COIL",
-          "level": 5
+          "level": 6
         },
         {
           "move": "FIRE_FANG",
-          "level": 7
+          "level": 9
         }
       ],
-      "catchRate": 0.28,
+      "catchRate": 0.27,
       "description": "灼熱の鱗を持つ火蛇。獲物に巻きついて焼く。",
       "evolution": {
         "evolvesTo": "SERPYRO",
         "condition": {
-          "type": "LEVEL",
-          "value": 18
+          "type": "ITEM",
+          "value": "FIRE_CRYSTAL"
         }
       },
       "sub_emoji": [],
@@ -2064,22 +2343,23 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 40,
+      "spawnRate": 0.8,
+      "baseExpYield": 41,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.9,
+      "recipe": []
     },
     {
       "id": "SERPYRO",
       "name": "サーパイロ",
       "emoji": "🐉",
       "primaryType": "FIRE",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
         "maxHp": 72,
-        "attack": 82,
+        "attack": 80,
         "defense": 64,
-        "speed": 70
+        "speed": 72
       },
       "learnset": [
         {
@@ -2088,15 +2368,15 @@
         },
         {
           "move": "FLAME_BURST",
-          "level": 3
+          "level": 4
         },
         {
           "move": "SOLAR_FLARE",
-          "level": 5
+          "level": 8
         },
         {
           "move": "BODY_SLAM",
-          "level": 7
+          "level": 12
         }
       ],
       "catchRate": 0.08,
@@ -2106,24 +2386,34 @@
       "ability": [
         {
           "abilityId": "BLAZE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "INTIMIDATE",
+          "acquisitionRate": 0.4
         }
       ],
       "spawnRate": 1,
       "baseExpYield": 54,
-      "heldItems": [],
-      "sizeScale": 1
+      "heldItems": [
+        {
+          "itemId": "RAGE_CANDY",
+          "dropRate": 0.05
+        }
+      ],
+      "sizeScale": 1.2,
+      "recipe": []
     },
     {
       "id": "SOLFLARE",
       "name": "ソルフレア",
       "emoji": "☀️",
       "primaryType": "FIRE",
-      "secondaryType": null,
+      "secondaryType": "ELECTRIC",
       "baseStats": {
         "maxHp": 68,
-        "attack": 80,
-        "defense": 56,
+        "attack": 78,
+        "defense": 58,
         "speed": 76
       },
       "learnset": [
@@ -2133,15 +2423,19 @@
         },
         {
           "move": "SOLAR_FLARE",
-          "level": 3
+          "level": 4
         },
         {
           "move": "PHOENIX_FLARE",
-          "level": 5
+          "level": 8
         },
         {
           "move": "BRIGHT_HEART",
-          "level": 7
+          "level": 12
+        },
+        {
+          "move": "THUNDERBOLT",
+          "level": 15
         }
       ],
       "catchRate": 0.06,
@@ -2151,13 +2445,32 @@
       "ability": [
         {
           "abilityId": "BLAZE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.5
+        },
+        {
+          "abilityId": "MOTOR_DRIVE",
+          "acquisitionRate": 0.5
         }
       ],
-      "spawnRate": 0.5,
-      "baseExpYield": 53,
-      "heldItems": [],
-      "sizeScale": 1
+      "spawnRate": 0.3,
+      "baseExpYield": 55,
+      "heldItems": [
+        {
+          "itemId": "POWER_CHARM",
+          "dropRate": 0.05
+        }
+      ],
+      "sizeScale": 1.3,
+      "recipe": [
+        [
+          {
+            "monsterId": "PYREBEAR"
+          },
+          {
+            "monsterId": "BLAZEBIRD"
+          }
+        ]
+      ]
     },
     {
       "id": "CORALION",
@@ -2168,8 +2481,8 @@
       "baseStats": {
         "maxHp": 62,
         "attack": 52,
-        "defense": 78,
-        "speed": 42
+        "defense": 76,
+        "speed": 45
       },
       "learnset": [
         {
@@ -2178,15 +2491,15 @@
         },
         {
           "move": "BUBBLE_BEAM",
-          "level": 3
+          "level": 4
         },
         {
           "move": "DEFENSE_CURL",
-          "level": 5
+          "level": 7
         },
         {
           "move": "TIDAL_CRUSH",
-          "level": 7
+          "level": 10
         }
       ],
       "catchRate": 0.2,
@@ -2196,25 +2509,35 @@
       "ability": [
         {
           "abilityId": "TORRENT",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.5
+        },
+        {
+          "abilityId": "STURDY",
+          "acquisitionRate": 0.5
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 43,
-      "heldItems": [],
-      "sizeScale": 1
+      "spawnRate": 0.7,
+      "baseExpYield": 44,
+      "heldItems": [
+        {
+          "itemId": "IRON_SEED",
+          "dropRate": 0.1
+        }
+      ],
+      "sizeScale": 1,
+      "recipe": []
     },
     {
       "id": "ABYSSQUID",
       "name": "アビスクイッド",
       "emoji": "🦑",
       "primaryType": "WATER",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
-        "maxHp": 56,
-        "attack": 76,
-        "defense": 50,
-        "speed": 68
+        "maxHp": 58,
+        "attack": 74,
+        "defense": 52,
+        "speed": 66
       },
       "learnset": [
         {
@@ -2223,15 +2546,15 @@
         },
         {
           "move": "DEEP_DIVE",
-          "level": 3
+          "level": 4
         },
         {
           "move": "TIDAL_WAVE",
-          "level": 5
+          "level": 7
         },
         {
           "move": "HYDRO_PUMP",
-          "level": 7
+          "level": 10
         }
       ],
       "catchRate": 0.12,
@@ -2241,13 +2564,23 @@
       "ability": [
         {
           "abilityId": "TORRENT",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "INTIMIDATE",
+          "acquisitionRate": 0.4
         }
       ],
-      "spawnRate": 1,
+      "spawnRate": 0.6,
       "baseExpYield": 48,
-      "heldItems": [],
-      "sizeScale": 1
+      "heldItems": [
+        {
+          "itemId": "ETHER",
+          "dropRate": 0.1
+        }
+      ],
+      "sizeScale": 1.2,
+      "recipe": []
     },
     {
       "id": "WHALORD",
@@ -2256,10 +2589,10 @@
       "primaryType": "WATER",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 82,
+        "maxHp": 85,
         "attack": 70,
-        "defense": 72,
-        "speed": 40
+        "defense": 74,
+        "speed": 46
       },
       "learnset": [
         {
@@ -2268,15 +2601,15 @@
         },
         {
           "move": "HYDRO_PUMP",
-          "level": 3
-        },
-        {
-          "move": "OCEAN_BLESS",
           "level": 5
         },
         {
+          "move": "OCEAN_BLESS",
+          "level": 9
+        },
+        {
           "move": "BODY_SLAM",
-          "level": 7
+          "level": 13
         }
       ],
       "catchRate": 0.05,
@@ -2286,25 +2619,44 @@
       "ability": [
         {
           "abilityId": "TORRENT",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "STURDY",
+          "acquisitionRate": 0.4
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 45,
-      "heldItems": [],
-      "sizeScale": 1
+      "spawnRate": 0.3,
+      "baseExpYield": 52,
+      "heldItems": [
+        {
+          "itemId": "HYPER_POTION",
+          "dropRate": 0.05
+        }
+      ],
+      "sizeScale": 1.4,
+      "recipe": [
+        [
+          {
+            "monsterId": "TIDALON"
+          },
+          {
+            "monsterId": "AQUASHELL"
+          }
+        ]
+      ]
     },
     {
       "id": "CACTURION",
       "name": "カクタリオン",
       "emoji": "🌵",
       "primaryType": "GRASS",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
-        "maxHp": 58,
-        "attack": 72,
-        "defense": 68,
-        "speed": 44
+        "maxHp": 60,
+        "attack": 70,
+        "defense": 66,
+        "speed": 46
       },
       "learnset": [
         {
@@ -2313,15 +2665,15 @@
         },
         {
           "move": "THORN_BARRAGE",
-          "level": 3
+          "level": 4
         },
         {
           "move": "RAZOR_LEAF",
-          "level": 5
+          "level": 7
         },
         {
           "move": "IRON_HIDE",
-          "level": 7
+          "level": 10
         }
       ],
       "catchRate": 0.18,
@@ -2331,13 +2683,23 @@
       "ability": [
         {
           "abilityId": "OVERGROW",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "STURDY",
+          "acquisitionRate": 0.4
         }
       ],
-      "spawnRate": 1,
+      "spawnRate": 0.7,
       "baseExpYield": 46,
-      "heldItems": [],
-      "sizeScale": 1
+      "heldItems": [
+        {
+          "itemId": "ANTIDOTE",
+          "dropRate": 0.1
+        }
+      ],
+      "sizeScale": 1.05,
+      "recipe": []
     },
     {
       "id": "FLORAMIS",
@@ -2346,10 +2708,10 @@
       "primaryType": "GRASS",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 46,
-        "attack": 48,
+        "maxHp": 48,
+        "attack": 50,
         "defense": 54,
-        "speed": 46
+        "speed": 48
       },
       "learnset": [
         {
@@ -2362,11 +2724,11 @@
         },
         {
           "move": "SPORE_CLOUD",
-          "level": 5
+          "level": 6
         },
         {
           "move": "FUNGAL_BURST",
-          "level": 7
+          "level": 9
         }
       ],
       "catchRate": 0.3,
@@ -2385,10 +2747,11 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 37,
+      "spawnRate": 0.9,
+      "baseExpYield": 38,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.75,
+      "recipe": []
     },
     {
       "id": "FUNGORIA",
@@ -2397,10 +2760,10 @@
       "primaryType": "GRASS",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 74,
-        "attack": 68,
-        "defense": 74,
-        "speed": 54
+        "maxHp": 76,
+        "attack": 70,
+        "defense": 76,
+        "speed": 58
       },
       "learnset": [
         {
@@ -2409,15 +2772,15 @@
         },
         {
           "move": "SOLAR_BEAM",
-          "level": 3
-        },
-        {
-          "move": "SPORE_CLOUD",
           "level": 5
         },
         {
+          "move": "SPORE_CLOUD",
+          "level": 9
+        },
+        {
           "move": "NATURE_GUARD",
-          "level": 7
+          "level": 13
         }
       ],
       "catchRate": 0.1,
@@ -2427,13 +2790,23 @@
       "ability": [
         {
           "abilityId": "OVERGROW",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.7
+        },
+        {
+          "abilityId": "INTIMIDATE",
+          "acquisitionRate": 0.3
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 49,
-      "heldItems": [],
-      "sizeScale": 1
+      "baseExpYield": 52,
+      "heldItems": [
+        {
+          "itemId": "ANTIDOTE",
+          "dropRate": 0.08
+        }
+      ],
+      "sizeScale": 1.15,
+      "recipe": []
     },
     {
       "id": "GHOSTAIL",
@@ -2442,10 +2815,10 @@
       "primaryType": "NORMAL",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 45,
-        "attack": 70,
-        "defense": 40,
-        "speed": 85
+        "maxHp": 46,
+        "attack": 68,
+        "defense": 42,
+        "speed": 84
       },
       "learnset": [
         {
@@ -2458,11 +2831,11 @@
         },
         {
           "move": "SHADOW_CLAW",
-          "level": 5
+          "level": 6
         },
         {
           "move": "SPIRIT_HOWL",
-          "level": 7
+          "level": 9
         }
       ],
       "catchRate": 0.15,
@@ -2472,25 +2845,30 @@
       "ability": [
         {
           "abilityId": "INTIMIDATE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.7
+        },
+        {
+          "abilityId": "SWIFT_SWIM",
+          "acquisitionRate": 0.3
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 48,
+      "spawnRate": 0.5,
+      "baseExpYield": 47,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.95,
+      "recipe": []
     },
     {
       "id": "COSMOWL",
       "name": "コスモウル",
       "emoji": "🦉",
       "primaryType": "NORMAL",
-      "secondaryType": null,
+      "secondaryType": "ICE",
       "baseStats": {
-        "maxHp": 64,
-        "attack": 74,
-        "defense": 58,
-        "speed": 66
+        "maxHp": 68,
+        "attack": 75,
+        "defense": 62,
+        "speed": 70
       },
       "learnset": [
         {
@@ -2499,15 +2877,19 @@
         },
         {
           "move": "COSMIC_RAY",
-          "level": 3
+          "level": 4
         },
         {
           "move": "HYPER_VOICE",
-          "level": 5
+          "level": 7
         },
         {
           "move": "BRIGHT_HEART",
-          "level": 7
+          "level": 10
+        },
+        {
+          "move": "ICE_BEAM",
+          "level": 13
         }
       ],
       "catchRate": 0.1,
@@ -2517,13 +2899,32 @@
       "ability": [
         {
           "abilityId": "STURDY",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.5
+        },
+        {
+          "abilityId": "ICE_BODY",
+          "acquisitionRate": 0.5
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 49,
-      "heldItems": [],
-      "sizeScale": 1
+      "spawnRate": 0.4,
+      "baseExpYield": 52,
+      "heldItems": [
+        {
+          "itemId": "MEGA_ETHER",
+          "dropRate": 0.05
+        }
+      ],
+      "sizeScale": 1.15,
+      "recipe": [
+        [
+          {
+            "monsterId": "MOONMITE"
+          },
+          {
+            "monsterId": "SKYPIP"
+          }
+        ]
+      ]
     },
     {
       "id": "SPIRALHORN",
@@ -2532,10 +2933,10 @@
       "primaryType": "NORMAL",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 78,
-        "attack": 75,
-        "defense": 72,
-        "speed": 35
+        "maxHp": 80,
+        "attack": 76,
+        "defense": 74,
+        "speed": 40
       },
       "learnset": [
         {
@@ -2544,15 +2945,15 @@
         },
         {
           "move": "STONE_BASH",
-          "level": 3
+          "level": 4
         },
         {
           "move": "IRON_HIDE",
-          "level": 5
+          "level": 7
         },
         {
           "move": "COMET_KICK",
-          "level": 7
+          "level": 10
         }
       ],
       "catchRate": 0.12,
@@ -2562,13 +2963,32 @@
       "ability": [
         {
           "abilityId": "INTIMIDATE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "STURDY",
+          "acquisitionRate": 0.4
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 45,
-      "heldItems": [],
-      "sizeScale": 1
+      "spawnRate": 0.4,
+      "baseExpYield": 50,
+      "heldItems": [
+        {
+          "itemId": "IRON_SEED",
+          "dropRate": 0.1
+        }
+      ],
+      "sizeScale": 1.3,
+      "recipe": [
+        [
+          {
+            "monsterId": "MOSSHORN"
+          },
+          {
+            "monsterId": "CRYSTALINE"
+          }
+        ]
+      ]
     },
     {
       "id": "NEONRAY",
@@ -2577,10 +2997,10 @@
       "primaryType": "ELECTRIC",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 48,
-        "attack": 62,
-        "defense": 44,
-        "speed": 70
+        "maxHp": 52,
+        "attack": 63,
+        "defense": 48,
+        "speed": 72
       },
       "learnset": [
         {
@@ -2589,15 +3009,15 @@
         },
         {
           "move": "THUNDERBOLT",
-          "level": 3
+          "level": 4
         },
         {
           "move": "STORM_WING",
-          "level": 5
+          "level": 7
         },
         {
           "move": "QUICK_ATTACK",
-          "level": 7
+          "level": 9
         }
       ],
       "catchRate": 0.22,
@@ -2607,13 +3027,18 @@
       "ability": [
         {
           "abilityId": "MOTOR_DRIVE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "SWIFT_SWIM",
+          "acquisitionRate": 0.4
         }
       ],
-      "spawnRate": 1,
+      "spawnRate": 0.7,
       "baseExpYield": 44,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.85,
+      "recipe": []
     },
     {
       "id": "LIGHTNIX",
@@ -2622,10 +3047,10 @@
       "primaryType": "ELECTRIC",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 46,
-        "attack": 60,
+        "maxHp": 44,
+        "attack": 58,
         "defense": 44,
-        "speed": 72
+        "speed": 70
       },
       "learnset": [
         {
@@ -2638,20 +3063,20 @@
         },
         {
           "move": "STORM_WING",
-          "level": 5
+          "level": 6
         },
         {
           "move": "THUNDER_FANG",
-          "level": 7
+          "level": 9
         }
       ],
-      "catchRate": 0.24,
+      "catchRate": 0.23,
       "description": "雷雲を飛ぶ若鷲。翼に稲妻が走る。",
       "evolution": {
         "evolvesTo": "THUNDAGLE",
         "condition": {
-          "type": "LEVEL",
-          "value": 19
+          "type": "ITEM",
+          "value": "THUNDER_CRYSTAL"
         }
       },
       "sub_emoji": [],
@@ -2661,22 +3086,23 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 44,
+      "spawnRate": 0.8,
+      "baseExpYield": 43,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.9,
+      "recipe": []
     },
     {
       "id": "THUNDAGLE",
       "name": "サンダグル",
       "emoji": "🌩️",
       "primaryType": "ELECTRIC",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
-        "maxHp": 70,
-        "attack": 84,
+        "maxHp": 68,
+        "attack": 82,
         "defense": 60,
-        "speed": 82
+        "speed": 80
       },
       "learnset": [
         {
@@ -2685,15 +3111,15 @@
         },
         {
           "move": "THUNDERBOLT",
-          "level": 3
-        },
-        {
-          "move": "PLASMA_CANNON",
           "level": 5
         },
         {
+          "move": "PLASMA_CANNON",
+          "level": 9
+        },
+        {
           "move": "COMET_KICK",
-          "level": 7
+          "level": 13
         }
       ],
       "catchRate": 0.07,
@@ -2703,13 +3129,23 @@
       "ability": [
         {
           "abilityId": "MOTOR_DRIVE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.5
+        },
+        {
+          "abilityId": "SWIFT_SWIM",
+          "acquisitionRate": 0.5
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 56,
-      "heldItems": [],
-      "sizeScale": 1
+      "baseExpYield": 55,
+      "heldItems": [
+        {
+          "itemId": "X_SPEED",
+          "dropRate": 0.05
+        }
+      ],
+      "sizeScale": 1.25,
+      "recipe": []
     },
     {
       "id": "POLARYX",
@@ -2718,10 +3154,10 @@
       "primaryType": "ICE",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 60,
-        "attack": 50,
-        "defense": 65,
-        "speed": 45
+        "maxHp": 65,
+        "attack": 52,
+        "defense": 68,
+        "speed": 50
       },
       "learnset": [
         {
@@ -2734,15 +3170,15 @@
         },
         {
           "move": "HAIL_SHELL",
-          "level": 5
+          "level": 6
         },
         {
           "move": "FROST_QUAKE",
-          "level": 7
+          "level": 9
         },
         {
           "move": "ICY_WIND",
-          "level": 9
+          "level": 11
         }
       ],
       "catchRate": 0.22,
@@ -2752,24 +3188,29 @@
       "ability": [
         {
           "abilityId": "ICE_BODY",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.7
+        },
+        {
+          "abilityId": "STURDY",
+          "acquisitionRate": 0.3
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 40,
+      "spawnRate": 0.7,
+      "baseExpYield": 44,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.95,
+      "recipe": []
     },
     {
       "id": "GLACIDRAKE",
       "name": "グラシドレイク",
       "emoji": "🏔️",
       "primaryType": "ICE",
-      "secondaryType": null,
+      "secondaryType": "WATER",
       "baseStats": {
-        "maxHp": 75,
-        "attack": 82,
-        "defense": 70,
+        "maxHp": 76,
+        "attack": 80,
+        "defense": 72,
         "speed": 52
       },
       "learnset": [
@@ -2779,15 +3220,19 @@
         },
         {
           "move": "BLIZZARD",
-          "level": 3
-        },
-        {
-          "move": "ICE_BEAM",
           "level": 5
         },
         {
+          "move": "ICE_BEAM",
+          "level": 9
+        },
+        {
           "move": "BODY_SLAM",
-          "level": 7
+          "level": 13
+        },
+        {
+          "move": "AQUA_JET",
+          "level": 16
         }
       ],
       "catchRate": 0.06,
@@ -2797,13 +3242,32 @@
       "ability": [
         {
           "abilityId": "ICE_BODY",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.5
+        },
+        {
+          "abilityId": "TORRENT",
+          "acquisitionRate": 0.5
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 51,
-      "heldItems": [],
-      "sizeScale": 1
+      "spawnRate": 0.2,
+      "baseExpYield": 54,
+      "heldItems": [
+        {
+          "itemId": "GUARD_CHARM",
+          "dropRate": 0.05
+        }
+      ],
+      "sizeScale": 1.35,
+      "recipe": [
+        [
+          {
+            "monsterId": "BLIZZCAT"
+          },
+          {
+            "monsterId": "TUNDRABEAR"
+          }
+        ]
+      ]
     },
     {
       "id": "ETERNIA",
@@ -2824,15 +3288,15 @@
         },
         {
           "move": "COSMIC_RAY",
-          "level": 3
-        },
-        {
-          "move": "HYPER_VOICE",
           "level": 5
         },
         {
+          "move": "HYPER_VOICE",
+          "level": 9
+        },
+        {
           "move": "BRIGHT_HEART",
-          "level": 7
+          "level": 13
         }
       ],
       "catchRate": 0.03,
@@ -2842,13 +3306,23 @@
       "ability": [
         {
           "abilityId": "STURDY",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.5
+        },
+        {
+          "abilityId": "SWIFT_SWIM",
+          "acquisitionRate": 0.5
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 61,
-      "heldItems": [],
-      "sizeScale": 1
+      "spawnRate": 0.1,
+      "baseExpYield": 65,
+      "heldItems": [
+        {
+          "itemId": "MAX_ELIXIR",
+          "dropRate": 0.03
+        }
+      ],
+      "sizeScale": 1.4,
+      "recipe": []
     },
     {
       "id": "CINDLO",
@@ -2857,10 +3331,10 @@
       "primaryType": "FIRE",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 47,
-        "attack": 60,
+        "maxHp": 46,
+        "attack": 58,
         "defense": 44,
-        "speed": 61
+        "speed": 62
       },
       "learnset": [
         {
@@ -2873,14 +3347,14 @@
         },
         {
           "move": "EMBER_SWEEP",
-          "level": 5
+          "level": 6
         },
         {
           "move": "FOCUS",
-          "level": 7
+          "level": 8
         }
       ],
-      "catchRate": 0.27,
+      "catchRate": 0.26,
       "description": "炭火のしっぽを振って火花を散らす森の小獣。",
       "evolution": {
         "evolvesTo": "CINDRAKE",
@@ -2896,20 +3370,21 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 41,
+      "spawnRate": 0.9,
+      "baseExpYield": 42,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.85,
+      "recipe": []
     },
     {
       "id": "CINDRAKE",
       "name": "シンドレイク",
       "emoji": "🐲",
       "primaryType": "FIRE",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
-        "maxHp": 75,
-        "attack": 84,
+        "maxHp": 74,
+        "attack": 82,
         "defense": 62,
         "speed": 72
       },
@@ -2920,15 +3395,15 @@
         },
         {
           "move": "FLAME_BURST",
-          "level": 3
-        },
-        {
-          "move": "PHOENIX_FLARE",
           "level": 5
         },
         {
+          "move": "PHOENIX_FLARE",
+          "level": 10
+        },
+        {
           "move": "IRON_HIDE",
-          "level": 7
+          "level": 14
         }
       ],
       "catchRate": 0.08,
@@ -2938,13 +3413,23 @@
       "ability": [
         {
           "abilityId": "BLAZE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.7
+        },
+        {
+          "abilityId": "INTIMIDATE",
+          "acquisitionRate": 0.3
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 54,
-      "heldItems": [],
-      "sizeScale": 1
+      "baseExpYield": 55,
+      "heldItems": [
+        {
+          "itemId": "POWER_SEED",
+          "dropRate": 0.08
+        }
+      ],
+      "sizeScale": 1.2,
+      "recipe": []
     },
     {
       "id": "RILLY",
@@ -2954,8 +3439,8 @@
       "secondaryType": null,
       "baseStats": {
         "maxHp": 48,
-        "attack": 51,
-        "defense": 59,
+        "attack": 52,
+        "defense": 58,
         "speed": 56
       },
       "learnset": [
@@ -2969,14 +3454,14 @@
         },
         {
           "move": "RIVER_SONG",
-          "level": 5
+          "level": 6
         },
         {
           "move": "DEFENSE_CURL",
-          "level": 7
+          "level": 8
         }
       ],
-      "catchRate": 0.29,
+      "catchRate": 0.28,
       "description": "川辺で石を磨く水の職人。歌うような水流を操る。",
       "evolution": {
         "evolvesTo": "RILLARGO",
@@ -2992,10 +3477,11 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 41,
+      "spawnRate": 0.9,
+      "baseExpYield": 42,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.85,
+      "recipe": []
     },
     {
       "id": "RILLARGO",
@@ -3004,10 +3490,10 @@
       "primaryType": "WATER",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 77,
-        "attack": 68,
+        "maxHp": 78,
+        "attack": 70,
         "defense": 84,
-        "speed": 52
+        "speed": 54
       },
       "learnset": [
         {
@@ -3016,15 +3502,15 @@
         },
         {
           "move": "RIVER_SONG",
-          "level": 3
+          "level": 4
         },
         {
           "move": "TIDAL_WAVE",
-          "level": 5
+          "level": 8
         },
         {
           "move": "HYDRO_PUMP",
-          "level": 7
+          "level": 12
         }
       ],
       "catchRate": 0.09,
@@ -3034,13 +3520,23 @@
       "ability": [
         {
           "abilityId": "TORRENT",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.7
+        },
+        {
+          "abilityId": "STURDY",
+          "acquisitionRate": 0.3
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 51,
-      "heldItems": [],
-      "sizeScale": 1
+      "baseExpYield": 54,
+      "heldItems": [
+        {
+          "itemId": "IRON_SEED",
+          "dropRate": 0.08
+        }
+      ],
+      "sizeScale": 1.15,
+      "recipe": []
     },
     {
       "id": "BRAMBIT",
@@ -3049,10 +3545,10 @@
       "primaryType": "GRASS",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 49,
-        "attack": 58,
-        "defense": 53,
-        "speed": 55
+        "maxHp": 50,
+        "attack": 56,
+        "defense": 52,
+        "speed": 56
       },
       "learnset": [
         {
@@ -3065,14 +3561,14 @@
         },
         {
           "move": "BRAMBLE_EDGE",
-          "level": 5
+          "level": 6
         },
         {
           "move": "GROWL",
-          "level": 7
+          "level": 8
         }
       ],
-      "catchRate": 0.26,
+      "catchRate": 0.25,
       "description": "蔦を編んだ腕で素早く斬り込む若木の戦士。",
       "evolution": null,
       "sub_emoji": [],
@@ -3082,10 +3578,11 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 41,
+      "spawnRate": 0.9,
+      "baseExpYield": 42,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.85,
+      "recipe": []
     },
     {
       "id": "ARCWOLF",
@@ -3094,10 +3591,10 @@
       "primaryType": "ELECTRIC",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 58,
-        "attack": 74,
+        "maxHp": 56,
+        "attack": 72,
         "defense": 52,
-        "speed": 80
+        "speed": 75
       },
       "learnset": [
         {
@@ -3110,11 +3607,11 @@
         },
         {
           "move": "ARC_SPIN",
-          "level": 5
+          "level": 6
         },
         {
           "move": "COMET_KICK",
-          "level": 7
+          "level": 9
         }
       ],
       "catchRate": 0.13,
@@ -3124,13 +3621,23 @@
       "ability": [
         {
           "abilityId": "MOTOR_DRIVE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "INTIMIDATE",
+          "acquisitionRate": 0.4
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 51,
-      "heldItems": [],
-      "sizeScale": 1
+      "spawnRate": 0.5,
+      "baseExpYield": 50,
+      "heldItems": [
+        {
+          "itemId": "X_SPEED",
+          "dropRate": 0.08
+        }
+      ],
+      "sizeScale": 1.05,
+      "recipe": []
     },
     {
       "id": "ICELARK",
@@ -3139,10 +3646,10 @@
       "primaryType": "ICE",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 54,
-        "attack": 50,
-        "defense": 56,
-        "speed": 78
+        "maxHp": 56,
+        "attack": 52,
+        "defense": 58,
+        "speed": 74
       },
       "learnset": [
         {
@@ -3155,15 +3662,15 @@
         },
         {
           "move": "POLAR_PULSE",
-          "level": 5
+          "level": 6
         },
         {
           "move": "AURORA_VEIL",
-          "level": 7
+          "level": 9
         },
         {
           "move": "ICY_WIND",
-          "level": 9
+          "level": 11
         }
       ],
       "catchRate": 0.14,
@@ -3173,13 +3680,18 @@
       "ability": [
         {
           "abilityId": "ICE_BODY",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "SWIFT_SWIM",
+          "acquisitionRate": 0.4
         }
       ],
-      "spawnRate": 1,
+      "spawnRate": 0.6,
       "baseExpYield": 46,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.9,
+      "recipe": []
     },
     {
       "id": "LUMIPUP",
@@ -3188,9 +3700,9 @@
       "primaryType": "FIRE",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 45,
-        "attack": 57,
-        "defense": 43,
+        "maxHp": 44,
+        "attack": 56,
+        "defense": 44,
         "speed": 64
       },
       "learnset": [
@@ -3204,11 +3716,11 @@
         },
         {
           "move": "EMBER_RAIN",
-          "level": 5
+          "level": 6
         },
         {
           "move": "FOCUS",
-          "level": 7
+          "level": 9
         }
       ],
       "catchRate": 0.27,
@@ -3227,21 +3739,22 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 41,
+      "spawnRate": 0.9,
+      "baseExpYield": 42,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.8,
+      "recipe": []
     },
     {
       "id": "SOLMANTIS",
       "name": "ソルマンティス",
       "emoji": "🔥",
       "primaryType": "FIRE",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
         "maxHp": 74,
-        "attack": 83,
-        "defense": 61,
+        "attack": 82,
+        "defense": 62,
         "speed": 72
       },
       "learnset": [
@@ -3251,15 +3764,15 @@
         },
         {
           "move": "EMBER_RAIN",
-          "level": 3
+          "level": 4
         },
         {
           "move": "PHOENIX_FLARE",
-          "level": 5
+          "level": 8
         },
         {
           "move": "IRON_HIDE",
-          "level": 7
+          "level": 12
         }
       ],
       "catchRate": 0.08,
@@ -3275,13 +3788,23 @@
       "ability": [
         {
           "abilityId": "BLAZE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.7
+        },
+        {
+          "abilityId": "SWIFT_SWIM",
+          "acquisitionRate": 0.3
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 54,
-      "heldItems": [],
-      "sizeScale": 1
+      "baseExpYield": 55,
+      "heldItems": [
+        {
+          "itemId": "POWER_SEED",
+          "dropRate": 0.08
+        }
+      ],
+      "sizeScale": 1.15,
+      "recipe": []
     },
     {
       "id": "MISTOTTER",
@@ -3290,10 +3813,10 @@
       "primaryType": "WATER",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 49,
+        "maxHp": 48,
         "attack": 52,
-        "defense": 58,
-        "speed": 57
+        "defense": 56,
+        "speed": 58
       },
       "learnset": [
         {
@@ -3306,14 +3829,14 @@
         },
         {
           "move": "TIDE_LANCE",
-          "level": 5
+          "level": 6
         },
         {
           "move": "DEFENSE_CURL",
-          "level": 7
+          "level": 9
         }
       ],
-      "catchRate": 0.28,
+      "catchRate": 0.27,
       "description": "霧の川辺に巣を作る器用な水の職人。",
       "evolution": {
         "evolvesTo": "ABYSSMART",
@@ -3329,10 +3852,11 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 41,
+      "spawnRate": 0.9,
+      "baseExpYield": 42,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.85,
+      "recipe": []
     },
     {
       "id": "ABYSSMART",
@@ -3342,9 +3866,9 @@
       "secondaryType": null,
       "baseStats": {
         "maxHp": 76,
-        "attack": 69,
-        "defense": 83,
-        "speed": 55
+        "attack": 70,
+        "defense": 82,
+        "speed": 56
       },
       "learnset": [
         {
@@ -3353,15 +3877,15 @@
         },
         {
           "move": "TIDE_LANCE",
-          "level": 3
+          "level": 4
         },
         {
           "move": "TIDAL_WAVE",
-          "level": 5
+          "level": 8
         },
         {
           "move": "RIVER_SONG",
-          "level": 7
+          "level": 12
         }
       ],
       "catchRate": 0.09,
@@ -3377,13 +3901,23 @@
       "ability": [
         {
           "abilityId": "TORRENT",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.7
+        },
+        {
+          "abilityId": "STURDY",
+          "acquisitionRate": 0.3
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 51,
-      "heldItems": [],
-      "sizeScale": 1
+      "baseExpYield": 54,
+      "heldItems": [
+        {
+          "itemId": "GUARD_CHARM",
+          "dropRate": 0.08
+        }
+      ],
+      "sizeScale": 1.2,
+      "recipe": []
     },
     {
       "id": "FERNBIT",
@@ -3392,10 +3926,10 @@
       "primaryType": "GRASS",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 50,
-        "attack": 59,
+        "maxHp": 49,
+        "attack": 56,
         "defense": 52,
-        "speed": 56
+        "speed": 57
       },
       "learnset": [
         {
@@ -3408,11 +3942,11 @@
         },
         {
           "move": "MOSS_BARRIER",
-          "level": 5
+          "level": 6
         },
         {
           "move": "GROWL",
-          "level": 7
+          "level": 9
         }
       ],
       "catchRate": 0.25,
@@ -3437,20 +3971,21 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 41,
+      "spawnRate": 0.9,
+      "baseExpYield": 42,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.85,
+      "recipe": []
     },
     {
       "id": "GROVYRA",
       "name": "グローヴィラ",
       "emoji": "🌲",
       "primaryType": "GRASS",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
         "maxHp": 78,
-        "attack": 79,
+        "attack": 78,
         "defense": 74,
         "speed": 60
       },
@@ -3461,15 +3996,15 @@
         },
         {
           "move": "VERDANT_BLADE",
-          "level": 3
+          "level": 4
         },
         {
           "move": "SOLAR_BEAM",
-          "level": 5
+          "level": 8
         },
         {
           "move": "NATURE_GUARD",
-          "level": 7
+          "level": 12
         }
       ],
       "catchRate": 0.08,
@@ -3485,13 +4020,23 @@
       "ability": [
         {
           "abilityId": "OVERGROW",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "INTIMIDATE",
+          "acquisitionRate": 0.4
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 53,
-      "heldItems": [],
-      "sizeScale": 1
+      "baseExpYield": 55,
+      "heldItems": [
+        {
+          "itemId": "IRON_SEED",
+          "dropRate": 0.08
+        }
+      ],
+      "sizeScale": 1.2,
+      "recipe": []
     },
     {
       "id": "BOLTRON",
@@ -3500,10 +4045,10 @@
       "primaryType": "ELECTRIC",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 46,
-        "attack": 58,
+        "maxHp": 44,
+        "attack": 56,
         "defense": 46,
-        "speed": 71
+        "speed": 69
       },
       "learnset": [
         {
@@ -3516,11 +4061,11 @@
         },
         {
           "move": "CHARGE",
-          "level": 5
+          "level": 6
         },
         {
           "move": "QUICK_ATTACK",
-          "level": 7
+          "level": 8
         }
       ],
       "catchRate": 0.24,
@@ -3545,22 +4090,23 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1,
+      "spawnRate": 0.9,
       "baseExpYield": 43,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.8,
+      "recipe": []
     },
     {
       "id": "TEMPESTEL",
       "name": "テンペステル",
       "emoji": "🌪️",
       "primaryType": "ELECTRIC",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
-        "maxHp": 72,
-        "attack": 86,
-        "defense": 63,
-        "speed": 84
+        "maxHp": 70,
+        "attack": 82,
+        "defense": 62,
+        "speed": 81
       },
       "learnset": [
         {
@@ -3569,15 +4115,15 @@
         },
         {
           "move": "THUNDERBOLT",
-          "level": 3
-        },
-        {
-          "move": "PLASMA_CANNON",
           "level": 5
         },
         {
+          "move": "PLASMA_CANNON",
+          "level": 9
+        },
+        {
           "move": "ARC_SPIN",
-          "level": 7
+          "level": 13
         }
       ],
       "catchRate": 0.07,
@@ -3593,13 +4139,23 @@
       "ability": [
         {
           "abilityId": "MOTOR_DRIVE",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "INTIMIDATE",
+          "acquisitionRate": 0.4
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 58,
-      "heldItems": [],
-      "sizeScale": 1
+      "baseExpYield": 56,
+      "heldItems": [
+        {
+          "itemId": "SPEED_CANDY",
+          "dropRate": 0.05
+        }
+      ],
+      "sizeScale": 1.25,
+      "recipe": []
     },
     {
       "id": "SNOWLING",
@@ -3608,10 +4164,10 @@
       "primaryType": "ICE",
       "secondaryType": null,
       "baseStats": {
-        "maxHp": 48,
-        "attack": 51,
-        "defense": 55,
-        "speed": 58
+        "maxHp": 47,
+        "attack": 50,
+        "defense": 54,
+        "speed": 59
       },
       "learnset": [
         {
@@ -3624,11 +4180,11 @@
         },
         {
           "move": "CRYO_LANCE",
-          "level": 5
+          "level": 6
         },
         {
           "move": "HAIL_SHELL",
-          "level": 7
+          "level": 9
         }
       ],
       "catchRate": 0.23,
@@ -3653,22 +4209,23 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1,
-      "baseExpYield": 41,
+      "spawnRate": 0.9,
+      "baseExpYield": 42,
       "heldItems": [],
-      "sizeScale": 1
+      "sizeScale": 0.8,
+      "recipe": []
     },
     {
       "id": "GLAZELK",
       "name": "グレイズルク",
       "emoji": "🫎",
       "primaryType": "ICE",
-      "secondaryType": null,
+      "secondaryType": "NORMAL",
       "baseStats": {
-        "maxHp": 79,
+        "maxHp": 78,
         "attack": 74,
-        "defense": 80,
-        "speed": 56
+        "defense": 78,
+        "speed": 58
       },
       "learnset": [
         {
@@ -3677,15 +4234,15 @@
         },
         {
           "move": "CRYO_LANCE",
-          "level": 3
-        },
-        {
-          "move": "BLIZZARD",
           "level": 5
         },
         {
+          "move": "BLIZZARD",
+          "level": 9
+        },
+        {
           "move": "AURORA_VEIL",
-          "level": 7
+          "level": 13
         }
       ],
       "catchRate": 0.07,
@@ -3701,13 +4258,23 @@
       "ability": [
         {
           "abilityId": "ICE_BODY",
-          "acquisitionRate": 1
+          "acquisitionRate": 0.6
+        },
+        {
+          "abilityId": "INTIMIDATE",
+          "acquisitionRate": 0.4
         }
       ],
       "spawnRate": 1,
-      "baseExpYield": 52,
-      "heldItems": [],
-      "sizeScale": 1
+      "baseExpYield": 54,
+      "heldItems": [
+        {
+          "itemId": "SUPER_POTION",
+          "dropRate": 0.08
+        }
+      ],
+      "sizeScale": 1.25,
+      "recipe": []
     }
   ],
   "wildPoolIds": [

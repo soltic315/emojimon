@@ -117,7 +117,7 @@
       "battleUsable": false,
       "price": 120,
       "effect": null,
-      "catchBonus": 1.0
+      "catchBonus": 1
     },
     {
       "id": "GREAT_BALL",
@@ -242,7 +242,7 @@
       "battleUsable": false,
       "price": 9999,
       "effect": null,
-      "catchBonus": 100.0
+      "catchBonus": 100
     },
     {
       "id": "SPEED_CANDY",
@@ -289,7 +289,7 @@
       "price": 1200,
       "effect": {
         "type": "revive",
-        "amount": 1.0
+        "amount": 1
       }
     },
     {
@@ -359,6 +359,39 @@
       "price": 900,
       "effect": null,
       "catchBonus": 2.2
+    },
+    {
+      "id": "FIRE_CRYSTAL",
+      "name": "ほのおの結晶",
+      "emoji": "🔴",
+      "description": "ほのおの力を秘めた結晶。特定のモンスターを進化させる。",
+      "battleUsable": false,
+      "price": 1500,
+      "effect": {
+        "type": "evolution"
+      }
+    },
+    {
+      "id": "THUNDER_CRYSTAL",
+      "name": "いかずちの結晶",
+      "emoji": "🟡",
+      "description": "でんきの力を秘めた結晶。特定のモンスターを進化させる。",
+      "battleUsable": false,
+      "price": 1500,
+      "effect": {
+        "type": "evolution"
+      }
+    },
+    {
+      "id": "ICE_CRYSTAL",
+      "name": "こおりの結晶",
+      "emoji": "🔷",
+      "description": "こおりの力を秘めた結晶。特定のモンスターを進化させる。",
+      "battleUsable": false,
+      "price": 1500,
+      "effect": {
+        "type": "evolution"
+      }
     }
   ]
 }
