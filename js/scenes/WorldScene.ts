@@ -142,12 +142,12 @@ export class WorldScene extends Phaser.Scene {
 
     // メニューキー（X / ESC）
     this.keys.X.on("down", () => {
-      if (this.shopActive || this.isMoving || this.isEncounterTransitioning) return;
+      if (this.shopActive || this.isMoving || this.isEncounterTransitioning || this._trainerBattlePending) return;
       if (this._dialogActive || this._starterChoiceActive) return;
       this.openMenu();
     });
     this.keys.ESC.on("down", () => {
-      if (this.shopActive || this.isMoving || this.isEncounterTransitioning) return;
+      if (this.shopActive || this.isMoving || this.isEncounterTransitioning || this._trainerBattlePending) return;
       if (this._dialogActive || this._starterChoiceActive) return;
       this.openMenu();
     });
@@ -465,7 +465,9 @@ export class WorldScene extends Phaser.Scene {
     }
 
     if (targetMapKey === "MISTY_SWAMP") {
-      if (!sf.forestScoutBeaten) return "湿地へ進む前に、森のレンジャー試験を突破しよう。";
+      if (!sf.forestScoutBeaten && !sf.forestCrystalFound) {
+        return "湿地へ進む前に、森のレンジャー試験を突破しよう。";
+      }
     }
 
     if (targetMapKey === "CORAL_REEF") {
@@ -1396,7 +1398,7 @@ export class WorldScene extends Phaser.Scene {
         }
       }
       if (this.touchControls.justPressedCancel()) {
-        if (!this.shopActive && !this.isMoving && !this.isEncounterTransitioning
+        if (!this.shopActive && !this.isMoving && !this.isEncounterTransitioning && !this._trainerBattlePending
           && !this._dialogActive && !this._starterChoiceActive) {
           this.openMenu();
         } else if (this.shopActive) {
@@ -1422,6 +1424,11 @@ export class WorldScene extends Phaser.Scene {
 
     if (this._starterChoiceActive) {
       this._handleStarterChoiceInput();
+      if (this.encounterCooldown > 0) this.encounterCooldown -= delta;
+      return;
+    }
+
+    if (this._trainerBattlePending) {
       if (this.encounterCooldown > 0) this.encounterCooldown -= delta;
       return;
     }
