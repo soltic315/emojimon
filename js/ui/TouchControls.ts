@@ -55,7 +55,9 @@ export class TouchControls {
     const gap = 4;
 
     // D-pad 背景円
-    const dpadBg = this.scene.add.circle(dpadX, dpadY, 68, 0x000000, 0.25);
+    const dpadBg = this.scene.rexUI?.add?.roundRectangle
+      ? this.scene.rexUI.add.roundRectangle(dpadX, dpadY, 136, 136, 68, 0x000000, 0.25)
+      : this.scene.add.circle(dpadX, dpadY, 68, 0x000000, 0.25);
     this.container.add(dpadBg);
 
     // 上ボタン
@@ -119,15 +121,26 @@ export class TouchControls {
   }
 
   _createDpadButton(x, y, size, label, direction) {
-    const btn = this.scene.add.rectangle(x, y, size, size, 0x1f2937, 0.7)
-      .setInteractive()
-      .setOrigin(0.5);
+    const btn = this.scene.rexUI?.add?.roundRectangle
+      ? this.scene.rexUI.add.roundRectangle(x, y, size, size, 8, 0x1f2937, 0.7)
+      : this.scene.add.rectangle(x, y, size, size, 0x1f2937, 0.7);
+    btn.setInteractive().setOrigin(0.5);
     btn.setStrokeStyle(1.5, 0x374151, 0.8);
 
-    const text = this.scene.add.text(x, y, label, {
-      fontSize: 16,
-      color: "#9ca3af",
-    }).setOrigin(0.5);
+    const text = this.scene.rexUI?.add?.label
+      ? this.scene.rexUI.add.label({
+        x,
+        y,
+        text: this.scene.add.text(0, 0, label, {
+          fontSize: 16,
+          color: "#9ca3af",
+        }).setOrigin(0.5),
+        align: "center",
+      }).layout()
+      : this.scene.add.text(x, y, label, {
+        fontSize: 16,
+        color: "#9ca3af",
+      }).setOrigin(0.5);
 
     btn.on("pointerdown", (pointer) => {
       this._setVirtualInputByPointer(direction, pointer.id, true);
@@ -155,17 +168,30 @@ export class TouchControls {
   }
 
   _createActionButton(x, y, radius, label, action, color) {
-    const btn = this.scene.add.circle(x, y, radius, color, 0.7)
-      .setInteractive()
-      .setOrigin(0.5);
+    const btn = this.scene.rexUI?.add?.roundRectangle
+      ? this.scene.rexUI.add.roundRectangle(x, y, radius * 2, radius * 2, radius, color, 0.7)
+      : this.scene.add.circle(x, y, radius, color, 0.7);
+    btn.setInteractive().setOrigin(0.5);
     btn.setStrokeStyle(2, 0xffffff, 0.3);
 
-    const text = this.scene.add.text(x, y, label, {
-      fontSize: 18,
-      fontFamily: "'M PLUS Rounded 1c', 'Segoe UI', system-ui, sans-serif",
-      color: "#ffffff",
-      fontStyle: "bold",
-    }).setOrigin(0.5);
+    const text = this.scene.rexUI?.add?.label
+      ? this.scene.rexUI.add.label({
+        x,
+        y,
+        text: this.scene.add.text(0, 0, label, {
+          fontSize: 18,
+          fontFamily: "'M PLUS Rounded 1c', 'Segoe UI', system-ui, sans-serif",
+          color: "#ffffff",
+          fontStyle: "bold",
+        }).setOrigin(0.5),
+        align: "center",
+      }).layout()
+      : this.scene.add.text(x, y, label, {
+        fontSize: 18,
+        fontFamily: "'M PLUS Rounded 1c', 'Segoe UI', system-ui, sans-serif",
+        color: "#ffffff",
+        fontStyle: "bold",
+      }).setOrigin(0.5);
 
     btn.on("pointerdown", (pointer) => {
       this._setVirtualInputByPointer(action, pointer.id, true);

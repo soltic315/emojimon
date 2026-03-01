@@ -881,46 +881,84 @@ export class WorldScene extends Phaser.Scene {
     const { width, height } = this.scale;
 
     // ── 一時メッセージ（通常時は非表示） ──
-    const bottomBg = this.add.graphics();
-    drawPanel(bottomBg, 8, height - 66, width - 16, 58, {
-      radius: 12,
-      headerHeight: 20,
-      bgAlpha: 0.95,
-      glow: true,
-    });
+    const bottomBg = this.rexUI?.add?.roundRectangle
+      ? this.rexUI.add.roundRectangle(8, height - 66, width - 16, 58, 12, COLORS.PANEL_BG, 0.95)
+        .setOrigin(0, 0)
+        .setStrokeStyle(2, COLORS.PANEL_BORDER, 0.85)
+      : this.add.graphics();
+    if (bottomBg instanceof Phaser.GameObjects.Graphics) {
+      drawPanel(bottomBg, 8, height - 66, width - 16, 58, {
+        radius: 12,
+        headerHeight: 20,
+        bgAlpha: 0.95,
+        glow: true,
+      });
+    }
     bottomBg.setVisible(false);
     this.uiContainer.add(bottomBg);
     this.messageBg = bottomBg;
 
-    this.infoText = this.add.text(20, height - 54, "", {
-      fontFamily: FONT.UI,
-      fontSize: 14,
-      color: "#f1f5f9",
-      wordWrap: { width: width - 36 },
-      lineSpacing: 2,
-    });
+    this.infoText = this.rexUI?.add?.label
+      ? this.rexUI.add.label({
+        x: 20,
+        y: height - 54,
+        text: this.add.text(0, 0, "", {
+          fontFamily: FONT.UI,
+          fontSize: 14,
+          color: "#f1f5f9",
+          wordWrap: { width: width - 36 },
+          lineSpacing: 2,
+        }).setOrigin(0, 0),
+        align: "left",
+      }).layout()
+      : this.add.text(20, height - 54, "", {
+        fontFamily: FONT.UI,
+        fontSize: 14,
+        color: "#f1f5f9",
+        wordWrap: { width: width - 36 },
+        lineSpacing: 2,
+      });
     this.infoText.setVisible(false);
     this.uiContainer.add(this.infoText);
 
-    const nameBg = this.add.graphics();
-    drawPanel(nameBg, 12, height - 104, 160, 34, {
-      radius: 10,
-      headerHeight: 0,
-      bgAlpha: 0.96,
-      glow: true,
-      borderColor: COLORS.BLUE_LIGHT,
-    });
+    const nameBg = this.rexUI?.add?.roundRectangle
+      ? this.rexUI.add.roundRectangle(12, height - 104, 160, 34, 10, COLORS.PANEL_BG, 0.96)
+        .setOrigin(0, 0)
+        .setStrokeStyle(2, COLORS.BLUE_LIGHT, 0.85)
+      : this.add.graphics();
+    if (nameBg instanceof Phaser.GameObjects.Graphics) {
+      drawPanel(nameBg, 12, height - 104, 160, 34, {
+        radius: 10,
+        headerHeight: 0,
+        bgAlpha: 0.96,
+        glow: true,
+        borderColor: COLORS.BLUE_LIGHT,
+      });
+    }
     nameBg.setVisible(false);
     this.uiContainer.add(nameBg);
     this.speakerNameBg = nameBg;
 
-    this.speakerNameText = this.add.text(92, height - 87, "", {
-      fontFamily: FONT.UI,
-      fontSize: 14,
-      color: TEXT_COLORS.INFO,
-      fontStyle: "700",
-      align: "center",
-    }).setOrigin(0.5);
+    this.speakerNameText = this.rexUI?.add?.label
+      ? this.rexUI.add.label({
+        x: 92,
+        y: height - 87,
+        text: this.add.text(0, 0, "", {
+          fontFamily: FONT.UI,
+          fontSize: 14,
+          color: TEXT_COLORS.INFO,
+          fontStyle: "700",
+          align: "center",
+        }).setOrigin(0.5),
+        align: "center",
+      }).layout()
+      : this.add.text(92, height - 87, "", {
+        fontFamily: FONT.UI,
+        fontSize: 14,
+        color: TEXT_COLORS.INFO,
+        fontStyle: "700",
+        align: "center",
+      }).setOrigin(0.5);
     this.speakerNameText.setVisible(false);
     this.uiContainer.add(this.speakerNameText);
 
@@ -928,22 +966,40 @@ export class WorldScene extends Phaser.Scene {
     const weatherPanelX = width - weatherPanelWidth - 12;
     const weatherPanelY = 10;
 
-    this.timeWeatherPanel = this.add.graphics();
-    drawPanel(this.timeWeatherPanel, weatherPanelX, weatherPanelY, weatherPanelWidth, 34, {
-      radius: 10,
-      headerHeight: 0,
-      bgAlpha: 0.92,
-      glow: true,
-      borderColor: COLORS.BLUE_LIGHT,
-    });
+    this.timeWeatherPanel = this.rexUI?.add?.roundRectangle
+      ? this.rexUI.add.roundRectangle(weatherPanelX, weatherPanelY, weatherPanelWidth, 34, 10, COLORS.PANEL_BG, 0.92)
+        .setOrigin(0, 0)
+        .setStrokeStyle(2, COLORS.BLUE_LIGHT, 0.85)
+      : this.add.graphics();
+    if (this.timeWeatherPanel instanceof Phaser.GameObjects.Graphics) {
+      drawPanel(this.timeWeatherPanel, weatherPanelX, weatherPanelY, weatherPanelWidth, 34, {
+        radius: 10,
+        headerHeight: 0,
+        bgAlpha: 0.92,
+        glow: true,
+        borderColor: COLORS.BLUE_LIGHT,
+      });
+    }
     this.uiContainer.add(this.timeWeatherPanel);
 
-    this.timeWeatherText = this.add.text(weatherPanelX + 12, weatherPanelY + 10, "", {
-      fontFamily: FONT.UI,
-      fontSize: 12,
-      color: "#e2e8f0",
-      fontStyle: "700",
-    });
+    this.timeWeatherText = this.rexUI?.add?.label
+      ? this.rexUI.add.label({
+        x: weatherPanelX + 12,
+        y: weatherPanelY + 10,
+        text: this.add.text(0, 0, "", {
+          fontFamily: FONT.UI,
+          fontSize: 12,
+          color: "#e2e8f0",
+          fontStyle: "700",
+        }).setOrigin(0, 0),
+        align: "left",
+      }).layout()
+      : this.add.text(weatherPanelX + 12, weatherPanelY + 10, "", {
+        fontFamily: FONT.UI,
+        fontSize: 12,
+        color: "#e2e8f0",
+        fontStyle: "700",
+      });
     this.uiContainer.add(this.timeWeatherText);
 
     this.updateDefaultInfoMessage();

@@ -273,20 +273,44 @@ export class BattleScene extends Phaser.Scene {
     panelBg.lineStyle(1, 0x334155, 0.45);
     panelBg.lineBetween(width * 0.56, panelY + 30, width * 0.56, panelY + panelHeight - 14);
 
-    this.messageText = this.add.text(20, panelY + 14, "", {
-      fontFamily: FONT.UI,
-      fontSize: 15,
-      color: "#e5e7eb",
-      wordWrap: { width: width * 0.5 },
-      lineSpacing: 4,
-    });
+    this.messageText = this.rexUI?.add?.label
+      ? this.rexUI.add.label({
+        x: 20,
+        y: panelY + 14,
+        text: this.add.text(0, 0, "", {
+          fontFamily: FONT.UI,
+          fontSize: 15,
+          color: "#e5e7eb",
+          wordWrap: { width: width * 0.5 },
+          lineSpacing: 4,
+        }).setOrigin(0, 0),
+        align: "left",
+      }).layout()
+      : this.add.text(20, panelY + 14, "", {
+        fontFamily: FONT.UI,
+        fontSize: 15,
+        color: "#e5e7eb",
+        wordWrap: { width: width * 0.5 },
+        lineSpacing: 4,
+      });
 
     // ▼ 次へインジケーター
-    this.nextIndicator = this.add.text(width - 30, panelY + panelHeight - 20, "▼", {
-      fontFamily: FONT.UI,
-      fontSize: 14,
-      color: "#94a3b8",
-    });
+    this.nextIndicator = this.rexUI?.add?.label
+      ? this.rexUI.add.label({
+        x: width - 30,
+        y: panelY + panelHeight - 20,
+        text: this.add.text(0, 0, "▼", {
+          fontFamily: FONT.UI,
+          fontSize: 14,
+          color: "#94a3b8",
+        }).setOrigin(0.5),
+        align: "center",
+      }).layout()
+      : this.add.text(width - 30, panelY + panelHeight - 20, "▼", {
+        fontFamily: FONT.UI,
+        fontSize: 14,
+        color: "#94a3b8",
+      });
     this.tweens.add({
       targets: this.nextIndicator,
       alpha: 0.3,
@@ -704,11 +728,24 @@ export class BattleScene extends Phaser.Scene {
     });
 
     // タイプバッジ
-    this.playerTypeBadge = this.add.text(pPanelX + 238, pPanelY + 7, "", {
-      fontFamily: FONT.UI,
-      fontSize: 9,
-      padding: { x: 4, y: 1 },
-    }).setOrigin(1, 0);
+    this.playerTypeBadge = this.rexUI?.add?.label
+      ? this.rexUI.add.label({
+        x: pPanelX + 238,
+        y: pPanelY + 8,
+        background: this.rexUI.add.roundRectangle(0, 0, 46, 14, 7, 0x374151, 0.9),
+        text: this.add.text(0, 0, "", {
+          fontFamily: FONT.UI,
+          fontSize: 9,
+          color: "#d1d5db",
+        }).setOrigin(0.5),
+        align: "center",
+        space: { left: 6, right: 6, top: 2, bottom: 2 },
+      }).setOrigin(1, 0).layout()
+      : this.add.text(pPanelX + 238, pPanelY + 7, "", {
+        fontFamily: FONT.UI,
+        fontSize: 9,
+        padding: { x: 4, y: 1 },
+      }).setOrigin(1, 0);
 
     // HP ラベル
     this.add.text(pPanelX + 10, pPanelY + 28, "HP", {
@@ -716,8 +753,12 @@ export class BattleScene extends Phaser.Scene {
       fontSize: 11,
       color: "#94a3b8",
     });
-    this.playerHpBarBg = this.add.rectangle(pPanelX + 36, pPanelY + 34, 140, 10, 0x111827).setOrigin(0, 0.5);
-    this.playerHpBar = this.add.rectangle(pPanelX + 36, pPanelY + 34, 140, 10, 0x22c55e).setOrigin(0, 0.5);
+    this.playerHpBarBg = this.rexUI?.add?.roundRectangle
+      ? this.rexUI.add.roundRectangle(pPanelX + 36, pPanelY + 34, 140, 10, 5, 0x111827, 1).setOrigin(0, 0.5)
+      : this.add.rectangle(pPanelX + 36, pPanelY + 34, 140, 10, 0x111827).setOrigin(0, 0.5);
+    this.playerHpBar = this.rexUI?.add?.roundRectangle
+      ? this.rexUI.add.roundRectangle(pPanelX + 36, pPanelY + 34, 140, 10, 5, 0x22c55e, 1).setOrigin(0, 0.5)
+      : this.add.rectangle(pPanelX + 36, pPanelY + 34, 140, 10, 0x22c55e).setOrigin(0, 0.5);
     this.playerHpText = this.add.text(pPanelX + 180, pPanelY + 28, "", {
       fontFamily: FONT.UI,
       fontSize: 11,
@@ -730,8 +771,12 @@ export class BattleScene extends Phaser.Scene {
       fontSize: 10,
       color: "#94a3b8",
     });
-    this.playerExpBarBg = this.add.rectangle(pPanelX + 40, pPanelY + 54, 136, 6, 0x111827).setOrigin(0, 0.5);
-    this.playerExpBar = this.add.rectangle(pPanelX + 40, pPanelY + 54, 0, 6, 0x3b82f6).setOrigin(0, 0.5);
+    this.playerExpBarBg = this.rexUI?.add?.roundRectangle
+      ? this.rexUI.add.roundRectangle(pPanelX + 40, pPanelY + 54, 136, 6, 3, 0x111827, 1).setOrigin(0, 0.5)
+      : this.add.rectangle(pPanelX + 40, pPanelY + 54, 136, 6, 0x111827).setOrigin(0, 0.5);
+    this.playerExpBar = this.rexUI?.add?.roundRectangle
+      ? this.rexUI.add.roundRectangle(pPanelX + 40, pPanelY + 54, 0, 6, 3, 0x3b82f6, 1).setOrigin(0, 0.5)
+      : this.add.rectangle(pPanelX + 40, pPanelY + 54, 0, 6, 0x3b82f6).setOrigin(0, 0.5);
     this.playerExpText = this.add.text(pPanelX + 180, pPanelY + 48, "", {
       fontFamily: FONT.UI,
       fontSize: 10,
@@ -764,19 +809,36 @@ export class BattleScene extends Phaser.Scene {
     });
 
     // 相手タイプバッジ
-    this.opponentTypeBadge = this.add.text(oPanelX + 238, oPanelY + 7, "", {
-      fontFamily: FONT.UI,
-      fontSize: 9,
-      padding: { x: 4, y: 1 },
-    }).setOrigin(1, 0);
+    this.opponentTypeBadge = this.rexUI?.add?.label
+      ? this.rexUI.add.label({
+        x: oPanelX + 238,
+        y: oPanelY + 8,
+        background: this.rexUI.add.roundRectangle(0, 0, 46, 14, 7, 0x374151, 0.9),
+        text: this.add.text(0, 0, "", {
+          fontFamily: FONT.UI,
+          fontSize: 9,
+          color: "#d1d5db",
+        }).setOrigin(0.5),
+        align: "center",
+        space: { left: 6, right: 6, top: 2, bottom: 2 },
+      }).setOrigin(1, 0).layout()
+      : this.add.text(oPanelX + 238, oPanelY + 7, "", {
+        fontFamily: FONT.UI,
+        fontSize: 9,
+        padding: { x: 4, y: 1 },
+      }).setOrigin(1, 0);
 
     this.add.text(oPanelX + 10, oPanelY + 28, "HP", {
       fontFamily: FONT.UI,
       fontSize: 11,
       color: "#94a3b8",
     });
-    this.opponentHpBarBg = this.add.rectangle(oPanelX + 36, oPanelY + 34, 140, 10, 0x111827).setOrigin(0, 0.5);
-    this.opponentHpBar = this.add.rectangle(oPanelX + 36, oPanelY + 34, 140, 10, 0x22c55e).setOrigin(0, 0.5);
+    this.opponentHpBarBg = this.rexUI?.add?.roundRectangle
+      ? this.rexUI.add.roundRectangle(oPanelX + 36, oPanelY + 34, 140, 10, 5, 0x111827, 1).setOrigin(0, 0.5)
+      : this.add.rectangle(oPanelX + 36, oPanelY + 34, 140, 10, 0x111827).setOrigin(0, 0.5);
+    this.opponentHpBar = this.rexUI?.add?.roundRectangle
+      ? this.rexUI.add.roundRectangle(oPanelX + 36, oPanelY + 34, 140, 10, 5, 0x22c55e, 1).setOrigin(0, 0.5)
+      : this.add.rectangle(oPanelX + 36, oPanelY + 34, 140, 10, 0x22c55e).setOrigin(0, 0.5);
     this.opponentHpText = this.add.text(oPanelX + 180, oPanelY + 28, "", {
       fontFamily: FONT.UI,
       fontSize: 11,
@@ -2527,8 +2589,13 @@ export class BattleScene extends Phaser.Scene {
     const pType = player.species.primaryType || "NORMAL";
     const pBadge = typeBadgeColors[pType] || typeBadgeColors.NORMAL;
     this.playerTypeBadge.setText(pType);
-    this.playerTypeBadge.setColor(pBadge.text);
-    this.playerTypeBadge.setBackgroundColor(pBadge.bg);
+    if (this.playerTypeBadge.getElement) {
+      this.playerTypeBadge.getElement("text")?.setColor(pBadge.text);
+      this.playerTypeBadge.getElement("background")?.setFillStyle(Phaser.Display.Color.HexStringToColor(pBadge.bg).color, 0.9);
+    } else {
+      this.playerTypeBadge.setColor(pBadge.text);
+      this.playerTypeBadge.setBackgroundColor(pBadge.bg);
+    }
 
     const pRatio = Math.max(0, player.currentHp / (playerStats.maxHp || 1));
     const pTargetWidth = 140 * pRatio;
@@ -2537,16 +2604,16 @@ export class BattleScene extends Phaser.Scene {
     if (animate) {
       gsap.killTweensOf(this.playerHpBar);
       gsap.to(this.playerHpBar, {
-        width: pTargetWidth,
+        displayWidth: pTargetWidth,
         duration: 0.5,
         ease: "power2.out",
         onUpdate: () => {
-          this.playerHpBar.fillColor = pColor;
+          this.playerHpBar.setFillStyle(pColor, 1);
         },
       });
     } else {
-      this.playerHpBar.width = pTargetWidth;
-      this.playerHpBar.fillColor = pColor;
+      this.playerHpBar.displayWidth = pTargetWidth;
+      this.playerHpBar.setFillStyle(pColor, 1);
     }
 
     // EXP バー
@@ -2556,12 +2623,12 @@ export class BattleScene extends Phaser.Scene {
     if (animate) {
       gsap.killTweensOf(this.playerExpBar);
       gsap.to(this.playerExpBar, {
-        width: expTargetWidth,
+        displayWidth: expTargetWidth,
         duration: 0.4,
         ease: "power2.out",
       });
     } else {
-      this.playerExpBar.width = expTargetWidth;
+      this.playerExpBar.displayWidth = expTargetWidth;
     }
 
     // ステージ表示
@@ -2586,8 +2653,13 @@ export class BattleScene extends Phaser.Scene {
     const oType = opponent.species.primaryType || "NORMAL";
     const oBadge = typeBadgeColors[oType] || typeBadgeColors.NORMAL;
     this.opponentTypeBadge.setText(oType);
-    this.opponentTypeBadge.setColor(oBadge.text);
-    this.opponentTypeBadge.setBackgroundColor(oBadge.bg);
+    if (this.opponentTypeBadge.getElement) {
+      this.opponentTypeBadge.getElement("text")?.setColor(oBadge.text);
+      this.opponentTypeBadge.getElement("background")?.setFillStyle(Phaser.Display.Color.HexStringToColor(oBadge.bg).color, 0.9);
+    } else {
+      this.opponentTypeBadge.setColor(oBadge.text);
+      this.opponentTypeBadge.setBackgroundColor(oBadge.bg);
+    }
 
     const oRatio = Math.max(0, opponent.currentHp / (oppStats.maxHp || 1));
     const oTargetWidth = 140 * oRatio;
@@ -2596,16 +2668,16 @@ export class BattleScene extends Phaser.Scene {
     if (animate) {
       gsap.killTweensOf(this.opponentHpBar);
       gsap.to(this.opponentHpBar, {
-        width: oTargetWidth,
+        displayWidth: oTargetWidth,
         duration: 0.5,
         ease: "power2.out",
         onUpdate: () => {
-          this.opponentHpBar.fillColor = oColor;
+          this.opponentHpBar.setFillStyle(oColor, 1);
         },
       });
     } else {
-      this.opponentHpBar.width = oTargetWidth;
-      this.opponentHpBar.fillColor = oColor;
+      this.opponentHpBar.displayWidth = oTargetWidth;
+      this.opponentHpBar.setFillStyle(oColor, 1);
     }
 
     // ── 状態異常バッジ表示 ──
@@ -2634,16 +2706,32 @@ export class BattleScene extends Phaser.Scene {
     const badgeY = emojiText.y + 38;
 
     // 背景付きバッジ
-    this[keyBg] = this.add.rectangle(badgeX, badgeY, 58, 16, 0x0f172a, 0.85)
-      .setOrigin(0.5)
-      .setStrokeStyle(1, Phaser.Display.Color.HexStringToColor(color).color, 0.7)
-      .setDepth(10);
+    this[keyBg] = this.rexUI?.add?.roundRectangle
+      ? this.rexUI.add.roundRectangle(badgeX, badgeY, 58, 16, 8, 0x0f172a, 0.85)
+        .setOrigin(0.5)
+        .setStrokeStyle(1, Phaser.Display.Color.HexStringToColor(color).color, 0.7)
+        .setDepth(10)
+      : this.add.rectangle(badgeX, badgeY, 58, 16, 0x0f172a, 0.85)
+        .setOrigin(0.5)
+        .setStrokeStyle(1, Phaser.Display.Color.HexStringToColor(color).color, 0.7)
+        .setDepth(10);
 
-    this[key] = this.add.text(badgeX, badgeY, `${emoji}${label}`, {
-      fontFamily: FONT.UI,
-      fontSize: 10,
-      color: color,
-    }).setOrigin(0.5).setDepth(11);
+    this[key] = this.rexUI?.add?.label
+      ? this.rexUI.add.label({
+        x: badgeX,
+        y: badgeY,
+        text: this.add.text(0, 0, `${emoji}${label}`, {
+          fontFamily: FONT.UI,
+          fontSize: 10,
+          color,
+        }).setOrigin(0.5),
+        align: "center",
+      }).setDepth(11).layout()
+      : this.add.text(badgeX, badgeY, `${emoji}${label}`, {
+        fontFamily: FONT.UI,
+        fontSize: 10,
+        color,
+      }).setOrigin(0.5).setDepth(11);
 
     // パルスアニメーション
     this.tweens.add({
@@ -2686,12 +2774,18 @@ export class BattleScene extends Phaser.Scene {
     // プログレスバー背景
     const barWidth = 160;
     const barHeight = 8;
-    this.emoSkipBarBg = this.add.rectangle(cx, indicatorY, barWidth, barHeight, 0x1e293b, 0.8)
-      .setOrigin(0.5).setStrokeStyle(1, 0x475569, 0.6).setDepth(100);
+    this.emoSkipBarBg = this.rexUI?.add?.roundRectangle
+      ? this.rexUI.add.roundRectangle(cx, indicatorY, barWidth, barHeight, 4, 0x1e293b, 0.8)
+        .setOrigin(0.5).setStrokeStyle(1, 0x475569, 0.6).setDepth(100)
+      : this.add.rectangle(cx, indicatorY, barWidth, barHeight, 0x1e293b, 0.8)
+        .setOrigin(0.5).setStrokeStyle(1, 0x475569, 0.6).setDepth(100);
 
     // プログレスバー本体（左端から伸びる）
-    this.emoSkipBar = this.add.rectangle(cx - barWidth / 2, indicatorY, 0, barHeight, 0xfbbf24, 0.95)
-      .setOrigin(0, 0.5).setDepth(101);
+    this.emoSkipBar = this.rexUI?.add?.roundRectangle
+      ? this.rexUI.add.roundRectangle(cx - barWidth / 2, indicatorY, 0, barHeight, 4, 0xfbbf24, 0.95)
+        .setOrigin(0, 0.5).setDepth(101)
+      : this.add.rectangle(cx - barWidth / 2, indicatorY, 0, barHeight, 0xfbbf24, 0.95)
+        .setOrigin(0, 0.5).setDepth(101);
 
     this.emoSkipBarWidth = barWidth;
   }
@@ -2700,7 +2794,7 @@ export class BattleScene extends Phaser.Scene {
   _updateEmoSkipProgress(ratio) {
     const r = Phaser.Math.Clamp(ratio, 0, 1);
     if (this.emoSkipBar) {
-      this.emoSkipBar.width = this.emoSkipBarWidth * r;
+      this.emoSkipBar.displayWidth = this.emoSkipBarWidth * r;
       // 進捗に応じてバーの色を変化（黄→白）
       const g = Math.floor(191 + (255 - 191) * r);
       const b = Math.floor(36 + (255 - 36) * r);

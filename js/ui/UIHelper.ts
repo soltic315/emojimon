@@ -290,25 +290,38 @@ export function createTypeBadge(scene, x, y, type, opts = {}) {
   };
   const label = typeLabels[type] || type;
 
-  const container = scene.add.container(x, y);
-
-  const bg = scene.add.graphics();
   const badgeW = 56 * scale;
   const badgeH = 18 * scale;
+  if (scene.rexUI?.add?.label) {
+    return scene.rexUI.add.label({
+      x,
+      y,
+      background: scene.rexUI.add.roundRectangle(0, 0, badgeW, badgeH, badgeH / 2, typeColor, 0.25)
+        .setStrokeStyle(1, typeColor, 0.7),
+      text: scene.add.text(0, 0, label, {
+        fontFamily: FONT.UI,
+        fontSize: 10 * scale,
+        color: typeTextColor,
+        fontStyle: "bold",
+      }).setOrigin(0.5),
+      align: "center",
+      space: { left: 6 * scale, right: 6 * scale, top: 2 * scale, bottom: 2 * scale },
+    }).layout();
+  }
+
+  const container = scene.add.container(x, y);
+  const bg = scene.add.graphics();
   bg.fillStyle(typeColor, 0.25);
   bg.fillRoundedRect(-badgeW / 2, -badgeH / 2, badgeW, badgeH, badgeH / 2);
   bg.lineStyle(1, typeColor, 0.7);
   bg.strokeRoundedRect(-badgeW / 2, -badgeH / 2, badgeW, badgeH, badgeH / 2);
   container.add(bg);
-
-  const text = scene.add.text(0, 0, label, {
+  container.add(scene.add.text(0, 0, label, {
     fontFamily: FONT.UI,
     fontSize: 10 * scale,
     color: typeTextColor,
     fontStyle: "bold",
-  }).setOrigin(0.5);
-  container.add(text);
-
+  }).setOrigin(0.5));
   return container;
 }
 
@@ -328,7 +341,17 @@ export function createText(scene, x, y, content, style = {}) {
     fontSize: 14,
     color: TEXT_COLORS.PRIMARY,
   };
-  return scene.add.text(x, y, content, { ...defaultStyle, ...style });
+  const mergedStyle = { ...defaultStyle, ...style };
+  if (scene.rexUI?.add?.label) {
+    return scene.rexUI.add.label({
+      x,
+      y,
+      text: scene.add.text(0, 0, content, mergedStyle).setOrigin(0, 0),
+      align: "left",
+      space: { left: 0, right: 0, top: 0, bottom: 0 },
+    }).layout();
+  }
+  return scene.add.text(x, y, content, mergedStyle);
 }
 
 /**
