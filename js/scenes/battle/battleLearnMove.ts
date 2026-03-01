@@ -1,5 +1,5 @@
 // バトル技習得UI
-import { getMonsterMoves } from "../../data/monsters.ts";
+import { getMonsterMoves, MAX_MOVE_SLOTS } from "../../data/monsters.ts";
 import { MOVES } from "../../data/moves.ts";
 import { audioManager } from "../../audio/AudioManager.ts";
 import {
@@ -9,7 +9,7 @@ import {
   drawPanel,
   drawSelection,
 } from "../../ui/UIHelper.ts";
-import { BattleState, MAX_MOVE_SLOTS } from "./battleConstants.ts";
+import { BattleState } from "./battleConstants.ts";
 
 /** 技習得選択の開始 */
 export function startLearnMoveSelection(scene, monster, learnedMoves) {

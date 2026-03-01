@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## [1.9.8] - 2026-03-02
+
+### Note
+- `vite build` 失敗の原因だった `MAX_MOVE_SLOTS` import 不整合を修正。
+
+### Added
+- なし
+
+### Changed
+- `js/scenes/battle/battleLearnMove.ts` の `MAX_MOVE_SLOTS` 参照先を `js/data/monsters.ts` に変更。
+- `js/scenes/battle/battleResultRewards.ts` の `MAX_MOVE_SLOTS` 参照先を `js/data/monsters.ts` に変更。
+- `package.json` のバージョンを `1.9.7` から `1.9.8` に更新。
+
+### Fixed
+- `js/scenes/battle/battleConstants.ts` から未 export の `MAX_MOVE_SLOTS` を import していたことによる本番ビルド失敗を解消。
+
+### Prompt
+- User: `vite build` で `MAX_MOVE_SLOTS is not exported by battleConstants.ts` エラーが発生
+- Assistant（対応方針）: 参照元を調査し、`MAX_MOVE_SLOTS` の import を定義元 (`js/data/monsters.ts`) に統一して最小差分で修正。検証後にバージョンと `CHANGELOG.md` を更新。
+
 ## [1.9.7] - 2026-03-02
 
 ### Note
