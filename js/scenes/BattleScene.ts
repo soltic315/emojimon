@@ -253,6 +253,9 @@ export class BattleScene extends Phaser.Scene {
         nextAlive.species.emoji || "❓",
         nextAlive.species.subEmoji,
       );
+      this.playerEmojiText.setScale(Number.isFinite(nextAlive?.species?.sizeScale)
+        ? Math.max(0.4, nextAlive.species.sizeScale)
+        : 1);
       this.updateHud(false);
     }
     return true;
@@ -431,6 +434,10 @@ export class BattleScene extends Phaser.Scene {
         subEmojis: player.species.subEmoji,
       }
     );
+    const playerSizeScale = Number.isFinite(player?.species?.sizeScale)
+      ? Math.max(0.4, player.species.sizeScale)
+      : 1;
+    this.playerEmojiText.setScale(playerSizeScale);
 
     // 相手絵文字
     this.opponentAura = this.add.circle(this.opponentGround.x, this.opponentGround.y - 46, 38, 0xf8fafc, 0.08)
@@ -447,6 +454,10 @@ export class BattleScene extends Phaser.Scene {
         subEmojis: opponent.species.subEmoji,
       }
     );
+    const opponentSizeScale = Number.isFinite(opponent?.species?.sizeScale)
+      ? Math.max(0.4, opponent.species.sizeScale)
+      : 1;
+    this.opponentEmojiText.setScale(opponentSizeScale);
 
     // ── 入場アニメーション ──
     // プレイヤー: 左からスライドイン
@@ -465,12 +476,12 @@ export class BattleScene extends Phaser.Scene {
     const opponentFinalX = this.opponentEmojiText.x;
     this.opponentEmojiText.x = width + 60;
     this.opponentEmojiText.setAlpha(0);
-    this.opponentEmojiText.setScale(0.3);
+    this.opponentEmojiText.setScale(opponentSizeScale * 0.3);
     gsap.to(this.opponentEmojiText, {
       x: opponentFinalX,
       alpha: 1,
-      scaleX: 1,
-      scaleY: 1,
+      scaleX: opponentSizeScale,
+      scaleY: opponentSizeScale,
       duration: 0.7,
       ease: "back.out(1.4)",
       delay: 0.4,
@@ -1624,7 +1635,7 @@ export class BattleScene extends Phaser.Scene {
 
     // 経験値計算
     const expMultiplier = this.isArena ? EXP_MULT_ARENA : (this.isBoss ? EXP_MULT_GYM : (this.isTrainer ? EXP_MULT_TRAINER : EXP_MULT_WILD));
-    const expGain = Math.max(1, Math.floor(opponent.level * expMultiplier * totalBonusMul));
+    const expGain = Math.max(1, Math.floor(opponent.species.expYield * expMultiplier * totalBonusMul));
     this.enqueueMessage(`${expGain} けいけんちを かくとく！`);
     if (totalBonusMul > 1.01) {
       const bonusPct = Math.round((totalBonusMul - 1) * 100);
@@ -1660,9 +1671,16 @@ export class BattleScene extends Phaser.Scene {
         evolveMonster(leader, evo);
         syncMonsterMoves(leader);
         this.enqueueMessage(`おめでとう！ ${oldName}は ${leader.species.name}に しんかした！ 🎉`);
-        this._playEvolutionEffect(this.playerEmojiText, leader.species.emoji, leader.species.subEmoji);
+        this._playEvolutionEffect(
+          this.playerEmojiText,
+          leader.species.emoji,
+          leader.species.subEmoji,
+          leader.species.sizeScale,
+        );
       }
     }
+
+    this._grantHeldItemDrops(opponent);
 
     // お金
     const baseMoney = opponent.level * (this.isBoss ? 30 : 10);
@@ -1684,6 +1702,18 @@ export class BattleScene extends Phaser.Scene {
     if (opponent.species?.id && !gameState.seenIds.includes(opponent.species.id)) {
       gameState.seenIds.push(opponent.species.id);
     }
+  }
+
+  _grantHeldItemDrops(opponent) {
+    const heldItems = Array.isArray(opponent?.species?.heldItems) ? opponent.species.heldItems : [];
+    heldItems.forEach((entry) => {
+      if (!entry || !entry.itemId || entry.dropRate <= 0) return;
+      if (Math.random() > entry.dropRate) return;
+      gameState.addItem(entry.itemId, 1);
+      const itemDef = getItemById(entry.itemId);
+      const itemName = itemDef?.name || entry.itemId;
+      this.enqueueMessage(`${opponent.species.name}の もちもの ${itemName}を てにいれた！`);
+    });
   }
 
   /** 倒れたモンスターの消滅エフェクト */
@@ -1741,7 +1771,7 @@ export class BattleScene extends Phaser.Scene {
   }
 
   /** 進化の演出 — 光のバーストと絵文字チェンジ（強化版） */
-  _playEvolutionEffect(emojiText, newEmoji, newSubEmojis = null) {
+  _playEvolutionEffect(emojiText, newEmoji, newSubEmojis = null, targetScale = 1) {
     if (!emojiText) return;
     const x = emojiText.x;
     const y = emojiText.y;
@@ -1776,7 +1806,7 @@ export class BattleScene extends Phaser.Scene {
         setMonsterEmoji(emojiText, newEmoji, newSubEmojis);
       },
       onComplete: () => {
-        emojiText.setScale(1);
+        emojiText.setScale(Number.isFinite(targetScale) ? Math.max(0.4, targetScale) : 1);
         this.updateHud(false);
       },
     });
@@ -2644,6 +2674,7 @@ export class BattleScene extends Phaser.Scene {
 
     const newMon = {
       species: opponent.species,
+      abilityId: opponent.abilityId || opponent.species.abilityId,
       level: opponent.level,
       exp: 0,
       nextLevelExp: 10 + 8 * opponent.level,
@@ -2679,6 +2710,8 @@ export class BattleScene extends Phaser.Scene {
       this.registerWildStreakWin();
     }
 
+    this._grantHeldItemDrops(opponent);
+
     // 初回捕獲チュートリアル
     if (!gameState.storyFlags.tutorialCatchDone && gameState.totalCatches === 1) {
       this.enqueueMessage("📖 【はじめての捕獲！】おめでとう！ 仲間が増えたね！");
@@ -2703,14 +2736,17 @@ export class BattleScene extends Phaser.Scene {
 
     // 相手モンスターが再出現
     gsap.killTweensOf(this.opponentEmojiText);
-    this.opponentEmojiText.setScale(1).setAlpha(1);
+    const opponentSizeScale = Number.isFinite(opponent?.species?.sizeScale)
+      ? Math.max(0.4, opponent.species.sizeScale)
+      : 1;
+    this.opponentEmojiText.setScale(opponentSizeScale).setAlpha(1);
     gsap.fromTo(this.opponentEmojiText, {
-      scaleX: 0.85,
-      scaleY: 0.85,
+      scaleX: opponentSizeScale * 0.85,
+      scaleY: opponentSizeScale * 0.85,
       alpha: 1,
     }, {
-      scaleX: 1,
-      scaleY: 1,
+      scaleX: opponentSizeScale,
+      scaleY: opponentSizeScale,
       alpha: 1,
       duration: 0.4,
       ease: "back.out",
@@ -2766,6 +2802,9 @@ export class BattleScene extends Phaser.Scene {
       this.battle.player.species.emoji || "?",
       this.battle.player.species.subEmoji,
     );
+    this.playerEmojiText.setScale(Number.isFinite(this.battle.player?.species?.sizeScale)
+      ? Math.max(0.4, this.battle.player.species.sizeScale)
+      : 1);
     this.updateHud(false);
 
     // いれかえ後は相手が攻撃してくる（1ターン消費）

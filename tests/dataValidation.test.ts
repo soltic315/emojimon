@@ -32,6 +32,9 @@ function createValidData() {
           learnset: [{ move: "TACKLE", level: 1 }],
           catchRate: 0.3,
           spawnRate: 1,
+          expYield: 24,
+          heldItems: [],
+          sizeScale: 1,
           ability: [
             {
               abilityId: "STURDY",

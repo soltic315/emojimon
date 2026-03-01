@@ -59,6 +59,11 @@ const recipeMonsterSchema = z.object({
 
 const recipePairSchema = z.tuple([recipeMonsterSchema, recipeMonsterSchema]);
 
+const heldItemSchema = z.object({
+  itemId: z.string().min(1),
+  dropRate: z.number().min(0).max(1),
+});
+
 const monsterSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
@@ -69,6 +74,9 @@ const monsterSchema = z.object({
   learnset: z.array(learnsetEntrySchema),
   catchRate: z.number().min(0).max(1),
   spawnRate: z.number().positive().optional(),
+  expYield: z.number().int().positive(),
+  heldItems: z.array(heldItemSchema),
+  sizeScale: z.number().positive(),
   description: z.string().optional(),
   ability: z.array(abilityEntrySchema).min(1),
   recipe: z.array(recipePairSchema).optional(),

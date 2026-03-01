@@ -255,6 +255,13 @@ nextLevelExp = 10 + 8 × level
   - 未指定時は `1` 扱い。
 - `ability: [{ "abilityId": string, "acquisitionRate": number }]`
   - 個体生成時の特性抽選テーブル（必須）。
+- `expYield: number`
+  - 撃破時に配布する経験値の基礎値（必須）。
+- `heldItems: [{ "itemId": string, "dropRate": number }]`
+  - モンスター所持アイテムのドロップ定義（必須、空配列可）。
+  - `dropRate` は 0〜1 の確率値。
+- `sizeScale: number`
+  - バトル表示時の絵文字スケール倍率（必須）。
 - `recipe: [[{ "monsterId": string }, { "monsterId": string }]]`
   - そのモンスターへの合成レシピ定義。
   - 2体の組み合わせは順不同で判定する。

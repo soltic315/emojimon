@@ -40,7 +40,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 40,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "PYREBEAR",
@@ -80,7 +83,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 51,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "DROPLET",
@@ -122,7 +128,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 39,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "TIDALON",
@@ -162,7 +171,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 49,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "LEAFLING",
@@ -204,7 +216,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 35,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "THORNKING",
@@ -244,7 +259,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 48,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "STARLITE",
@@ -280,7 +298,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 43,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "BLAZEBIRD",
@@ -320,7 +341,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 42,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "AQUASHELL",
@@ -360,7 +384,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 38,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "THORNVINE",
@@ -400,7 +427,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 38,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "SHADOWPAW",
@@ -440,7 +470,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 44,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "CRYSTALINE",
@@ -480,7 +513,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 40,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "MAGMOG",
@@ -520,7 +556,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 45,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "RIPPLYNX",
@@ -560,7 +599,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 45,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "BRAMBLEON",
@@ -610,7 +652,10 @@
             "monsterId": "THORNVINE"
           }
         ]
-      ]
+      ],
+      "expYield": 45,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "MOONMITE",
@@ -650,7 +695,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 50,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "CINDERCUB",
@@ -692,7 +740,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 39,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "VOLCANOX",
@@ -732,7 +783,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 53,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "ASHHOUND",
@@ -772,7 +826,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 50,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "FINBUB",
@@ -814,7 +871,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 39,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "GLACIERA",
@@ -864,7 +924,10 @@
             "monsterId": "DROPLET"
           }
         ]
-      ]
+      ],
+      "expYield": 50,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "MISTRAY",
@@ -914,7 +977,10 @@
             "monsterId": "FINBUB"
           }
         ]
-      ]
+      ],
+      "expYield": 50,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "SPROUTLE",
@@ -956,7 +1022,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 37,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "BLOOMRA",
@@ -996,7 +1065,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 50,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "MOSSHORN",
@@ -1036,7 +1108,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 48,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "SKYPIP",
@@ -1078,7 +1153,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 43,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "AURORO",
@@ -1136,7 +1214,10 @@
             "monsterId": "PYREBEAR"
           }
         ]
-      ]
+      ],
+      "expYield": 56,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "RUNEFOX",
@@ -1186,7 +1267,10 @@
             "monsterId": "SKYPIP"
           }
         ]
-      ]
+      ],
+      "expYield": 52,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "VOLTPUP",
@@ -1228,7 +1312,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 40,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "SHOCKHOUND",
@@ -1268,7 +1355,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 52,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "SPARKBUG",
@@ -1308,7 +1398,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 40,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "THUNDERAM",
@@ -1350,7 +1443,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 40,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "STORMRAM",
@@ -1390,7 +1486,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 52,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "ZAPDRAKE",
@@ -1430,7 +1529,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 48,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "PLASMOTH",
@@ -1470,7 +1572,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 45,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "FROSTKIT",
@@ -1516,7 +1621,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 38,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "BLIZZCAT",
@@ -1556,7 +1664,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 51,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "ICEPECK",
@@ -1600,7 +1711,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 36,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "CRYSTEEL",
@@ -1640,7 +1754,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 41,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "SNOWFAWN",
@@ -1682,7 +1799,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 39,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "FROSTVEIL",
@@ -1722,7 +1842,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 50,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "TUNDRABEAR",
@@ -1762,7 +1885,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 43,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "CHARCOIL",
@@ -1804,7 +1930,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 40,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "SERPYRO",
@@ -1844,7 +1973,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 54,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "SOLFLARE",
@@ -1884,7 +2016,10 @@
           "acquisitionRate": 1
         }
       ],
-      "sub_emoji": []
+      "sub_emoji": [],
+      "expYield": 53,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "CORALION",
@@ -1924,7 +2059,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 43,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "ABYSSQUID",
@@ -1964,7 +2102,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 48,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "WHALORD",
@@ -2004,7 +2145,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 45,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "CACTURION",
@@ -2044,7 +2188,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 46,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "FLORAMIS",
@@ -2086,7 +2233,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 37,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "FUNGORIA",
@@ -2126,7 +2276,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 49,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "GHOSTAIL",
@@ -2166,7 +2319,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 48,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "COSMOWL",
@@ -2206,7 +2362,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 49,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "SPIRALHORN",
@@ -2246,7 +2405,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 45,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "NEONRAY",
@@ -2286,7 +2448,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 44,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "LIGHTNIX",
@@ -2328,7 +2493,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 44,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "THUNDAGLE",
@@ -2368,7 +2536,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 56,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "POLARYX",
@@ -2412,7 +2583,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 40,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "GLACIDRAKE",
@@ -2452,7 +2626,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 51,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "ETERNIA",
@@ -2492,7 +2669,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 61,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "CINDLO",
@@ -2534,7 +2714,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 41,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "CINDRAKE",
@@ -2574,7 +2757,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 54,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "RILLY",
@@ -2616,7 +2802,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 41,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "RILLARGO",
@@ -2656,7 +2845,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 51,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "BRAMBIT",
@@ -2696,7 +2888,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 41,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "ARCWOLF",
@@ -2736,7 +2931,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 51,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "ICELARK",
@@ -2780,7 +2978,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 46,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "LUMIPUP",
@@ -2822,7 +3023,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 41,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "SOLMANTIS",
@@ -2868,7 +3072,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 54,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "MISTOTTER",
@@ -2910,7 +3117,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 41,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "ABYSSMART",
@@ -2956,7 +3166,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 51,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "FERNBIT",
@@ -3004,7 +3217,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 41,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "GROVYRA",
@@ -3050,7 +3266,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 53,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "BOLTRON",
@@ -3098,7 +3317,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 43,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "TEMPESTEL",
@@ -3144,7 +3366,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 58,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "SNOWLING",
@@ -3192,7 +3417,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 41,
+      "heldItems": [],
+      "sizeScale": 1
     },
     {
       "id": "GLAZELK",
@@ -3238,7 +3466,10 @@
           "acquisitionRate": 1
         }
       ],
-      "spawnRate": 1
+      "spawnRate": 1,
+      "expYield": 52,
+      "heldItems": [],
+      "sizeScale": 1
     }
   ],
   "wildPoolIds": [

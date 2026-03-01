@@ -399,6 +399,18 @@ export function initMonstersFromJson(json) {
     const abilityRates = normalizeAbilityRates(raw.ability, fallbackAbilityId);
     const abilityId = abilityRates[0]?.abilityId || fallbackAbilityId;
     const spawnRate = Number.isFinite(raw.spawnRate) ? Math.max(0, raw.spawnRate) : 1;
+    const expYield = Math.max(1, Math.floor(raw.expYield));
+    const heldItems = raw.heldItems
+      .map((entry) => {
+        const itemId = typeof entry?.itemId === "string" ? entry.itemId : "";
+        const dropRate = Number.isFinite(entry?.dropRate)
+          ? Math.max(0, Math.min(1, entry.dropRate))
+          : 0;
+        if (!itemId) return null;
+        return { itemId, dropRate };
+      })
+      .filter(Boolean);
+    const sizeScale = Math.max(0.1, raw.sizeScale);
 
     MONSTERS[raw.id] = {
       id: raw.id,
@@ -409,6 +421,9 @@ export function initMonstersFromJson(json) {
       abilityId,
       abilityRates,
       spawnRate,
+      expYield,
+      heldItems,
+      sizeScale,
       baseStats: raw.baseStats,
       learnset,
       learnsetLevels,

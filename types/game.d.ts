@@ -94,6 +94,11 @@ export interface MonsterRecipeMaterial {
   monsterId: string;
 }
 
+export interface MonsterHeldItem {
+  itemId: string;
+  dropRate: number;
+}
+
 export interface MonsterSpecies {
   id: string;
   name: string;
@@ -103,6 +108,9 @@ export interface MonsterSpecies {
   abilityId: string;
   abilityRates?: MonsterAbilityRate[];
   spawnRate?: number;
+  expYield: number;
+  heldItems: MonsterHeldItem[];
+  sizeScale: number;
   recipe?: [MonsterRecipeMaterial, MonsterRecipeMaterial][];
   baseStats: BaseStats;
   learnset: Move[];
