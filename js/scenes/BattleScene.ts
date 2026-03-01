@@ -10,7 +10,7 @@ import {
 } from "../data/monsters.ts";
 import { getItemById } from "../data/items.ts";
 import { MOVES } from "../data/moves.ts";
-import { getBattleBackgroundTheme, rollWeatherForMap, WEATHER } from "../data/mapRules.ts";
+import { WEATHER } from "../data/mapRules.ts";
 import { audioManager } from "../audio/AudioManager.ts";
 import { TouchControls } from "../ui/TouchControls.ts";
 import { FONT, COLORS, TEXT_COLORS, drawPanel, drawSelection, drawHpBar, drawExpBar } from "../ui/UIHelper.ts";
@@ -57,6 +57,26 @@ import {
   showSwitchMenu,
   clearMenuTexts,
 } from "./battle/battleMenu.ts";
+import {
+  createBattleAtmosphere,
+  rollInitialWeather,
+  createWeatherDisplay,
+  createWeatherParticles,
+  destroyWeatherParticles,
+  tickWeather,
+  startBreathingAnimations,
+  drawBattleBackground,
+} from "./battle/battleVisuals.ts";
+import {
+  resolveBattleSpeedMultiplier,
+  clearMessageAutoAdvanceEvent,
+  scheduleMessageAutoAdvance,
+  resetMessageFastForward,
+  isFastForwardHeld,
+  updateMessageFastForward,
+  enqueueMessage as enqueueBattleMessage,
+  showNextMessage as showNextBattleMessage,
+} from "./battle/battleMessageFlow.ts";
 import { gsap } from "gsap";
 import {
   addCameraBloom,
@@ -338,258 +358,27 @@ export class BattleScene extends Phaser.Scene {
   }
 
   _createBattleAtmosphere(width, height) {
-    const theme = getBattleBackgroundTheme(gameState.currentMap);
-
-    const tintMap = {
-      FOREST: 0x4ade80,
-      CAVE: 0xa78bfa,
-      VOLCANO: 0xfb923c,
-      RUINS: 0x93c5fd,
-      TOWN: 0x60a5fa,
-    };
-    const tint = tintMap[theme] || 0x93c5fd;
-
-    const edgeGlow = this.add.graphics();
-    edgeGlow.fillStyle(tint, 0.05);
-    edgeGlow.fillEllipse(width * 0.2, height * 0.16, 240, 160);
-    edgeGlow.fillEllipse(width * 0.82, height * 0.22, 220, 140);
-    edgeGlow.setBlendMode(Phaser.BlendModes.ADD);
-
-    for (let i = 0; i < 10; i++) {
-      const orb = this.add.circle(
-        60 + i * (width / 10),
-        50 + (i % 4) * 22,
-        8 + (i % 3) * 4,
-        tint,
-        0.06,
-      ).setBlendMode(Phaser.BlendModes.ADD);
-
-      this.tweens.add({
-        targets: orb,
-        alpha: 0.14,
-        y: orb.y + 16,
-        duration: 1800 + (i % 5) * 260,
-        yoyo: true,
-        repeat: -1,
-        ease: "sine.inOut",
-      });
-    }
+    createBattleAtmosphere(this, width, height);
   }
 
   /** 天候初期化：マップ単位の天候を取得（未設定時のみ決定して保持） */
   _rollInitialWeather() {
-    if (this.battle?.weather) {
-      return this.battle.weather;
-    }
-
-    const existingMapWeather = gameState.getMapWeather(gameState.currentMap);
-    if (existingMapWeather) {
-      return existingMapWeather;
-    }
-
-    const rolledWeather = rollWeatherForMap(gameState.currentMap);
-    gameState.setMapWeather(gameState.currentMap, rolledWeather);
-    return rolledWeather;
+    return rollInitialWeather(this);
   }
 
   /** 天候表示UIを生成 */
   _createWeatherDisplay() {
-    const { width, height } = this.scale;
-    const wInfo = WEATHER_INFO[this.weather] || WEATHER_INFO.NONE;
-    if (this.weather === WEATHER.NONE) {
-      this.weatherText = null;
-      this._destroyWeatherParticles();
-      return;
-    }
-    this.weatherText = this.add.text(width / 2, 102, `${wInfo.emoji} ${wInfo.label}`, {
-      fontFamily: FONT.UI,
-      fontSize: 12,
-      color: "#f8fafc",
-      backgroundColor: "#0b1222",
-      padding: { x: 10, y: 4 },
-    }).setOrigin(0.5);
-    this.weatherText.setStroke("#000000", 2);
-    this.weatherText.setShadow(0, 1, wInfo.color, 6, true, true);
-    // 天候アイコンのふわふわアニメ
-    this.tweens.add({
-      targets: this.weatherText,
-      alpha: 0.5,
-      duration: 1200,
-      yoyo: true,
-      repeat: -1,
-      ease: "sine.inOut",
-    });
-
-    // 天候パーティクルエフェクト
-    this._createWeatherParticles(width, height);
+    createWeatherDisplay(this);
   }
 
   /** 天候パーティクルを生成 */
   _createWeatherParticles(width, height) {
-    this._destroyWeatherParticles();
-    this._weatherParticles = [];
-
-    const battleFieldHeight = this.panelY || (height - 156);
-
-    if (this.weather === WEATHER.RAINY) {
-      // 雨粒パーティクル
-      const rainGfx = this.add.graphics();
-      const drops = [];
-      const dropCount = 40;
-      for (let i = 0; i < dropCount; i++) {
-        drops.push({
-          x: Math.random() * width,
-          y: Math.random() * battleFieldHeight,
-          speed: 3 + Math.random() * 4,
-          length: 6 + Math.random() * 8,
-          alpha: 0.15 + Math.random() * 0.25,
-        });
-      }
-      rainGfx.setDepth(5);
-      const rainTimer = this.time.addEvent({
-        delay: 33,
-        loop: true,
-        callback: () => {
-          rainGfx.clear();
-          for (const drop of drops) {
-            drop.y += drop.speed;
-            drop.x -= drop.speed * 0.3;
-            if (drop.y > battleFieldHeight) {
-              drop.y = -drop.length;
-              drop.x = Math.random() * (width + 100);
-            }
-            if (drop.x < -20) {
-              drop.x = width + 10;
-            }
-            rainGfx.lineStyle(1.5, 0x88bbff, drop.alpha);
-            rainGfx.lineBetween(drop.x, drop.y, drop.x - drop.speed * 0.3, drop.y + drop.length);
-          }
-        },
-      });
-      // 画面全体に薄い青オーバーレイ
-      const rainOverlay = this.add.rectangle(width / 2, battleFieldHeight / 2, width, battleFieldHeight, 0x2244aa, 0.06);
-      rainOverlay.setDepth(4);
-      this._weatherParticles.push(rainGfx, rainOverlay, { destroy: () => rainTimer.destroy() });
-
-    } else if (this.weather === WEATHER.SUNNY) {
-      // 太陽光エフェクト — 斜めの光線
-      const sunGfx = this.add.graphics();
-      sunGfx.setDepth(4);
-      sunGfx.setAlpha(0.08);
-      // 光線を複数描画
-      for (let i = 0; i < 5; i++) {
-        const sx = width * 0.15 + i * width * 0.18;
-        sunGfx.lineStyle(20 + i * 8, 0xfbbf24, 0.12);
-        sunGfx.lineBetween(sx, 0, sx - 60, battleFieldHeight);
-      }
-      // 暖色オーバーレイ
-      const sunOverlay = this.add.rectangle(width / 2, battleFieldHeight / 2, width, battleFieldHeight, 0xffa500, 0.04);
-      sunOverlay.setDepth(4);
-      // 光のゆらめき
-      this.tweens.add({
-        targets: sunGfx,
-        alpha: 0.15,
-        duration: 2000,
-        yoyo: true,
-        repeat: -1,
-        ease: "sine.inOut",
-      });
-      this._weatherParticles.push(sunGfx, sunOverlay);
-
-    } else if (this.weather === WEATHER.WINDY) {
-      // 風エフェクト — 葉っぱ・風線パーティクル
-      const windGfx = this.add.graphics();
-      windGfx.setDepth(5);
-      const leaves = [];
-      const leafCount = 12;
-      for (let i = 0; i < leafCount; i++) {
-        leaves.push({
-          x: Math.random() * width,
-          y: Math.random() * battleFieldHeight,
-          speedX: 4 + Math.random() * 3,
-          speedY: -0.5 + Math.random() * 1,
-          size: 2 + Math.random() * 3,
-          alpha: 0.2 + Math.random() * 0.3,
-          wobble: Math.random() * Math.PI * 2,
-        });
-      }
-      const windTimer = this.time.addEvent({
-        delay: 33,
-        loop: true,
-        callback: () => {
-          windGfx.clear();
-          for (const leaf of leaves) {
-            leaf.x += leaf.speedX;
-            leaf.y += leaf.speedY + Math.sin(leaf.wobble) * 0.8;
-            leaf.wobble += 0.1;
-            if (leaf.x > width + 20) {
-              leaf.x = -10;
-              leaf.y = Math.random() * battleFieldHeight;
-            }
-            // 葉っぱ形状
-            windGfx.fillStyle(0x6dbd6d, leaf.alpha);
-            windGfx.fillEllipse(leaf.x, leaf.y, leaf.size * 2, leaf.size);
-          }
-          // 風線 ─ 横に流れる薄い線
-          windGfx.lineStyle(1, 0xcccccc, 0.08);
-          for (let i = 0; i < 3; i++) {
-            const wy = 30 + i * 60;
-            const phase = (Date.now() * 0.002 + i) % (width + 200) - 100;
-            windGfx.lineBetween(phase, wy, phase + 80, wy - 2);
-          }
-        },
-      });
-      this._weatherParticles.push(windGfx, { destroy: () => windTimer.destroy() });
-
-    } else if (this.weather === WEATHER.SNOWY) {
-      // 雪パーティクル
-      const snowGfx = this.add.graphics();
-      snowGfx.setDepth(5);
-      const flakes = [];
-      const flakeCount = 30;
-      for (let i = 0; i < flakeCount; i++) {
-        flakes.push({
-          x: Math.random() * width,
-          y: Math.random() * battleFieldHeight,
-          speed: 1 + Math.random() * 2,
-          size: 1.5 + Math.random() * 2.5,
-          alpha: 0.3 + Math.random() * 0.4,
-          wobble: Math.random() * Math.PI * 2,
-        });
-      }
-      const snowTimer = this.time.addEvent({
-        delay: 33,
-        loop: true,
-        callback: () => {
-          snowGfx.clear();
-          for (const flake of flakes) {
-            flake.y += flake.speed;
-            flake.x += Math.sin(flake.wobble) * 0.6;
-            flake.wobble += 0.04;
-            if (flake.y > battleFieldHeight) {
-              flake.y = -flake.size;
-              flake.x = Math.random() * width;
-            }
-            snowGfx.fillStyle(0xffffff, flake.alpha);
-            snowGfx.fillCircle(flake.x, flake.y, flake.size);
-          }
-        },
-      });
-      // 薄い青白オーバーレイ
-      const snowOverlay = this.add.rectangle(width / 2, battleFieldHeight / 2, width, battleFieldHeight, 0x93c5fd, 0.05);
-      snowOverlay.setDepth(4);
-      this._weatherParticles.push(snowGfx, snowOverlay, { destroy: () => snowTimer.destroy() });
-    }
+    createWeatherParticles(this, width, height);
   }
 
   /** 天候パーティクルを破棄 */
   _destroyWeatherParticles() {
-    if (this._weatherParticles) {
-      for (const obj of this._weatherParticles) {
-        if (obj && obj.destroy) obj.destroy();
-      }
-    }
-    this._weatherParticles = [];
+    destroyWeatherParticles(this);
   }
 
   /** 天候UIを更新 */
@@ -600,24 +389,7 @@ export class BattleScene extends Phaser.Scene {
 
   /** ターン経過で天候が変化するか判定 */
   _tickWeather() {
-    this.weatherTurnCounter++;
-    if (this.weather !== WEATHER.NONE && this.weatherTurnCounter >= this.weatherDuration) {
-      // 天候終了
-      const oldWeather = WEATHER_INFO[this.weather];
-      this.weather = WEATHER.NONE;
-      this.weatherTurnCounter = 0;
-      this._updateWeatherDisplay();
-      this.enqueueMessage(`${oldWeather.emoji} ${oldWeather.label}が おさまった！`);
-    } else if (this.weather === WEATHER.NONE && Math.random() < 0.08) {
-      // 低確率で新天候発生
-      const candidates = [WEATHER.SUNNY, WEATHER.RAINY, WEATHER.WINDY, WEATHER.SNOWY];
-      this.weather = candidates[Math.floor(Math.random() * candidates.length)];
-      this.weatherTurnCounter = 0;
-      this.weatherDuration = 3 + Math.floor(Math.random() * 3);
-      const newWeather = WEATHER_INFO[this.weather];
-      this._updateWeatherDisplay();
-      this.enqueueMessage(`${newWeather.emoji} てんきが ${newWeather.label}に かわった！`);
-    }
+    tickWeather(this);
   }
 
   /** 天候によるダメージ倍率を取得 */
@@ -627,22 +399,7 @@ export class BattleScene extends Phaser.Scene {
 
   /** 呼吸アニメーション開始（入場演出完了後に呼ぶ） */
   _startBreathingAnimations() {
-    this.tweens.add({
-      targets: this.playerEmojiText,
-      y: this.playerEmojiText.y - 4,
-      duration: 800,
-      yoyo: true,
-      repeat: -1,
-      ease: "sine.inOut",
-    });
-    this.tweens.add({
-      targets: this.opponentEmojiText,
-      y: this.opponentEmojiText.y + 4,
-      duration: 900,
-      yoyo: true,
-      repeat: -1,
-      ease: "sine.inOut",
-    });
+    startBreathingAnimations(this);
   }
 
   setupMonsters() {
@@ -866,123 +623,7 @@ export class BattleScene extends Phaser.Scene {
 
   /** 環境に応じたバトル背景を描画 */
   _drawBattleBackground(width, height) {
-    const theme = getBattleBackgroundTheme(gameState.currentMap);
-    const g = this.add.graphics();
-
-    if (theme === "CAVE") {
-      // 洞窟 — 深度グラデーション + クリスタル反射
-      g.fillGradientStyle(0x060711, 0x0d1022, 0x191133, 0x0d1022, 1);
-      g.fillRect(0, 0, width, height);
-
-      for (let i = 0; i < 42; i++) {
-        const x = Math.random() * width;
-        const y = Math.random() * height * 0.65;
-        const alpha = 0.08 + Math.random() * 0.24;
-        const size = 1 + Math.random() * 2.6;
-        g.fillStyle(i % 2 === 0 ? 0xc4b5fd : 0x93c5fd, alpha);
-        g.fillCircle(x, y, size);
-      }
-
-      g.fillStyle(0x191a2d, 0.68);
-      for (let i = 0; i < 10; i++) {
-        const x = i * (width / 8) + Math.random() * 40;
-        const w = 10 + Math.random() * 20;
-        const h = 20 + Math.random() * 50;
-        g.fillTriangle(x, 0, x - w / 2, h, x + w / 2, h);
-      }
-
-      g.fillStyle(0x7c3aed, 0.06);
-      g.fillEllipse(width * 0.72, height * 0.24, 220, 120);
-    } else if (theme === "VOLCANO") {
-      // 火山 — 熱気レイヤー + 火山シルエット
-      g.fillGradientStyle(0x260e0d, 0x3a130f, 0x150807, 0x210906, 1);
-      g.fillRect(0, 0, width, height);
-
-      for (let i = 0; i < 46; i++) {
-        const x = Math.random() * width;
-        const y = Math.random() * height * 0.75;
-        const alpha = 0.08 + Math.random() * 0.3;
-        const size = 1 + Math.random() * 2.6;
-        g.fillStyle(i % 3 === 0 ? 0xf97316 : 0xfb923c, alpha);
-        g.fillCircle(x, y, size);
-      }
-
-      g.fillStyle(0x111827, 0.55);
-      for (let i = 0; i < 6; i++) {
-        const baseX = i * (width / 6);
-        const peak = 30 + Math.random() * 50;
-        g.fillTriangle(baseX, height * 0.72, baseX + 45, height * 0.72, baseX + 22, height * 0.72 - peak);
-      }
-
-      g.fillStyle(0xfb923c, 0.08);
-      g.fillEllipse(width * 0.3, height * 0.2, 260, 120);
-    } else if (theme === "RUINS") {
-      // 遺跡 — 蒼空 + 石柱 + 微細な粒
-      g.fillGradientStyle(0x0f172a, 0x1e40af, 0x312e81, 0x0f172a, 1);
-      g.fillRect(0, 0, width, height);
-
-      g.fillStyle(0xe2e8f0, 0.11);
-      for (let i = 0; i < 7; i++) {
-        const x = 40 + i * 140 + (Math.random() - 0.5) * 30;
-        const h = 60 + Math.random() * 40;
-        g.fillRect(x, height * 0.72 - h, 14, h);
-      }
-
-      for (let i = 0; i < 34; i++) {
-        const x = Math.random() * width;
-        const y = Math.random() * height * 0.5;
-        const alpha = 0.06 + Math.random() * 0.2;
-        g.fillStyle(0xe0f2fe, alpha);
-        g.fillCircle(x, y, 1.2);
-      }
-
-      g.fillStyle(0x93c5fd, 0.07);
-      g.fillEllipse(width * 0.55, height * 0.18, 280, 110);
-    } else if (theme === "FOREST") {
-      // 森 — 深緑レイヤー + 木影
-      g.fillGradientStyle(0x052916, 0x0a3d1f, 0x0b2d18, 0x062412, 1);
-      g.fillRect(0, 0, width, height);
-
-      g.fillStyle(0x14532d, 0.55);
-      for (let i = 0; i < 5; i++) {
-        const x = 50 + i * 180 + (Math.random() - 0.5) * 60;
-        const y = height * 0.15 + Math.random() * 30;
-        g.fillTriangle(x, y, x - 40, y + 80, x + 40, y + 80);
-        g.fillTriangle(x, y - 30, x - 30, y + 50, x + 30, y + 50);
-      }
-
-      g.fillStyle(0x4ade80, 0.06);
-      g.fillCircle(width * 0.7, 30, 200);
-
-      for (let i = 0; i < 20; i++) {
-        g.fillStyle(0x86efac, 0.05 + Math.random() * 0.06);
-        g.fillCircle(Math.random() * width, Math.random() * (height * 0.6), 1 + Math.random() * 1.5);
-      }
-    } else {
-      // 町（デフォルト）— 都市夜景トーン
-      g.fillGradientStyle(0x0f172a, 0x1e293b, 0x030712, 0x0f172a, 1);
-      g.fillRect(0, 0, width, height);
-
-      for (let i = 0; i < 30; i++) {
-        const x = Math.random() * width;
-        const y = Math.random() * height * 0.5;
-        const alpha = 0.08 + Math.random() * 0.35;
-        g.fillStyle(i % 3 === 0 ? 0xf8fafc : 0xbfdbfe, alpha);
-        g.fillCircle(x, y, 1);
-      }
-
-      g.fillStyle(0x93c5fd, 0.05);
-      g.fillEllipse(width * 0.78, 44, 260, 120);
-    }
-
-    // 共通 — 地面ライン
-    g.lineStyle(1, 0x64748b, 0.45);
-    g.lineBetween(0, height * 0.72, width, height * 0.72);
-
-    const horizonGlow = this.add.graphics();
-    horizonGlow.fillStyle(0xf8fafc, 0.06);
-    horizonGlow.fillEllipse(width / 2, height * 0.66, width * 0.85, 120);
-    horizonGlow.setBlendMode(Phaser.BlendModes.ADD);
+    drawBattleBackground(this, width, height);
   }
 
   bindInput() {
@@ -1004,89 +645,37 @@ export class BattleScene extends Phaser.Scene {
   }
 
   _resolveBattleSpeedMultiplier() {
-    const speed = gameState.gameplaySettings?.battleSpeed;
-    if (speed === "FAST") return 1.3;
-    if (speed === "TURBO") return 1.65;
-    return 1;
+    return resolveBattleSpeedMultiplier(this);
   }
 
   _clearMessageAutoAdvanceEvent() {
-    if (this.messageAutoAdvanceEvent) {
-      this.messageAutoAdvanceEvent.remove(false);
-      this.messageAutoAdvanceEvent = null;
-    }
+    clearMessageAutoAdvanceEvent(this);
   }
 
   _scheduleMessageAutoAdvance(text) {
-    if (!this.autoAdvanceMessagesEnabled) return;
-    this._clearMessageAutoAdvanceEvent();
-    const safeLength = Math.max(0, String(text || "").length);
-    const baseDelay = Phaser.Math.Clamp(520 + safeLength * 20, 560, 1850);
-    const adjustedDelay = Math.max(280, Math.floor(baseDelay / this.battleSpeedMultiplier));
-    this.messageAutoAdvanceEvent = this.time.delayedCall(adjustedDelay, () => {
-      this.messageAutoAdvanceEvent = null;
-      if (!this.currentMessage || this.state === BattleState.ANIMATING) return;
-      this.showNextMessage();
-    });
+    scheduleMessageAutoAdvance(this, text);
   }
 
   _resetMessageFastForward() {
-    this.messageFastForwardHoldMs = 0;
-    this.messageFastForwardCooldownMs = 0;
+    resetMessageFastForward(this);
   }
 
   _isFastForwardHeld() {
-    const keyboardHold = this.keys?.Z?.isDown || this.keys?.SPACE?.isDown;
-    const touchHold = this.touchControls?.visible && this.touchControls.isConfirmHeld();
-    return !!(keyboardHold || touchHold);
+    return isFastForwardHeld(this);
   }
 
   _updateMessageFastForward(delta) {
-    if (!this.currentMessage || this.state === BattleState.ANIMATING) {
-      this._resetMessageFastForward();
-      return;
-    }
-    if (!this._isFastForwardHeld()) {
-      this._resetMessageFastForward();
-      return;
-    }
-
-    this.messageFastForwardHoldMs += delta;
-    if (this.messageFastForwardHoldMs < 220) return;
-
-    this.messageFastForwardCooldownMs -= delta;
-    if (this.messageFastForwardCooldownMs > 0) return;
-
-    this._clearMessageAutoAdvanceEvent();
-    this.showNextMessage();
-    this.messageFastForwardCooldownMs = 65;
+    updateMessageFastForward(this, delta);
   }
 
   // ── メッセージキュー ──
 
   enqueueMessage(text, options = {}) {
-    this.messageQueue.push({ text, options });
-    if (!this.currentMessage) this.showNextMessage();
+    enqueueBattleMessage(this, text, options);
   }
 
   showNextMessage() {
-    this._clearMessageAutoAdvanceEvent();
-    if (this.messageQueue.length === 0) {
-      this.currentMessage = null;
-      this.nextIndicator.setVisible(false);
-      if (this.state === BattleState.INTRO) {
-        this.showMainMenu(true);
-      } else if (this.state === BattleState.RESULT) {
-        this.endBattle();
-      } else if (this.state === BattleState.OPPONENT_TURN) {
-        this.startPlayerTurn();
-      }
-      return;
-    }
-    this.currentMessage = this.messageQueue.shift();
-    this.messageText.setText(this.currentMessage.text);
-    this.nextIndicator.setVisible(true);
-    this._scheduleMessageAutoAdvance(this.currentMessage.text);
+    showNextBattleMessage(this);
   }
 
   // ── ボール判定 ──
