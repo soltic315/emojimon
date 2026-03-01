@@ -4,6 +4,14 @@ import { getItemById } from "../../data/items.ts";
 import { FONT, COLORS } from "../../ui/UIHelper.ts";
 import { BattleState } from "./battleConstants.ts";
 
+function setSceneBattleState(scene, nextState) {
+  if (typeof scene?.setBattleState === "function") {
+    scene.setBattleState(nextState);
+    return;
+  }
+  scene.state = nextState;
+}
+
 function getMenuIcon(label) {
   if (label.includes("たたかう")) return "⚔";
   if (label.includes("いれかえ")) return "🔁";
@@ -136,7 +144,7 @@ export function clearMenuTexts(scene) {
 }
 
 export function showMainMenu(scene, reset = true) {
-  scene.state = BattleState.PLAYER_TURN;
+  setSceneBattleState(scene, BattleState.PLAYER_TURN);
   clearMenuTexts(scene);
 
   const layout = resolvePanelLayout(scene);
@@ -171,14 +179,14 @@ export function showMainMenu(scene, reset = true) {
 }
 
 export function showMoveMenu(scene, reset = true) {
-  scene.state = BattleState.PLAYER_SELECT_MOVE;
+  setSceneBattleState(scene, BattleState.PLAYER_SELECT_MOVE);
   clearMenuTexts(scene);
 
   const layout = resolvePanelLayout(scene);
   const moves = getMonsterMoves(scene.battle.player);
 
   if (moves.length === 0) {
-    scene.state = BattleState.PLAYER_TURN;
+    setSceneBattleState(scene, BattleState.PLAYER_TURN);
     scene.enqueueMessage("つかえる わざが ない…");
     showMainMenu(scene, true);
     return;
@@ -298,7 +306,7 @@ export function showMoveMenu(scene, reset = true) {
 }
 
 export function showItemMenu(scene, reset = true) {
-  scene.state = BattleState.PLAYER_SELECT_ITEM;
+  setSceneBattleState(scene, BattleState.PLAYER_SELECT_ITEM);
   clearMenuTexts(scene);
 
   const layout = resolvePanelLayout(scene);
@@ -315,7 +323,7 @@ export function showItemMenu(scene, reset = true) {
   scene.currentBattleItems = battleItems;
 
   if (battleItems.length === 0) {
-    scene.state = BattleState.PLAYER_TURN;
+    setSceneBattleState(scene, BattleState.PLAYER_TURN);
     scene.enqueueMessage("いま つかえるアイテムは ない…");
     showMainMenu(scene, true);
     return;
@@ -350,7 +358,7 @@ export function showItemMenu(scene, reset = true) {
 }
 
 export function showSwitchMenu(scene, reset = true) {
-  scene.state = BattleState.PLAYER_SELECT_SWITCH;
+  setSceneBattleState(scene, BattleState.PLAYER_SELECT_SWITCH);
   clearMenuTexts(scene);
 
   const layout = resolvePanelLayout(scene);

@@ -89,6 +89,10 @@ import {
   enqueueMessage as enqueueBattleMessage,
   showNextMessage as showNextBattleMessage,
 } from "./battle/battleMessageFlow.ts";
+import {
+  createBattleStateActor,
+  transitionBattleState,
+} from "./battle/battleStateMachine.ts";
 import { gsap } from "gsap";
 import {
   addCameraBloom,
@@ -117,7 +121,14 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
 
-    this.state = BattleState.INTRO;
+    this.battleStateActor = createBattleStateActor(BattleState.INTRO);
+    this.state = this.battleStateActor.getSnapshot().value;
+    this.events.once("shutdown", () => {
+      if (this.battleStateActor) {
+        this.battleStateActor.stop();
+        this.battleStateActor = null;
+      }
+    });
     this.messageQueue = [];
     this.currentMessage = null;
     this.pendingActions = [];
@@ -240,6 +251,20 @@ export class BattleScene extends Phaser.Scene {
 
   clampStage(value) {
     return clampStageValue(value);
+  }
+
+  setBattleState(nextState) {
+    if (!this.battleStateActor) {
+      this.state = nextState;
+      return this.state;
+    }
+    try {
+      this.state = transitionBattleState(this.battleStateActor, nextState);
+    } catch (error) {
+      console.warn("BattleScene: 状態遷移に失敗しました", error);
+      this.state = nextState;
+    }
+    return this.state;
   }
 
   getActivePlayer() {
@@ -1038,14 +1063,14 @@ export class BattleScene extends Phaser.Scene {
       this.currentLearnMove = null;
       this.learnMoveMonster = null;
       this.selectedLearnReplaceIndex = 0;
-      this.state = BattleState.PLAYER_TURN;
+      this.setBattleState(BattleState.PLAYER_TURN);
       this.showMainMenu(false);
       return false;
     }
 
     this.currentLearnMove = this.pendingLearnMoves.shift();
     this.selectedLearnReplaceIndex = 0;
-    this.state = BattleState.PLAYER_SELECT_LEARN_REPLACE;
+    this.setBattleState(BattleState.PLAYER_SELECT_LEARN_REPLACE);
     this._renderLearnMoveReplaceMenu();
     return true;
   }
@@ -1160,7 +1185,7 @@ export class BattleScene extends Phaser.Scene {
     if (success) {
       audioManager.playRunAway();
       this.resultType = "run";
-      this.state = BattleState.RESULT;
+      this.setBattleState(BattleState.RESULT);
       this.enqueueMessage("うまく にげきれた！");
     } else {
       this.enqueueMessage("にげられなかった！");
@@ -1171,7 +1196,7 @@ export class BattleScene extends Phaser.Scene {
   // ── 攻撃演出 ──
 
   playAttackAnimation(attacker, target, move, onComplete) {
-    this.state = BattleState.ANIMATING;
+    this.setBattleState(BattleState.ANIMATING);
 
     const isPlayer = attacker === this.battle.player;
     const emojiText = isPlayer ? this.playerEmojiText : this.opponentEmojiText;
@@ -1778,7 +1803,7 @@ export class BattleScene extends Phaser.Scene {
 
   handleVictory() {
     this.resultType = "win";
-    this.state = BattleState.RESULT;
+    this.setBattleState(BattleState.RESULT);
     audioManager.playVictory();
     flashVictory(this.cameras.main);
 
@@ -2200,7 +2225,7 @@ export class BattleScene extends Phaser.Scene {
       gameState.inventory = gameState.inventory.filter((it) => it.quantity > 0);
     }
 
-    this.state = BattleState.OPPONENT_TURN;
+    this.setBattleState(BattleState.OPPONENT_TURN);
     this.clearMenuTexts();
     this.startOpponentTurn();
   }
@@ -2224,7 +2249,7 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
 
-    this.state = BattleState.OPPONENT_TURN;
+    this.setBattleState(BattleState.OPPONENT_TURN);
 
     const statusResult = this.processTurnStartStatus(opponent);
     if (statusResult === "fainted") {
@@ -2378,7 +2403,7 @@ export class BattleScene extends Phaser.Scene {
 
   handleDefeat() {
     this.resultType = "lose";
-    this.state = BattleState.RESULT;
+    this.setBattleState(BattleState.RESULT);
     audioManager.playDefeat();
     const player = this.battle.player;
     this.enqueueMessage(`${player.species.name}は たおれてしまった…`);
@@ -2764,7 +2789,7 @@ export class BattleScene extends Phaser.Scene {
     this._playDefeatEffect(this.opponentEmojiText);
 
     this.resultType = "win";
-    this.state = BattleState.RESULT;
+    this.setBattleState(BattleState.RESULT);
 
     this.enqueueMessage("⚡ エモ・スキップ！ 一瞬で けりがついた！");
 
@@ -2798,7 +2823,7 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
 
-    this.state = BattleState.PLAYER_TURN;
+    this.setBattleState(BattleState.PLAYER_TURN);
     this.showMainMenu(true);
     if (this.currentMessage && this.currentMessage.text) {
       this.messageText.setText(this.currentMessage.text);
@@ -2830,7 +2855,7 @@ export class BattleScene extends Phaser.Scene {
     const success = Math.random() < finalRate;
 
     this.clearMenuTexts();
-    this.state = BattleState.ANIMATING;
+    this.setBattleState(BattleState.ANIMATING);
 
     // ボール投げアニメーション
     this._playCatchAnimation(ball, success, opponent);
@@ -2931,7 +2956,7 @@ export class BattleScene extends Phaser.Scene {
   _completeCatchSuccess(ballText, opponent) {
     audioManager.playCatchSuccess();
     this.resultType = "catch";
-    this.state = BattleState.RESULT;
+    this.setBattleState(BattleState.RESULT);
 
     // ボールにキラキラエフェクト
     const sparkles = ["✨", "⭐", "🌟"];
@@ -3094,7 +3119,7 @@ export class BattleScene extends Phaser.Scene {
     this.updateHud(false);
 
     // いれかえ後は相手が攻撃してくる（1ターン消費）
-    this.state = BattleState.OPPONENT_TURN;
+    this.setBattleState(BattleState.OPPONENT_TURN);
     this.startOpponentTurn();
   }
 
