@@ -914,7 +914,7 @@ export class BattleScene extends Phaser.Scene {
 
     // ── エモ・スキップ 長押し判定 ──
     if (this.emoSkipAvailable && !this.emoSkipTriggered && this._isEmoSkipPhase()) {
-      if (this.keys.Z.isDown || this.keys.ENTER.isDown) {
+      if (this.keys.Z.isDown || this.keys.ENTER.isDown || this.keys.SPACE.isDown) {
         this.emoSkipHoldTime += delta;
         this._updateEmoSkipProgress(this.emoSkipHoldTime / this.emoSkipHoldThreshold);
         if (this.emoSkipHoldTime >= this.emoSkipHoldThreshold) {

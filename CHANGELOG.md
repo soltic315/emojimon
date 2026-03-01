@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## [1.9.14] - 2026-03-02
+
+### Note
+- バトル中エモスキップ長押しの決定キー判定を共通仕様に合わせ、`Space` でも発動するよう修正。
+
+### Added
+- なし
+
+### Changed
+- `js/scenes/BattleScene.ts` のエモスキップ長押し判定に `SPACE` キーを追加。
+- `package.json` のバージョンを `1.9.13` から `1.9.14` に更新。
+- `package-lock.json` のバージョン表記を `1.9.14` に更新。
+
+### Fixed
+- エモスキップが `Z/Enter` 長押しでしか発動せず、標準決定キーである `Space` 長押しでは発動しない不具合を解消。
+
+### Prompt
+- User: `バグを探して修正してください`
+- Assistant（対応方針）: 入力仕様の不整合を調査し、`BattleScene` のエモスキップ長押し判定へ `Space` を追加する最小差分修正を実施。`lint/typecheck/test/build` を順次実行して回帰確認。
+
 ## [1.9.13] - 2026-03-02
 
 ### Note
