@@ -1,5 +1,29 @@
 # CHANGELOG
 
+## [1.9.13] - 2026-03-02
+
+### Note
+- `WorldScene` のトレーナー/闘技場責務を分割して1ファイル肥大化を解消し、作業規約に検証コマンド逐次実行ルールを明文化。
+
+### Added
+- `js/scenes/world/worldTrainerArena.ts` を追加（トレーナー戦開始・対戦相手生成・勝敗後進行・闘技場進行を集約）。
+
+### Changed
+- `js/scenes/WorldScene.ts` のトレーナー戦/闘技場関連処理を委譲構成へ変更し、シーン本体の責務を縮小。
+- `AGENTS.md` の作業フローに、`lint/typecheck/test/build` を前コマンド完了確認後に逐次実行するルールを追加。
+- `package.json` のバージョンを `1.9.12` から `1.9.13` に更新。
+- `package-lock.json` のバージョン表記を `1.9.13` に更新。
+
+### Fixed
+- なし（挙動変更なしのリファクタリングと作業規約更新）。
+
+### Prompt
+- User: `WorldScene.tsをリファクタリング・分割することで1ファイルのサイズを減らしてください。必要なら外部ライブラリ等も活用してください。`
+- User: ``npm run lint` / `npm run typecheck` / `npm run test` / `npm run build`は時間がかかるので前のコマンドの完了を待ってから次のコマンドを実行してください。Agent.mdにそのルールを追記してください`
+- User: `6. コードの変更がある場合のみ、セマンティックバージョニングの原則に従い、変更の種類に応じて適切なバージョン番号を更新する。`
+- User: `7. コードの変更がある場合のみ、AIとのチャット完了後に `CHANGELOG.md` を更新する。`
+- Assistant（対応方針）: `WorldScene` の長大ロジックを `js/scenes/world/` に分離して委譲化し、検証ルールを `AGENTS.md` に追記。規約に従ってバージョン更新と `CHANGELOG.md` 追記を実施する。
+
 ## [1.9.12] - 2026-03-02
 
 ### Note
