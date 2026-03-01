@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## [1.9.11] - 2026-03-02
+
+### Note
+- 戦闘開始時に発生していた `pickByWeight is not defined` を修正し、エンカウントからバトル遷移できる状態に復旧。
+
+### Added
+- なし
+
+### Changed
+- `js/data/monsters.ts` に特性抽選用の重み付き選択ヘルパー `pickByWeight()` を追加。
+- `package.json` のバージョンを `1.9.10` から `1.9.11` に更新。
+- `package-lock.json` のバージョン表記を `1.9.11` に更新。
+
+### Fixed
+- `rollMonsterAbilityId()` 内で未定義関数 `pickByWeight` を参照していたため、戦闘突入時に `ReferenceError` で停止する不具合を解消。
+
+### Prompt
+- User: `戦闘に入るとエラーが発生します index-DkMqmoDY.js:1 Uncaught ReferenceError: pickByWeight is not defined`
+- Assistant（対応方針）: `pickByWeight` の参照元を特定し、`rollMonsterAbilityId()` が同一モジュール内の定義済みヘルパーを使うよう最小差分で修正。`lint/typecheck/test/build` の順で検証する。
+
 ## [1.9.10] - 2026-03-02
 
 ### Note
