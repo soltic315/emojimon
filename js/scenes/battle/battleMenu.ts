@@ -12,6 +12,41 @@ function getMenuIcon(label) {
   return "◆";
 }
 
+function truncateText(text, maxLength) {
+  if (!text || text.length <= maxLength) return text;
+  return `${text.slice(0, Math.max(0, maxLength - 1))}…`;
+}
+
+function resolvePanelLayout(scene) {
+  const panelX = Number.isFinite(scene.panelX) ? scene.panelX : 6;
+  const panelY = Number.isFinite(scene.panelY) ? scene.panelY : (scene.scale.height - 156);
+  const panelWidth = Number.isFinite(scene.panelWidth) ? scene.panelWidth : (scene.scale.width - 12);
+  const panelHeight = Number.isFinite(scene.panelHeight) ? scene.panelHeight : 150;
+  const panelDividerX = Number.isFinite(scene.panelDividerX) ? scene.panelDividerX : (panelX + panelWidth * 0.56);
+
+  const leftColumnLeft = panelX + 12;
+  const leftColumnRight = panelDividerX - 12;
+  const rightColumnLeft = panelDividerX + 12;
+  const rightColumnRight = panelX + panelWidth - 12;
+
+  const leftColumnWidth = Math.max(180, leftColumnRight - leftColumnLeft);
+  const rightColumnWidth = Math.max(120, rightColumnRight - rightColumnLeft);
+
+  return {
+    panelX,
+    panelY,
+    panelWidth,
+    panelHeight,
+    panelDividerX,
+    leftColumnLeft,
+    leftColumnWidth,
+    rightColumnLeft,
+    rightColumnWidth,
+    leftColumnCenterX: leftColumnLeft + leftColumnWidth * 0.5,
+    rightColumnCenterX: rightColumnLeft + rightColumnWidth * 0.5,
+  };
+}
+
 function addMenuRow(scene, list, opts) {
   const {
     x,
@@ -21,6 +56,9 @@ function addMenuRow(scene, list, opts) {
     label,
     selected,
     fontSize = 14,
+    rightLabel = "",
+    rightFontSize = 12,
+    rightTextColor = "#93c5fd",
     selectedTextColor = "#fde68a",
     textColor = "#e2e8f0",
   } = opts;
@@ -62,13 +100,30 @@ function addMenuRow(scene, list, opts) {
   }).setOrigin(0, 0);
   list.push(icon);
 
-  const text = scene.add.text(x - width * 0.5 + 32, y + 2, selected ? `▶ ${label}` : label, {
+  const hasRightLabel = !!rightLabel;
+  const labelX = x - width * 0.5 + 32;
+  const rightLabelReserve = hasRightLabel ? 126 : 12;
+  const labelMaxLength = hasRightLabel ? 22 : 28;
+  const displayLabel = truncateText(selected ? `▶ ${label}` : label, labelMaxLength);
+
+  const text = scene.add.text(labelX, y + 2, displayLabel, {
     fontFamily: FONT.UI,
     fontSize,
     color: selected ? selectedTextColor : textColor,
     fontStyle: selected ? "700" : "500",
+    fixedWidth: Math.max(40, width - 32 - rightLabelReserve),
   }).setOrigin(0, 0);
   list.push(text);
+
+  if (hasRightLabel) {
+    const rightText = scene.add.text(x + width * 0.5 - 12, y + 2, rightLabel, {
+      fontFamily: FONT.UI,
+      fontSize: rightFontSize,
+      color: selected ? selectedTextColor : rightTextColor,
+      fontStyle: selected ? "700" : "500",
+    }).setOrigin(1, 0);
+    list.push(rightText);
+  }
 }
 
 export function clearMenuTexts(scene) {
@@ -84,7 +139,7 @@ export function showMainMenu(scene, reset = true) {
   scene.state = BattleState.PLAYER_TURN;
   clearMenuTexts(scene);
 
-  const { width } = scene.scale;
+  const layout = resolvePanelLayout(scene);
 
   scene.mainOptions = ["たたかう", "いれかえ", "アイテム", "にげる"];
 
@@ -97,9 +152,9 @@ export function showMainMenu(scene, reset = true) {
     scene.selectedMainIndex = 0;
   }
 
-  const menuX = width * 0.72;
+  const menuX = layout.rightColumnCenterX;
   scene.mainOptions.forEach((label, index) => {
-    const y = scene.panelY + 14 + index * 30;
+    const y = layout.panelY + 14 + index * 30;
     const selected = index === scene.selectedMainIndex;
     addMenuRow(scene, scene.menuTextGroup, {
       x: menuX,
@@ -119,7 +174,7 @@ export function showMoveMenu(scene, reset = true) {
   scene.state = BattleState.PLAYER_SELECT_MOVE;
   clearMenuTexts(scene);
 
-  const { width } = scene.scale;
+  const layout = resolvePanelLayout(scene);
   const moves = getMonsterMoves(scene.battle.player);
 
   if (moves.length === 0) {
@@ -148,30 +203,33 @@ export function showMoveMenu(scene, reset = true) {
   };
 
   const ppArr = scene.battle.player.pp || [];
+  const moveRowWidth = Math.min(360, Math.max(260, layout.leftColumnWidth - 10));
+  const moveRowX = layout.leftColumnLeft + moveRowWidth * 0.5;
 
   moves.forEach((move, index) => {
-    const x = width * 0.32;
-    const y = scene.panelY + 36 + index * 26;
+    const y = layout.panelY + 36 + index * 26;
     const selected = index === scene.selectedMoveIndex;
     const currentPP = ppArr[index] !== undefined ? ppArr[index] : (move.pp || "?");
     const maxPP = move.pp || "?";
     const noPP = typeof currentPP === "number" && currentPP <= 0;
 
     const typeColor = typeColors[move.type] || "#9ca3af";
-    const powerStr = move.power > 0 ? ` 威力${move.power}` : " 変化";
-    const ppStr = ` PP${currentPP}/${maxPP}`;
-    const label = `${move.name} [${move.type}]${powerStr}${ppStr}`;
+    const powerStr = move.power > 0 ? `威力${move.power}` : "変化";
+    const ppStr = `PP${currentPP}/${maxPP}`;
+    const label = `${move.name} [${move.type}]`;
     const displayColor = noPP ? "#4b5563" : (selected ? typeColor : "#e2e8f0");
     addMenuRow(scene, scene.moveTextGroup, {
-      x,
+      x: moveRowX,
       y,
-      width: 300,
+      width: moveRowWidth,
       height: 24,
       label,
+      rightLabel: `${powerStr}  ${ppStr}`,
       selected,
       fontSize: 13,
       selectedTextColor: displayColor,
       textColor: displayColor,
+      rightTextColor: noPP ? "#4b5563" : "#93c5fd",
     });
   });
 
@@ -186,10 +244,11 @@ export function showMoveMenu(scene, reset = true) {
     const priorityStr = `優先度:${priority >= 0 ? "+" : ""}${priority}`;
     const effectStr = scene.getMoveEffectLabel(currentMove);
     const detailLines = [catStr, accStr, effectivenessStr, priorityStr, effectStr];
+    const detailWidth = Math.min(220, Math.max(156, layout.rightColumnWidth - 16));
     const detailSizer = scene.rexUI?.add.sizer({
-      x: width * 0.75,
-      y: scene.panelY + 87,
-      width: 156,
+      x: layout.rightColumnLeft + detailWidth * 0.5,
+      y: layout.panelY + 87,
+      width: detailWidth,
       height: 106,
       orientation: "y",
       space: {
@@ -224,7 +283,7 @@ export function showMoveMenu(scene, reset = true) {
       detailSizer.layout();
       scene.moveTextGroup.push(detailSizer);
     } else {
-      const detailText = scene.add.text(width * 0.75, scene.panelY + 36, detailLines.join("\n"), {
+      const detailText = scene.add.text(layout.rightColumnCenterX, layout.panelY + 36, detailLines.join("\n"), {
         fontFamily: FONT.UI,
         fontSize: 11,
         color: "#6b7280",
@@ -241,7 +300,7 @@ export function showItemMenu(scene, reset = true) {
   scene.state = BattleState.PLAYER_SELECT_ITEM;
   clearMenuTexts(scene);
 
-  const { width } = scene.scale;
+  const layout = resolvePanelLayout(scene);
   const inventory = gameState.inventory || [];
   const battleItems = inventory
     .map((entry) => ({ entry, def: getItemById(entry.itemId) }))
@@ -272,8 +331,8 @@ export function showItemMenu(scene, reset = true) {
 
   battleItems.forEach((item, index) => {
     const label = `${item.def.emoji || ""} ${item.def.name} x${item.entry.quantity}`;
-    const x = width * 0.35;
-    const y = scene.panelY + 36 + index * 24;
+    const x = layout.leftColumnCenterX;
+    const y = layout.panelY + 36 + index * 24;
     const selected = index === scene.selectedItemIndex;
     addMenuRow(scene, scene.itemTextGroup, {
       x,
@@ -293,7 +352,7 @@ export function showSwitchMenu(scene, reset = true) {
   scene.state = BattleState.PLAYER_SELECT_SWITCH;
   clearMenuTexts(scene);
 
-  const { width } = scene.scale;
+  const layout = resolvePanelLayout(scene);
   const currentPlayer = scene.getActivePlayer();
   const currentIndex = gameState.party.indexOf(currentPlayer);
 
@@ -315,8 +374,8 @@ export function showSwitchMenu(scene, reset = true) {
     const stats = calcStats(monster.species, monster.level || 1);
     const hpPercent = Math.round((monster.currentHp / stats.maxHp) * 100);
     const label = `${monster.species.emoji || ""} ${monster.species.name} Lv.${monster.level} HP${hpPercent}%`;
-    const x = width * 0.35;
-    const y = scene.panelY + 14 + index * 24;
+    const x = layout.leftColumnCenterX;
+    const y = layout.panelY + 14 + index * 24;
     const selected = index === scene.selectedSwitchIndex;
     addMenuRow(scene, scene.menuTextGroup, {
       x,

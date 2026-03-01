@@ -258,12 +258,19 @@ export class BattleScene extends Phaser.Scene {
       .setBlendMode(Phaser.BlendModes.ADD);
 
     // メッセージパネル
+    const panelX = 6;
+    const panelWidth = width - 12;
     const panelHeight = 150;
     const panelY = height - panelHeight - 6;
+    const panelDividerX = panelX + panelWidth * 0.56;
+    this.panelX = panelX;
     this.panelY = panelY;
+    this.panelWidth = panelWidth;
+    this.panelHeight = panelHeight;
+    this.panelDividerX = panelDividerX;
 
     const panelBg = this.add.graphics();
-    drawPanel(panelBg, 6, panelY, width - 12, panelHeight, {
+    drawPanel(panelBg, panelX, panelY, panelWidth, panelHeight, {
       headerHeight: 24,
       radius: 12,
       bgAlpha: 0.95,
@@ -271,33 +278,36 @@ export class BattleScene extends Phaser.Scene {
     });
 
     panelBg.lineStyle(1, 0x334155, 0.45);
-    panelBg.lineBetween(width * 0.56, panelY + 30, width * 0.56, panelY + panelHeight - 14);
+    panelBg.lineBetween(panelDividerX, panelY + 30, panelDividerX, panelY + panelHeight - 14);
+
+    const messageX = panelX + 14;
+    const messageWrapWidth = Math.max(180, panelDividerX - messageX - 16);
 
     this.messageText = this.rexUI?.add?.label
       ? this.rexUI.add.label({
-        x: 20,
+        x: messageX,
         y: panelY + 14,
         text: this.add.text(0, 0, "", {
           fontFamily: FONT.UI,
           fontSize: 15,
           color: "#e5e7eb",
-          wordWrap: { width: width * 0.5 },
+          wordWrap: { width: messageWrapWidth },
           lineSpacing: 4,
         }).setOrigin(0, 0),
         align: "left",
       }).layout()
-      : this.add.text(20, panelY + 14, "", {
+      : this.add.text(messageX, panelY + 14, "", {
         fontFamily: FONT.UI,
         fontSize: 15,
         color: "#e5e7eb",
-        wordWrap: { width: width * 0.5 },
+        wordWrap: { width: messageWrapWidth },
         lineSpacing: 4,
       });
 
     // ▼ 次へインジケーター
     this.nextIndicator = this.rexUI?.add?.label
       ? this.rexUI.add.label({
-        x: width - 30,
+        x: panelX + panelWidth - 24,
         y: panelY + panelHeight - 20,
         text: this.add.text(0, 0, "▼", {
           fontFamily: FONT.UI,
@@ -306,7 +316,7 @@ export class BattleScene extends Phaser.Scene {
         }).setOrigin(0.5),
         align: "center",
       }).layout()
-      : this.add.text(width - 30, panelY + panelHeight - 20, "▼", {
+      : this.add.text(panelX + panelWidth - 24, panelY + panelHeight - 20, "▼", {
         fontFamily: FONT.UI,
         fontSize: 14,
         color: "#94a3b8",
