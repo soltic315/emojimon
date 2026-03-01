@@ -200,17 +200,7 @@ export class TitleScene extends Phaser.Scene {
 
     // ── 入力 ──
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.input.keyboard.on("keydown-Z", () => this.handleConfirm());
-    this.input.keyboard.on("keydown-ENTER", () => this.handleConfirm());
-    this.input.keyboard.on("keydown-SPACE", () => this.handleConfirm());
-    this.input.keyboard.on("keydown-X", () => {
-      if (this.helpVisible) this.hideHelp();
-      if (this.settingsVisible) this.hideSettings();
-    });
-    this.input.keyboard.on("keydown-ESC", () => {
-      if (this.helpVisible) this.hideHelp();
-      if (this.settingsVisible) this.hideSettings();
-    });
+    this._bindDefaultKeyboardHandlers();
   }
 
   update() {
@@ -288,6 +278,37 @@ export class TitleScene extends Phaser.Scene {
         drawSelection(this.menuBgs[i], width / 2 - 156, text.y - 18, 312, 40, { radius: 10 });
       }
     });
+  }
+
+  _clearTitleKeyListeners() {
+    this.input.keyboard.off("keydown-Z");
+    this.input.keyboard.off("keydown-ENTER");
+    this.input.keyboard.off("keydown-SPACE");
+    this.input.keyboard.off("keydown-X");
+    this.input.keyboard.off("keydown-ESC");
+  }
+
+  _handleDefaultCancel() {
+    if (this.helpVisible) this.hideHelp();
+    if (this.settingsVisible) this.hideSettings();
+  }
+
+  _bindDefaultKeyboardHandlers() {
+    this._clearTitleKeyListeners();
+    this.input.keyboard.on("keydown-Z", () => this.handleConfirm());
+    this.input.keyboard.on("keydown-ENTER", () => this.handleConfirm());
+    this.input.keyboard.on("keydown-SPACE", () => this.handleConfirm());
+    this.input.keyboard.on("keydown-X", () => this._handleDefaultCancel());
+    this.input.keyboard.on("keydown-ESC", () => this._handleDefaultCancel());
+  }
+
+  _bindNameSelectKeyboardHandlers() {
+    this._clearTitleKeyListeners();
+    this.input.keyboard.on("keydown-Z", () => this._confirmName());
+    this.input.keyboard.on("keydown-ENTER", () => this._confirmName());
+    this.input.keyboard.on("keydown-SPACE", () => this._confirmName());
+    this.input.keyboard.on("keydown-X", () => this._closeNameSelect());
+    this.input.keyboard.on("keydown-ESC", () => this._closeNameSelect());
   }
 
   handleConfirm() {
@@ -425,18 +446,7 @@ export class TitleScene extends Phaser.Scene {
     this._nameActive = true;
 
     // キー処理を一時的に上書き
-    this.input.keyboard.off("keydown-Z");
-    this.input.keyboard.off("keydown-ENTER");
-    this.input.keyboard.off("keydown-SPACE");
-    this.input.keyboard.on("keydown-Z", () => this._confirmName());
-    this.input.keyboard.on("keydown-ENTER", () => this._confirmName());
-    this.input.keyboard.on("keydown-SPACE", () => this._confirmName());
-    this.input.keyboard.on("keydown-X", () => {
-      this._closeNameSelect();
-    });
-    this.input.keyboard.on("keydown-ESC", () => {
-      this._closeNameSelect();
-    });
+    this._bindNameSelectKeyboardHandlers();
   }
 
   _updateNameDisplay() {
@@ -544,23 +554,8 @@ export class TitleScene extends Phaser.Scene {
       this.namePanel = null;
     }
     this._nameKeyboardButtons = [];
-    // Z/Enterを元に戻す
-    this.input.keyboard.off("keydown-Z");
-    this.input.keyboard.off("keydown-ENTER");
-    this.input.keyboard.off("keydown-SPACE");
-    this.input.keyboard.off("keydown-X");
-    this.input.keyboard.off("keydown-ESC");
-    this.input.keyboard.on("keydown-Z", () => this.handleConfirm());
-    this.input.keyboard.on("keydown-ENTER", () => this.handleConfirm());
-    this.input.keyboard.on("keydown-SPACE", () => this.handleConfirm());
-    this.input.keyboard.on("keydown-X", () => {
-      if (this.helpVisible) this.hideHelp();
-      if (this.settingsVisible) this.hideSettings();
-    });
-    this.input.keyboard.on("keydown-ESC", () => {
-      if (this.helpVisible) this.hideHelp();
-      if (this.settingsVisible) this.hideSettings();
-    });
+    // Z/Enter/Space と X/ESC の標準操作へ戻す
+    this._bindDefaultKeyboardHandlers();
   }
 
   _doStartNewGame(playerName) {
