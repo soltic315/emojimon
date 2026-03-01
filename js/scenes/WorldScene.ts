@@ -11,7 +11,14 @@ import {
 import { createWildMonsterForEncounter, rollWeatherForMapByHour } from "../data/mapRules.ts";
 import { audioManager } from "../audio/AudioManager.ts";
 import { TouchControls } from "../ui/TouchControls.ts";
-import { FONT, COLORS, TEXT_COLORS, drawPanel, drawSelection } from "../ui/UIHelper.ts";
+import {
+  FONT,
+  COLORS,
+  TEXT_COLORS,
+  drawPanel,
+  drawSelection,
+  createMonsterEmojiDisplay,
+} from "../ui/UIHelper.ts";
 import { addCameraBloom, createParticleBurst } from "../ui/FXHelper.ts";
 import {
   TILE_SIZE,
@@ -837,9 +844,9 @@ export class WorldScene extends Phaser.Scene {
     starterInfo.forEach((s) => {
       const wx = s.x * TILE_SIZE + TILE_SIZE / 2;
       const wy = s.y * TILE_SIZE + TILE_SIZE / 2;
-      const emoji = this.add.text(wx, wy - 18, s.emoji, {
+      const emoji = createMonsterEmojiDisplay(this, wx, wy - 18, s.emoji, {
         fontSize: 22,
-      }).setOrigin(0.5).setScrollFactor(1);
+      }).setScrollFactor(1);
       const label = this.add.text(wx, wy + 20, s.name, {
         fontFamily: FONT.UI,
         fontSize: 10,

@@ -13,7 +13,17 @@ import { MOVES } from "../data/moves.ts";
 import { WEATHER } from "../data/mapRules.ts";
 import { audioManager } from "../audio/AudioManager.ts";
 import { TouchControls } from "../ui/TouchControls.ts";
-import { FONT, COLORS, TEXT_COLORS, drawPanel, drawSelection, drawHpBar, drawExpBar } from "../ui/UIHelper.ts";
+import {
+  FONT,
+  COLORS,
+  TEXT_COLORS,
+  drawPanel,
+  drawSelection,
+  drawHpBar,
+  drawExpBar,
+  createMonsterEmojiDisplay,
+  setMonsterEmoji,
+} from "../ui/UIHelper.ts";
 import {
   BattleState,
   TYPE_PARTICLE,
@@ -238,7 +248,7 @@ export class BattleScene extends Phaser.Scene {
     if (this.battle.player !== nextAlive) {
       this.battle.player = nextAlive;
       this.enqueueMessage(`いけ！ ${nextAlive.species.name}！`);
-      this.playerEmojiText.setText(nextAlive.species.emoji || "❓");
+      setMonsterEmoji(this.playerEmojiText, nextAlive.species.emoji || "❓");
       this.updateHud(false);
     }
     return true;
@@ -406,23 +416,31 @@ export class BattleScene extends Phaser.Scene {
     this.playerAura = this.add.circle(this.playerGround.x, this.playerGround.y - 42, 34, 0xfbbf24, 0.08)
       .setBlendMode(Phaser.BlendModes.ADD);
 
-    this.playerEmojiText = this.add
-      .text(this.playerGround.x, this.playerGround.y - 44, player.species.emoji || "❓", {
+    this.playerEmojiText = createMonsterEmojiDisplay(
+      this,
+      this.playerGround.x,
+      this.playerGround.y - 44,
+      player.species.emoji || "❓",
+      {
         fontFamily: "system-ui, emoji",
         fontSize: 56,
-      })
-      .setOrigin(0.5);
+      }
+    );
 
     // 相手絵文字
     this.opponentAura = this.add.circle(this.opponentGround.x, this.opponentGround.y - 46, 38, 0xf8fafc, 0.08)
       .setBlendMode(Phaser.BlendModes.ADD);
 
-    this.opponentEmojiText = this.add
-      .text(this.opponentGround.x, this.opponentGround.y - 48, opponent.species.emoji || "❓", {
+    this.opponentEmojiText = createMonsterEmojiDisplay(
+      this,
+      this.opponentGround.x,
+      this.opponentGround.y - 48,
+      opponent.species.emoji || "❓",
+      {
         fontFamily: "system-ui, emoji",
         fontSize: 60,
-      })
-      .setOrigin(0.5);
+      }
+    );
 
     // ── 入場アニメーション ──
     // プレイヤー: 左からスライドイン
@@ -1749,7 +1767,7 @@ export class BattleScene extends Phaser.Scene {
       yoyo: true,
       ease: "sine.inOut",
       onYoyo: () => {
-        emojiText.setText(newEmoji);
+        setMonsterEmoji(emojiText, newEmoji);
       },
       onComplete: () => {
         emojiText.setScale(1);
@@ -2737,7 +2755,7 @@ export class BattleScene extends Phaser.Scene {
     this.enqueueMessage(`ゆけ！ ${this.battle.player.species.name}！`);
 
     // 絵文字表示を更新
-    this.playerEmojiText.setText(this.battle.player.species.emoji || "?");
+    setMonsterEmoji(this.playerEmojiText, this.battle.player.species.emoji || "?");
     this.updateHud(false);
 
     // いれかえ後は相手が攻撃してくる（1ターン消費）

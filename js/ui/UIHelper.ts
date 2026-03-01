@@ -355,6 +355,101 @@ export function createText(scene, x, y, content, style = {}) {
 }
 
 /**
+ * 絵文字文字列を見た目の1文字単位（グラフェム）で分割する
+ *
+ * @param {string} emoji
+ * @returns {string[]}
+ */
+function splitEmojiGraphemes(emoji) {
+  const normalized = (emoji || "").trim();
+  if (!normalized) return [];
+
+  if (typeof Intl !== "undefined" && Intl.Segmenter) {
+    const segmenter = new Intl.Segmenter("ja", { granularity: "grapheme" });
+    return Array.from(segmenter.segment(normalized), (part) => part.segment);
+  }
+
+  return Array.from(normalized);
+}
+
+/**
+ * モンスター絵文字表示オブジェクトを生成する
+ * 2グラフェムのときは「ベース + オーバーレイ」で重ね描画する
+ *
+ * @param {Phaser.Scene} scene
+ * @param {number} x
+ * @param {number} y
+ * @param {string} emoji
+ * @param {object} opts
+ * @returns {Phaser.GameObjects.Container}
+ */
+export function createMonsterEmojiDisplay(scene, x, y, emoji, opts = {}) {
+  const {
+    fontFamily = "system-ui, emoji",
+    fontSize = 56,
+    color,
+    overlayScale = 0.68,
+    overlayOffsetX = 0,
+    overlayOffsetY = -2,
+  } = opts;
+
+  const container = scene.add.container(x, y);
+
+  const renderEmoji = (nextEmoji) => {
+    container.removeAll(true);
+
+    const parts = splitEmojiGraphemes(nextEmoji || "❓");
+    const textStyle = {
+      fontFamily,
+      fontSize,
+      ...(color ? { color } : {}),
+    };
+
+    if (parts.length === 2) {
+      const base = scene.add.text(0, 0, parts[0], textStyle).setOrigin(0.5);
+      const overlay = scene.add.text(
+        overlayOffsetX,
+        overlayOffsetY,
+        parts[1],
+        { ...textStyle, fontSize: Math.max(10, Math.round(fontSize * overlayScale)) }
+      ).setOrigin(0.5);
+      container.add([base, overlay]);
+      return;
+    }
+
+    const single = scene.add.text(0, 0, (parts.join("") || "❓"), textStyle).setOrigin(0.5);
+    container.add(single);
+  };
+
+  renderEmoji(emoji);
+
+  // BattleScene等から setText と同じ感覚で呼べるようにメソッドを生やす
+  container.setMonsterEmoji = (nextEmoji) => {
+    renderEmoji(nextEmoji);
+    return container;
+  };
+
+  return container;
+}
+
+/**
+ * 既存のモンスター絵文字表示オブジェクトに対して絵文字を更新する
+ *
+ * @param {Phaser.GameObjects.Container | Phaser.GameObjects.Text | null} display
+ * @param {string} emoji
+ */
+export function setMonsterEmoji(display, emoji) {
+  if (!display) return;
+  if (typeof display.setMonsterEmoji === "function") {
+    display.setMonsterEmoji(emoji);
+    return;
+  }
+  if (typeof display.setText === "function") {
+    display.setText(emoji || "❓");
+  }
+}
+
+/**
  * 背景の微光パーティクルを生成する
  * ふわふわ浮く光の粒でプロフェッショナルな空気感を演出
  *
