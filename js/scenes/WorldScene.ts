@@ -240,6 +240,124 @@ export class WorldScene extends Phaser.Scene {
 
     // トレーナーバトル結果チェック
     this._checkTrainerBattleResult();
+
+    // 実績チェック & 通知
+    this._checkAndShowAchievements();
+  }
+
+  /** オートセーブ時に画面右上にインジケーターを表示 */
+  _showAutoSaveIndicator() {
+    if (this._autoSaveIndicator && !this._autoSaveIndicator.scene) {
+      this._autoSaveIndicator = null;
+    }
+    if (this._autoSaveIndicator) return; // 表示中の場合は重複しない
+
+    const { width } = this.scale;
+    const indicator = this.add.text(width - 12, 8, "💾 セーブ中…", {
+      fontFamily: FONT.UI,
+      fontSize: 12,
+      color: "#86efac",
+      stroke: "#000000",
+      strokeThickness: 2,
+    }).setOrigin(1, 0).setScrollFactor(0).setDepth(100).setAlpha(0);
+
+    this._autoSaveIndicator = indicator;
+
+    this.tweens.add({
+      targets: indicator,
+      alpha: 1,
+      duration: 200,
+      yoyo: true,
+      hold: 600,
+      onComplete: () => {
+        if (indicator.scene) indicator.destroy();
+        this._autoSaveIndicator = null;
+      },
+    });
+  }
+
+  /** オートセーブ（インジケーター付き） */
+  autoSave() {
+    const ok = gameState.save();
+    if (ok) this._showAutoSaveIndicator();
+    return ok;
+  }
+
+  /** 実績をチェックし、新たに達成されたものをトースト表示する */
+  _checkAndShowAchievements() {
+    const newIds = gameState.checkAchievements();
+    if (newIds.length === 0) return;
+
+    // 通知をキューから取り出して順番に表示
+    const notifications = gameState.consumeAchievementNotifications();
+    notifications.forEach((def, i) => {
+      this.time.delayedCall(i * 1800, () => {
+        this._showAchievementToast(def);
+      });
+    });
+
+    // 実績アンロック後にオートセーブ
+    gameState.save();
+  }
+
+  /** 実績達成のトースト通知を表示 */
+  _showAchievementToast(achievementDef) {
+    const { width } = this.scale;
+    const toastW = 260;
+    const toastH = 44;
+    const toastX = width / 2 - toastW / 2;
+    const toastY = -toastH;
+
+    const container = this.add.container(toastX, toastY).setScrollFactor(0).setDepth(200);
+
+    // 背景
+    const bg = this.add.graphics();
+    bg.fillStyle(0x1e293b, 0.95);
+    bg.fillRoundedRect(0, 0, toastW, toastH, 8);
+    bg.lineStyle(2, 0xfbbf24, 0.8);
+    bg.strokeRoundedRect(0, 0, toastW, toastH, 8);
+    container.add(bg);
+
+    // テキスト
+    const icon = this.add.text(10, toastH / 2, achievementDef.icon, {
+      fontFamily: "system-ui, emoji",
+      fontSize: 20,
+    }).setOrigin(0, 0.5);
+    container.add(icon);
+
+    const title = this.add.text(36, 8, "🏆 実績解除！", {
+      fontFamily: FONT.UI,
+      fontSize: 11,
+      color: "#fbbf24",
+    });
+    container.add(title);
+
+    const name = this.add.text(36, 24, achievementDef.name, {
+      fontFamily: FONT.UI,
+      fontSize: 13,
+      color: "#e5e7eb",
+    });
+    container.add(name);
+
+    // スライドインアニメーション
+    this.tweens.add({
+      targets: container,
+      y: 8,
+      duration: 400,
+      ease: "Back.easeOut",
+      onComplete: () => {
+        this.time.delayedCall(2200, () => {
+          this.tweens.add({
+            targets: container,
+            y: -toastH - 10,
+            alpha: 0,
+            duration: 350,
+            ease: "Power2",
+            onComplete: () => container.destroy(),
+          });
+        });
+      },
+    });
   }
 
   /** トレーナーバトル後の結果処理 */
@@ -2996,7 +3114,7 @@ export class WorldScene extends Phaser.Scene {
         return;
       }
       // マップ遷移時にオートセーブ
-      gameState.save();
+      this.autoSave();
       this.cameras.main.fadeOut(300, 0, 0, 0);
       this.cameras.main.once("camerafadeoutcomplete", () => {
         this.scene.restart({ mapKey: match.target, startX: match.startX, startY: match.startY });

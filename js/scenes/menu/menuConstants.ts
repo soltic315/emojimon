@@ -3,6 +3,7 @@ export const MENU_ITEMS = [
   { label: "ボックス", icon: "📦", action: "box" },
   { label: "バッグ", icon: "🎒", action: "bag" },
   { label: "ずかん", icon: "📖", action: "pokedex" },
+  { label: "実績", icon: "🏆", action: "achievements" },
   { label: "トレーナー", icon: "👤", action: "trainer" },
   { label: "グローバルマップ", icon: "🗺️", action: "globalMap" },
   { label: "ガイド", icon: "🧭", action: "guide" },

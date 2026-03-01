@@ -6,6 +6,7 @@ import {
   rollMonsterAbilityId,
   syncMonsterMoves,
 } from "../data/monsters.ts";
+import { checkNewAchievements, getAchievementById } from "../data/achievements.ts";
 
 const SAVE_KEY = "emojimon_save_v2";
 const SAVE_BACKUP_KEY = "emojimon_save_v2_backup";
@@ -91,11 +92,23 @@ function buildLoadedMonster(saved) {
       ? saved.moveIds.filter((moveId) => typeof moveId === "string")
       : [],
     pp: Array.isArray(saved?.pp) ? saved.pp : [],
+    nickname: typeof saved?.nickname === "string" && saved.nickname.trim().length > 0
+      ? saved.nickname.trim().slice(0, 12)
+      : null,
   };
 
   syncMonsterMoves(loaded);
   loaded.currentHp = clampInt(loaded.currentHp, 0, maxHp, maxHp);
   return loaded;
+}
+
+/** モンスターの表示名を取得（ニックネーム優先） */
+export function getMonsterDisplayName(monster) {
+  if (!monster) return "？";
+  if (monster.nickname && typeof monster.nickname === "string" && monster.nickname.trim().length > 0) {
+    return monster.nickname.trim();
+  }
+  return monster.species?.name || "？";
 }
 
 const DAILY_CHALLENGE_DEFS = [
@@ -253,6 +266,8 @@ class GameState {
     this.box = []; // パーティ上限(6)を超えたモンスター保管
     this.discoveredFusionRecipes = [];
     this.dailyChallenge = null;
+    this.unlockedAchievements = []; // 解除済み実績ID
+    this._pendingAchievementNotifications = []; // 表示待ちの新実績
     this.audioSettings = {
       muted: false,
       bgmVolume: 0.3,
@@ -299,6 +314,8 @@ class GameState {
     this.box = [];
     this.discoveredFusionRecipes = [];
     this.dailyChallenge = null;
+    this.unlockedAchievements = [];
+    this._pendingAchievementNotifications = [];
     this.refreshDailyChallenge();
     this.audioSettings = prevAudioSettings;
     this.gameplaySettings = sanitizeGameplaySettings(prevGameplaySettings);
@@ -485,6 +502,43 @@ class GameState {
   getFieldTimeLabel() {
     const { hour, minute } = this.getFieldTime();
     return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+  }
+
+  // ── 実績システム ──
+
+  /**
+   * 実績の達成状況をチェックし、新しく達成されたものを通知キューに追加する
+   * @returns 新しく達成された実績IDの配列
+   */
+  checkAchievements() {
+    if (!Array.isArray(this.unlockedAchievements)) {
+      this.unlockedAchievements = [];
+    }
+    const newIds = checkNewAchievements(this.unlockedAchievements);
+    if (newIds.length > 0) {
+      this.unlockedAchievements.push(...newIds);
+      if (!Array.isArray(this._pendingAchievementNotifications)) {
+        this._pendingAchievementNotifications = [];
+      }
+      newIds.forEach((id) => {
+        const def = getAchievementById(id);
+        if (def) {
+          this._pendingAchievementNotifications.push(def);
+        }
+      });
+    }
+    return newIds;
+  }
+
+  /** 未表示の実績通知を取得して消費する */
+  consumeAchievementNotifications() {
+    if (!Array.isArray(this._pendingAchievementNotifications)) {
+      this._pendingAchievementNotifications = [];
+      return [];
+    }
+    const pending = [...this._pendingAchievementNotifications];
+    this._pendingAchievementNotifications = [];
+    return pending;
   }
 
   /** 図鑑: モンスターを見た */
@@ -834,6 +888,7 @@ class GameState {
           nextLevelExp: m.nextLevelExp,
           currentHp: m.currentHp,
           bond: m.bond || 0,
+          nickname: m.nickname || null,
           moveIds: m.moveIds || [],
           pp: m.pp || [],
         })),
@@ -847,6 +902,7 @@ class GameState {
           nextLevelExp: m.nextLevelExp,
           currentHp: m.currentHp,
           bond: m.bond || 0,
+          nickname: m.nickname || null,
           moveIds: m.moveIds || [],
           pp: m.pp || [],
         })),
@@ -863,6 +919,7 @@ class GameState {
         playTimeMs: this.playTimeMs,
         wildWinStreak: this.getWildWinStreak(),
         discoveredFusionRecipes: [...this.getFusionDiscoveries()],
+        unlockedAchievements: Array.isArray(this.unlockedAchievements) ? [...this.unlockedAchievements] : [],
         dailyChallenge: this.getDailyChallenge(),
         audioSettings: { ...this.audioSettings },
         gameplaySettings: sanitizeGameplaySettings(this.gameplaySettings),
@@ -939,6 +996,10 @@ class GameState {
       this.discoveredFusionRecipes = Array.isArray(data.discoveredFusionRecipes)
         ? [...new Set(data.discoveredFusionRecipes.filter((v) => typeof v === "string"))]
         : [];
+      this.unlockedAchievements = Array.isArray(data.unlockedAchievements)
+        ? [...new Set(data.unlockedAchievements.filter((v) => typeof v === "string"))]
+        : [];
+      this._pendingAchievementNotifications = [];
       this.dailyChallenge = data.dailyChallenge || null;
       this.refreshDailyChallenge();
       this.audioSettings = {

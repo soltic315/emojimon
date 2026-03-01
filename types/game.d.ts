@@ -158,6 +158,8 @@ export interface MonsterInstance {
   lastUsedMoveType?: MonsterType;
   /** キズナ (0-100) */
   bond?: number;
+  /** ニックネーム（未設定時はnull/undefined） */
+  nickname?: string | null;
 }
 
 // ── アイテム ──

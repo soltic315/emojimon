@@ -75,6 +75,7 @@ export class MenuScene extends Phaser.Scene {
     this.input.keyboard.on("keydown-X", () => this.handleCancel());
     this.input.keyboard.on("keydown-ESC", () => this.handleCancel());
     this.input.keyboard.on("keydown-C", () => this.handlePartyFusionShortcut());
+    this.input.keyboard.on("keydown-N", () => this.handleNicknameShortcut());
   }
 
   update() {
@@ -129,6 +130,9 @@ export class MenuScene extends Phaser.Scene {
         break;
       case "pokedex":
         this.openSubMenu("pokedex");
+        break;
+      case "achievements":
+        this.openSubMenu("achievements");
         break;
       case "trainer":
         this.openSubMenu("trainer");
@@ -391,6 +395,31 @@ export class MenuScene extends Phaser.Scene {
 
   _showPartyMessage(text) {
     showPartyMessage(this, text);
+  }
+
+  // ── ニックネーム変更 ──
+  handleNicknameShortcut() {
+    if (!this.subMenuActive || this.subMenuType !== "party") return;
+    if (this.partySwapMode || this.partyFusionMode) return;
+    const mon = gameState.party[this.subMenuIndex];
+    if (!mon || !mon.species) return;
+
+    const currentName = mon.nickname || "";
+    const input = prompt(
+      `${mon.species.emoji} ${mon.species.name} のニックネームを入力\n（空欄で元の名前に戻す / 最大12文字）`,
+      currentName,
+    );
+    if (input === null) return; // キャンセル
+
+    const trimmed = input.trim().slice(0, 12);
+    mon.nickname = trimmed.length > 0 ? trimmed : null;
+    audioManager.playConfirm();
+    if (mon.nickname) {
+      this._showPartyMessage(`${mon.species.name}に「${mon.nickname}」というニックネームをつけた！`);
+    } else {
+      this._showPartyMessage(`${mon.species.name}のニックネームを元に戻した！`);
+    }
+    this._renderSubMenu();
   }
 
   // ── ボックス画面 ──

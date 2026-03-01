@@ -1078,29 +1078,61 @@ export class BattleScene extends Phaser.Scene {
     createTypeHitEffect(this, x, y, moveType, false);
   }
 
-  showFloatingDamage(x, y, damage, isSuper = false) {
-    const color = isSuper ? "#f97316" : "#ffffff";
-    const fontSize = isSuper ? 28 : 22;
-    const text = this.add.text(x, y, `-${damage}`, {
+  showFloatingDamage(x, y, damage, isSuper = false, isCritical = false) {
+    const color = isSuper ? "#f97316" : isCritical ? "#fbbf24" : "#ffffff";
+    const fontSize = isSuper ? 28 : isCritical ? 26 : 22;
+    const prefix = isCritical && !isSuper ? "💥" : "";
+    const text = this.add.text(x, y, `${prefix}-${damage}`, {
       fontFamily: FONT.UI,
       fontSize,
       color,
       stroke: "#000000",
+      strokeThickness: 4,
+      shadow: { offsetX: 1, offsetY: 1, color: "#00000080", blur: 4, fill: true },
+    }).setOrigin(0.5).setScale(0.6).setAlpha(0).setDepth(50);
+
+    // 左右にわずかにランダムオフセット
+    const offsetX = (Math.random() - 0.5) * 30;
+
+    gsap.timeline({ onComplete: () => text.destroy() })
+      .to(text, {
+        alpha: 1,
+        scale: isSuper ? 1.2 : 1,
+        duration: 0.12,
+        ease: "back.out(2)",
+      })
+      .to(text, {
+        x: x + offsetX,
+        y: y - 60,
+        alpha: 0,
+        scale: isSuper ? 1.3 : 1.08,
+        duration: 0.85,
+        ease: "power2.out",
+      });
+  }
+
+  /** 回復数値のフローティング表示 */
+  showFloatingHeal(x, y, amount) {
+    const text = this.add.text(x, y, `+${amount}`, {
+      fontFamily: FONT.UI,
+      fontSize: 22,
+      color: "#4ade80",
+      stroke: "#000000",
       strokeThickness: 3,
-    }).setOrigin(0.5).setScale(0.6).setAlpha(0);
+      shadow: { offsetX: 1, offsetY: 1, color: "#00000080", blur: 4, fill: true },
+    }).setOrigin(0.5).setScale(0.6).setAlpha(0).setDepth(50);
 
     gsap.timeline({ onComplete: () => text.destroy() })
       .to(text, {
         alpha: 1,
         scale: 1,
-        duration: 0.12,
-        ease: "back.out(2)",
+        duration: 0.15,
+        ease: "back.out(1.5)",
       })
       .to(text, {
         y: y - 50,
         alpha: 0,
-        scale: isSuper ? 1.18 : 1.06,
-        duration: 0.72,
+        duration: 0.8,
         ease: "power2.out",
       });
   }
@@ -1398,7 +1430,7 @@ export class BattleScene extends Phaser.Scene {
       }
 
       // ダメージ数字表示
-      this.showFloatingDamage(this.opponentEmojiText.x, this.opponentEmojiText.y - 30, damage, isSuper);
+      this.showFloatingDamage(this.opponentEmojiText.x, this.opponentEmojiText.y - 30, damage, isSuper, result.critical);
 
       // HP バーをアニメーション更新
       this.updateHud(true);
@@ -1522,7 +1554,7 @@ export class BattleScene extends Phaser.Scene {
         this.cameras.main.shake(300, intensity);
       }
 
-      this.showFloatingDamage(this.playerEmojiText.x, this.playerEmojiText.y - 30, damage, isSuper);
+      this.showFloatingDamage(this.playerEmojiText.x, this.playerEmojiText.y - 30, damage, isSuper, result.critical);
       this.updateHud(true);
 
       const label = this._getOpponentLabel();
@@ -2059,6 +2091,12 @@ export class BattleScene extends Phaser.Scene {
     const moves = getMonsterMoves(opponent);
     if (moves.length === 0) return null;
 
+    const oppStats = calcStats(opponent.species, opponent.level || 1);
+    const playerStats = calcStats(player.species, player.level || 1);
+    const oppHpRatio = Math.max(0, opponent.currentHp / (oppStats.maxHp || 1));
+    const playerHpRatio = Math.max(0, player.currentHp / (playerStats.maxHp || 1));
+    const isBossLevel = this.isBoss || this.isArena || this.isTrainer || this.isFinalBoss;
+
     const weighted = moves
       .map((move) => {
         const rawAccuracy = move.accuracy;
@@ -2069,33 +2107,108 @@ export class BattleScene extends Phaser.Scene {
         const effectiveness = this.getEffectiveness(move.type, player.species.primaryType, player.species.secondaryType);
         const isStatus = move.category === "status";
         const basePower = move.power || 0;
-        const playerHpRatio = Math.max(0, player.currentHp / (calcStats(player.species, player.level || 1).maxHp || 1));
-        const oppHpRatio = Math.max(0, opponent.currentHp / (calcStats(opponent.species, opponent.level || 1).maxHp || 1));
+
+        // PP残量チェック（PPが0なら選択しない）
+        const moveIndex = moves.indexOf(move);
+        const currentPp = Array.isArray(opponent.pp) && opponent.pp[moveIndex] !== undefined
+          ? opponent.pp[moveIndex]
+          : (move.pp || 10);
+        if (currentPp <= 0) return { move, score: -1 };
 
         let score = 0;
         if (isStatus) {
           score = 10;
-          if (move.selfHealPercent && oppHpRatio <= 0.45) score += 30;
-          if (move.selfAttackStage && (opponent.attackStage || 0) < 3) score += 12;
-          if (move.selfDefenseStage && (opponent.defenseStage || 0) < 3) score += 12;
+
+          // 回復技: HP50%以下で大幅加点、瀕死付近でさらに重視
+          if (move.selfHealPercent) {
+            if (oppHpRatio <= 0.25) score += 60;
+            else if (oppHpRatio <= 0.45) score += 35;
+            else if (oppHpRatio <= 0.7) score += 15;
+            else score -= 5; // HP十分なら回復の価値低い
+          }
+
+          // バフ技: ステージが低いときに重視
+          if (move.selfAttackStage) {
+            const currentStage = opponent.attackStage || 0;
+            if (currentStage < 2) score += 18 + (2 - currentStage) * 5;
+            else score -= 5; // 既に十分強化済み
+          }
+          if (move.selfDefenseStage) {
+            const currentStage = opponent.defenseStage || 0;
+            if (currentStage < 2) score += 15 + (2 - currentStage) * 4;
+            else score -= 5;
+          }
+
+          // デバフ技: 相手のステージが高いときやHP高いときに有効
           if (move.targetAttackStage) {
-            score += (player.attackStage || 0) > 0 ? 18 : 8;
-            if (playerHpRatio < 0.45) score += 8;
+            const targetStage = player.attackStage || 0;
+            score += targetStage > 0 ? 22 : 10;
+            if (playerHpRatio > 0.6) score += 8; // 長期戦の見込みがあるとき効果的
+          }
+          if (move.targetDefenseStage) {
+            const targetStage = player.defenseStage || 0;
+            score += targetStage > 0 ? 18 : 8;
+          }
+
+          // 状態異常技: 相手に状態異常がなければ有効
+          if (move.inflictStatus && !player.statusCondition) {
+            score += 22;
+            // まひはすばやさの高い相手に効果的
+            if (move.inflictStatus === "PARALYSIS" && playerStats.speed > oppStats.speed) score += 10;
+            // こおりは強力
+            if (move.inflictStatus === "FREEZE") score += 8;
+            // ねむりは強力
+            if (move.inflictStatus === "SLEEP") score += 8;
+          } else if (move.inflictStatus && player.statusCondition) {
+            score -= 15; // 既に状態異常がある場合は避ける
           }
         } else {
           const estimatedDamage = this.calculateDamage(opponent, player, move).damage;
           const canFinish = estimatedDamage >= player.currentHp;
-          const priorityBonus = (move.priority || 0) > 0 ? move.priority * 8 : 0;
-          const statusBonus = move.inflictStatus && !player.statusCondition ? 8 : 0;
-          score = estimatedDamage + 10 + basePower * 0.15 + effectiveness * 12 + priorityBonus + statusBonus + (canFinish ? 45 : 0);
+          const priorityBonus = (move.priority || 0) > 0 ? move.priority * 10 : 0;
+          const statusBonus = move.inflictStatus && !player.statusCondition ? 10 : 0;
+
+          // 倒しきれる場合は最優先
+          const finishBonus = canFinish ? 60 : 0;
+
+          // タイプ相性によるボーナス
+          const effectivenessBonus = effectiveness >= 2 ? 25 : (effectiveness >= 1.5 ? 15 : (effectiveness < 1 ? -10 : 0));
+
+          // STABボーナス
+          const stabBonus = (move.type === opponent.species.primaryType || move.type === opponent.species.secondaryType) ? 8 : 0;
+
+          score = estimatedDamage + 10 + basePower * 0.1 + effectivenessBonus + priorityBonus + statusBonus + finishBonus + stabBonus;
+
+          // 相手がHPが少なければ優先度を使う技を優先
+          if (playerHpRatio < 0.2 && (move.priority || 0) > 0) {
+            score += 20;
+          }
         }
 
         score *= accuracy;
+
+        // ボス・トレーナー戦ではAIの精度を上げる（上位技をより確実に選ぶ）
+        if (isBossLevel) {
+          score *= 1.15;
+        }
+
         return { move, score };
       })
+      .filter((entry) => entry.score >= 0)
       .sort((a, b) => b.score - a.score);
 
-    const top = weighted.slice(0, Math.min(2, weighted.length));
+    if (weighted.length === 0) return moves[0] || null;
+
+    // ボス/トレーナーは最善手を高確率で選ぶ、野生は多少ランダム
+    if (isBossLevel) {
+      // 60%でベスト、40%で次善
+      const topCount = Math.min(2, weighted.length);
+      if (topCount === 1 || Math.random() < 0.6) return weighted[0].move;
+      return weighted[1].move;
+    }
+
+    // 野生: 上位3手からランダム
+    const top = weighted.slice(0, Math.min(3, weighted.length));
     return Phaser.Utils.Array.GetRandom(top).move;
   }
 
@@ -2874,6 +2987,9 @@ export class BattleScene extends Phaser.Scene {
         gameState.currentMap = "EMOJI_TOWN";
       }
     }
+
+    // バトル終了時に実績チェック
+    gameState.checkAchievements();
 
     // バトル終了時にオートセーブ
     gameState.save();
