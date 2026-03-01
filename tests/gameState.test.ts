@@ -90,6 +90,25 @@ describe("gameState map weather", () => {
     expect(gameState.playerName).toBe("復旧元データ");
   });
 
+  it("メインセーブのJSON形式は正しくても構造不正ならバックアップからロードできる", () => {
+    gameState.playerName = "構造検証の復旧元";
+    expect(gameState.save()).toBe(true);
+
+    gameState.playerName = "最新データ";
+    expect(gameState.save()).toBe(true);
+
+    globalThis.localStorage.setItem(SAVE_KEY, JSON.stringify({
+      playerName: "壊れた構造",
+      party: "NOT_ARRAY",
+    }));
+
+    gameState.playerName = "初期化済み";
+    const loaded = gameState.load();
+
+    expect(loaded).toBe(true);
+    expect(gameState.playerName).toBe("構造検証の復旧元");
+  });
+
   it("ロード時にストーリー進行フラグを欠落なく復元する", () => {
     gameState.storyFlags.shadowDataFound = true;
     gameState.storyFlags.libraryPuzzleSolved = true;

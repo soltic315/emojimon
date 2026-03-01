@@ -7,6 +7,7 @@ import {
   syncMonsterMoves,
 } from "../data/monsters.ts";
 import { checkNewAchievements, getAchievementById } from "../data/achievements.ts";
+import { z } from "zod";
 
 const SAVE_KEY = "emojimon_save_v2";
 const SAVE_BACKUP_KEY = "emojimon_save_v2_backup";
@@ -29,6 +30,95 @@ const MAX_PLAY_TIME_MS = 31_536_000_000; // 365日分
 const VALID_WEATHER_KEYS = ["NONE", "SUNNY", "RAINY", "WINDY", "SNOWY"];
 const MINUTES_PER_DAY = 24 * 60;
 const DEFAULT_FIELD_TIME_MINUTES = 8 * 60;
+
+const serializedMonsterSchema = z.object({
+  speciesId: z.string().min(1).nullable().optional(),
+  abilityId: z.string().min(1).optional(),
+  level: z.number().finite().optional(),
+  exp: z.number().finite().optional(),
+  nextLevelExp: z.number().finite().optional(),
+  currentHp: z.number().finite().optional(),
+  bond: z.number().finite().optional(),
+  nickname: z.string().nullable().optional(),
+  moveIds: z.array(z.string()).optional(),
+  pp: z.array(z.number().finite()).optional(),
+}).passthrough();
+
+const inventoryEntrySchema = z.object({
+  itemId: z.string().min(1),
+  quantity: z.number().finite(),
+}).passthrough();
+
+const dailyChallengeSchema = z.object({
+  dateKey: z.string().min(1),
+  type: z.string().min(1),
+  label: z.string().min(1),
+  target: z.number().finite(),
+  progress: z.number().finite(),
+  rewardMoney: z.number().finite(),
+  completed: z.boolean(),
+  rewardClaimed: z.boolean(),
+}).partial().passthrough();
+
+const saveDataSchema = z.object({
+  playerName: z.string().optional(),
+  playerPosition: z.object({
+    x: z.number().finite().optional(),
+    y: z.number().finite().optional(),
+  }).partial().optional(),
+  playerDirection: z.enum(["up", "down", "left", "right"]).optional(),
+  currentMap: z.string().optional(),
+  lastHealPoint: z.object({
+    mapKey: z.string().optional(),
+    x: z.number().finite().optional(),
+    y: z.number().finite().optional(),
+  }).partial().optional(),
+  visitedMapIds: z.array(z.string()).optional(),
+  mapWeatherByMap: z.record(z.string(), z.unknown()).optional(),
+  fieldTimeMinutes: z.number().finite().optional(),
+  party: z.array(serializedMonsterSchema).optional(),
+  box: z.array(serializedMonsterSchema).optional(),
+  inventory: z.array(inventoryEntrySchema).optional(),
+  money: z.number().finite().optional(),
+  starQuestDone: z.boolean().optional(),
+  gymCleared: z.boolean().optional(),
+  arenaWins: z.number().finite().optional(),
+  arenaHighScore: z.number().finite().optional(),
+  caughtIds: z.array(z.string()).optional(),
+  seenIds: z.array(z.string()).optional(),
+  totalBattles: z.number().finite().optional(),
+  totalCatches: z.number().finite().optional(),
+  playTimeMs: z.number().finite().optional(),
+  wildWinStreak: z.number().finite().optional(),
+  discoveredFusionRecipes: z.array(z.string()).optional(),
+  unlockedAchievements: z.array(z.string()).optional(),
+  dailyChallenge: dailyChallengeSchema.nullable().optional(),
+  audioSettings: z.object({
+    muted: z.boolean().optional(),
+    bgmVolume: z.number().finite().optional(),
+    seVolume: z.number().finite().optional(),
+  }).partial().optional(),
+  gameplaySettings: z.object({
+    battleSpeed: z.string().optional(),
+    autoAdvanceMessages: z.boolean().optional(),
+    shortEncounterEffect: z.boolean().optional(),
+    emoSkipEnabled: z.boolean().optional(),
+    autoSaveEnabled: z.boolean().optional(),
+    screenBrightness: z.number().finite().optional(),
+  }).partial().optional(),
+  storyFlags: z.record(z.string(), z.unknown()).optional(),
+  savedAt: z.number().finite().optional(),
+}).passthrough();
+
+function parseAndValidateSaveData(raw, sourceLabel) {
+  const result = saveDataSchema.safeParse(raw);
+  if (!result.success) {
+    const issue = result.error.issues[0];
+    const issuePath = issue?.path?.length ? issue.path.join(".") : "root";
+    throw new Error(`${sourceLabel}の形式が不正です (${issuePath}: ${issue?.message || "unknown"})`);
+  }
+  return result.data;
+}
 
 function sanitizeGameplaySettings(raw) {
   const speed = raw?.battleSpeed;
@@ -1095,7 +1185,8 @@ class GameState {
     if (!rawPrimary) return false;
 
     try {
-      const data = JSON.parse(rawPrimary);
+      const parsed = JSON.parse(rawPrimary);
+      const data = parseAndValidateSaveData(parsed, "メインセーブ");
       return applyLoadedData(data);
     } catch (e) {
       console.warn("メインセーブのロードに失敗:", e);
@@ -1104,7 +1195,8 @@ class GameState {
     try {
       const rawBackup = localStorage.getItem(SAVE_BACKUP_KEY);
       if (!rawBackup) return false;
-      const backupData = JSON.parse(rawBackup);
+      const backupParsed = JSON.parse(rawBackup);
+      const backupData = parseAndValidateSaveData(backupParsed, "バックアップセーブ");
       const loaded = applyLoadedData(backupData);
       if (loaded) {
         console.warn("バックアップセーブから復旧しました。");
