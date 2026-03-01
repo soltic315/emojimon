@@ -190,6 +190,7 @@ export function openShopMenu(scene) {
   scene.shopActive = true;
   scene.shopMode = SHOP_MODE.ROOT;
   scene.shopSelectedIndex = 0;
+  scene.shopInputGuardUntil = (scene.time?.now || 0) + 180;
   scene.shopItems = getShopInventory(scene.mapKey);
   clearShopMenu(scene);
   renderShopMenu(scene);
@@ -270,9 +271,36 @@ export function renderShopMenu(scene) {
     scene.shopContainer.add(text);
     row += 1;
   }
+
+  if (totalEntries > visibleEntries) {
+    const topHint = scene.add.text(width / 2 + 140, panelY + 38, startIndex > 0 ? "▲" : " ", {
+      fontFamily: FONT.UI,
+      fontSize: 12,
+      color: "#94a3b8",
+    }).setOrigin(1, 0);
+    scene.shopContainer.add(topHint);
+
+    const bottomHint = scene.add.text(width / 2 + 140, panelY + panelH - 18, endIndex < totalEntries ? "▼" : " ", {
+      fontFamily: FONT.UI,
+      fontSize: 12,
+      color: "#94a3b8",
+    }).setOrigin(1, 0);
+    scene.shopContainer.add(bottomHint);
+
+    const scrollHint = scene.add.text(width / 2, panelY + panelH - 16, "↑↓でスクロール", {
+      fontFamily: FONT.UI,
+      fontSize: 11,
+      color: "#94a3b8",
+    }).setOrigin(0.5, 0);
+    scene.shopContainer.add(scrollHint);
+  }
 }
 
 export function handleShopInput(scene) {
+  const inputGuardActive = Number.isFinite(scene.shopInputGuardUntil)
+    && scene.time?.now < scene.shopInputGuardUntil;
+  if (inputGuardActive) return;
+
   const entries = scene.shopEntries || getShopEntries(scene);
   const upPressed = Phaser.Input.Keyboard.JustDown(scene.cursors.up)
     || Phaser.Input.Keyboard.JustDown(scene.keys.W);

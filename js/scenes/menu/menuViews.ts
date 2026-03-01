@@ -194,7 +194,6 @@ export function renderPartyView(scene) {
     const cursor = selected ? "▶" : " ";
     const bondMarker = (mon.bond || 0) >= 80 ? "❤️" : "";
     const displayName = mon.nickname || mon.species.name;
-    const nicknameIndicator = mon.nickname ? `(${mon.species.name})` : "";
     const nameStr = `${cursor} ${mon.species.emoji} ${displayName}${bondMarker}  Lv.${mon.level}`;
     const nameText = scene.add.text(panelX + 16, y, nameStr, {
       fontFamily: FONT.UI,
@@ -202,16 +201,6 @@ export function renderPartyView(scene) {
       color: selected ? "#fbbf24" : "#e5e7eb",
     });
     scene.subPanel.add(nameText);
-
-    // ニックネームがある場合、種族名を小さく表示
-    if (nicknameIndicator) {
-      const speciesLabel = scene.add.text(panelX + 38, y + 16, nicknameIndicator, {
-        fontFamily: FONT.UI,
-        fontSize: 10,
-        color: "#94a3b8",
-      });
-      scene.subPanel.add(speciesLabel);
-    }
 
     const typeColors = { FIRE: "#f97316", WATER: "#3b82f6", GRASS: "#22c55e", NORMAL: "#9ca3af", ELECTRIC: "#fbbf24", ICE: "#67e8f9" };
     const typeColor = typeColors[mon.species.primaryType] || "#9ca3af";

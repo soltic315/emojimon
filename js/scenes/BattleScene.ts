@@ -1,6 +1,7 @@
 import { gameState } from "../state/gameState.ts";
 import {
   TYPE_EFFECTIVENESS,
+  MAX_MOVE_SLOTS,
   calcStats,
   checkEvolution,
   evolveMonster,
@@ -124,9 +125,13 @@ export class BattleScene extends Phaser.Scene {
     this.selectedMainIndex = 0;
     this.selectedMoveIndex = 0;
     this.selectedItemIndex = 0;
+    this.selectedLearnReplaceIndex = 0;
     this.lastSelectedMainOption = "たたかう";
     this.lastSelectedMoveId = null;
     this.lastSelectedItemId = null;
+    this.pendingLearnMoves = [];
+    this.learnMoveMonster = null;
+    this.currentLearnMove = null;
 
     this.isBoss = this.battle.isBoss || false;
     this.isArena = this.battle.isArena || false;
@@ -809,6 +814,9 @@ export class BattleScene extends Phaser.Scene {
     } else if (this.state === BattleState.PLAYER_SELECT_SWITCH) {
       audioManager.playConfirm();
       this.performSwitch();
+    } else if (this.state === BattleState.PLAYER_SELECT_LEARN_REPLACE) {
+      audioManager.playConfirm();
+      this._confirmLearnMoveReplaceSelection();
     }
   }
 
@@ -823,6 +831,9 @@ export class BattleScene extends Phaser.Scene {
         if (selectedItem && selectedItem.def) this.lastSelectedItemId = selectedItem.def.id;
       }
       this.showMainMenu(false);
+    } else if (this.state === BattleState.PLAYER_SELECT_LEARN_REPLACE) {
+      audioManager.playCancel();
+      this._skipLearnMoveReplaceSelection();
     }
   }
 
@@ -870,6 +881,7 @@ export class BattleScene extends Phaser.Scene {
     else if (this.state === BattleState.PLAYER_SELECT_MOVE) this.handleMoveMenuNavigation();
     else if (this.state === BattleState.PLAYER_SELECT_ITEM) this.handleItemMenuNavigation();
     else if (this.state === BattleState.PLAYER_SELECT_SWITCH) this.handleSwitchMenuNavigation();
+    else if (this.state === BattleState.PLAYER_SELECT_LEARN_REPLACE) this.handleLearnReplaceMenuNavigation();
   }
 
   _handleTouchNav(dir) {
@@ -899,6 +911,14 @@ export class BattleScene extends Phaser.Scene {
         this.selectedSwitchIndex = (this.selectedSwitchIndex + dir + switchable.length) % switchable.length;
         audioManager.playCursor();
         this.showSwitchMenu(false);
+      }
+    } else if (this.state === BattleState.PLAYER_SELECT_LEARN_REPLACE) {
+      const moveCount = this.learnMoveMonster?.moveIds?.length || 0;
+      const optionsCount = Math.min(MAX_MOVE_SLOTS, moveCount) + 1;
+      if (optionsCount > 0) {
+        this.selectedLearnReplaceIndex = (this.selectedLearnReplaceIndex + dir + optionsCount) % optionsCount;
+        audioManager.playCursor();
+        this._renderLearnMoveReplaceMenu();
       }
     }
   }
@@ -986,6 +1006,137 @@ export class BattleScene extends Phaser.Scene {
       audioManager.playCursor();
       this.showItemMenu(false);
     }
+  }
+
+  handleLearnReplaceMenuNavigation() {
+    const moveCount = this.learnMoveMonster?.moveIds?.length || 0;
+    const optionsCount = Math.min(MAX_MOVE_SLOTS, moveCount) + 1;
+    if (optionsCount <= 0) return;
+
+    if (this.isNavUpPressed()) {
+      this.selectedLearnReplaceIndex = (this.selectedLearnReplaceIndex - 1 + optionsCount) % optionsCount;
+      audioManager.playCursor();
+      this._renderLearnMoveReplaceMenu();
+    } else if (this.isNavDownPressed()) {
+      this.selectedLearnReplaceIndex = (this.selectedLearnReplaceIndex + 1) % optionsCount;
+      audioManager.playCursor();
+      this._renderLearnMoveReplaceMenu();
+    }
+  }
+
+  _startLearnMoveSelection(monster, learnedMoves) {
+    if (!monster || !Array.isArray(learnedMoves) || learnedMoves.length === 0) return;
+    this.learnMoveMonster = monster;
+    this.pendingLearnMoves = [...learnedMoves];
+    this.currentLearnMove = null;
+    this.selectedLearnReplaceIndex = 0;
+    this._openNextLearnMoveSelection();
+  }
+
+  _openNextLearnMoveSelection() {
+    if (!Array.isArray(this.pendingLearnMoves) || this.pendingLearnMoves.length === 0) {
+      this.currentLearnMove = null;
+      this.learnMoveMonster = null;
+      this.selectedLearnReplaceIndex = 0;
+      this.state = BattleState.PLAYER_TURN;
+      this.showMainMenu(false);
+      return false;
+    }
+
+    this.currentLearnMove = this.pendingLearnMoves.shift();
+    this.selectedLearnReplaceIndex = 0;
+    this.state = BattleState.PLAYER_SELECT_LEARN_REPLACE;
+    this._renderLearnMoveReplaceMenu();
+    return true;
+  }
+
+  _renderLearnMoveReplaceMenu() {
+    const monster = this.learnMoveMonster;
+    const move = this.currentLearnMove;
+    if (!monster || !move) return;
+
+    this.clearMenuTexts();
+    const currentMoves = getMonsterMoves(monster).slice(0, MAX_MOVE_SLOTS);
+    const options = [
+      ...currentMoves.map((knownMove) => `わすれる: ${knownMove.name}`),
+      "おぼえない",
+    ];
+
+    if (this.selectedLearnReplaceIndex >= options.length) {
+      this.selectedLearnReplaceIndex = 0;
+    }
+
+    const panelX = (this.panelDividerX || 0) + 8;
+    const panelY = (this.panelY || 0) + 30;
+    const panelW = Math.max(180, (this.panelX + this.panelWidth - 12) - panelX);
+    const panelH = 22 + options.length * 24;
+
+    const panel = this.add.graphics();
+    drawPanel(panel, panelX, panelY, panelW, panelH, {
+      radius: 10,
+      headerHeight: 18,
+      bgAlpha: 0.94,
+      glow: true,
+      borderColor: COLORS.SELECT_BORDER,
+    });
+    this.menuTextGroup.push(panel);
+
+    const title = this.add.text(panelX + 10, panelY + 3, `${move.name}を どうする？`, {
+      fontFamily: FONT.UI,
+      fontSize: 12,
+      color: TEXT_COLORS.ACCENT,
+    });
+    this.menuTextGroup.push(title);
+
+    options.forEach((label, index) => {
+      const rowY = panelY + 24 + index * 24;
+      if (index === this.selectedLearnReplaceIndex) {
+        const selection = this.add.graphics();
+        drawSelection(selection, panelX + 6, rowY - 1, panelW - 12, 22, { radius: 7 });
+        this.menuTextGroup.push(selection);
+      }
+      const text = this.add.text(panelX + 14, rowY + 2, `${index === this.selectedLearnReplaceIndex ? "▶" : " "} ${label}`, {
+        fontFamily: FONT.UI,
+        fontSize: 13,
+        color: index === this.selectedLearnReplaceIndex ? "#f8fafc" : "#cbd5e1",
+      });
+      this.menuTextGroup.push(text);
+    });
+
+    this.messageText.setText(`${monster.species.name}は ${move.name}を おぼえたい！`);
+  }
+
+  _confirmLearnMoveReplaceSelection() {
+    const monster = this.learnMoveMonster;
+    const move = this.currentLearnMove;
+    if (!monster || !move) return;
+
+    const currentMoveIds = Array.isArray(monster.moveIds) ? monster.moveIds : [];
+    const replaceableCount = Math.min(MAX_MOVE_SLOTS, currentMoveIds.length);
+
+    if (this.selectedLearnReplaceIndex >= replaceableCount) {
+      this.enqueueMessage(`${monster.species.name}は ${move.name}を おぼえるのを やめた。`);
+    } else {
+      const forgetMoveId = currentMoveIds[this.selectedLearnReplaceIndex];
+      const forgetMove = MOVES[forgetMoveId];
+      currentMoveIds[this.selectedLearnReplaceIndex] = move.id;
+      const pp = Array.isArray(monster.pp) ? monster.pp : [];
+      pp[this.selectedLearnReplaceIndex] = Math.max(1, move.pp || 10);
+      monster.pp = pp;
+      this.enqueueMessage(`${monster.species.name}は ${forgetMove?.name || "わざ"}を わすれた！`);
+      this.enqueueMessage(`${monster.species.name}は ${move.name}を おぼえた！`);
+    }
+
+    this._openNextLearnMoveSelection();
+  }
+
+  _skipLearnMoveReplaceSelection() {
+    const monster = this.learnMoveMonster;
+    const move = this.currentLearnMove;
+    if (monster && move) {
+      this.enqueueMessage(`${monster.species.name}は ${move.name}を おぼえるのを やめた。`);
+    }
+    this._openNextLearnMoveSelection();
   }
 
   // ── 逃走 ──
@@ -1689,9 +1840,27 @@ export class BattleScene extends Phaser.Scene {
       audioManager.playLevelUp();
       this.enqueueMessage(`${leader.species.name}は レベル ${leader.level} に あがった！`);
       if (levelUpResult.learnedMoves.length > 0) {
+        const knownMoveIds = new Set(Array.isArray(leader.moveIds) ? leader.moveIds : []);
+        const pendingReplaceMoves = [];
         levelUpResult.learnedMoves.forEach((move) => {
-          this.enqueueMessage(`${leader.species.name}は ${move.name}を おぼえた！`);
+          if (knownMoveIds.has(move.id)) {
+            this.enqueueMessage(`${leader.species.name}は ${move.name}を おぼえた！`);
+            return;
+          }
+          if ((leader.moveIds || []).length < MAX_MOVE_SLOTS) {
+            leader.moveIds = [...(leader.moveIds || []), move.id].slice(0, MAX_MOVE_SLOTS);
+            leader.pp = [...(leader.pp || []), Math.max(1, move.pp || 10)].slice(0, MAX_MOVE_SLOTS);
+            knownMoveIds.add(move.id);
+            this.enqueueMessage(`${leader.species.name}は ${move.name}を おぼえた！`);
+            return;
+          }
+          pendingReplaceMoves.push(move);
         });
+
+        if (pendingReplaceMoves.length > 0) {
+          this.enqueueMessage(`${leader.species.name}の わざが いっぱいだ！`);
+          this._startLearnMoveSelection(leader, pendingReplaceMoves);
+        }
       }
       this._playLevelUpEffect(this.playerEmojiText);
 
@@ -2933,6 +3102,11 @@ export class BattleScene extends Phaser.Scene {
 
   endBattle() {
     audioManager.stopBgm();
+    gameState.setLastBattleResult({
+      isTrainer: !!this.isTrainer,
+      trainerBattleKey: this.battle?.trainerBattleKey || null,
+      won: this.resultType === "win",
+    });
     gameState.setBattle(null);
 
     // GSAPアニメーションをすべて停止（破棄済みオブジェクトへの操作を防止）

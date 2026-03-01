@@ -1,6 +1,7 @@
 import { MOVES } from "./moves.ts";
 
 export const TYPES = ["NORMAL", "FIRE", "WATER", "GRASS", "ELECTRIC", "ICE"];
+export const MAX_MOVE_SLOTS = 4;
 
 // 特性マスタ（8種）
 const DEFAULT_ABILITIES = {
@@ -330,16 +331,21 @@ export function getMonsterMoves(monsterEntry) {
   if (!monsterEntry?.species) return [];
   const levelMoves = getMovesForLevel(monsterEntry.species, monsterEntry.level || 1);
   if (!Array.isArray(monsterEntry.moveIds) || monsterEntry.moveIds.length === 0) {
-    return levelMoves;
+    return levelMoves.slice(0, MAX_MOVE_SLOTS);
   }
   const moveById = new Map(levelMoves.map((move) => [move.id, move]));
-  return monsterEntry.moveIds.map((moveId) => moveById.get(moveId)).filter(Boolean);
+  return monsterEntry.moveIds
+    .slice(0, MAX_MOVE_SLOTS)
+    .map((moveId) => moveById.get(moveId))
+    .filter(Boolean);
 }
 
 export function syncMonsterMoves(monsterEntry) {
   if (!monsterEntry?.species) return [];
 
   const levelMoves = getMovesForLevel(monsterEntry.species, monsterEntry.level || 1);
+  const levelMoveIds = levelMoves.map((move) => move.id);
+  const levelMoveIdSet = new Set(levelMoveIds);
   const prevMoveIds = Array.isArray(monsterEntry.moveIds) ? monsterEntry.moveIds : [];
   const prevPp = Array.isArray(monsterEntry.pp) ? monsterEntry.pp : [];
 
@@ -356,8 +362,21 @@ export function syncMonsterMoves(monsterEntry) {
     });
   }
 
-  monsterEntry.moveIds = levelMoves.map((move) => move.id);
-  monsterEntry.pp = levelMoves.map((move) => {
+  const nextMoveIds = prevMoveIds
+    .filter((moveId) => typeof moveId === "string" && levelMoveIdSet.has(moveId))
+    .slice(0, MAX_MOVE_SLOTS);
+
+  levelMoveIds.forEach((moveId) => {
+    if (nextMoveIds.length >= MAX_MOVE_SLOTS) return;
+    if (nextMoveIds.includes(moveId)) return;
+    nextMoveIds.push(moveId);
+  });
+
+  const moveById = new Map(levelMoves.map((move) => [move.id, move]));
+  monsterEntry.moveIds = nextMoveIds;
+  monsterEntry.pp = nextMoveIds.map((moveId) => {
+    const move = moveById.get(moveId);
+    if (!move) return 1;
     const prev = ppById.get(move.id);
     const maxPp = Math.max(1, move.pp || 10);
     if (typeof prev === "number") {

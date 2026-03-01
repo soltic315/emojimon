@@ -365,24 +365,13 @@ export class WorldScene extends Phaser.Scene {
 
   /** トレーナーバトル後の結果処理 */
   _checkTrainerBattleResult() {
-    const battle = gameState.activeBattle;
-    if (!battle || !battle.isTrainer) return;
+    const result = gameState.consumeLastBattleResult?.();
+    if (!result?.isTrainer || !result?.trainerBattleKey) return;
 
-    const battleKey = battle.trainerBattleKey;
-    const won = !gameState.isPartyWiped();
-
-    // バトル情報をクリア
-    gameState.activeBattle = null;
-    gameState.inBattle = false;
-
-    if (battleKey) {
-      // NPC再生成（フラグ更新前に結果処理）
-      this._handleTrainerBattleResult(battleKey, won);
-      // フラグが更新されたのでNPCを再生成
-      this.time.delayedCall(200, () => {
-        this.createNpcSprites();
-      });
-    }
+    this._handleTrainerBattleResult(result.trainerBattleKey, !!result.won);
+    this.time.delayedCall(200, () => {
+      this.createNpcSprites();
+    });
   }
 
   openMenu() {
@@ -1150,9 +1139,9 @@ export class WorldScene extends Phaser.Scene {
     this.starterLabelSprites = [];
 
     const starterInfo = [
-      { x: 3, y: 5, emoji: "🧸", name: "エムベア\n炎タイプ" },
-      { x: 7, y: 5, emoji: "🐟", name: "フィンバブ\n水タイプ" },
-      { x: 11, y: 5, emoji: "🌿", name: "ソーンバイン\n草タイプ" },
+      { x: 3, y: 5, emoji: "🧸" },
+      { x: 7, y: 5, emoji: "🐟" },
+      { x: 11, y: 5, emoji: "🌿" },
     ];
     starterInfo.forEach((s) => {
       const wx = s.x * TILE_SIZE + TILE_SIZE / 2;
@@ -1160,14 +1149,7 @@ export class WorldScene extends Phaser.Scene {
       const emoji = createMonsterEmojiDisplay(this, wx, wy - 18, s.emoji, {
         fontSize: 22,
       }).setScrollFactor(1);
-      const label = this.add.text(wx, wy + 20, s.name, {
-        fontFamily: FONT.UI,
-        fontSize: 10,
-        color: "#fde68a",
-        align: "center",
-      }).setOrigin(0.5).setScrollFactor(1);
-
-      this.starterLabelSprites.push(emoji, label);
+      this.starterLabelSprites.push(emoji);
     });
   }
 

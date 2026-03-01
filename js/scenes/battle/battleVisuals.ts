@@ -262,6 +262,7 @@ export function tickWeather(scene: any) {
     const oldWeather = WEATHER_INFO[scene.weather];
     scene.weather = WEATHER.NONE;
     scene.weatherTurnCounter = 0;
+    gameState.setMapWeather(gameState.currentMap, scene.weather);
     updateWeatherDisplay(scene);
     scene.enqueueMessage(`${oldWeather.emoji} ${oldWeather.label}が おさまった！`);
   } else if (scene.weather === WEATHER.NONE && Math.random() < 0.08) {
@@ -269,6 +270,7 @@ export function tickWeather(scene: any) {
     scene.weather = candidates[Math.floor(Math.random() * candidates.length)];
     scene.weatherTurnCounter = 0;
     scene.weatherDuration = 3 + Math.floor(Math.random() * 3);
+    gameState.setMapWeather(gameState.currentMap, scene.weather);
     const newWeather = WEATHER_INFO[scene.weather];
     updateWeatherDisplay(scene);
     scene.enqueueMessage(`${newWeather.emoji} てんきが ${newWeather.label}に かわった！`);

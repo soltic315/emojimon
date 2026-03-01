@@ -257,6 +257,7 @@ class GameState {
     this.fieldTimeMinutes = DEFAULT_FIELD_TIME_MINUTES;
     this.inBattle = false;
     this.activeBattle = null;
+    this.lastBattleResult = null;
     this.party = [];
     this.inventory = [];
     this.money = 0;
@@ -302,6 +303,7 @@ class GameState {
     this.fieldTimeMinutes = DEFAULT_FIELD_TIME_MINUTES;
     this.inBattle = false;
     this.activeBattle = null;
+    this.lastBattleResult = null;
 
     // ニューゲーム時はパーティなし（スターター選択後に追加）
     this.party = [];
@@ -465,6 +467,25 @@ class GameState {
       battlePayload.weather = mapWeather;
     }
     this.activeBattle = battlePayload;
+    this.lastBattleResult = null;
+  }
+
+  setLastBattleResult(result) {
+    if (!result || typeof result !== "object") {
+      this.lastBattleResult = null;
+      return;
+    }
+    this.lastBattleResult = {
+      isTrainer: !!result.isTrainer,
+      trainerBattleKey: typeof result.trainerBattleKey === "string" ? result.trainerBattleKey : null,
+      won: !!result.won,
+    };
+  }
+
+  consumeLastBattleResult() {
+    const result = this.lastBattleResult;
+    this.lastBattleResult = null;
+    return result;
   }
 
   _normalizeMapWeatherKey(mapKey) {
@@ -1016,6 +1037,7 @@ class GameState {
       }
       this.inBattle = false;
       this.activeBattle = null;
+      this.lastBattleResult = null;
 
       this.party = (Array.isArray(data.party) ? data.party : [])
         .map((saved) => buildLoadedMonster(saved))
