@@ -713,6 +713,11 @@ export function renderGlobalMapView(scene) {
   const panelW = width - SUB_PANEL_WIDTH_OFFSET;
   const panelX = 10;
   const panelY = 10;
+  const listAreaW = Math.min(250, Math.max(200, Math.floor(panelW * 0.35)));
+  const mapAreaX = panelX + listAreaW + 18;
+  const mapAreaY = panelY + 44;
+  const mapAreaW = Math.max(220, panelW - listAreaW - 30);
+  const mapAreaH = 240;
 
   const bg = scene.add.graphics();
   drawPanel(bg, panelX, panelY, panelW, height - 20, { radius: 12, headerHeight: 24 });
@@ -731,7 +736,41 @@ export function renderGlobalMapView(scene) {
   scene.subMenuIndex = Phaser.Math.Clamp(scene.subMenuIndex, 0, Math.max(0, mapKeys.length - 1));
   const selectedMapKey = mapKeys[scene.subMenuIndex] || currentMapKey;
 
-  const currentLine = scene.add.text(panelX + panelW - 300, panelY + 12, `現在地: ${currentMapName}`, {
+  const nodeLayout = {
+    EMOJI_TOWN: { x: 0.08, y: 0.56 },
+    HOUSE1: { x: 0.06, y: 0.34 },
+    LAB: { x: 0.14, y: 0.34 },
+    TOWN_SHOP: { x: 0.08, y: 0.78 },
+    FOREST: { x: 0.26, y: 0.56 },
+    FOREST_GYM: { x: 0.26, y: 0.33 },
+    CRYSTAL_CAVE: { x: 0.44, y: 0.56 },
+    DARK_TOWER: { x: 0.44, y: 0.82 },
+    VOLCANIC_PASS: { x: 0.62, y: 0.56 },
+    VOLCANO_SHOP: { x: 0.62, y: 0.82 },
+    FROZEN_PEAK: { x: 0.78, y: 0.56 },
+    FROZEN_GYM: { x: 0.78, y: 0.33 },
+    FROZEN_SHOP: { x: 0.78, y: 0.82 },
+    SKY_RUINS: { x: 0.9, y: 0.42 },
+    CELESTIAL_GARDEN: { x: 0.9, y: 0.7 },
+    GARDEN_SHOP: { x: 0.98, y: 0.82 },
+  };
+
+  const nodeCenters = {};
+  mapKeys.forEach((mapKey, index) => {
+    const fixed = nodeLayout[mapKey];
+    const fallbackCol = index % 4;
+    const fallbackRow = Math.floor(index / 4);
+    const fx = 0.08 + fallbackCol * 0.24;
+    const fy = 0.2 + fallbackRow * 0.2;
+    const nx = fixed ? fixed.x : fx;
+    const ny = fixed ? fixed.y : Math.min(0.92, fy);
+    nodeCenters[mapKey] = {
+      x: mapAreaX + Math.round(mapAreaW * nx),
+      y: mapAreaY + Math.round(mapAreaH * ny),
+    };
+  });
+
+  const currentLine = scene.add.text(panelX + listAreaW + 24, panelY + 12, `現在地: ${currentMapName}`, {
     fontFamily: FONT.UI,
     fontSize: 12,
     color: "#cbd5e1",
@@ -740,9 +779,77 @@ export function renderGlobalMapView(scene) {
 
   const listTop = panelY + 44;
   const rowH = 30;
-  const listHeight = 230;
+  const listHeight = mapAreaH;
   const visibleCount = Math.max(1, Math.floor(listHeight / rowH));
   const scrollStart = Math.max(0, Math.min(scene.subMenuIndex - Math.floor(visibleCount / 2), mapKeys.length - visibleCount));
+
+  const mapBg = scene.add.graphics();
+  mapBg.fillStyle(0x0f172a, 0.52);
+  mapBg.fillRoundedRect(mapAreaX, mapAreaY, mapAreaW, mapAreaH, 10);
+  mapBg.lineStyle(1, 0x334155, 0.85);
+  mapBg.strokeRoundedRect(mapAreaX, mapAreaY, mapAreaW, mapAreaH, 10);
+  scene.subPanel.add(mapBg);
+
+  const mapLegend = scene.add.text(mapAreaX + 10, mapAreaY + 8, "ワールド接続図", {
+    fontFamily: FONT.UI,
+    fontSize: 12,
+    color: "#93c5fd",
+  });
+  scene.subPanel.add(mapLegend);
+
+  const edgeKeys = new Set();
+  mapKeys.forEach((source) => {
+    const transitions = DOOR_TRANSITIONS[source] || [];
+    transitions.forEach((transition) => {
+      const target = transition.target;
+      if (!nodeCenters[target]) return;
+      const edgeKey = [source, target].sort().join("__");
+      if (edgeKeys.has(edgeKey)) return;
+      edgeKeys.add(edgeKey);
+
+      const from = nodeCenters[source];
+      const to = nodeCenters[target];
+      const isFocused = source === selectedMapKey || target === selectedMapKey;
+
+      const edge = scene.add.graphics();
+      edge.lineStyle(isFocused ? 2 : 1, isFocused ? 0x93c5fd : 0x475569, isFocused ? 0.95 : 0.7);
+      edge.beginPath();
+      edge.moveTo(from.x, from.y);
+      edge.lineTo(to.x, to.y);
+      edge.strokePath();
+      scene.subPanel.add(edge);
+    });
+  });
+
+  mapKeys.forEach((mapKey) => {
+    const center = nodeCenters[mapKey];
+    const isCurrent = mapKey === currentMapKey;
+    const isSelected = mapKey === selectedMapKey;
+
+    const node = scene.add.circle(center.x, center.y, isSelected ? 7 : 5, isCurrent ? 0xfacc15 : 0x94a3b8, 0.95);
+    scene.subPanel.add(node);
+
+    if (isSelected) {
+      const ring = scene.add.circle(center.x, center.y, 11, 0x000000, 0).setStrokeStyle(2, 0xfbbf24, 0.95);
+      scene.subPanel.add(ring);
+    }
+
+    const mapLabel = MAPS[mapKey]?.name || mapKey;
+    const label = scene.add.text(center.x + 8, center.y - 8, mapLabel, {
+      fontFamily: FONT.UI,
+      fontSize: 10,
+      color: isCurrent ? "#fde68a" : (isSelected ? "#fbbf24" : "#cbd5e1"),
+    });
+    scene.subPanel.add(label);
+
+    if (isCurrent) {
+      const pin = scene.add.text(center.x - 4, center.y - 20, "📍", {
+        fontFamily: FONT.UI,
+        fontSize: 11,
+      });
+      scene.subPanel.add(pin);
+    }
+  });
 
   for (let vi = 0; vi < visibleCount; vi++) {
     const index = scrollStart + vi;
@@ -754,7 +861,7 @@ export function renderGlobalMapView(scene) {
 
     if (selected) {
       const selBg = scene.add.graphics();
-      drawSelection(selBg, panelX + 12, y - 4, panelW - 24, 26, { radius: 6 });
+      drawSelection(selBg, panelX + 12, y - 4, listAreaW - 18, 26, { radius: 6 });
       scene.subPanel.add(selBg);
     }
 
