@@ -799,6 +799,97 @@
       "description": "凍てつく風で攻撃し、相手の防御を下げる。"
     },
     {
+      "id": "EMBER_RAIN",
+      "name": "エンバーレイン",
+      "type": "FIRE",
+      "power": 76,
+      "accuracy": 0.88,
+      "category": "special",
+      "pp": 10,
+      "inflictStatus": "BURN",
+      "statusChance": 0.2,
+      "description": "燃える火の粉の雨を降らせ、相手を包み焼く。"
+    },
+    {
+      "id": "TIDE_LANCE",
+      "name": "タイドラング",
+      "type": "WATER",
+      "power": 74,
+      "accuracy": 0.9,
+      "category": "physical",
+      "pp": 12,
+      "description": "水流を槍のように束ねて鋭く突き刺す。"
+    },
+    {
+      "id": "MOSS_BARRIER",
+      "name": "モスバリア",
+      "type": "GRASS",
+      "power": 0,
+      "accuracy": 1,
+      "category": "status",
+      "pp": 12,
+      "selfDefenseStage": 1,
+      "selfHealPercent": 0.12,
+      "description": "苔の壁で守りを固め、少しだけ回復する。"
+    },
+    {
+      "id": "VERDANT_BLADE",
+      "name": "ヴァーダントブレード",
+      "type": "GRASS",
+      "power": 82,
+      "accuracy": 0.86,
+      "category": "physical",
+      "pp": 8,
+      "description": "深緑の刃を形成し、重い一閃を叩き込む。"
+    },
+    {
+      "id": "THUNDER_STEP",
+      "name": "サンダーステップ",
+      "type": "ELECTRIC",
+      "power": 48,
+      "accuracy": 1,
+      "category": "physical",
+      "pp": 18,
+      "priority": 1,
+      "inflictStatus": "PARALYSIS",
+      "statusChance": 0.12,
+      "description": "電光石火の踏み込みで先制し、まひを狙う。"
+    },
+    {
+      "id": "CRYO_LANCE",
+      "name": "クライオランス",
+      "type": "ICE",
+      "power": 82,
+      "accuracy": 0.84,
+      "category": "special",
+      "pp": 8,
+      "inflictStatus": "FREEZE",
+      "statusChance": 0.12,
+      "description": "極低温の氷槍を連続射出し、動きを封じる。"
+    },
+    {
+      "id": "METEOR_BARK",
+      "name": "メテオバーク",
+      "type": "NORMAL",
+      "power": 78,
+      "accuracy": 0.9,
+      "category": "physical",
+      "pp": 10,
+      "description": "流星のような咆哮と突進を同時に叩きつける。"
+    },
+    {
+      "id": "STAR_PRAYER",
+      "name": "スタープレイヤー",
+      "type": "NORMAL",
+      "power": 0,
+      "accuracy": 1,
+      "category": "status",
+      "pp": 10,
+      "selfAttackStage": 1,
+      "selfDefenseStage": 1,
+      "description": "星に祈りを捧げ、攻守を同時に高める。"
+    },
+    {
       "id": "ETERNAL_LIGHT",
       "name": "エターナルライト",
       "type": "NORMAL",

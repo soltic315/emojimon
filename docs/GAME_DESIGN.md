@@ -232,6 +232,9 @@ nextLevelExp = 10 + 8 × level
 - 追加技: `EMBER_SWEEP` / `RIVER_SONG` / `BRAMBLE_EDGE` / `ARC_SPIN` / `POLAR_PULSE` / `ICY_WIND`
 - 追加アイテム: `MEGA_ETHER` / `RESCUE_GEL` / `DUSK_BALL`
 - 出現プール（町・森・洞窟・火山・遺跡・ダークタワー・氷峰・天空の花園）とショップ在庫へ反映
+- 追加モンスター（追補）: `LUMIPUP` / `SOLMANTIS` / `MISTOTTER` / `ABYSSMART` / `FERNBIT` / `GROVYRA` / `BOLTRON` / `TEMPESTEL` / `SNOWLING` / `GLAZELK`
+- 追加技（追補）: `EMBER_RAIN` / `TIDE_LANCE` / `MOSS_BARRIER` / `VERDANT_BLADE` / `THUNDER_STEP` / `CRYO_LANCE` / `METEOR_BARK` / `STAR_PRAYER`
+- ストーリー拡張（追補）: マップ探索中に石板・碑文イベント（`forest_tablet_1` / `cave_memory_1` / `volcano_memory_1` / `frozen_memory_1` / `ruins_memory_2` / `garden_epilogue`）を追加
 
 ### 8.5 バランス調整（2026-03-01）
 

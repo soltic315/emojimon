@@ -175,6 +175,7 @@ export function getMapNpcs(mapKey) {
   if (mapKey === "FOREST") {
     const npcs = [
       { x: 11, y: 4, text: "この森には 珍しいモンスターがいるらしい… 奥に進むほど強いのが出るぞ。", texture: "npc" },
+      { x: 3, y: 3, text: null, texture: "npc-quest", story: "forest_tablet_1" },
     ];
     if (!sf.forestScoutBeaten) {
       npcs.push({ x: 6, y: 6, text: null, texture: "npc-quest", rivalBattle: "forest_scout", trainerName: "レンジャー ミナト", rivalLevel: 14, preBattleText: "ミナト: 森の中は危険がいっぱいだ！ レンジャーの俺に実力を見せてみな！" });
@@ -197,6 +198,7 @@ export function getMapNpcs(mapKey) {
     const npcs = [
       { x: 12, y: 16, text: "ひかる床では 強いモンスターが出やすいみたい。", texture: "npc" },
       { x: 5, y: 5, text: "闘技場へようこそ！ 3連戦に勝てば豪華報酬だ！", arena: true, texture: "npc-shop" },
+      { x: 18, y: 15, text: null, texture: "npc-quest", story: "cave_memory_1" },
     ];
     if (!sf.caveScholarBeaten) {
       npcs.push({ x: 7, y: 14, text: "洞窟では一手のミスが命取りだ。戦術演習を始めよう。", texture: "npc-quest", rivalBattle: "cave_scholar", trainerName: "戦術家 シオン", rivalLevel: 24 });
@@ -219,6 +221,7 @@ export function getMapNpcs(mapKey) {
     const npcs = [
       { x: 6, y: 18, text: "ここから先は高レベル地帯だ。ボールを多めに持っていけ！", texture: "npc" },
       { x: 14, y: 12, text: "補給所だよ。遠征前に買っていきな！", shop: true, texture: "npc-shop" },
+      { x: 10, y: 6, text: null, texture: "npc-quest", story: "volcano_memory_1" },
     ];
     if (!sf.volcanicScoutBeaten) {
       npcs.push({ x: 25, y: 10, text: "斥候任務中だ。ここを抜ける実力、見せてみな！", texture: "npc-quest", rivalBattle: "volcanic_scout", trainerName: "火山斥候 ガロ", rivalLevel: 33 });
@@ -236,6 +239,7 @@ export function getMapNpcs(mapKey) {
   if (mapKey === "SKY_RUINS") {
     const npcs = [
       { x: 8, y: 5, text: "遺跡に刻まれた伝説によると…かつて世界を救ったエモじは、今もここで眠っている。", texture: "npc-quest", story: "ruins_elder" },
+      { x: 20, y: 4, text: null, texture: "npc-quest", story: "ruins_memory_2" },
     ];
     if (!sf.ruinsGuardianBeaten) {
       npcs.push({ x: 6, y: 14, text: "最後の間へ進む者には、遺跡の掟を示してもらう。受けよ！", texture: "npc-quest", rivalBattle: "ruins_guardian", trainerName: "遺跡の守人 ラカ", rivalLevel: 39, isBossTrainer: true });
@@ -276,6 +280,7 @@ export function getMapNpcs(mapKey) {
     const npcs = [
       { x: 6, y: 16, text: "この山は一年中雪が降っている。氷タイプが多いぞ。", texture: "npc" },
       { x: 20, y: 15, text: "補給所だよ。氷の山は危険だから準備万端で行きな！", shop: true, texture: "npc-shop" },
+      { x: 22, y: 5, text: null, texture: "npc-quest", story: "frozen_memory_1" },
     ];
     if (!sf.frozenSageBeaten) {
       npcs.push({ x: 9, y: 6, text: "吹雪で勝つには判断力が要る。山の試験を受けるかい？", texture: "npc-quest", rivalBattle: "frozen_sage", trainerName: "氷峰の賢者 セツナ", rivalLevel: 36, isBossTrainer: true });
@@ -306,6 +311,7 @@ export function getMapNpcs(mapKey) {
       { x: 6, y: 6, text: "伝説のモンスターの気配がする…奥に進んでみては？", texture: "npc-quest" },
       { x: 22, y: 12, text: "ここのモンスターは強い。最強を目指す者だけが来る場所だ。", texture: "npc" },
       { x: 10, y: 4, text: "特別なアイテムがあるよ！", shop: true, texture: "npc-shop" },
+      { x: 4, y: 15, text: null, story: "garden_epilogue", texture: "npc-quest" },
     ];
     if (!sf.legendaryDefeated) {
       npcs.push({ x: 14, y: 3, text: null, story: "garden_legendary", texture: "npc-quest" });

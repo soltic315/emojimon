@@ -160,6 +160,8 @@ export class WorldScene extends Phaser.Scene {
         "── それぞれが 炎、水、草…さまざまな力を宿している。",
         "── この世界の秩序は 5つの『エモじクリスタル』によって保たれてきた。",
         "── しかし今、悪の組織『ダーク団』がクリスタルを狙い 暗躍を始めている…。",
+        "── クリスタルは 森、洞窟、塔、火山、遺跡に封じられているという。",
+        "── すべての結晶が揃うと、天空の花園に古い扉が開くらしい…。",
         `── そんな中、${gameState.playerName}は ハカセからの手紙を受け取り、`,
         "── エモじタウンの研究所を訪れることになった。",
         "▶ WASDキーで移動、Zキーで話しかける。北の研究所に向かおう！",
@@ -1154,6 +1156,24 @@ export class WorldScene extends Phaser.Scene {
       case "rival_first_meet":
         this._doRivalFirstMeet(npc);
         break;
+      case "forest_tablet_1":
+        this._doForestTabletLore();
+        break;
+      case "cave_memory_1":
+        this._doCaveMemoryLore();
+        break;
+      case "volcano_memory_1":
+        this._doVolcanoMemoryLore();
+        break;
+      case "frozen_memory_1":
+        this._doFrozenMemoryLore();
+        break;
+      case "ruins_memory_2":
+        this._doRuinsMemoryLore();
+        break;
+      case "garden_epilogue":
+        this._doGardenEpilogueLore();
+        break;
       default:
         if (npc && npc.text) this.showMessage(npc.text);
     }
@@ -1455,6 +1475,66 @@ export class WorldScene extends Phaser.Scene {
       "老人: ここに 最後のクリスタルが眠っている。",
       "老人: しかし ダーク団のボスが また現れた…",
       "老人: 奥に入って 決着をつけておくれ！",
+    ]);
+  }
+
+  _doForestTabletLore() {
+    this.showDialogSequence([
+      "石板の文字: 『最初の光は森に根を張り、命の巡りを護った』",
+      "石板の文字: 『炎は再生を、水は循環を、草は調和を司る』",
+      "石板の文字: 『守護者に認められし者のみ、結晶を手にする』",
+    ]);
+  }
+
+  _doCaveMemoryLore() {
+    this.showDialogSequence([
+      "結晶壁に古い記録が映る…",
+      "記録: 『二つ目の結晶は、恐れに打ち勝つ者を選ぶ』",
+      "記録: 『揺らぐ心は暗闇に呑まれる。仲間との絆を信じよ』",
+    ]);
+  }
+
+  _doVolcanoMemoryLore() {
+    this.showDialogSequence([
+      "焦げた碑文: 『炎の結晶は怒りを映す鏡なり』",
+      "焦げた碑文: 『怒りを力に変え、力を守りに変えよ』",
+      "焦げた碑文: 『支配を望む者に、結晶は決して従わない』",
+    ]);
+  }
+
+  _doFrozenMemoryLore() {
+    this.showDialogSequence([
+      "氷壁の詩: 『凍てる静寂は、迷いを映し出す』",
+      "氷壁の詩: 『急ぐ者は道を失い、見極める者は峰を越える』",
+      "氷壁の詩: 『最後の門は、冷静な心にのみ開かれる』",
+    ]);
+  }
+
+  _doRuinsMemoryLore() {
+    const sf = gameState.storyFlags;
+    if (sf.ruinsFinalDone) {
+      this.showDialogSequence([
+        "光る石柱: 『継承は果たされた。新たな守護者に祝福を』",
+        "光る石柱: 『旅の果てに見た景色を、次の時代へ伝えよ』",
+      ]);
+      return;
+    }
+    this.showDialogSequence([
+      "石柱の刻印: 『五つ目の結晶は、終わりと始まりを繋ぐ鍵』",
+      "石柱の刻印: 『すべての試練を越えし者、天へ至る庭に招かれる』",
+    ]);
+  }
+
+  _doGardenEpilogueLore() {
+    const sf = gameState.storyFlags;
+    if (!sf.ruinsFinalDone) {
+      this.showMessage("古い花碑がある…文字はかすれて読めない。まだ時期ではないようだ。");
+      return;
+    }
+    this.showDialogSequence([
+      "花碑の詩: 『守護者は世界を救い、その物語は風に刻まれる』",
+      "花碑の詩: 『旅が終わっても、絆は次の冒険を呼ぶ』",
+      "花碑の詩: 『挑戦を望むなら、花園はいつでも門を開く』",
     ]);
   }
 
