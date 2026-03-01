@@ -1008,7 +1008,10 @@
     {
       "id": "SNOWLING",
       "name": "スノウリング",
-      "emoji": "🐑❄️",
+      "emoji": "🐑",
+      "sub_emoji": [
+        { "emoji": "❄️", "point": "top-right", "size": 0.5 }
+      ],
       "primaryType": "ICE",
       "baseStats": { "maxHp": 48, "attack": 51, "defense": 55, "speed": 58 },
       "learnset": ["ICE_SHARD", "FROST_BITE", "CRYO_LANCE", "HAIL_SHELL"],

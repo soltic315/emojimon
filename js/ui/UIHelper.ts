@@ -372,6 +372,42 @@ function splitEmojiGraphemes(emoji) {
   return Array.from(normalized);
 }
 
+function resolveSubEmojiOffset(point, fontSize) {
+  const scale = Math.max(8, fontSize || 56);
+  if (point && typeof point === "object" && typeof point.x === "number" && typeof point.y === "number") {
+    return { x: point.x, y: point.y };
+  }
+
+  const key = String(point || "center").toLowerCase();
+  const map = {
+    center: { x: 0, y: 0 },
+    middle: { x: 0, y: 0 },
+    "中央": { x: 0, y: 0 },
+    top: { x: 0, y: -scale * 0.28 },
+    "上": { x: 0, y: -scale * 0.28 },
+    bottom: { x: 0, y: scale * 0.28 },
+    "下": { x: 0, y: scale * 0.28 },
+    left: { x: -scale * 0.25, y: 0 },
+    "左": { x: -scale * 0.25, y: 0 },
+    right: { x: scale * 0.25, y: 0 },
+    "右": { x: scale * 0.25, y: 0 },
+    "top-left": { x: -scale * 0.22, y: -scale * 0.22 },
+    topleft: { x: -scale * 0.22, y: -scale * 0.22 },
+    "左上": { x: -scale * 0.22, y: -scale * 0.22 },
+    "top-right": { x: scale * 0.22, y: -scale * 0.22 },
+    topright: { x: scale * 0.22, y: -scale * 0.22 },
+    "右上": { x: scale * 0.22, y: -scale * 0.22 },
+    "bottom-left": { x: -scale * 0.22, y: scale * 0.22 },
+    bottomleft: { x: -scale * 0.22, y: scale * 0.22 },
+    "左下": { x: -scale * 0.22, y: scale * 0.22 },
+    "bottom-right": { x: scale * 0.22, y: scale * 0.22 },
+    bottomright: { x: scale * 0.22, y: scale * 0.22 },
+    "右下": { x: scale * 0.22, y: scale * 0.22 },
+  };
+
+  return map[key] || { x: 0, y: 0 };
+}
+
 /**
  * モンスター絵文字表示オブジェクトを生成する
  * 2グラフェムのときは「ベース + オーバーレイ」で重ね描画する
@@ -388,6 +424,7 @@ export function createMonsterEmojiDisplay(scene, x, y, emoji, opts = {}) {
     fontFamily = "system-ui, emoji",
     fontSize = 56,
     color,
+    subEmojis = null,
     overlayScale = 0.68,
     overlayOffsetX = 0,
     overlayOffsetY = -2,
@@ -395,7 +432,7 @@ export function createMonsterEmojiDisplay(scene, x, y, emoji, opts = {}) {
 
   const container = scene.add.container(x, y);
 
-  const renderEmoji = (nextEmoji) => {
+  const renderEmoji = (nextEmoji, nextSubEmojis = null) => {
     container.removeAll(true);
 
     const parts = splitEmojiGraphemes(nextEmoji || "❓");
@@ -404,6 +441,33 @@ export function createMonsterEmojiDisplay(scene, x, y, emoji, opts = {}) {
       fontSize,
       ...(color ? { color } : {}),
     };
+
+    const customSubEmojis = Array.isArray(nextSubEmojis)
+      ? nextSubEmojis.filter((entry) => entry && typeof entry.emoji === "string" && entry.emoji.length > 0)
+      : [];
+
+    const baseEmoji = parts[0] || "❓";
+
+    if (customSubEmojis.length > 0) {
+      const base = scene.add.text(0, 0, baseEmoji, textStyle).setOrigin(0.5);
+      container.add(base);
+
+      customSubEmojis.forEach((entry) => {
+        const size = typeof entry.size === "number" ? Math.max(0.1, entry.size) : 0.5;
+        const offset = resolveSubEmojiOffset(entry.point, fontSize);
+        const overlay = scene.add.text(
+          offset.x,
+          offset.y,
+          entry.emoji,
+          {
+            ...textStyle,
+            fontSize: Math.max(10, Math.round(fontSize * size)),
+          }
+        ).setOrigin(0.5);
+        container.add(overlay);
+      });
+      return;
+    }
 
     if (parts.length === 2) {
       const base = scene.add.text(0, 0, parts[0], textStyle).setOrigin(0.5);
@@ -421,11 +485,11 @@ export function createMonsterEmojiDisplay(scene, x, y, emoji, opts = {}) {
     container.add(single);
   };
 
-  renderEmoji(emoji);
+  renderEmoji(emoji, subEmojis);
 
   // BattleScene等から setText と同じ感覚で呼べるようにメソッドを生やす
-  container.setMonsterEmoji = (nextEmoji) => {
-    renderEmoji(nextEmoji);
+  container.setMonsterEmoji = (nextEmoji, nextSubEmojis = null) => {
+    renderEmoji(nextEmoji, nextSubEmojis);
     return container;
   };
 
@@ -438,10 +502,10 @@ export function createMonsterEmojiDisplay(scene, x, y, emoji, opts = {}) {
  * @param {Phaser.GameObjects.Container | Phaser.GameObjects.Text | null} display
  * @param {string} emoji
  */
-export function setMonsterEmoji(display, emoji) {
+export function setMonsterEmoji(display, emoji, subEmojis = null) {
   if (!display) return;
   if (typeof display.setMonsterEmoji === "function") {
-    display.setMonsterEmoji(emoji);
+    display.setMonsterEmoji(emoji, subEmojis);
     return;
   }
   if (typeof display.setText === "function") {

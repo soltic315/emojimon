@@ -248,7 +248,11 @@ export class BattleScene extends Phaser.Scene {
     if (this.battle.player !== nextAlive) {
       this.battle.player = nextAlive;
       this.enqueueMessage(`いけ！ ${nextAlive.species.name}！`);
-      setMonsterEmoji(this.playerEmojiText, nextAlive.species.emoji || "❓");
+      setMonsterEmoji(
+        this.playerEmojiText,
+        nextAlive.species.emoji || "❓",
+        nextAlive.species.subEmoji,
+      );
       this.updateHud(false);
     }
     return true;
@@ -424,6 +428,7 @@ export class BattleScene extends Phaser.Scene {
       {
         fontFamily: "system-ui, emoji",
         fontSize: 56,
+        subEmojis: player.species.subEmoji,
       }
     );
 
@@ -439,6 +444,7 @@ export class BattleScene extends Phaser.Scene {
       {
         fontFamily: "system-ui, emoji",
         fontSize: 60,
+        subEmojis: opponent.species.subEmoji,
       }
     );
 
@@ -1654,7 +1660,7 @@ export class BattleScene extends Phaser.Scene {
         evolveMonster(leader, evo);
         syncMonsterMoves(leader);
         this.enqueueMessage(`おめでとう！ ${oldName}は ${leader.species.name}に しんかした！ 🎉`);
-        this._playEvolutionEffect(this.playerEmojiText, leader.species.emoji);
+        this._playEvolutionEffect(this.playerEmojiText, leader.species.emoji, leader.species.subEmoji);
       }
     }
 
@@ -1735,7 +1741,7 @@ export class BattleScene extends Phaser.Scene {
   }
 
   /** 進化の演出 — 光のバーストと絵文字チェンジ（強化版） */
-  _playEvolutionEffect(emojiText, newEmoji) {
+  _playEvolutionEffect(emojiText, newEmoji, newSubEmojis = null) {
     if (!emojiText) return;
     const x = emojiText.x;
     const y = emojiText.y;
@@ -1767,7 +1773,7 @@ export class BattleScene extends Phaser.Scene {
       yoyo: true,
       ease: "sine.inOut",
       onYoyo: () => {
-        setMonsterEmoji(emojiText, newEmoji);
+        setMonsterEmoji(emojiText, newEmoji, newSubEmojis);
       },
       onComplete: () => {
         emojiText.setScale(1);
@@ -2755,7 +2761,11 @@ export class BattleScene extends Phaser.Scene {
     this.enqueueMessage(`ゆけ！ ${this.battle.player.species.name}！`);
 
     // 絵文字表示を更新
-    setMonsterEmoji(this.playerEmojiText, this.battle.player.species.emoji || "?");
+    setMonsterEmoji(
+      this.playerEmojiText,
+      this.battle.player.species.emoji || "?",
+      this.battle.player.species.subEmoji,
+    );
     this.updateHud(false);
 
     // いれかえ後は相手が攻撃してくる（1ターン消費）

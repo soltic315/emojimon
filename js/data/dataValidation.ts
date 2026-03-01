@@ -31,10 +31,23 @@ const baseStatsSchema = z.object({
   speed: z.number().min(1),
 });
 
+const subEmojiSchema = z.object({
+  emoji: z.string().min(1),
+  point: z.union([
+    z.string().min(1),
+    z.object({
+      x: z.number(),
+      y: z.number(),
+    }),
+  ]).optional(),
+  size: z.number().positive().optional(),
+});
+
 const monsterSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   emoji: z.string().optional(),
+  sub_emoji: z.array(subEmojiSchema).optional(),
   primaryType: z.string().min(1),
   baseStats: baseStatsSchema,
   learnset: z.array(z.string().min(1)),

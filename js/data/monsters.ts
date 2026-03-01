@@ -109,6 +109,35 @@ let gardenPool = [];
 let gymBossData = null;
 let gymBoss2Data = null;
 
+function normalizeSubEmoji(rawSubEmoji) {
+  if (!Array.isArray(rawSubEmoji)) return [];
+
+  return rawSubEmoji
+    .map((entry) => {
+      if (!entry || typeof entry !== "object") return null;
+      const emoji = typeof entry.emoji === "string" ? entry.emoji : "";
+      if (!emoji) return null;
+
+      const point = entry.point;
+      const hasPointObject = point && typeof point === "object"
+        && typeof point.x === "number" && typeof point.y === "number";
+      const normalizedPoint = hasPointObject
+        ? { x: point.x, y: point.y }
+        : (typeof point === "string" ? point : "center");
+
+      const size = typeof entry.size === "number" && Number.isFinite(entry.size)
+        ? Math.max(0.1, entry.size)
+        : 0.5;
+
+      return {
+        emoji,
+        point: normalizedPoint,
+        size,
+      };
+    })
+    .filter(Boolean);
+}
+
 function setDefaultAbilities() {
   Object.keys(ABILITIES).forEach((key) => {
     delete ABILITIES[key];
@@ -246,6 +275,7 @@ export function initMonstersFromJson(json) {
       id: raw.id,
       name: raw.name,
       emoji: raw.emoji || "",
+      subEmoji: normalizeSubEmoji(raw.sub_emoji),
       primaryType: raw.primaryType,
       abilityId,
       baseStats: raw.baseStats,

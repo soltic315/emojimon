@@ -79,10 +79,17 @@ export interface Move {
 // ── モンスター ──
 
 /** モンスター種族データ（マスター） */
+export interface MonsterSubEmoji {
+  emoji: string;
+  point?: string | { x: number; y: number };
+  size?: number;
+}
+
 export interface MonsterSpecies {
   id: string;
   name: string;
   emoji: string;
+  subEmoji?: MonsterSubEmoji[];
   primaryType: MonsterType;
   abilityId: string;
   baseStats: BaseStats;
