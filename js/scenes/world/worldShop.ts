@@ -290,6 +290,7 @@ export function handleShopInput(scene) {
   }
 
   const confirm = Phaser.Input.Keyboard.JustDown(scene.keys.Z)
+    || Phaser.Input.Keyboard.JustDown(scene.keys.ENTER)
     || Phaser.Input.Keyboard.JustDown(scene.keys.SPACE);
   if (confirm) {
     const selected = entries[scene.shopSelectedIndex];

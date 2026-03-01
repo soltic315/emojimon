@@ -153,7 +153,7 @@ export class BattleScene extends Phaser.Scene {
     this.weatherDuration = 4 + Math.floor(Math.random() * 4); // 4〜7ターン
 
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.keys = this.input.keyboard.addKeys("Z,SPACE,X,W,A,S,D");
+    this.keys = this.input.keyboard.addKeys("Z,ENTER,SPACE,X,W,A,S,D");
 
     // タッチコントロール
     this.touchControls = new TouchControls(this);
@@ -657,15 +657,18 @@ export class BattleScene extends Phaser.Scene {
   }
 
   bindInput() {
-    this.keys.Z.on("down", () => {
+    const handleConfirmDown = () => {
       // エモ・スキップ中は通常確定を無視（長押し判定に委ねる）
       if (this.emoSkipAvailable && !this.emoSkipTriggered && this._isEmoSkipPhase()) return;
       this.handleConfirm();
-    });
+    };
+    this.keys.Z.on("down", handleConfirmDown);
+    this.keys.ENTER.on("down", handleConfirmDown);
     this.keys.SPACE.on("down", () => this.handleConfirm());
     this.keys.X.on("down", () => this.handleCancel());
 
     this.keys.Z.on("up", () => this._resetMessageFastForward());
+    this.keys.ENTER.on("up", () => this._resetMessageFastForward());
     this.keys.SPACE.on("up", () => this._resetMessageFastForward());
   }
 
@@ -828,7 +831,7 @@ export class BattleScene extends Phaser.Scene {
 
     // ── エモ・スキップ 長押し判定 ──
     if (this.emoSkipAvailable && !this.emoSkipTriggered && this._isEmoSkipPhase()) {
-      if (this.keys.Z.isDown) {
+      if (this.keys.Z.isDown || this.keys.ENTER.isDown) {
         this.emoSkipHoldTime += delta;
         this._updateEmoSkipProgress(this.emoSkipHoldTime / this.emoSkipHoldThreshold);
         if (this.emoSkipHoldTime >= this.emoSkipHoldThreshold) {
@@ -2836,6 +2839,8 @@ export class BattleScene extends Phaser.Scene {
     if (this.keys) {
       this.keys.Z.removeAllListeners("down");
       this.keys.Z.removeAllListeners("up");
+      this.keys.ENTER.removeAllListeners("down");
+      this.keys.ENTER.removeAllListeners("up");
       this.keys.SPACE.removeAllListeners("down");
       this.keys.SPACE.removeAllListeners("up");
       this.keys.X.removeAllListeners("down");

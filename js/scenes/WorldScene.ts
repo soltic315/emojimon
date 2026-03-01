@@ -130,13 +130,15 @@ export class WorldScene extends Phaser.Scene {
     this.touchControls.create();
 
     // キー入力
-    this.keys.Z.on("down", () => {
+    const interactAction = () => {
       if (this._dialogActive) return; // ダイアログ表示中は NPC 会話をスキップ
       if (this._starterChoiceActive) return;
       if (this._trainerBattlePending) return;
       if (this.isMoving || this.shopActive || this.isEncounterTransitioning) return;
       this.checkNpcInteraction();
-    });
+    };
+    this.keys.Z.on("down", interactAction);
+    this.keys.ENTER.on("down", interactAction);
 
     // メニューキー（X / ESC）
     this.keys.X.on("down", () => {
@@ -761,7 +763,7 @@ export class WorldScene extends Phaser.Scene {
       const roofHeight = Math.max(14, Math.floor(height * 0.5));
       const roof = this.add.triangle(
         baseX + width / 2,
-        baseY + 1,
+        baseY,
         -width / 2 - 3,
         0,
         width / 2 + 3,
