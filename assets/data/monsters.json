@@ -5,6 +5,7 @@
       "name": "エムベア",
       "emoji": "🧸",
       "primaryType": "FIRE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 39,
         "attack": 52,
@@ -31,8 +32,13 @@
       ],
       "catchRate": 0.3,
       "description": "小さな炎をまとったクマ。いたずら好きだが仲間想い。",
-      "evolveTo": "PYREBEAR",
-      "evolveLevel": 12,
+      "evolution": {
+        "evolvesTo": "PYREBEAR",
+        "condition": {
+          "type": "LEVEL",
+          "value": 12
+        }
+      },
       "sub_emoji": [],
       "ability": [
         {
@@ -41,7 +47,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 40,
+      "baseExpYield": 40,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -50,6 +56,7 @@
       "name": "パイロベア",
       "emoji": "🔥",
       "primaryType": "FIRE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 58,
         "attack": 74,
@@ -76,6 +83,7 @@
       ],
       "catchRate": 0.15,
       "description": "エムベアの進化形。体を炎でまとい、力強く戦う。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -84,7 +92,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 51,
+      "baseExpYield": 51,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -93,6 +101,7 @@
       "name": "ドロプレット",
       "emoji": "💧",
       "primaryType": "WATER",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 44,
         "attack": 48,
@@ -119,8 +128,13 @@
       ],
       "catchRate": 0.4,
       "description": "体のほとんどが水でできたモンスター。のんびり屋。",
-      "evolveTo": "TIDALON",
-      "evolveLevel": 14,
+      "evolution": {
+        "evolvesTo": "TIDALON",
+        "condition": {
+          "type": "LEVEL",
+          "value": 14
+        }
+      },
       "sub_emoji": [],
       "ability": [
         {
@@ -129,7 +143,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 39,
+      "baseExpYield": 39,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -138,6 +152,7 @@
       "name": "タイダロン",
       "emoji": "🌊",
       "primaryType": "WATER",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 68,
         "attack": 62,
@@ -164,6 +179,7 @@
       ],
       "catchRate": 0.12,
       "description": "ドロプレットの進化形。嵐をまとう海の覇者。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -172,7 +188,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 49,
+      "baseExpYield": 49,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -181,6 +197,7 @@
       "name": "リーフリング",
       "emoji": "🍃",
       "primaryType": "GRASS",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 45,
         "attack": 49,
@@ -207,8 +224,13 @@
       ],
       "catchRate": 0.35,
       "description": "風に乗って素早く動く草の妖精。森を守っている。",
-      "evolveTo": "THORNKING",
-      "evolveLevel": 13,
+      "evolution": {
+        "evolvesTo": "THORNKING",
+        "condition": {
+          "type": "LEVEL",
+          "value": 13
+        }
+      },
       "sub_emoji": [],
       "ability": [
         {
@@ -217,7 +239,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 35,
+      "baseExpYield": 35,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -226,6 +248,7 @@
       "name": "ソーンキング",
       "emoji": "🌳",
       "primaryType": "GRASS",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 72,
         "attack": 68,
@@ -252,6 +275,7 @@
       ],
       "catchRate": 0.1,
       "description": "リーフリングの進化形。巨木の王が森を統治する。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -260,7 +284,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 48,
+      "baseExpYield": 48,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -269,6 +293,7 @@
       "name": "スターライト",
       "emoji": "⭐",
       "primaryType": "NORMAL",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 35,
         "attack": 60,
@@ -291,6 +316,7 @@
       ],
       "catchRate": 0.5,
       "description": "夜空から落ちてきた星のかけら。きらめく光で敵をひるませると言われている。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -299,7 +325,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 43,
+      "baseExpYield": 43,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -308,6 +334,7 @@
       "name": "ブレイズバード",
       "emoji": "🐦‍🔥",
       "primaryType": "FIRE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 38,
         "attack": 58,
@@ -334,6 +361,7 @@
       ],
       "catchRate": 0.3,
       "description": "炎の翼を持つ高速の鳥。空から急降下して獲物を狩る。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -342,7 +370,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 42,
+      "baseExpYield": 42,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -351,6 +379,7 @@
       "name": "アクアシェル",
       "emoji": "🐢",
       "primaryType": "WATER",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 55,
         "attack": 46,
@@ -377,6 +406,7 @@
       ],
       "catchRate": 0.35,
       "description": "硬い甲羅に守られた水亀。動きは遅いが守りは鉄壁。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -385,7 +415,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 38,
+      "baseExpYield": 38,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -394,6 +424,7 @@
       "name": "ソーンバイン",
       "emoji": "🌿",
       "primaryType": "GRASS",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 50,
         "attack": 55,
@@ -420,6 +451,7 @@
       ],
       "catchRate": 0.4,
       "description": "つるを自在に操る植物モンスター。素早い連続攻撃が得意。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -428,7 +460,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 38,
+      "baseExpYield": 38,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -437,6 +469,7 @@
       "name": "シャドウポウ",
       "emoji": "🐾",
       "primaryType": "NORMAL",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 42,
         "attack": 65,
@@ -463,6 +496,7 @@
       ],
       "catchRate": 0.25,
       "description": "影に潜む謎の獣。夜になると活発になる素早いハンター。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -471,7 +505,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 44,
+      "baseExpYield": 44,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -480,6 +514,7 @@
       "name": "クリスタリン",
       "emoji": "💎",
       "primaryType": "NORMAL",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 48,
         "attack": 45,
@@ -506,6 +541,7 @@
       ],
       "catchRate": 0.2,
       "description": "体が宝石でできた希少なモンスター。硬さは折り紙つき。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -514,7 +550,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 40,
+      "baseExpYield": 40,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -523,6 +559,7 @@
       "name": "マグモグ",
       "emoji": "🌋",
       "primaryType": "FIRE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 64,
         "attack": 78,
@@ -549,6 +586,7 @@
       ],
       "catchRate": 0.14,
       "description": "火山の奥で眠る熔岩獣。重い一撃で押し切る。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -557,7 +595,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 45,
+      "baseExpYield": 45,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -566,6 +604,7 @@
       "name": "リップリンクス",
       "emoji": "🦭",
       "primaryType": "WATER",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 60,
         "attack": 58,
@@ -592,6 +631,7 @@
       ],
       "catchRate": 0.2,
       "description": "冷たい洞窟湖を泳ぐ狩人。波を操る。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -600,7 +640,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 45,
+      "baseExpYield": 45,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -609,6 +649,7 @@
       "name": "ブランブルオン",
       "emoji": "🍀",
       "primaryType": "GRASS",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 66,
         "attack": 64,
@@ -635,6 +676,7 @@
       ],
       "catchRate": 0.18,
       "description": "結晶草原に生きる幸運の守り手。防御が高い。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -643,6 +685,9 @@
         }
       ],
       "spawnRate": 1,
+      "baseExpYield": 45,
+      "heldItems": [],
+      "sizeScale": 1,
       "recipe": [
         [
           {
@@ -652,16 +697,14 @@
             "monsterId": "THORNVINE"
           }
         ]
-      ],
-      "expYield": 45,
-      "heldItems": [],
-      "sizeScale": 1
+      ]
     },
     {
       "id": "MOONMITE",
       "name": "ムーンマイト",
       "emoji": "🌙",
       "primaryType": "NORMAL",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 52,
         "attack": 72,
@@ -688,6 +731,7 @@
       ],
       "catchRate": 0.12,
       "description": "月明かりに現れる幻影。すばやく鋭い連撃を放つ。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -696,7 +740,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 50,
+      "baseExpYield": 50,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -705,6 +749,7 @@
       "name": "シンダーカブ",
       "emoji": "🦊",
       "primaryType": "FIRE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 42,
         "attack": 56,
@@ -731,8 +776,13 @@
       ],
       "catchRate": 0.33,
       "description": "火の粉をまとって走る幼い炎狐。",
-      "evolveTo": "VOLCANOX",
-      "evolveLevel": 16,
+      "evolution": {
+        "evolvesTo": "VOLCANOX",
+        "condition": {
+          "type": "LEVEL",
+          "value": 16
+        }
+      },
       "sub_emoji": [],
       "ability": [
         {
@@ -741,7 +791,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 39,
+      "baseExpYield": 39,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -750,6 +800,7 @@
       "name": "ヴォルカノックス",
       "emoji": "🗻",
       "primaryType": "FIRE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 76,
         "attack": 84,
@@ -776,6 +827,7 @@
       ],
       "catchRate": 0.09,
       "description": "溶岩帯を支配する巨大な炎獣。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -784,7 +836,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 53,
+      "baseExpYield": 53,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -793,6 +845,7 @@
       "name": "アッシュハウンド",
       "emoji": "🐺",
       "primaryType": "FIRE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 58,
         "attack": 76,
@@ -819,6 +872,7 @@
       ],
       "catchRate": 0.17,
       "description": "灰の荒野を駆ける紅い牙のハウンド。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -827,7 +881,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 50,
+      "baseExpYield": 50,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -836,6 +890,7 @@
       "name": "フィンバブ",
       "emoji": "🐟",
       "primaryType": "WATER",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 46,
         "attack": 47,
@@ -862,8 +917,13 @@
       ],
       "catchRate": 0.36,
       "description": "泡の尾びれで跳ねる川辺の小魚。",
-      "evolveTo": "GLACIERA",
-      "evolveLevel": 17,
+      "evolution": {
+        "evolvesTo": "GLACIERA",
+        "condition": {
+          "type": "LEVEL",
+          "value": 17
+        }
+      },
       "sub_emoji": [],
       "ability": [
         {
@@ -872,7 +932,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 39,
+      "baseExpYield": 39,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -881,6 +941,7 @@
       "name": "グラシエラ",
       "emoji": "🧊",
       "primaryType": "WATER",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 74,
         "attack": 67,
@@ -907,6 +968,7 @@
       ],
       "catchRate": 0.11,
       "description": "氷水をまとった古代の守護魚。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -915,6 +977,9 @@
         }
       ],
       "spawnRate": 1,
+      "baseExpYield": 50,
+      "heldItems": [],
+      "sizeScale": 1,
       "recipe": [
         [
           {
@@ -924,16 +989,14 @@
             "monsterId": "DROPLET"
           }
         ]
-      ],
-      "expYield": 50,
-      "heldItems": [],
-      "sizeScale": 1
+      ]
     },
     {
       "id": "MISTRAY",
       "name": "ミストレイ",
       "emoji": "🐬",
       "primaryType": "WATER",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 57,
         "attack": 61,
@@ -960,6 +1023,7 @@
       ],
       "catchRate": 0.16,
       "description": "霧の海を滑るように泳ぐ神秘のレイ。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -968,6 +1032,9 @@
         }
       ],
       "spawnRate": 1,
+      "baseExpYield": 50,
+      "heldItems": [],
+      "sizeScale": 1,
       "recipe": [
         [
           {
@@ -977,16 +1044,14 @@
             "monsterId": "FINBUB"
           }
         ]
-      ],
-      "expYield": 50,
-      "heldItems": [],
-      "sizeScale": 1
+      ]
     },
     {
       "id": "SPROUTLE",
       "name": "スプラウトル",
       "emoji": "🌱",
       "primaryType": "GRASS",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 44,
         "attack": 50,
@@ -1013,8 +1078,13 @@
       ],
       "catchRate": 0.34,
       "description": "芽吹きの音で仲間を呼ぶ草の精。",
-      "evolveTo": "BLOOMRA",
-      "evolveLevel": 16,
+      "evolution": {
+        "evolvesTo": "BLOOMRA",
+        "condition": {
+          "type": "LEVEL",
+          "value": 16
+        }
+      },
       "sub_emoji": [],
       "ability": [
         {
@@ -1023,7 +1093,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 37,
+      "baseExpYield": 37,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -1032,6 +1102,7 @@
       "name": "ブルームラ",
       "emoji": "🌺",
       "primaryType": "GRASS",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 73,
         "attack": 71,
@@ -1058,6 +1129,7 @@
       ],
       "catchRate": 0.1,
       "description": "花弁の嵐で戦場を包む花王。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -1066,7 +1138,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 50,
+      "baseExpYield": 50,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -1075,6 +1147,7 @@
       "name": "モスホーン",
       "emoji": "🫎",
       "primaryType": "GRASS",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 70,
         "attack": 73,
@@ -1101,6 +1174,7 @@
       ],
       "catchRate": 0.14,
       "description": "苔むした角で突進する森の番人。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -1109,7 +1183,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 48,
+      "baseExpYield": 48,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -1118,6 +1192,7 @@
       "name": "スカイピップ",
       "emoji": "🕊️",
       "primaryType": "NORMAL",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 41,
         "attack": 52,
@@ -1144,8 +1219,13 @@
       ],
       "catchRate": 0.31,
       "description": "空高く舞う風の案内役。",
-      "evolveTo": "AURORO",
-      "evolveLevel": 18,
+      "evolution": {
+        "evolvesTo": "AURORO",
+        "condition": {
+          "type": "LEVEL",
+          "value": 18
+        }
+      },
       "sub_emoji": [],
       "ability": [
         {
@@ -1154,7 +1234,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 43,
+      "baseExpYield": 43,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -1163,6 +1243,7 @@
       "name": "オーロロ",
       "emoji": "🪽",
       "primaryType": "NORMAL",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 69,
         "attack": 77,
@@ -1189,6 +1270,7 @@
       ],
       "catchRate": 0.08,
       "description": "遺跡上空に現れる光翼の守護鳥。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -1197,6 +1279,9 @@
         }
       ],
       "spawnRate": 1,
+      "baseExpYield": 56,
+      "heldItems": [],
+      "sizeScale": 1,
       "recipe": [
         [
           {
@@ -1214,16 +1299,14 @@
             "monsterId": "PYREBEAR"
           }
         ]
-      ],
-      "expYield": 56,
-      "heldItems": [],
-      "sizeScale": 1
+      ]
     },
     {
       "id": "RUNEFOX",
       "name": "ルーンフォックス",
       "emoji": "🦝",
       "primaryType": "NORMAL",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 62,
         "attack": 79,
@@ -1250,6 +1333,7 @@
       ],
       "catchRate": 0.12,
       "description": "古代文字を宿した尾で獲物を惑わす。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -1258,6 +1342,9 @@
         }
       ],
       "spawnRate": 1,
+      "baseExpYield": 52,
+      "heldItems": [],
+      "sizeScale": 1,
       "recipe": [
         [
           {
@@ -1267,16 +1354,14 @@
             "monsterId": "SKYPIP"
           }
         ]
-      ],
-      "expYield": 52,
-      "heldItems": [],
-      "sizeScale": 1
+      ]
     },
     {
       "id": "VOLTPUP",
       "name": "ボルトパプ",
       "emoji": "⚡",
       "primaryType": "ELECTRIC",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 40,
         "attack": 50,
@@ -1303,8 +1388,13 @@
       ],
       "catchRate": 0.32,
       "description": "体毛に静電気を宿した子犬。走ると火花が散る。",
-      "evolveTo": "SHOCKHOUND",
-      "evolveLevel": 14,
+      "evolution": {
+        "evolvesTo": "SHOCKHOUND",
+        "condition": {
+          "type": "LEVEL",
+          "value": 14
+        }
+      },
       "sub_emoji": [],
       "ability": [
         {
@@ -1313,7 +1403,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 40,
+      "baseExpYield": 40,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -1322,6 +1412,7 @@
       "name": "ショックハウンド",
       "emoji": "🐕",
       "primaryType": "ELECTRIC",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 65,
         "attack": 72,
@@ -1348,6 +1439,7 @@
       ],
       "catchRate": 0.14,
       "description": "雷鳴のように速く駆ける電撃犬。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -1356,7 +1448,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 52,
+      "baseExpYield": 52,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -1365,6 +1457,7 @@
       "name": "スパークバグ",
       "emoji": "🪲",
       "primaryType": "ELECTRIC",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 38,
         "attack": 55,
@@ -1391,6 +1484,7 @@
       ],
       "catchRate": 0.38,
       "description": "夜の草むらで光る小さな甲虫。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -1399,7 +1493,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 40,
+      "baseExpYield": 40,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -1408,6 +1502,7 @@
       "name": "サンダラム",
       "emoji": "🐏",
       "primaryType": "ELECTRIC",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 48,
         "attack": 58,
@@ -1434,8 +1529,13 @@
       ],
       "catchRate": 0.25,
       "description": "角に雷を溜め、強力な突進を放つ。",
-      "evolveTo": "STORMRAM",
-      "evolveLevel": 17,
+      "evolution": {
+        "evolvesTo": "STORMRAM",
+        "condition": {
+          "type": "LEVEL",
+          "value": 17
+        }
+      },
       "sub_emoji": [],
       "ability": [
         {
@@ -1444,7 +1544,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 40,
+      "baseExpYield": 40,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -1453,6 +1553,7 @@
       "name": "ストームラム",
       "emoji": "⛈️",
       "primaryType": "ELECTRIC",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 72,
         "attack": 82,
@@ -1479,6 +1580,7 @@
       ],
       "catchRate": 0.1,
       "description": "嵐を呼ぶ巨角の雷獣。一撃は山を割る。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -1487,7 +1589,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 52,
+      "baseExpYield": 52,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -1496,6 +1598,7 @@
       "name": "ザップドレイク",
       "emoji": "🐲",
       "primaryType": "ELECTRIC",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 55,
         "attack": 68,
@@ -1522,6 +1625,7 @@
       ],
       "catchRate": 0.1,
       "description": "遺跡に住む伝説的な雷竜。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -1530,7 +1634,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 48,
+      "baseExpYield": 48,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -1539,6 +1643,7 @@
       "name": "プラズモス",
       "emoji": "🦠",
       "primaryType": "ELECTRIC",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 52,
         "attack": 60,
@@ -1565,6 +1670,7 @@
       ],
       "catchRate": 0.18,
       "description": "プラズマの翅を持つ夜行性モンスター。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -1573,7 +1679,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 45,
+      "baseExpYield": 45,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -1582,6 +1688,7 @@
       "name": "フロストキット",
       "emoji": "🐱",
       "primaryType": "ICE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 42,
         "attack": 48,
@@ -1612,8 +1719,13 @@
       ],
       "catchRate": 0.3,
       "description": "冷気をまとった子猫。息は白く凍る。",
-      "evolveTo": "BLIZZCAT",
-      "evolveLevel": 15,
+      "evolution": {
+        "evolvesTo": "BLIZZCAT",
+        "condition": {
+          "type": "LEVEL",
+          "value": 15
+        }
+      },
       "sub_emoji": [],
       "ability": [
         {
@@ -1622,7 +1734,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 38,
+      "baseExpYield": 38,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -1631,6 +1743,7 @@
       "name": "ブリザキャット",
       "emoji": "❄️",
       "primaryType": "ICE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 68,
         "attack": 70,
@@ -1657,6 +1770,7 @@
       ],
       "catchRate": 0.12,
       "description": "吹雪を操る氷の猫王。尾は結晶化している。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -1665,7 +1779,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 51,
+      "baseExpYield": 51,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -1674,6 +1788,7 @@
       "name": "アイスペック",
       "emoji": "🐧",
       "primaryType": "ICE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 50,
         "attack": 45,
@@ -1704,6 +1819,7 @@
       ],
       "catchRate": 0.28,
       "description": "氷の上を滑るように歩くペンギン型モンスター。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -1712,7 +1828,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 36,
+      "baseExpYield": 36,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -1721,6 +1837,7 @@
       "name": "クリスティール",
       "emoji": "🦂",
       "primaryType": "ICE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 45,
         "attack": 62,
@@ -1747,6 +1864,7 @@
       ],
       "catchRate": 0.2,
       "description": "全身が氷の結晶で覆われた鋼蠍。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -1755,7 +1873,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 41,
+      "baseExpYield": 41,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -1764,6 +1882,7 @@
       "name": "スノウフォーン",
       "emoji": "🦌",
       "primaryType": "ICE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 46,
         "attack": 44,
@@ -1790,8 +1909,13 @@
       ],
       "catchRate": 0.24,
       "description": "雪原を優雅に駆ける小鹿。角は氷で透き通る。",
-      "evolveTo": "FROSTVEIL",
-      "evolveLevel": 16,
+      "evolution": {
+        "evolvesTo": "FROSTVEIL",
+        "condition": {
+          "type": "LEVEL",
+          "value": 16
+        }
+      },
       "sub_emoji": [],
       "ability": [
         {
@@ -1800,7 +1924,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 39,
+      "baseExpYield": 39,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -1809,6 +1933,7 @@
       "name": "フロストヴェール",
       "emoji": "🦋",
       "primaryType": "ICE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 65,
         "attack": 62,
@@ -1835,6 +1960,7 @@
       ],
       "catchRate": 0.1,
       "description": "氷の薄衣をまとう蝶。はばたきが吹雪を呼ぶ。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -1843,7 +1969,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 50,
+      "baseExpYield": 50,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -1852,6 +1978,7 @@
       "name": "ツンドラベア",
       "emoji": "🐻‍❄️",
       "primaryType": "ICE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 70,
         "attack": 65,
@@ -1878,6 +2005,7 @@
       ],
       "catchRate": 0.1,
       "description": "極寒の地を支配する巨大な氷熊。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -1886,7 +2014,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 43,
+      "baseExpYield": 43,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -1895,6 +2023,7 @@
       "name": "チャーコイル",
       "emoji": "🐍",
       "primaryType": "FIRE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 44,
         "attack": 58,
@@ -1921,8 +2050,13 @@
       ],
       "catchRate": 0.28,
       "description": "灼熱の鱗を持つ火蛇。獲物に巻きついて焼く。",
-      "evolveTo": "SERPYRO",
-      "evolveLevel": 18,
+      "evolution": {
+        "evolvesTo": "SERPYRO",
+        "condition": {
+          "type": "LEVEL",
+          "value": 18
+        }
+      },
       "sub_emoji": [],
       "ability": [
         {
@@ -1931,7 +2065,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 40,
+      "baseExpYield": 40,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -1940,6 +2074,7 @@
       "name": "サーパイロ",
       "emoji": "🐉",
       "primaryType": "FIRE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 72,
         "attack": 82,
@@ -1966,6 +2101,7 @@
       ],
       "catchRate": 0.08,
       "description": "猛炎を吐く火竜蛇。怒りの炎は山を焦がす。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -1974,7 +2110,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 54,
+      "baseExpYield": 54,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -1983,6 +2119,7 @@
       "name": "ソルフレア",
       "emoji": "☀️",
       "primaryType": "FIRE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 68,
         "attack": 80,
@@ -2008,16 +2145,17 @@
         }
       ],
       "catchRate": 0.06,
-      "spawnRate": 0.5,
       "description": "太陽の欠片から生まれた神獣。灼熱の光を放つ。",
+      "evolution": null,
+      "sub_emoji": [],
       "ability": [
         {
           "abilityId": "BLAZE",
           "acquisitionRate": 1
         }
       ],
-      "sub_emoji": [],
-      "expYield": 53,
+      "spawnRate": 0.5,
+      "baseExpYield": 53,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2026,6 +2164,7 @@
       "name": "コラリオン",
       "emoji": "🪸",
       "primaryType": "WATER",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 62,
         "attack": 52,
@@ -2052,6 +2191,7 @@
       ],
       "catchRate": 0.2,
       "description": "珊瑚の鎧をまとった海の戦士。守りは鉄壁。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -2060,7 +2200,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 43,
+      "baseExpYield": 43,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2069,6 +2209,7 @@
       "name": "アビスクイッド",
       "emoji": "🦑",
       "primaryType": "WATER",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 56,
         "attack": 76,
@@ -2095,6 +2236,7 @@
       ],
       "catchRate": 0.12,
       "description": "深海の闇から襲う巨大イカ。吸盤の力は凄まじい。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -2103,7 +2245,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 48,
+      "baseExpYield": 48,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2112,6 +2254,7 @@
       "name": "ウェイロード",
       "emoji": "🐳",
       "primaryType": "WATER",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 82,
         "attack": 70,
@@ -2138,6 +2281,7 @@
       ],
       "catchRate": 0.05,
       "description": "海の王と呼ばれる巨大鯨。その咆哮は嵐をも鎮める。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -2146,7 +2290,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 45,
+      "baseExpYield": 45,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2155,6 +2299,7 @@
       "name": "カクタリオン",
       "emoji": "🌵",
       "primaryType": "GRASS",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 58,
         "attack": 72,
@@ -2181,6 +2326,7 @@
       ],
       "catchRate": 0.18,
       "description": "乾燥地帯に立つサボテン戦士。トゲの反撃が痛い。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -2189,7 +2335,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 46,
+      "baseExpYield": 46,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2198,6 +2344,7 @@
       "name": "フローラミス",
       "emoji": "🍄",
       "primaryType": "GRASS",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 46,
         "attack": 48,
@@ -2224,8 +2371,13 @@
       ],
       "catchRate": 0.3,
       "description": "胞子で仲間を呼ぶキノコの妖精。眠りの粉をまく。",
-      "evolveTo": "FUNGORIA",
-      "evolveLevel": 17,
+      "evolution": {
+        "evolvesTo": "FUNGORIA",
+        "condition": {
+          "type": "LEVEL",
+          "value": 17
+        }
+      },
       "sub_emoji": [],
       "ability": [
         {
@@ -2234,7 +2386,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 37,
+      "baseExpYield": 37,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2243,6 +2395,7 @@
       "name": "ファンゴリア",
       "emoji": "🍂",
       "primaryType": "GRASS",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 74,
         "attack": 68,
@@ -2269,6 +2422,7 @@
       ],
       "catchRate": 0.1,
       "description": "秋の森を統べるキノコ王。胞子の霧で戦場を支配する。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -2277,7 +2431,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 49,
+      "baseExpYield": 49,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2286,6 +2440,7 @@
       "name": "ゴーステイル",
       "emoji": "👻",
       "primaryType": "NORMAL",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 45,
         "attack": 70,
@@ -2312,6 +2467,7 @@
       ],
       "catchRate": 0.15,
       "description": "影に溶け込む幽霊のような獣。気配なく忍び寄る。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -2320,7 +2476,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 48,
+      "baseExpYield": 48,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2329,6 +2485,7 @@
       "name": "コスモウル",
       "emoji": "🦉",
       "primaryType": "NORMAL",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 64,
         "attack": 74,
@@ -2355,6 +2512,7 @@
       ],
       "catchRate": 0.1,
       "description": "宇宙の知恵を持つ神秘のフクロウ。星の光で未来を見通す。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -2363,7 +2521,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 49,
+      "baseExpYield": 49,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2372,6 +2530,7 @@
       "name": "スパイラルホーン",
       "emoji": "🦬",
       "primaryType": "NORMAL",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 78,
         "attack": 75,
@@ -2398,6 +2557,7 @@
       ],
       "catchRate": 0.12,
       "description": "螺旋の角で突進する巨獣。一撃の重さは大地を揺るがす。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -2406,7 +2566,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 45,
+      "baseExpYield": 45,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2415,6 +2575,7 @@
       "name": "ネオンレイ",
       "emoji": "🐠",
       "primaryType": "ELECTRIC",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 48,
         "attack": 62,
@@ -2441,6 +2602,7 @@
       ],
       "catchRate": 0.22,
       "description": "体がネオンのように光る深海魚。放電で獲物を捕る。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -2449,7 +2611,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 44,
+      "baseExpYield": 44,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2458,6 +2620,7 @@
       "name": "ライトニクス",
       "emoji": "🦅",
       "primaryType": "ELECTRIC",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 46,
         "attack": 60,
@@ -2484,8 +2647,13 @@
       ],
       "catchRate": 0.24,
       "description": "雷雲を飛ぶ若鷲。翼に稲妻が走る。",
-      "evolveTo": "THUNDAGLE",
-      "evolveLevel": 19,
+      "evolution": {
+        "evolvesTo": "THUNDAGLE",
+        "condition": {
+          "type": "LEVEL",
+          "value": 19
+        }
+      },
       "sub_emoji": [],
       "ability": [
         {
@@ -2494,7 +2662,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 44,
+      "baseExpYield": 44,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2503,6 +2671,7 @@
       "name": "サンダグル",
       "emoji": "🌩️",
       "primaryType": "ELECTRIC",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 70,
         "attack": 84,
@@ -2529,6 +2698,7 @@
       ],
       "catchRate": 0.07,
       "description": "嵐の中で王として君臨する雷鷲。稲妻を自在に操る。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -2537,7 +2707,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 56,
+      "baseExpYield": 56,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2546,6 +2716,7 @@
       "name": "ポラリクス",
       "emoji": "⛄",
       "primaryType": "ICE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 60,
         "attack": 50,
@@ -2576,6 +2747,7 @@
       ],
       "catchRate": 0.22,
       "description": "永久凍土で生まれた雪の精霊。冷気の盾で身を守る。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -2584,7 +2756,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 40,
+      "baseExpYield": 40,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2593,6 +2765,7 @@
       "name": "グラシドレイク",
       "emoji": "🏔️",
       "primaryType": "ICE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 75,
         "attack": 82,
@@ -2619,6 +2792,7 @@
       ],
       "catchRate": 0.06,
       "description": "氷山を住処とする伝説の氷竜。吹雪の中にその姿が見える。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -2627,7 +2801,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 51,
+      "baseExpYield": 51,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2636,6 +2810,7 @@
       "name": "エテルニア",
       "emoji": "✨",
       "primaryType": "NORMAL",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 85,
         "attack": 85,
@@ -2662,6 +2837,7 @@
       ],
       "catchRate": 0.03,
       "description": "エモじクリスタルの力で眠り続けた伝説のモンスター。すべての命を見守る。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -2670,7 +2846,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 61,
+      "baseExpYield": 61,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2679,6 +2855,7 @@
       "name": "シンドロ",
       "emoji": "🦝",
       "primaryType": "FIRE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 47,
         "attack": 60,
@@ -2705,8 +2882,13 @@
       ],
       "catchRate": 0.27,
       "description": "炭火のしっぽを振って火花を散らす森の小獣。",
-      "evolveTo": "CINDRAKE",
-      "evolveLevel": 20,
+      "evolution": {
+        "evolvesTo": "CINDRAKE",
+        "condition": {
+          "type": "LEVEL",
+          "value": 20
+        }
+      },
       "sub_emoji": [],
       "ability": [
         {
@@ -2715,7 +2897,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 41,
+      "baseExpYield": 41,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2724,6 +2906,7 @@
       "name": "シンドレイク",
       "emoji": "🐲",
       "primaryType": "FIRE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 75,
         "attack": 84,
@@ -2750,6 +2933,7 @@
       ],
       "catchRate": 0.08,
       "description": "炎の尾で弧を描き、戦場を焦土に変える紅竜。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -2758,7 +2942,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 54,
+      "baseExpYield": 54,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2767,6 +2951,7 @@
       "name": "リリー",
       "emoji": "🦦",
       "primaryType": "WATER",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 48,
         "attack": 51,
@@ -2793,8 +2978,13 @@
       ],
       "catchRate": 0.29,
       "description": "川辺で石を磨く水の職人。歌うような水流を操る。",
-      "evolveTo": "RILLARGO",
-      "evolveLevel": 20,
+      "evolution": {
+        "evolvesTo": "RILLARGO",
+        "condition": {
+          "type": "LEVEL",
+          "value": 20
+        }
+      },
       "sub_emoji": [],
       "ability": [
         {
@@ -2803,7 +2993,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 41,
+      "baseExpYield": 41,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2812,6 +3002,7 @@
       "name": "リラルゴ",
       "emoji": "🛶",
       "primaryType": "WATER",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 77,
         "attack": 68,
@@ -2838,6 +3029,7 @@
       ],
       "catchRate": 0.09,
       "description": "大河の流れを背負って進む重装の水獣。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -2846,7 +3038,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 51,
+      "baseExpYield": 51,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2855,6 +3047,7 @@
       "name": "ブランビット",
       "emoji": "🪴",
       "primaryType": "GRASS",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 49,
         "attack": 58,
@@ -2881,6 +3074,7 @@
       ],
       "catchRate": 0.26,
       "description": "蔦を編んだ腕で素早く斬り込む若木の戦士。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -2889,7 +3083,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 41,
+      "baseExpYield": 41,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2898,6 +3092,7 @@
       "name": "アークウルフ",
       "emoji": "🐺",
       "primaryType": "ELECTRIC",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 58,
         "attack": 74,
@@ -2924,6 +3119,7 @@
       ],
       "catchRate": 0.13,
       "description": "雷光を引き連れて駆ける稲妻の狼。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -2932,7 +3128,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 51,
+      "baseExpYield": 51,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2941,6 +3137,7 @@
       "name": "アイスラーク",
       "emoji": "🐦",
       "primaryType": "ICE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 54,
         "attack": 50,
@@ -2971,6 +3168,7 @@
       ],
       "catchRate": 0.14,
       "description": "氷風に乗って鳴く冬の渡り鳥。",
+      "evolution": null,
       "sub_emoji": [],
       "ability": [
         {
@@ -2979,7 +3177,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 46,
+      "baseExpYield": 46,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -2988,6 +3186,7 @@
       "name": "ルミパプ",
       "emoji": "🐕‍🦺",
       "primaryType": "FIRE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 45,
         "attack": 57,
@@ -3014,8 +3213,13 @@
       ],
       "catchRate": 0.27,
       "description": "体毛が淡く光る炎の子犬。夜道を照らす案内役。",
-      "evolveTo": "SOLMANTIS",
-      "evolveLevel": 18,
+      "evolution": {
+        "evolvesTo": "SOLMANTIS",
+        "condition": {
+          "type": "LEVEL",
+          "value": 18
+        }
+      },
       "sub_emoji": [],
       "ability": [
         {
@@ -3024,7 +3228,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 41,
+      "baseExpYield": 41,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -3033,6 +3237,7 @@
       "name": "ソルマンティス",
       "emoji": "🔥",
       "primaryType": "FIRE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 74,
         "attack": 83,
@@ -3059,6 +3264,7 @@
       ],
       "catchRate": 0.08,
       "description": "日輪の熱を刃に宿す灼熱の狩人。",
+      "evolution": null,
       "sub_emoji": [
         {
           "emoji": "🦗",
@@ -3073,7 +3279,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 54,
+      "baseExpYield": 54,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -3082,6 +3288,7 @@
       "name": "ミストッター",
       "emoji": "🦫",
       "primaryType": "WATER",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 49,
         "attack": 52,
@@ -3108,8 +3315,13 @@
       ],
       "catchRate": 0.28,
       "description": "霧の川辺に巣を作る器用な水の職人。",
-      "evolveTo": "ABYSSMART",
-      "evolveLevel": 18,
+      "evolution": {
+        "evolvesTo": "ABYSSMART",
+        "condition": {
+          "type": "LEVEL",
+          "value": 18
+        }
+      },
       "sub_emoji": [],
       "ability": [
         {
@@ -3118,7 +3330,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 41,
+      "baseExpYield": 41,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -3127,6 +3339,7 @@
       "name": "アビスマート",
       "emoji": "🌫️",
       "primaryType": "WATER",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 76,
         "attack": 69,
@@ -3153,6 +3366,7 @@
       ],
       "catchRate": 0.09,
       "description": "深霧の水路を守る重装の水獣。",
+      "evolution": null,
       "sub_emoji": [
         {
           "emoji": "🦦",
@@ -3167,7 +3381,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 51,
+      "baseExpYield": 51,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -3176,6 +3390,7 @@
       "name": "ファーンビット",
       "emoji": "🍀",
       "primaryType": "GRASS",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 50,
         "attack": 59,
@@ -3202,8 +3417,13 @@
       ],
       "catchRate": 0.25,
       "description": "苔の耳で風を読む俊敏な草うさぎ。",
-      "evolveTo": "GROVYRA",
-      "evolveLevel": 18,
+      "evolution": {
+        "evolvesTo": "GROVYRA",
+        "condition": {
+          "type": "LEVEL",
+          "value": 18
+        }
+      },
       "sub_emoji": [
         {
           "emoji": "🐇",
@@ -3218,7 +3438,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 41,
+      "baseExpYield": 41,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -3227,6 +3447,7 @@
       "name": "グローヴィラ",
       "emoji": "🌲",
       "primaryType": "GRASS",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 78,
         "attack": 79,
@@ -3253,6 +3474,7 @@
       ],
       "catchRate": 0.08,
       "description": "深森の意志を背負う樹角の守護獣。",
+      "evolution": null,
       "sub_emoji": [
         {
           "emoji": "🦌",
@@ -3267,7 +3489,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 53,
+      "baseExpYield": 53,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -3276,6 +3498,7 @@
       "name": "ボルトロン",
       "emoji": "⚙️",
       "primaryType": "ELECTRIC",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 46,
         "attack": 58,
@@ -3302,8 +3525,13 @@
       ],
       "catchRate": 0.24,
       "description": "稲妻で駆動する歯車獣。直線加速が得意。",
-      "evolveTo": "TEMPESTEL",
-      "evolveLevel": 20,
+      "evolution": {
+        "evolvesTo": "TEMPESTEL",
+        "condition": {
+          "type": "LEVEL",
+          "value": 20
+        }
+      },
       "sub_emoji": [
         {
           "emoji": "⚡",
@@ -3318,7 +3546,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 43,
+      "baseExpYield": 43,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -3327,6 +3555,7 @@
       "name": "テンペステル",
       "emoji": "🌪️",
       "primaryType": "ELECTRIC",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 72,
         "attack": 86,
@@ -3353,6 +3582,7 @@
       ],
       "catchRate": 0.07,
       "description": "暴風に雷をまとう空域支配者。",
+      "evolution": null,
       "sub_emoji": [
         {
           "emoji": "⚡",
@@ -3367,7 +3597,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 58,
+      "baseExpYield": 58,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -3375,14 +3605,8 @@
       "id": "SNOWLING",
       "name": "スノウリング",
       "emoji": "🐑",
-      "sub_emoji": [
-        {
-          "emoji": "❄️",
-          "point": "top-right",
-          "size": 0.5
-        }
-      ],
       "primaryType": "ICE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 48,
         "attack": 51,
@@ -3409,8 +3633,20 @@
       ],
       "catchRate": 0.23,
       "description": "雪雲の毛並みを持つ幼い氷羊。",
-      "evolveTo": "GLAZELK",
-      "evolveLevel": 20,
+      "evolution": {
+        "evolvesTo": "GLAZELK",
+        "condition": {
+          "type": "LEVEL",
+          "value": 20
+        }
+      },
+      "sub_emoji": [
+        {
+          "emoji": "❄️",
+          "point": "top-right",
+          "size": 0.5
+        }
+      ],
       "ability": [
         {
           "abilityId": "ICE_BODY",
@@ -3418,7 +3654,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 41,
+      "baseExpYield": 41,
       "heldItems": [],
       "sizeScale": 1
     },
@@ -3427,6 +3663,7 @@
       "name": "グレイズルク",
       "emoji": "🫎",
       "primaryType": "ICE",
+      "secondaryType": null,
       "baseStats": {
         "maxHp": 79,
         "attack": 74,
@@ -3453,6 +3690,7 @@
       ],
       "catchRate": 0.07,
       "description": "凍原に氷紋を刻む白角の巨獣。",
+      "evolution": null,
       "sub_emoji": [
         {
           "emoji": "❄️",
@@ -3467,7 +3705,7 @@
         }
       ],
       "spawnRate": 1,
-      "expYield": 52,
+      "baseExpYield": 52,
       "heldItems": [],
       "sizeScale": 1
     }

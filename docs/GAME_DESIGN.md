@@ -250,13 +250,18 @@ nextLevelExp = 10 + 8 × level
 
 ### 8.4 monsters.json 追加キー
 
+- `secondaryType: string | null`
+  - 副タイプ。単タイプの場合は `null`。
+  - 被ダメージ時はタイプ相性を乗算（例: FIRE/GRASSへのWATER = 2×0.5 = 1）。
+  - STABはprimaryTypeまたはsecondaryType一致で発動。
 - `spawnRate: number`
   - 野生出現プール内での重み。値が大きいほど抽選されやすい。
   - 未指定時は `1` 扱い。
 - `ability: [{ "abilityId": string, "acquisitionRate": number }]`
   - 個体生成時の特性抽選テーブル（必須）。
-- `expYield: number`
-  - 撃破時に配布する経験値の基礎値（必須）。
+- `baseExpYield: number`
+  - 撞破時に配布する経験値の基礎値（必須）。
+  - 実際の獲得経験値 = `baseExpYield × (相手Lv / 5) × 場所補正 × ボーナス`。
 - `heldItems: [{ "itemId": string, "dropRate": number }]`
   - モンスター所持アイテムのドロップ定義（必須、空配列可）。
   - `dropRate` は 0〜1 の確率値。
@@ -265,6 +270,10 @@ nextLevelExp = 10 + 8 × level
 - `recipe: [[{ "monsterId": string }, { "monsterId": string }]]`
   - そのモンスターへの合成レシピ定義。
   - 2体の組み合わせは順不同で判定する。
+- `evolution: { "evolvesTo": string, "condition": { "type": "LEVEL" | "ITEM", "value": number | string } } | null`
+  - 進化定義。進化しないモンスターは `null`。
+  - `type: "LEVEL"` の場合: `value` は進化レベル（整数）。
+  - `type: "ITEM"` の場合: `value` は進化に必要なアイテムID（文字列）。
 
 ### 8.3 コンテンツ拡張（2026-03-01）
 

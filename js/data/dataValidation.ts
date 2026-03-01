@@ -64,24 +64,34 @@ const heldItemSchema = z.object({
   dropRate: z.number().min(0).max(1),
 });
 
+const evolutionConditionSchema = z.object({
+  type: z.enum(["LEVEL", "ITEM"]),
+  value: z.union([z.number().int().positive(), z.string().min(1)]),
+});
+
+const evolutionSchema = z.object({
+  evolvesTo: z.string().min(1),
+  condition: evolutionConditionSchema,
+});
+
 const monsterSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   emoji: z.string().optional(),
   sub_emoji: z.array(subEmojiSchema),
   primaryType: z.string().min(1),
+  secondaryType: z.string().nullable().optional(),
   baseStats: baseStatsSchema,
   learnset: z.array(learnsetEntrySchema),
   catchRate: z.number().min(0).max(1),
   spawnRate: z.number().positive().optional(),
-  expYield: z.number().int().positive(),
+  baseExpYield: z.number().int().positive(),
   heldItems: z.array(heldItemSchema),
   sizeScale: z.number().positive(),
   description: z.string().optional(),
   ability: z.array(abilityEntrySchema).min(1),
   recipe: z.array(recipePairSchema).optional(),
-  evolveTo: z.string().nullable().optional(),
-  evolveLevel: z.number().int().positive().nullable().optional(),
+  evolution: evolutionSchema.nullable().optional(),
 });
 
 const monstersDataSchema = z.object({

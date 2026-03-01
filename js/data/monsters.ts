@@ -399,7 +399,8 @@ export function initMonstersFromJson(json) {
     const abilityRates = normalizeAbilityRates(raw.ability, fallbackAbilityId);
     const abilityId = abilityRates[0]?.abilityId || fallbackAbilityId;
     const spawnRate = Number.isFinite(raw.spawnRate) ? Math.max(0, raw.spawnRate) : 1;
-    const expYield = Math.max(1, Math.floor(raw.expYield));
+    const baseExpYield = Math.max(1, Math.floor(raw.baseExpYield));
+    const secondaryType = typeof raw.secondaryType === "string" ? raw.secondaryType : null;
     const heldItems = raw.heldItems
       .map((entry) => {
         const itemId = typeof entry?.itemId === "string" ? entry.itemId : "";
@@ -412,16 +413,28 @@ export function initMonstersFromJson(json) {
       .filter(Boolean);
     const sizeScale = Math.max(0.1, raw.sizeScale);
 
+    // 進化定義の正規化
+    const evolution = raw.evolution && raw.evolution.evolvesTo
+      ? {
+          evolvesTo: raw.evolution.evolvesTo,
+          condition: {
+            type: raw.evolution.condition?.type || "LEVEL",
+            value: raw.evolution.condition?.value ?? null,
+          },
+        }
+      : null;
+
     MONSTERS[raw.id] = {
       id: raw.id,
       name: raw.name,
       emoji: raw.emoji || "",
       subEmoji: normalizeSubEmoji(raw.sub_emoji),
       primaryType: raw.primaryType,
+      secondaryType,
       abilityId,
       abilityRates,
       spawnRate,
-      expYield,
+      baseExpYield,
       heldItems,
       sizeScale,
       baseStats: raw.baseStats,
@@ -429,8 +442,7 @@ export function initMonstersFromJson(json) {
       learnsetLevels,
       description: raw.description || "",
       catchRate: raw.catchRate,
-      evolveTo: raw.evolveTo || null,
-      evolveLevel: raw.evolveLevel || null,
+      evolution,
     };
 
     if (Array.isArray(raw.recipe)) {
@@ -602,13 +614,29 @@ export function getArenaOpponent(round) {
   return createMonsterEntry(base, level, { trainer: true });
 }
 
-/** 進化チェック: 進化可能な場合は進化後のspeciesを返す */
+/** 進化チェック: レベル進化が可能な場合は進化後のspeciesを返す */
 export function checkEvolution(monsterEntry) {
   if (!monsterEntry || !monsterEntry.species) return null;
   const species = monsterEntry.species;
-  if (!species.evolveTo || !species.evolveLevel) return null;
-  if (monsterEntry.level >= species.evolveLevel) {
-    const evolved = MONSTERS[species.evolveTo];
+  if (!species.evolution) return null;
+  const { evolvesTo, condition } = species.evolution;
+  if (condition.type === "LEVEL" && typeof condition.value === "number") {
+    if (monsterEntry.level >= condition.value) {
+      const evolved = MONSTERS[evolvesTo];
+      if (evolved) return evolved;
+    }
+  }
+  return null;
+}
+
+/** アイテム進化チェック: 指定アイテムで進化可能な場合は進化後のspeciesを返す */
+export function checkItemEvolution(monsterEntry, itemId) {
+  if (!monsterEntry || !monsterEntry.species || !itemId) return null;
+  const species = monsterEntry.species;
+  if (!species.evolution) return null;
+  const { evolvesTo, condition } = species.evolution;
+  if (condition.type === "ITEM" && condition.value === itemId) {
+    const evolved = MONSTERS[evolvesTo];
     if (evolved) return evolved;
   }
   return null;

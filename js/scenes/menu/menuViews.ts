@@ -158,7 +158,10 @@ export function renderPartyView(scene) {
 
     const typeColors = { FIRE: "#f97316", WATER: "#3b82f6", GRASS: "#22c55e", NORMAL: "#9ca3af", ELECTRIC: "#fbbf24", ICE: "#67e8f9" };
     const typeColor = typeColors[mon.species.primaryType] || "#9ca3af";
-    const typeText = scene.add.text(panelX + panelW - 90, y, mon.species.primaryType, {
+    const typeLabel = mon.species.secondaryType
+      ? `${mon.species.primaryType}/${mon.species.secondaryType}`
+      : mon.species.primaryType;
+    const typeText = scene.add.text(panelX + panelW - 90, y, typeLabel, {
       fontFamily: FONT.UI,
       fontSize: 11,
       color: typeColor,
@@ -283,7 +286,10 @@ function _drawMonRow(scene, mon, index, selected, panelX, panelW, y) {
 
   const typeColors = { FIRE: "#f97316", WATER: "#3b82f6", GRASS: "#22c55e", NORMAL: "#9ca3af", ELECTRIC: "#fbbf24", ICE: "#67e8f9" };
   const typeColor = typeColors[mon.species.primaryType] || "#9ca3af";
-  const typeText = scene.add.text(panelX + panelW - 90, y, mon.species.primaryType, {
+  const typeLabel = mon.species.secondaryType
+    ? `${mon.species.primaryType}/${mon.species.secondaryType}`
+    : mon.species.primaryType;
+  const typeText = scene.add.text(panelX + panelW - 90, y, typeLabel, {
     fontFamily: FONT.UI, fontSize: 11, color: typeColor,
     backgroundColor: "#1e293b", padding: { x: 4, y: 2 },
   });
@@ -599,7 +605,9 @@ export function renderPokedexView(scene) {
     const name = seen ? mon.name : "？？？？？";
     const caughtMark = caught ? "●" : seen ? "○" : "—";
     const typeColors = { FIRE: "#f97316", WATER: "#3b82f6", GRASS: "#22c55e", NORMAL: "#9ca3af", ELECTRIC: "#fbbf24", ICE: "#67e8f9" };
-    const typeStr = seen ? mon.primaryType : "???";
+    const typeStr = seen
+      ? (mon.secondaryType ? `${mon.primaryType}/${mon.secondaryType}` : mon.primaryType)
+      : "???";
     const cursor = selected ? "▶" : " ";
 
     const label = `${cursor} ${no} ${emoji} ${name}`;

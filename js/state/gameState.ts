@@ -634,7 +634,9 @@ class GameState {
 
   hasPartyType(type) {
     if (!type) return false;
-    return this.party.some((monster) => monster?.species?.primaryType === type);
+    return this.party.some((monster) =>
+      monster?.species?.primaryType === type || monster?.species?.secondaryType === type
+    );
   }
 
   getFusionDiscoveries() {

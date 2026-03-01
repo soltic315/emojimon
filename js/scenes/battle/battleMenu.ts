@@ -238,7 +238,8 @@ export function showMoveMenu(scene, reset = true) {
     const accStr = `命中:${scene.formatMoveAccuracy(currentMove)}`;
     const catStr = currentMove.category === "status" ? "変化わざ" : "攻撃わざ";
     const opponentType = scene.battle.opponent?.species?.primaryType || "NORMAL";
-    const effectiveness = scene.getEffectiveness(currentMove.type, opponentType);
+    const opponentSecType = scene.battle.opponent?.species?.secondaryType || null;
+    const effectiveness = scene.getEffectiveness(currentMove.type, opponentType, opponentSecType);
     const effectivenessStr = `相性:${scene.getEffectivenessLabel(effectiveness)}`;
     const priority = Number.isFinite(currentMove.priority) ? currentMove.priority : 0;
     const priorityStr = `優先度:${priority >= 0 ? "+" : ""}${priority}`;

@@ -99,16 +99,32 @@ export interface MonsterHeldItem {
   dropRate: number;
 }
 
+/** 進化条件の種別 */
+export type EvolutionConditionType = "LEVEL" | "ITEM";
+
+/** 進化条件 */
+export interface EvolutionCondition {
+  type: EvolutionConditionType;
+  value: number | string;
+}
+
+/** 進化定義 */
+export interface EvolutionDef {
+  evolvesTo: string;
+  condition: EvolutionCondition;
+}
+
 export interface MonsterSpecies {
   id: string;
   name: string;
   emoji: string;
   subEmoji?: MonsterSubEmoji[];
   primaryType: MonsterType;
+  secondaryType?: MonsterType | null;
   abilityId: string;
   abilityRates?: MonsterAbilityRate[];
   spawnRate?: number;
-  expYield: number;
+  baseExpYield: number;
   heldItems: MonsterHeldItem[];
   sizeScale: number;
   recipe?: [MonsterRecipeMaterial, MonsterRecipeMaterial][];
@@ -117,8 +133,7 @@ export interface MonsterSpecies {
   learnsetLevels?: number[];
   description: string;
   catchRate: number;
-  evolveTo: string | null;
-  evolveLevel: number | null;
+  evolution: EvolutionDef | null;
 }
 
 /** パーティ/バトルのモンスターインスタンス */

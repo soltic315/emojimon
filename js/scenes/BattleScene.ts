@@ -1633,9 +1633,10 @@ export class BattleScene extends Phaser.Scene {
     const encounterBonusMul = opponent.rewardMultiplier || 1;
     const totalBonusMul = streakBonusMul * encounterBonusMul;
 
-    // 経験値計算
+    // 経験値計算（レベル補正付き）
     const expMultiplier = this.isArena ? EXP_MULT_ARENA : (this.isBoss ? EXP_MULT_GYM : (this.isTrainer ? EXP_MULT_TRAINER : EXP_MULT_WILD));
-    const expGain = Math.max(1, Math.floor(opponent.species.expYield * expMultiplier * totalBonusMul));
+    const levelFactor = Math.max(1, (opponent.level || 1)) / 5;
+    const expGain = Math.max(1, Math.floor(opponent.species.baseExpYield * levelFactor * expMultiplier * totalBonusMul));
     this.enqueueMessage(`${expGain} けいけんちを かくとく！`);
     if (totalBonusMul > 1.01) {
       const bonusPct = Math.round((totalBonusMul - 1) * 100);
@@ -2062,7 +2063,7 @@ export class BattleScene extends Phaser.Scene {
           ? 100
           : (rawAccuracy <= 1 ? rawAccuracy * 100 : rawAccuracy);
         const accuracy = Phaser.Math.Clamp(accuracyPercent / 100, 0.35, 1);
-        const effectiveness = this.getEffectiveness(move.type, player.species.primaryType);
+        const effectiveness = this.getEffectiveness(move.type, player.species.primaryType, player.species.secondaryType);
         const isStatus = move.category === "status";
         const basePower = move.power || 0;
         const playerHpRatio = Math.max(0, player.currentHp / (calcStats(player.species, player.level || 1).maxHp || 1));
@@ -2123,8 +2124,8 @@ export class BattleScene extends Phaser.Scene {
     const defMult = Math.max(0.25, 1 + defStage * 0.25);
     const burnMul = attacker.statusCondition === StatusCondition.BURN && move.category === "physical" ? BURN_ATTACK_MULTIPLIER : 1;
 
-    const effectiveness = this.getEffectiveness(move.type, defender.species.primaryType);
-    const stab = move.type === attacker.species.primaryType ? STAB_BONUS : 1;
+    const effectiveness = this.getEffectiveness(move.type, defender.species.primaryType, defender.species.secondaryType);
+    const stab = (move.type === attacker.species.primaryType || move.type === attacker.species.secondaryType) ? STAB_BONUS : 1;
     const randomFactor = Phaser.Math.FloatBetween(DAMAGE_RANDOM_MIN, DAMAGE_RANDOM_MAX);
     
     let critRate = CRITICAL_HIT_RATE;
@@ -2149,10 +2150,12 @@ export class BattleScene extends Phaser.Scene {
     };
   }
 
-  getEffectiveness(attackType, defendType) {
+  getEffectiveness(attackType, primaryDefendType, secondaryDefendType) {
     const row = TYPE_EFFECTIVENESS[attackType];
     if (!row) return 1;
-    return row[defendType] || 1;
+    const primary = row[primaryDefendType] || 1;
+    const secondary = secondaryDefendType ? (row[secondaryDefendType] || 1) : 1;
+    return primary * secondary;
   }
 
   getMonsterAbility(monster) {
@@ -2230,8 +2233,10 @@ export class BattleScene extends Phaser.Scene {
 
     // プレイヤータイプバッジ
     const pType = player.species.primaryType || "NORMAL";
+    const pSecType = player.species.secondaryType || null;
     const pBadge = typeBadgeColors[pType] || typeBadgeColors.NORMAL;
-    this.playerTypeBadge.setText(pType);
+    const pTypeLabel = pSecType ? `${pType}/${pSecType}` : pType;
+    this.playerTypeBadge.setText(pTypeLabel);
     if (this.playerTypeBadge.getElement) {
       this.playerTypeBadge.getElement("text")?.setColor(pBadge.text);
       this.playerTypeBadge.getElement("background")?.setFillStyle(Phaser.Display.Color.HexStringToColor(pBadge.bg).color, 0.9);
@@ -2294,8 +2299,10 @@ export class BattleScene extends Phaser.Scene {
 
     // 相手タイプバッジ
     const oType = opponent.species.primaryType || "NORMAL";
+    const oSecType = opponent.species.secondaryType || null;
     const oBadge = typeBadgeColors[oType] || typeBadgeColors.NORMAL;
-    this.opponentTypeBadge.setText(oType);
+    const oTypeLabel = oSecType ? `${oType}/${oSecType}` : oType;
+    this.opponentTypeBadge.setText(oTypeLabel);
     if (this.opponentTypeBadge.getElement) {
       this.opponentTypeBadge.getElement("text")?.setColor(oBadge.text);
       this.opponentTypeBadge.getElement("background")?.setFillStyle(Phaser.Display.Color.HexStringToColor(oBadge.bg).color, 0.9);

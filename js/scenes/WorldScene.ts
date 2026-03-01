@@ -1239,7 +1239,7 @@ export class WorldScene extends Phaser.Scene {
       // 氷峰アイスタイプクエスト
       if (npc.quest === "ICE_TYPE") {
         if (!gameState.storyFlags.frozenPeakIceQuest) {
-          const hasIce = gameState.party.some((m) => m.species && m.species.primaryType === "ICE");
+          const hasIce = gameState.party.some((m) => m.species && (m.species.primaryType === "ICE" || m.species.secondaryType === "ICE"));
           if (hasIce) {
             gameState.storyFlags.frozenPeakIceQuest = true;
             gameState.addItem("HYPER_BALL", 3);
