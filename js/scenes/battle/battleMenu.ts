@@ -7,7 +7,6 @@ import { BattleState } from "./battleConstants.ts";
 function getMenuIcon(label) {
   if (label.includes("たたかう")) return "⚔";
   if (label.includes("いれかえ")) return "🔁";
-  if (label.includes("つかまえる")) return "🎯";
   if (label.includes("アイテム")) return "🎒";
   if (label.includes("にげる")) return "🏃";
   return "◆";
@@ -87,17 +86,7 @@ export function showMainMenu(scene, reset = true) {
 
   const { width } = scene.scale;
 
-  scene.mainOptions = [];
-  const wild = !scene.battle.opponent.trainer;
-  scene.mainOptions.push("たたかう");
-  if (gameState.party.filter((monster) => monster.currentHp > 0).length > 1) {
-    scene.mainOptions.push("いれかえ");
-  }
-  if (wild && !scene.isBoss && !scene.isArena && !scene.isTrainer && scene.hasBallsInInventory()) {
-    scene.mainOptions.push("つかまえる");
-  }
-  scene.mainOptions.push("アイテム");
-  if (!scene.isBoss && !scene.isArena && !scene.isTrainer) scene.mainOptions.push("にげる");
+  scene.mainOptions = ["たたかう", "いれかえ", "アイテム", "にげる"];
 
   if (reset) {
     const rememberedIndex = scene.mainOptions.indexOf(scene.lastSelectedMainOption);
@@ -256,7 +245,12 @@ export function showItemMenu(scene, reset = true) {
   const inventory = gameState.inventory || [];
   const battleItems = inventory
     .map((entry) => ({ entry, def: getItemById(entry.itemId) }))
-    .filter((item) => item.def && item.entry.quantity > 0 && item.def.battleUsable);
+    .filter((item) => {
+      if (!item.def || item.entry.quantity <= 0) return false;
+      const catchBonus = item.def.catchBonus || (item.def.id === "EMO_BALL" ? 1 : 0);
+      const isCatchBall = catchBonus > 0;
+      return item.def.battleUsable || (scene.isWildBattle && isCatchBall);
+    });
 
   scene.currentBattleItems = battleItems;
 

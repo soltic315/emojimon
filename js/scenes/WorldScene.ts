@@ -12,7 +12,7 @@ import { createWildMonsterForEncounter, rollWeatherForMap } from "../data/mapRul
 import { audioManager } from "../audio/AudioManager.ts";
 import { TouchControls } from "../ui/TouchControls.ts";
 import { FONT, COLORS, TEXT_COLORS, drawPanel, drawSelection } from "../ui/UIHelper.ts";
-import { addCameraBloom } from "../ui/FXHelper.ts";
+import { addCameraBloom, createParticleBurst } from "../ui/FXHelper.ts";
 import {
   TILE_SIZE,
   T,
@@ -623,12 +623,82 @@ export class WorldScene extends Phaser.Scene {
         ease: "sine.inOut",
       });
       this.npcSprites.push(sprite);
+
+      if (npc.heal) {
+        const healBadge = this.add.text(wx, wy - 20, "💖", {
+          fontSize: 16,
+        }).setOrigin(0.5);
+        this.tweens.add({
+          targets: healBadge,
+          y: healBadge.y - 4,
+          duration: 900,
+          yoyo: true,
+          repeat: -1,
+          ease: "sine.inOut",
+        });
+        this.npcSprites.push(healBadge);
+      }
     });
 
     // 研究所マップのスターター絵文字表示（LABのみ）
     if (this.mapKey === "LAB" && !gameState.storyFlags.prologueDone) {
       this._renderStarterLabels();
     }
+  }
+
+  _playHealNpcEffect(npc) {
+    const playerX = gameState.playerPosition.x * TILE_SIZE + TILE_SIZE / 2;
+    const playerY = gameState.playerPosition.y * TILE_SIZE + TILE_SIZE / 2;
+    const npcX = npc.x * TILE_SIZE + TILE_SIZE / 2;
+    const npcY = npc.y * TILE_SIZE + TILE_SIZE / 2;
+
+    this.cameras.main.flash(220, 170, 255, 210, false);
+
+    createParticleBurst(this, npcX, npcY - 8, {
+      textureKey: "particle-star",
+      count: 10,
+      speed: 110,
+      lifespan: 700,
+      scale: { start: 1.3, end: 0 },
+      tint: [0x86efac, 0xfde68a],
+      gravityY: -30,
+    });
+    createParticleBurst(this, playerX, playerY, {
+      textureKey: "particle-white",
+      count: 16,
+      speed: 170,
+      lifespan: 620,
+      scale: { start: 1.3, end: 0 },
+      tint: [0xbbf7d0, 0xffffff],
+      gravityY: 10,
+    });
+
+    const ring = this.add.circle(playerX, playerY, 8, 0x86efac, 0.32)
+      .setStrokeStyle(2, 0xa7f3d0, 0.85);
+    this.tweens.add({
+      targets: ring,
+      radius: 44,
+      alpha: 0,
+      duration: 520,
+      ease: "quad.out",
+      onComplete: () => ring.destroy(),
+    });
+
+    const healText = this.add.text(playerX, playerY - 30, "💚 ぜんかいふく！", {
+      fontFamily: FONT.UI,
+      fontSize: 12,
+      color: "#dcfce7",
+      stroke: "#14532d",
+      strokeThickness: 3,
+    }).setOrigin(0.5);
+    this.tweens.add({
+      targets: healText,
+      y: healText.y - 12,
+      alpha: 0,
+      duration: 900,
+      ease: "sine.out",
+      onComplete: () => healText.destroy(),
+    });
   }
 
   /** 研究所のスターター台座に絵文字ラベルを表示 */
@@ -989,21 +1059,31 @@ export class WorldScene extends Phaser.Scene {
 
       // 回復NPC
       if (npc.heal) {
-        gameState.party.forEach((m) => {
-          if (m.species) {
-            // calcStats を使用して正しい最大HPを算出
-            const stats = calcStats(m.species, m.level);
-            m.currentHp = stats.maxHp;
-            // PP全回復
-            syncMonsterMoves(m);
-            m.pp = getMonsterMoves(m).map((mv) => mv.pp || 10);
-            // 状態異常回復
-            m.statusCondition = "NONE";
-          }
+        const restoreParty = () => {
+          gameState.party.forEach((m) => {
+            if (m.species) {
+              // calcStats を使用して正しい最大HPを算出
+              const stats = calcStats(m.species, m.level);
+              m.currentHp = stats.maxHp;
+              // PP全回復
+              syncMonsterMoves(m);
+              m.pp = getMonsterMoves(m).map((mv) => mv.pp || 10);
+              // 状態異常回復
+              m.statusCondition = "NONE";
+            }
+          });
+          audioManager.playHeal();
+          this._playHealNpcEffect(npc);
+          this.showMessage("パーティが全回復した！", 2600);
+        };
+
+        const nurseLine = npc.text || "おかえり！ 今日はぐっすり休んでいこうね。";
+        this.showDialogSequence([
+          `かいふく係: ${nurseLine}`,
+          "かいふく係: はい、みんな元気いっぱい！ いってらっしゃい！",
+        ], () => {
+          restoreParty();
         });
-        audioManager.playHeal();
-        this.showMessage("パーティが全回復した！ おやすみなさい…");
-        this.createUi();
         return true;
       }
 
@@ -1349,8 +1429,8 @@ export class WorldScene extends Phaser.Scene {
       "アユム: 次は モンスターの つかまえ方 を教えるよ。",
       "📖 【捕獲のコツ】",
       "📖  ① まず相手のHPを減らそう（赤ゲージがベスト！）",
-      "📖  ② バトルメニューで『つかまえる』を選ぼう",
-      "📖  ③ エモボールを投げて 捕獲チャレンジ！",
+      "📖  ② バトルメニューで『アイテム』を選ぼう",
+      "📖  ③ ボールを選んで 捕獲チャレンジ！",
       "📖  HPが低いほど・状態異常だと 成功率アップ！",
       "アユム: モンスターを6体まで パーティに入れられるよ。",
       "アユム: 7体目からは 博士に預ける（ボックス）形になるんだ。",
@@ -1588,7 +1668,7 @@ export class WorldScene extends Phaser.Scene {
       "📖 【操作ガイド④】Pキーで いつでもセーブできます。こまめにセーブしよう！",
       "博士: 町の草むらに入ると 野生のモンスターが出てくるぞ。",
       "博士: バトルでは『たたかう』で わざを選んで攻撃じゃ！",
-      "博士: 相手を弱らせたら『つかまえる』で 仲間にできるかもしれん。",
+      "博士: 相手を弱らせたら『アイテム』からボールを使うのじゃ。",
       `博士: ${gameState.playerName}、世界の運命は きみにかかっておる！`,
       "博士: まずは タウンを探索してみよう。ライバルの『レン』も会いたがっておるよ。",
       "博士: 準備ができたら 東の出口から 森へ向かうんじゃ！",

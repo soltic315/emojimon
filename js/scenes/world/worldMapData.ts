@@ -148,9 +148,9 @@ export function getMapNpcs(mapKey) {
   if (mapKey === "HOUSE1") {
     const npcs = [];
     if (!sf.prologueDone) {
-      npcs.push({ x: 6, y: 5, text: "おかえり！ 博士が研究所で待っているみたい。行ってきなさい！", heal: true, texture: "npc" });
+      npcs.push({ x: 6, y: 5, text: "おかえり！ 博士が研究所で待っているみたい。行ってきなさい！", heal: true, texture: "npc-heal" });
     } else {
-      npcs.push({ x: 6, y: 5, text: "おかえり！ ゆっくり休んでね。ここに泊まるとHPが全回復するよ。", heal: true, texture: "npc" });
+      npcs.push({ x: 6, y: 5, text: "おかえり！ ゆっくり休んでね。ここに泊まるとHPが全回復するよ。", heal: true, texture: "npc-heal" });
     }
     return npcs;
   }

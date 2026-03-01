@@ -1092,8 +1092,7 @@ export class BattleScene extends Phaser.Scene {
       audioManager.playConfirm();
       const choice = this.mainOptions[this.selectedMainIndex];
       this.lastSelectedMainOption = choice;
-      if (choice === "つかまえる") this.attemptCatch();
-      else if (choice === "たたかう") this.showMoveMenu(true);
+      if (choice === "たたかう") this.showMoveMenu(true);
       else if (choice === "いれかえ") this.showSwitchMenu(true);
       else if (choice === "アイテム") this.showItemMenu(true);
       else if (choice === "にげる") this.tryRun();
@@ -1298,6 +1297,11 @@ export class BattleScene extends Phaser.Scene {
   // ── 逃走 ──
 
   tryRun() {
+    if (!this.isWildBattle) {
+      this.enqueueMessage("トレーナーせんでは にげられない！");
+      return;
+    }
+
     // 速度差による逃走確率補正: 速いほど逃げやすい
     const player = this.battle.player;
     const opponent = this.battle.opponent;
@@ -2118,6 +2122,18 @@ export class BattleScene extends Phaser.Scene {
     const { entry, def } = selection;
     const player = this.getActivePlayer();
     let itemConsumed = false;
+    const catchBonus = def.catchBonus || (def.id === "EMO_BALL" ? 1 : 0);
+    const isCatchBall = catchBonus > 0;
+
+    if (isCatchBall) {
+      if (!this.isWildBattle) {
+        this.enqueueMessage("いまは ボールを つかえない！");
+        this.showMainMenu(true);
+        return;
+      }
+      this.attemptCatch({ entry, bonus: catchBonus, name: def.name, emoji: def.emoji });
+      return;
+    }
 
     if (!def.effect) {
       this.enqueueMessage("しかし なにも おきなかった…");
@@ -2769,8 +2785,8 @@ export class BattleScene extends Phaser.Scene {
 
   // ── 捕獲 ──
 
-  attemptCatch() {
-    const ball = this.getBestBall();
+  attemptCatch(selectedBall = null) {
+    const ball = selectedBall || this.getBestBall();
     if (!ball) {
       this.enqueueMessage("ボールがない！");
       return;

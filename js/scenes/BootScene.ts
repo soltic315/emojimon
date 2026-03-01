@@ -251,6 +251,30 @@ export class BootScene extends Phaser.Scene {
     g.strokePath();
     g.generateTexture("npc", 32, 32);
 
+    // ── 回復 NPC ──
+    g.clear();
+    g.fillStyle(0x000000, 0.2);
+    g.fillEllipse(16, 29, 20, 7);
+    g.fillStyle(0x22c55e, 1);
+    g.fillCircle(16, 15, 12);
+    g.fillStyle(0x4ade80, 0.35);
+    g.fillCircle(12, 11, 8);
+    g.fillStyle(0x1e293b, 1);
+    g.fillCircle(12, 13, 2.5);
+    g.fillCircle(20, 13, 2.5);
+    g.fillStyle(0xffffff, 1);
+    g.fillCircle(13, 12, 1.2);
+    g.fillCircle(21, 12, 1.2);
+    // 回復マーク（十字）
+    g.fillStyle(0xffffff, 0.95);
+    g.fillRoundedRect(14, 0, 4, 10, 1);
+    g.fillRoundedRect(11, 3, 10, 4, 1);
+    g.lineStyle(2, 0x1e293b, 0.9);
+    g.beginPath();
+    g.arc(16, 17, 4, 0.1, Math.PI - 0.1, false);
+    g.strokePath();
+    g.generateTexture("npc-heal", 32, 32);
+
     // ── ショップ NPC ──
     g.clear();
     g.fillStyle(0x000000, 0.2);
