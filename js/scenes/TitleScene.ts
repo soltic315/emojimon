@@ -124,7 +124,7 @@ export class TitleScene extends Phaser.Scene {
     });
 
     // ── バージョン表示 ──
-    this.add.text(width - 16, 8, "v1.0.0", {
+    this.add.text(width - 16, 8, `v${__APP_VERSION__}`, {
       fontFamily: FONT.MONO,
       fontSize: 11,
       color: "#374151",

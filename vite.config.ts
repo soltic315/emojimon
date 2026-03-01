@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import packageJson from './package.json';
 
 // GitHub Actions 上でビルドする場合、GITHUB_REPOSITORY 環境変数からリポジトリ名を取得して
 // GitHub Pages のベースパス（/<リポジトリ名>/）を自動設定する。
@@ -10,4 +11,7 @@ const getBase = (): string => {
 
 export default defineConfig({
   base: process.env.CI ? getBase() : '/',
+  define: {
+    __APP_VERSION__: JSON.stringify(packageJson.version),
+  },
 });
