@@ -188,8 +188,9 @@ $$
 ### 6.6 特性
 
 - 特性マスタ: `assets/data/abilities.json`
-- モンスター紐付け: `assets/data/monsters.json` の `abilityId`
-- `abilityId` 未指定時はタイプ別デフォルトを利用
+- モンスター紐付け: `assets/data/monsters.json` の `ability`（配列）または `abilityId`（単体）
+- `ability` 指定時は `acquisitionRate` 重みで個体ごとにランダム抽選する
+- `ability` 未指定時は `abilityId` を使用し、`abilityId` も未指定時はタイプ別デフォルトを利用
 - 特性はダメージ計算など内部ロジックで適用するが、戦闘メッセージおよび戦闘中のモンスター情報表示には出さない。
 
 ---
@@ -246,6 +247,18 @@ nextLevelExp = 10 + 8 × level
 - `assets/data/moves.json`
 - `assets/data/items.json`
 - `assets/data/abilities.json`
+
+### 8.4 monsters.json 追加キー
+
+- `spawnRate: number`
+  - 野生出現プール内での重み。値が大きいほど抽選されやすい。
+  - 未指定時は `1` 扱い。
+- `ability: [{ "abilityId": string, "acquisitionRate": number }]`
+  - 個体生成時の特性抽選テーブル。
+  - 未指定時は従来どおり `abilityId` を使用。
+- `recipe: [[{ "monsterId": string }, { "monsterId": string }]]`
+  - そのモンスターへの合成レシピ定義。
+  - 2体の組み合わせは順不同で判定する。
 
 ### 8.3 コンテンツ拡張（2026-03-01）
 

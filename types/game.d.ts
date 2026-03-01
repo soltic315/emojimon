@@ -85,6 +85,15 @@ export interface MonsterSubEmoji {
   size?: number;
 }
 
+export interface MonsterAbilityRate {
+  abilityId: string;
+  acquisitionRate: number;
+}
+
+export interface MonsterRecipeMaterial {
+  monsterId: string;
+}
+
 export interface MonsterSpecies {
   id: string;
   name: string;
@@ -92,6 +101,9 @@ export interface MonsterSpecies {
   subEmoji?: MonsterSubEmoji[];
   primaryType: MonsterType;
   abilityId: string;
+  abilityRates?: MonsterAbilityRate[];
+  spawnRate?: number;
+  recipe?: [MonsterRecipeMaterial, MonsterRecipeMaterial][];
   baseStats: BaseStats;
   learnset: Move[];
   learnsetLevels?: number[];
@@ -110,6 +122,7 @@ export interface MonsterInstance {
   currentHp: number;
   attackStage: number;
   defenseStage: number;
+  abilityId?: string;
   moveIds: string[];
   pp: number[];
   statusCondition?: StatusConditionType;

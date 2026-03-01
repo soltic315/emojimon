@@ -72,6 +72,15 @@ const DEFAULT_ABILITY_BY_TYPE = {
   ICE: "ICE_BODY",
 };
 
+const DEFAULT_FUSION_RECIPES = {
+  "BLAZEBIRD+PYREBEAR": "AURORO",
+  "BLAZEBIRD+STARLITE": "AURORO",
+  "CINDERCUB+FINBUB": "MISTRAY",
+  "BLIZZCAT+DROPLET": "GLACIERA",
+  "CRYSTALINE+THORNVINE": "BRAMBLEON",
+  "SHADOWPAW+SKYPIP": "RUNEFOX",
+};
+
 // タイプ相性表 6×6（攻撃側 -> 防御側）
 export const TYPE_EFFECTIVENESS = {
   FIRE: {
@@ -108,6 +117,99 @@ let frozenPeakPool = [];
 let gardenPool = [];
 let gymBossData = null;
 let gymBoss2Data = null;
+let fusionRecipes = { ...DEFAULT_FUSION_RECIPES };
+
+function normalizeFusionKey(speciesIdA, speciesIdB) {
+  if (!speciesIdA || !speciesIdB) return null;
+  return [speciesIdA, speciesIdB].sort().join("+");
+}
+
+export function getFusionRecipeResult(speciesIdA, speciesIdB) {
+  const key = normalizeFusionKey(speciesIdA, speciesIdB);
+  if (!key) return null;
+  return fusionRecipes[key] || null;
+}
+
+function normalizeAbilityRates(raw, fallbackAbilityId) {
+  if (!Array.isArray(raw) || raw.length === 0) {
+    return [{ abilityId: fallbackAbilityId, acquisitionRate: 1 }];
+  }
+
+  const normalized = raw
+    .map((entry) => {
+      const abilityId = typeof entry?.abilityId === "string" ? entry.abilityId : "";
+      const acquisitionRate = Number.isFinite(entry?.acquisitionRate)
+        ? Math.max(0, entry.acquisitionRate)
+        : 0;
+      if (!abilityId || acquisitionRate <= 0) return null;
+      return { abilityId, acquisitionRate };
+    })
+    .filter(Boolean);
+
+  if (normalized.length === 0) {
+    return [{ abilityId: fallbackAbilityId, acquisitionRate: 1 }];
+  }
+
+  return normalized;
+}
+
+function pickByWeight(entries, randomValue = Math.random()) {
+  if (!Array.isArray(entries) || entries.length === 0) return null;
+  const totalWeight = entries.reduce((sum, entry) => sum + Math.max(0, entry.weight || 0), 0);
+  if (totalWeight <= 0) return entries[0];
+
+  const safeRandom = Math.max(0, Math.min(0.999999, Number.isFinite(randomValue) ? randomValue : 0));
+  let cursor = safeRandom * totalWeight;
+  for (const entry of entries) {
+    cursor -= Math.max(0, entry.weight || 0);
+    if (cursor < 0) return entry;
+  }
+
+  return entries[entries.length - 1];
+}
+
+function pickWeightedMonster(pool) {
+  if (!Array.isArray(pool) || pool.length === 0) return null;
+  const weightedPool = pool.map((species) => ({
+    value: species,
+    weight: Number.isFinite(species?.spawnRate) ? Math.max(0, species.spawnRate) : 1,
+  }));
+  const picked = pickByWeight(weightedPool);
+  return picked?.value || pool[0];
+}
+
+export function rollMonsterAbilityId(species) {
+  if (!species) return "STURDY";
+  const rates = Array.isArray(species.abilityRates) && species.abilityRates.length > 0
+    ? species.abilityRates
+    : [{
+      abilityId: species.abilityId || DEFAULT_ABILITY_BY_TYPE[species.primaryType] || "STURDY",
+      acquisitionRate: 1,
+    }];
+  const weighted = rates.map((entry) => ({
+    value: entry.abilityId,
+    weight: Number.isFinite(entry.acquisitionRate) ? Math.max(0, entry.acquisitionRate) : 0,
+  }));
+  const picked = pickByWeight(weighted);
+  return picked?.value || rates[0].abilityId;
+}
+
+function createMonsterEntry(base, level, extra = {}) {
+  const stats = calcStats(base, level);
+  return {
+    species: base,
+    level,
+    currentHp: stats.maxHp,
+    exp: 0,
+    nextLevelExp: 10 + 8 * level,
+    bond: 0,
+    attackStage: 0,
+    defenseStage: 0,
+    abilityId: rollMonsterAbilityId(base),
+    pp: (base.learnset || []).map((m) => m.pp || 10),
+    ...extra,
+  };
+}
 
 function normalizeSubEmoji(rawSubEmoji) {
   if (!Array.isArray(rawSubEmoji)) return [];
@@ -276,6 +378,8 @@ export function initMonstersFromJson(json) {
     delete MONSTERS[key];
   });
 
+  fusionRecipes = { ...DEFAULT_FUSION_RECIPES };
+
   json.monsters.forEach((raw) => {
     const learnsetEntries = (raw.learnset || [])
       .map((entry, index) => {
@@ -292,6 +396,8 @@ export function initMonstersFromJson(json) {
     const learnset = learnsetEntries.map((entry) => entry.move);
     const learnsetLevels = learnsetEntries.map((entry) => entry.level);
     const abilityId = raw.abilityId || DEFAULT_ABILITY_BY_TYPE[raw.primaryType] || "STURDY";
+    const abilityRates = normalizeAbilityRates(raw.ability, abilityId);
+    const spawnRate = Number.isFinite(raw.spawnRate) ? Math.max(0, raw.spawnRate) : 1;
 
     MONSTERS[raw.id] = {
       id: raw.id,
@@ -300,6 +406,8 @@ export function initMonstersFromJson(json) {
       subEmoji: normalizeSubEmoji(raw.sub_emoji),
       primaryType: raw.primaryType,
       abilityId,
+      abilityRates,
+      spawnRate,
       baseStats: raw.baseStats,
       learnset,
       learnsetLevels,
@@ -308,6 +416,17 @@ export function initMonstersFromJson(json) {
       evolveTo: raw.evolveTo || null,
       evolveLevel: raw.evolveLevel || null,
     };
+
+    if (Array.isArray(raw.recipe)) {
+      raw.recipe.forEach((pair) => {
+        if (!Array.isArray(pair) || pair.length < 2) return;
+        const firstId = typeof pair[0]?.monsterId === "string" ? pair[0].monsterId : null;
+        const secondId = typeof pair[1]?.monsterId === "string" ? pair[1].monsterId : null;
+        const key = normalizeFusionKey(firstId, secondId);
+        if (!key) return;
+        fusionRecipes[key] = raw.id;
+      });
+    }
   });
 
   // 野生出現テーブル（町の草むら）
@@ -352,161 +471,81 @@ export function initMonstersFromJson(json) {
 /** 野生モンスター生成（町の草むら用） */
 export function getRandomWildMonster(minLv = 3, maxLv = 5) {
   const pool = wildPool.length > 0 ? wildPool : Object.values(MONSTERS);
-  const base = Phaser.Utils.Array.GetRandom(pool);
+  const base = pickWeightedMonster(pool);
+  if (!base) return null;
   const level = Phaser.Math.Between(minLv, maxLv);
-  const stats = calcStats(base, level);
 
-  return {
-    species: base,
-    level,
-    currentHp: stats.maxHp,
-    exp: 0,
-    nextLevelExp: 10 + 8 * level,
-    bond: 0,
-    attackStage: 0,
-    defenseStage: 0,
-    pp: (base.learnset || []).map(m => m.pp || 10),
-  };
+  return createMonsterEntry(base, level);
 }
 
 /** 森エリア用の野生モンスター */
 export function getForestWildMonster() {
   const pool = forestPool.length > 0 ? forestPool : wildPool;
-  const base = Phaser.Utils.Array.GetRandom(pool);
+  const base = pickWeightedMonster(pool);
+  if (!base) return null;
   const level = Phaser.Math.Between(5, 8);
-  const stats = calcStats(base, level);
 
-  return {
-    species: base,
-    level,
-    currentHp: stats.maxHp,
-    exp: 0,
-    nextLevelExp: 10 + 8 * level,
-    bond: 0,
-    attackStage: 0,
-    defenseStage: 0,
-    pp: (base.learnset || []).map(m => m.pp || 10),
-  };
+  return createMonsterEntry(base, level);
 }
 
 /** 洞窟エリア用の野生モンスター */
 export function getCaveWildMonster() {
   const pool = cavePool.length > 0 ? cavePool : forestPool;
-  const base = Phaser.Utils.Array.GetRandom(pool);
+  const base = pickWeightedMonster(pool);
+  if (!base) return null;
   const level = Phaser.Math.Between(8, 12);
-  const stats = calcStats(base, level);
 
-  return {
-    species: base,
-    level,
-    currentHp: stats.maxHp,
-    exp: 0,
-    nextLevelExp: 10 + 8 * level,
-    bond: 0,
-    attackStage: 0,
-    defenseStage: 0,
-    pp: (base.learnset || []).map(m => m.pp || 10),
-  };
+  return createMonsterEntry(base, level);
 }
 
 /** 火山エリア用の野生モンスター */
 export function getVolcanoWildMonster() {
   const pool = volcanoPool.length > 0 ? volcanoPool : cavePool;
-  const base = Phaser.Utils.Array.GetRandom(pool);
+  const base = pickWeightedMonster(pool);
+  if (!base) return null;
   const level = Phaser.Math.Between(12, 16);
-  const stats = calcStats(base, level);
 
-  return {
-    species: base,
-    level,
-    currentHp: stats.maxHp,
-    exp: 0,
-    nextLevelExp: 10 + 8 * level,
-    bond: 0,
-    attackStage: 0,
-    defenseStage: 0,
-    pp: (base.learnset || []).map(m => m.pp || 10),
-  };
+  return createMonsterEntry(base, level);
 }
 
 /** 遺跡エリア用の野生モンスター */
 export function getRuinsWildMonster() {
   const pool = ruinsPool.length > 0 ? ruinsPool : volcanoPool;
-  const base = Phaser.Utils.Array.GetRandom(pool);
+  const base = pickWeightedMonster(pool);
+  if (!base) return null;
   const level = Phaser.Math.Between(15, 20);
-  const stats = calcStats(base, level);
 
-  return {
-    species: base,
-    level,
-    currentHp: stats.maxHp,
-    exp: 0,
-    nextLevelExp: 10 + 8 * level,
-    bond: 0,
-    attackStage: 0,
-    defenseStage: 0,
-    pp: (base.learnset || []).map(m => m.pp || 10),
-  };
+  return createMonsterEntry(base, level);
 }
 
 /** ダーク団アジト用の野生モンスター */
 export function getDarkTowerWildMonster() {
   const pool = darkTowerPool.length > 0 ? darkTowerPool : cavePool;
-  const base = Phaser.Utils.Array.GetRandom(pool);
+  const base = pickWeightedMonster(pool);
+  if (!base) return null;
   const level = Phaser.Math.Between(18, 24);
-  const stats = calcStats(base, level);
 
-  return {
-    species: base,
-    level,
-    currentHp: stats.maxHp,
-    exp: 0,
-    nextLevelExp: 10 + 8 * level,
-    bond: 0,
-    attackStage: 0,
-    defenseStage: 0,
-    pp: (base.learnset || []).map(m => m.pp || 10),
-  };
+  return createMonsterEntry(base, level);
 }
 
 /** 氷峰用の野生モンスター */
 export function getFrozenPeakWildMonster() {
   const pool = frozenPeakPool.length > 0 ? frozenPeakPool : ruinsPool;
-  const base = Phaser.Utils.Array.GetRandom(pool);
+  const base = pickWeightedMonster(pool);
+  if (!base) return null;
   const level = Phaser.Math.Between(22, 28);
-  const stats = calcStats(base, level);
 
-  return {
-    species: base,
-    level,
-    currentHp: stats.maxHp,
-    exp: 0,
-    nextLevelExp: 10 + 8 * level,
-    bond: 0,
-    attackStage: 0,
-    defenseStage: 0,
-    pp: (base.learnset || []).map(m => m.pp || 10),
-  };
+  return createMonsterEntry(base, level);
 }
 
 /** 天空の花園用の野生モンスター */
 export function getGardenWildMonster() {
   const pool = gardenPool.length > 0 ? gardenPool : ruinsPool;
-  const base = Phaser.Utils.Array.GetRandom(pool);
+  const base = pickWeightedMonster(pool);
+  if (!base) return null;
   const level = Phaser.Math.Between(25, 35);
-  const stats = calcStats(base, level);
 
-  return {
-    species: base,
-    level,
-    currentHp: stats.maxHp,
-    exp: 0,
-    nextLevelExp: 10 + 8 * level,
-    bond: 0,
-    attackStage: 0,
-    defenseStage: 0,
-    pp: (base.learnset || []).map(m => m.pp || 10),
-  };
+  return createMonsterEntry(base, level);
 }
 
 /** ジムボスモンスター */
@@ -515,20 +554,8 @@ export function getGymBossMonster() {
   const base = MONSTERS[gymBossData.id];
   if (!base) return getRandomWildMonster(10, 15);
   const level = gymBossData.level || 15;
-  const stats = calcStats(base, level);
 
-  return {
-    species: base,
-    level,
-    currentHp: stats.maxHp,
-    exp: 0,
-    nextLevelExp: 10 + 8 * level,
-    bond: 0,
-    attackStage: 0,
-    defenseStage: 0,
-    isBoss: true,
-    pp: (base.learnset || []).map(m => m.pp || 10),
-  };
+  return createMonsterEntry(base, level, { isBoss: true });
 }
 
 /** 第2ジムボスモンスター（氷峰ジム） */
@@ -537,20 +564,8 @@ export function getGymBoss2Monster() {
   const base = MONSTERS[gymBoss2Data.id];
   if (!base) return getRandomWildMonster(25, 32);
   const level = gymBoss2Data.level || 32;
-  const stats = calcStats(base, level);
 
-  return {
-    species: base,
-    level,
-    currentHp: stats.maxHp,
-    exp: 0,
-    nextLevelExp: 10 + 8 * level,
-    bond: 0,
-    attackStage: 0,
-    defenseStage: 0,
-    isBoss: true,
-    pp: (base.learnset || []).map(m => m.pp || 10),
-  };
+  return createMonsterEntry(base, level, { isBoss: true });
 }
 
 /** 全モンスター一覧を返す（図鑑用） */
@@ -563,23 +578,12 @@ export function getArenaOpponent(round) {
   // 全モンスタープールから選出、ラウンドに応じて強くなる
   const allMons = Object.values(MONSTERS);
   if (allMons.length === 0) return getRandomWildMonster(10, 15);
-  const base = Phaser.Utils.Array.GetRandom(allMons);
+  const base = pickWeightedMonster(allMons);
+  if (!base) return getRandomWildMonster(10, 15);
   const baseLevel = 10 + round * 3;
   const level = Phaser.Math.Between(baseLevel, baseLevel + 2);
-  const stats = calcStats(base, level);
 
-  return {
-    species: base,
-    level,
-    currentHp: stats.maxHp,
-    exp: 0,
-    nextLevelExp: 10 + 8 * level,
-    bond: 0,
-    attackStage: 0,
-    defenseStage: 0,
-    trainer: true,
-    pp: (base.learnset || []).map(m => m.pp || 10),
-  };
+  return createMonsterEntry(base, level, { trainer: true });
 }
 
 /** 進化チェック: 進化可能な場合は進化後のspeciesを返す */

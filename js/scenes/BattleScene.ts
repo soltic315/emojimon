@@ -2127,7 +2127,7 @@ export class BattleScene extends Phaser.Scene {
 
   getMonsterAbility(monster) {
     if (!monster || !monster.species) return null;
-    return getAbilityById(monster.species.abilityId);
+    return getAbilityById(monster.abilityId || monster.species.abilityId);
   }
 
   isLowHp(monster) {

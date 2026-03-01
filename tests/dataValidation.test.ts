@@ -31,6 +31,19 @@ function createValidData() {
           },
           learnset: [{ move: "TACKLE", level: 1 }],
           catchRate: 0.3,
+          spawnRate: 1,
+          ability: [
+            {
+              abilityId: "STURDY",
+              acquisitionRate: 0.5,
+            },
+          ],
+          recipe: [
+            [
+              { monsterId: "TESTMON" },
+              { monsterId: "TESTMON" },
+            ],
+          ],
         },
       ],
       wildPoolIds: ["TESTMON"],

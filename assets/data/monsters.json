@@ -1554,8 +1554,25 @@
         }
       ],
       "catchRate": 0.06,
+      "spawnRate": 0.5,
       "description": "太陽の欠片から生まれた神獣。灼熱の光を放つ。",
       "abilityId": "BLAZE",
+      "ability": [
+        {
+          "abilityId": "BLAZE",
+          "acquisitionRate": 0.5
+        }
+      ],
+      "recipe": [
+        [
+          {
+            "monsterId": "SOLFLARE"
+          },
+          {
+            "monsterId": "SOLFLARE"
+          }
+        ]
+      ],
       "sub_emoji": []
     },
     {

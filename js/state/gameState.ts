@@ -1,7 +1,9 @@
 import {
   MONSTERS,
   calcStats,
+  getFusionRecipeResult,
   getLearnedMovesByLevelUp,
+  rollMonsterAbilityId,
   syncMonsterMoves,
 } from "../data/monsters.ts";
 
@@ -82,6 +84,9 @@ function buildLoadedMonster(saved) {
     bond: clampInt(saved?.bond, 0, 100, 0),
     attackStage: 0,
     defenseStage: 0,
+    abilityId: typeof saved?.abilityId === "string" && saved.abilityId.length > 0
+      ? saved.abilityId
+      : rollMonsterAbilityId(species),
     moveIds: Array.isArray(saved?.moveIds)
       ? saved.moveIds.filter((moveId) => typeof moveId === "string")
       : [],
@@ -141,21 +146,6 @@ function buildDailyChallenge(dateKey) {
     completed: false,
     rewardClaimed: false,
   };
-}
-
-const FUSION_RECIPES = {
-  "BLAZEBIRD+STARLITE": "AURORO",
-  "BLAZEBIRD+PYREBEAR": "AURORO",
-  "CINDERCUB+FINBUB": "MISTRAY",
-  "BLIZZCAT+DROPLET": "GLACIERA",
-  "CRYSTALINE+THORNVINE": "BRAMBLEON",
-  "SHADOWPAW+SKYPIP": "RUNEFOX",
-};
-
-function getFusionRecipeResult(speciesIdA, speciesIdB) {
-  if (!speciesIdA || !speciesIdB) return null;
-  const key = [speciesIdA, speciesIdB].sort().join("+");
-  return FUSION_RECIPES[key] || null;
 }
 
 class GameState {
@@ -718,6 +708,7 @@ class GameState {
     let resultName = null;
     if (recipeResultId && MONSTERS[recipeResultId]) {
       baseMonster.species = MONSTERS[recipeResultId];
+      baseMonster.abilityId = rollMonsterAbilityId(baseMonster.species);
       transformed = true;
       resultName = baseMonster.species.name;
       this.discoverFusionRecipe(baseSpeciesIdBeforeFusion, materialMonster.species.id);
@@ -806,6 +797,9 @@ class GameState {
         fieldTimeMinutes: this.getFieldTimeMinutes(),
         party: this.party.map((m) => ({
           speciesId: m.species ? m.species.id : null,
+          abilityId: typeof m.abilityId === "string" && m.abilityId.length > 0
+            ? m.abilityId
+            : rollMonsterAbilityId(m.species),
           level: m.level,
           exp: m.exp,
           nextLevelExp: m.nextLevelExp,
@@ -816,6 +810,9 @@ class GameState {
         })),
         box: (this.box || []).map((m) => ({
           speciesId: m.species ? m.species.id : null,
+          abilityId: typeof m.abilityId === "string" && m.abilityId.length > 0
+            ? m.abilityId
+            : rollMonsterAbilityId(m.species),
           level: m.level,
           exp: m.exp,
           nextLevelExp: m.nextLevelExp,

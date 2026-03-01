@@ -48,6 +48,17 @@ const learnsetEntrySchema = z.object({
   level: z.number().int().min(1),
 });
 
+const abilityEntrySchema = z.object({
+  abilityId: z.string().min(1),
+  acquisitionRate: z.number().positive(),
+});
+
+const recipeMonsterSchema = z.object({
+  monsterId: z.string().min(1),
+});
+
+const recipePairSchema = z.tuple([recipeMonsterSchema, recipeMonsterSchema]);
+
 const monsterSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
@@ -57,8 +68,11 @@ const monsterSchema = z.object({
   baseStats: baseStatsSchema,
   learnset: z.array(learnsetEntrySchema),
   catchRate: z.number().min(0).max(1),
+  spawnRate: z.number().positive().optional(),
   description: z.string().optional(),
   abilityId: z.string().optional(),
+  ability: z.array(abilityEntrySchema).optional(),
+  recipe: z.array(recipePairSchema).optional(),
   evolveTo: z.string().nullable().optional(),
   evolveLevel: z.number().int().positive().nullable().optional(),
 });
@@ -70,7 +84,14 @@ const monstersDataSchema = z.object({
   cavePoolIds: z.array(z.string().min(1)).optional(),
   volcanoPoolIds: z.array(z.string().min(1)).optional(),
   ruinsPoolIds: z.array(z.string().min(1)).optional(),
+  darkTowerPoolIds: z.array(z.string().min(1)).optional(),
+  frozenPeakPoolIds: z.array(z.string().min(1)).optional(),
+  gardenPoolIds: z.array(z.string().min(1)).optional(),
   gymBoss: z.object({
+    id: z.string().min(1),
+    level: z.number().int().positive(),
+  }).optional(),
+  gymBoss2: z.object({
     id: z.string().min(1),
     level: z.number().int().positive(),
   }).optional(),

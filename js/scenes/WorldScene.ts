@@ -6,6 +6,7 @@ import {
   calcStats,
   MONSTERS,
   getMonsterMoves,
+  rollMonsterAbilityId,
   syncMonsterMoves,
 } from "../data/monsters.ts";
 import { createWildMonsterForEncounter, rollWeatherForMapByHour } from "../data/mapRules.ts";
@@ -1789,6 +1790,7 @@ export class WorldScene extends Phaser.Scene {
       currentHp: stats.maxHp,
       attackStage: 0,
       defenseStage: 0,
+      abilityId: rollMonsterAbilityId(starter),
       moveIds: [],
       pp: (starter.learnset || []).map(m => m.pp || 10),
     };
@@ -1953,6 +1955,7 @@ export class WorldScene extends Phaser.Scene {
         nextLevelExp: 10 + 8 * level,
         attackStage: 0,
         defenseStage: 0,
+        abilityId: rollMonsterAbilityId(eternia),
         pp: (eternia.learnset || []).map(m => m.pp || 10),
       };
       const activeMon = gameState.getFirstAlive();
@@ -2093,6 +2096,7 @@ export class WorldScene extends Phaser.Scene {
       currentHp: stats.maxHp,
       attackStage: 0,
       defenseStage: 0,
+      abilityId: rollMonsterAbilityId(species),
       rewardMoney: 50 + level * 15,
       moveIds: [],
       pp: (species.learnset || []).map(m => m.pp || 10),
@@ -2381,6 +2385,7 @@ export class WorldScene extends Phaser.Scene {
         currentHp: stats.maxHp,
         attackStage: 0,
         defenseStage: 0,
+        abilityId: rollMonsterAbilityId(eterna),
         moveIds: [],
         pp: (eterna.learnset || []).map(m => m.pp || 10),
       };
@@ -2399,6 +2404,7 @@ export class WorldScene extends Phaser.Scene {
       currentHp: stats.maxHp,
       attackStage: 0,
       defenseStage: 0,
+      abilityId: rollMonsterAbilityId(eterna),
       moveIds: [],
       pp: (eterna.learnset || []).map(m => m.pp || 10),
     };
