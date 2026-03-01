@@ -1,4 +1,32 @@
 import { MOVES } from "./moves.ts";
+import { initWildPools } from "./wildEncounters.ts";
+
+// 既存インポートとの互換性のため再エクスポート
+export {
+  getRandomWildMonster,
+  getForestWildMonster,
+  getCaveWildMonster,
+  getVolcanoWildMonster,
+  getRuinsWildMonster,
+  getDarkTowerWildMonster,
+  getFrozenPeakWildMonster,
+  getGardenWildMonster,
+  getSwampWildMonster,
+  getCoralWildMonster,
+  getSandValleyWildMonster,
+  getShadowGroveWildMonster,
+  getLibraryWildMonster,
+  getBasinWildMonster,
+  getGymBossMonster,
+  getGymBoss2Monster,
+  getArenaOpponent,
+} from "./wildEncounters.ts";
+
+export {
+  checkEvolution,
+  checkItemEvolution,
+  evolveMonster,
+} from "./evolution.ts";
 
 export const TYPES = ["NORMAL", "FIRE", "WATER", "GRASS", "ELECTRIC", "ICE"];
 export const MAX_MOVE_SLOTS = 4;
@@ -108,22 +136,6 @@ export const TYPE_EFFECTIVENESS = {
 
 // JSON から初期化されるモンスター定義
 export const MONSTERS = {};
-let wildPool = [];
-let forestPool = [];
-let cavePool = [];
-let volcanoPool = [];
-let ruinsPool = [];
-let darkTowerPool = [];
-let frozenPeakPool = [];
-let gardenPool = [];
-let swampPool = [];
-let coralPool = [];
-let sandValleyPool = [];
-let shadowGrovePool = [];
-let libraryPool = [];
-let basinPool = [];
-let gymBossData = null;
-let gymBoss2Data = null;
 let fusionRecipes = { ...DEFAULT_FUSION_RECIPES };
 
 function normalizeFusionKey(speciesIdA, speciesIdB) {
@@ -160,30 +172,7 @@ function normalizeAbilityRates(raw, fallbackAbilityId) {
   return normalized;
 }
 
-function pickByWeight(entries, randomValue = Math.random()) {
-  if (!Array.isArray(entries) || entries.length === 0) return null;
-  const totalWeight = entries.reduce((sum, entry) => sum + Math.max(0, entry.weight || 0), 0);
-  if (totalWeight <= 0) return entries[0];
 
-  const safeRandom = Math.max(0, Math.min(0.999999, Number.isFinite(randomValue) ? randomValue : 0));
-  let cursor = safeRandom * totalWeight;
-  for (const entry of entries) {
-    cursor -= Math.max(0, entry.weight || 0);
-    if (cursor < 0) return entry;
-  }
-
-  return entries[entries.length - 1];
-}
-
-function pickWeightedMonster(pool) {
-  if (!Array.isArray(pool) || pool.length === 0) return null;
-  const weightedPool = pool.map((species) => ({
-    value: species,
-    weight: Number.isFinite(species?.spawnRate) ? Math.max(0, species.spawnRate) : 1,
-  }));
-  const picked = pickByWeight(weightedPool);
-  return picked?.value || pool[0];
-}
 
 export function rollMonsterAbilityId(species) {
   if (!species) return "STURDY";
@@ -201,22 +190,7 @@ export function rollMonsterAbilityId(species) {
   return picked?.value || rates[0].abilityId;
 }
 
-function createMonsterEntry(base, level, extra = {}) {
-  const stats = calcStats(base, level);
-  return {
-    species: base,
-    level,
-    currentHp: stats.maxHp,
-    exp: 0,
-    nextLevelExp: 10 + 8 * level,
-    bond: 0,
-    attackStage: 0,
-    defenseStage: 0,
-    abilityId: rollMonsterAbilityId(base),
-    pp: (base.learnset || []).map((m) => m.pp || 10),
-    ...extra,
-  };
-}
+
 
 function normalizeSubEmoji(rawSubEmoji) {
   if (!Array.isArray(rawSubEmoji)) return [];
@@ -482,283 +456,11 @@ export function initMonstersFromJson(json) {
     }
   });
 
-  // 野生出現テーブル（町の草むら）
-  const poolIds = Array.isArray(json.wildPoolIds)
-    ? json.wildPoolIds
-    : Object.keys(MONSTERS);
-  wildPool = poolIds.map((id) => MONSTERS[id]).filter(Boolean);
-
-  // 森の出現テーブル
-  const forestIds = Array.isArray(json.forestPoolIds) ? json.forestPoolIds : [];
-  forestPool = forestIds.map((id) => MONSTERS[id]).filter(Boolean);
-
-  // 洞窟の出現テーブル
-  const caveIds = Array.isArray(json.cavePoolIds) ? json.cavePoolIds : [];
-  cavePool = caveIds.map((id) => MONSTERS[id]).filter(Boolean);
-
-  // 火山地帯の出現テーブル
-  const volcanoIds = Array.isArray(json.volcanoPoolIds) ? json.volcanoPoolIds : [];
-  volcanoPool = volcanoIds.map((id) => MONSTERS[id]).filter(Boolean);
-
-  // 遺跡エリアの出現テーブル
-  const ruinsIds = Array.isArray(json.ruinsPoolIds) ? json.ruinsPoolIds : [];
-  ruinsPool = ruinsIds.map((id) => MONSTERS[id]).filter(Boolean);
-
-  // ダーク団アジトの出現テーブル
-  const darkTowerIds = Array.isArray(json.darkTowerPoolIds) ? json.darkTowerPoolIds : [];
-  darkTowerPool = darkTowerIds.map((id) => MONSTERS[id]).filter(Boolean);
-
-  // 氷峰の出現テーブル
-  const frozenPeakIds = Array.isArray(json.frozenPeakPoolIds) ? json.frozenPeakPoolIds : [];
-  frozenPeakPool = frozenPeakIds.map((id) => MONSTERS[id]).filter(Boolean);
-
-  // 天空の花園の出現テーブル
-  const gardenIds = Array.isArray(json.gardenPoolIds) ? json.gardenPoolIds : [];
-  gardenPool = gardenIds.map((id) => MONSTERS[id]).filter(Boolean);
-
-  // 霧の湿地の出現テーブル
-  const swampIds = Array.isArray(json.swampPoolIds) ? json.swampPoolIds : [];
-  swampPool = swampIds.map((id) => MONSTERS[id]).filter(Boolean);
-
-  // 珊瑚の浜の出現テーブル
-  const coralIds = Array.isArray(json.coralPoolIds) ? json.coralPoolIds : [];
-  coralPool = coralIds.map((id) => MONSTERS[id]).filter(Boolean);
-
-  // 砂塵の谷の出現テーブル
-  const sandValleyIds = Array.isArray(json.sandValleyPoolIds) ? json.sandValleyPoolIds : [];
-  sandValleyPool = sandValleyIds.map((id) => MONSTERS[id]).filter(Boolean);
-
-  // 影の森の出現テーブル
-  const shadowGroveIds = Array.isArray(json.shadowGrovePoolIds) ? json.shadowGrovePoolIds : [];
-  shadowGrovePool = shadowGroveIds.map((id) => MONSTERS[id]).filter(Boolean);
-
-  // 古代図書館の出現テーブル
-  const libraryIds = Array.isArray(json.libraryPoolIds) ? json.libraryPoolIds : [];
-  libraryPool = libraryIds.map((id) => MONSTERS[id]).filter(Boolean);
-
-  // 星降り盆地の出現テーブル
-  const basinIds = Array.isArray(json.basinPoolIds) ? json.basinPoolIds : [];
-  basinPool = basinIds.map((id) => MONSTERS[id]).filter(Boolean);
-
-  // ジムボス
-  gymBossData = json.gymBoss || null;
-  gymBoss2Data = json.gymBoss2 || null;
-}
-
-/** 野生モンスター生成（町の草むら用） */
-export function getRandomWildMonster(minLv = 3, maxLv = 5) {
-  const pool = wildPool.length > 0 ? wildPool : Object.values(MONSTERS);
-  const base = pickWeightedMonster(pool);
-  if (!base) return null;
-  const level = Phaser.Math.Between(minLv, maxLv);
-
-  return createMonsterEntry(base, level);
-}
-
-/** 森エリア用の野生モンスター */
-export function getForestWildMonster() {
-  const pool = forestPool.length > 0 ? forestPool : wildPool;
-  const base = pickWeightedMonster(pool);
-  if (!base) return null;
-  const level = Phaser.Math.Between(5, 8);
-
-  return createMonsterEntry(base, level);
-}
-
-/** 洞窟エリア用の野生モンスター */
-export function getCaveWildMonster() {
-  const pool = cavePool.length > 0 ? cavePool : forestPool;
-  const base = pickWeightedMonster(pool);
-  if (!base) return null;
-  const level = Phaser.Math.Between(8, 12);
-
-  return createMonsterEntry(base, level);
-}
-
-/** 火山エリア用の野生モンスター */
-export function getVolcanoWildMonster() {
-  const pool = volcanoPool.length > 0 ? volcanoPool : cavePool;
-  const base = pickWeightedMonster(pool);
-  if (!base) return null;
-  const level = Phaser.Math.Between(12, 16);
-
-  return createMonsterEntry(base, level);
-}
-
-/** 遺跡エリア用の野生モンスター */
-export function getRuinsWildMonster() {
-  const pool = ruinsPool.length > 0 ? ruinsPool : volcanoPool;
-  const base = pickWeightedMonster(pool);
-  if (!base) return null;
-  const level = Phaser.Math.Between(15, 20);
-
-  return createMonsterEntry(base, level);
-}
-
-/** ダーク団アジト用の野生モンスター */
-export function getDarkTowerWildMonster() {
-  const pool = darkTowerPool.length > 0 ? darkTowerPool : cavePool;
-  const base = pickWeightedMonster(pool);
-  if (!base) return null;
-  const level = Phaser.Math.Between(18, 24);
-
-  return createMonsterEntry(base, level);
-}
-
-/** 氷峰用の野生モンスター */
-export function getFrozenPeakWildMonster() {
-  const pool = frozenPeakPool.length > 0 ? frozenPeakPool : ruinsPool;
-  const base = pickWeightedMonster(pool);
-  if (!base) return null;
-  const level = Phaser.Math.Between(22, 28);
-
-  return createMonsterEntry(base, level);
-}
-
-/** 天空の花園用の野生モンスター */
-export function getGardenWildMonster() {
-  const pool = gardenPool.length > 0 ? gardenPool : ruinsPool;
-  const base = pickWeightedMonster(pool);
-  if (!base) return null;
-  const level = Phaser.Math.Between(25, 35);
-
-  return createMonsterEntry(base, level);
-}
-
-/** 霧の湿地用の野生モンスター */
-export function getSwampWildMonster() {
-  const pool = swampPool.length > 0 ? swampPool : forestPool;
-  const base = pickWeightedMonster(pool);
-  if (!base) return null;
-  const level = Phaser.Math.Between(7, 11);
-
-  return createMonsterEntry(base, level);
-}
-
-/** 珊瑚の浜用の野生モンスター */
-export function getCoralWildMonster() {
-  const pool = coralPool.length > 0 ? coralPool : forestPool;
-  const base = pickWeightedMonster(pool);
-  if (!base) return null;
-  const level = Phaser.Math.Between(8, 13);
-
-  return createMonsterEntry(base, level);
-}
-
-/** 砂塵の谷用の野生モンスター */
-export function getSandValleyWildMonster() {
-  const pool = sandValleyPool.length > 0 ? sandValleyPool : volcanoPool;
-  const base = pickWeightedMonster(pool);
-  if (!base) return null;
-  const level = Phaser.Math.Between(15, 20);
-
-  return createMonsterEntry(base, level);
-}
-
-/** 影の森用の野生モンスター */
-export function getShadowGroveWildMonster() {
-  const pool = shadowGrovePool.length > 0 ? shadowGrovePool : darkTowerPool;
-  const base = pickWeightedMonster(pool);
-  if (!base) return null;
-  const level = Phaser.Math.Between(20, 26);
-
-  return createMonsterEntry(base, level);
-}
-
-/** 古代図書館用の野生モンスター */
-export function getLibraryWildMonster() {
-  const pool = libraryPool.length > 0 ? libraryPool : ruinsPool;
-  const base = pickWeightedMonster(pool);
-  if (!base) return null;
-  const level = Phaser.Math.Between(24, 30);
-
-  return createMonsterEntry(base, level);
-}
-
-/** 星降り盆地用の野生モンスター */
-export function getBasinWildMonster() {
-  const pool = basinPool.length > 0 ? basinPool : gardenPool;
-  const base = pickWeightedMonster(pool);
-  if (!base) return null;
-  const level = Phaser.Math.Between(35, 45);
-
-  return createMonsterEntry(base, level);
-}
-
-/** ジムボスモンスター */
-export function getGymBossMonster() {
-  if (!gymBossData) return getRandomWildMonster(10, 15);
-  const base = MONSTERS[gymBossData.id];
-  if (!base) return getRandomWildMonster(10, 15);
-  const level = gymBossData.level || 15;
-
-  return createMonsterEntry(base, level, { isBoss: true });
-}
-
-/** 第2ジムボスモンスター（氷峰ジム） */
-export function getGymBoss2Monster() {
-  if (!gymBoss2Data) return getRandomWildMonster(25, 32);
-  const base = MONSTERS[gymBoss2Data.id];
-  if (!base) return getRandomWildMonster(25, 32);
-  const level = gymBoss2Data.level || 32;
-
-  return createMonsterEntry(base, level, { isBoss: true });
+  // 野生出現プール初期化を委譲
+  initWildPools(json, MONSTERS);
 }
 
 /** 全モンスター一覧を返す（図鑑用） */
 export function getAllMonsters() {
   return Object.values(MONSTERS);
 }
-
-/** 闘技場の対戦相手を生成（ラウンドに応じてレベル上昇） */
-export function getArenaOpponent(round) {
-  // 全モンスタープールから選出、ラウンドに応じて強くなる
-  const allMons = Object.values(MONSTERS);
-  if (allMons.length === 0) return getRandomWildMonster(10, 15);
-  const base = pickWeightedMonster(allMons);
-  if (!base) return getRandomWildMonster(10, 15);
-  const baseLevel = 10 + round * 3;
-  const level = Phaser.Math.Between(baseLevel, baseLevel + 2);
-
-  return createMonsterEntry(base, level, { trainer: true });
-}
-
-/** 進化チェック: レベル進化が可能な場合は進化後のspeciesを返す */
-export function checkEvolution(monsterEntry) {
-  if (!monsterEntry || !monsterEntry.species) return null;
-  const species = monsterEntry.species;
-  if (!species.evolution) return null;
-  const { evolvesTo, condition } = species.evolution;
-  if (condition.type === "LEVEL" && typeof condition.value === "number") {
-    if (monsterEntry.level >= condition.value) {
-      const evolved = MONSTERS[evolvesTo];
-      if (evolved) return evolved;
-    }
-  }
-  return null;
-}
-
-/** アイテム進化チェック: 指定アイテムで進化可能な場合は進化後のspeciesを返す */
-export function checkItemEvolution(monsterEntry, itemId) {
-  if (!monsterEntry || !monsterEntry.species || !itemId) return null;
-  const species = monsterEntry.species;
-  if (!species.evolution) return null;
-  const { evolvesTo, condition } = species.evolution;
-  if (condition.type === "ITEM" && condition.value === itemId) {
-    const evolved = MONSTERS[evolvesTo];
-    if (evolved) return evolved;
-  }
-  return null;
-}
-
-/** 進化を実行する */
-export function evolveMonster(monsterEntry, newSpecies) {
-  const oldName = monsterEntry.species.name;
-  monsterEntry.species = newSpecies;
-  // 進化後のHP全回復
-  const newStats = calcStats(newSpecies, monsterEntry.level);
-  monsterEntry.currentHp = newStats.maxHp;
-  syncMonsterMoves(monsterEntry);
-  return oldName;
-}
-
