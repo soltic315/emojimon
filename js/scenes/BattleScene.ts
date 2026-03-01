@@ -59,7 +59,6 @@ import {
 } from "./battle/battleMenu.ts";
 import { gsap } from "gsap";
 import {
-  addCameraVignette,
   addCameraBloom,
   flashDamage,
   flashSuperHit,
@@ -149,8 +148,7 @@ export class BattleScene extends Phaser.Scene {
     this._initializeElementStates();
     this.bindInput();
 
-    // PostFX: ビネット + ブルーム
-    addCameraVignette(this.cameras.main, { radius: 0.45, strength: 0.2 });
+    // PostFX: ブルーム
     this._battleBloom = addCameraBloom(this.cameras.main, {
       strength: 1.2, blurStrength: 0.8, steps: 4,
     });

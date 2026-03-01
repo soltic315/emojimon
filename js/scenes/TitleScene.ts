@@ -1,7 +1,7 @@
 import { gameState } from "../state/gameState.ts";
 import { audioManager } from "../audio/AudioManager.ts";
 import { FONT, COLORS, TEXT_COLORS, drawPanel, drawSelection, createAmbientParticles } from "../ui/UIHelper.ts";
-import { addCameraVignette, addCameraBloom, addGlow, addShine } from "../ui/FXHelper.ts";
+import { addCameraBloom, addGlow, addShine } from "../ui/FXHelper.ts";
 import { gsap } from "gsap";
 
 export class TitleScene extends Phaser.Scene {
@@ -24,11 +24,6 @@ export class TitleScene extends Phaser.Scene {
     const bg = this.add.graphics();
     bg.fillGradientStyle(0x0b1222, 0x1e293b, 0x020617, 0x0a1020, 1);
     bg.fillRect(0, 0, width, height);
-
-    const vignette = this.add.graphics();
-    vignette.fillStyle(0x020617, 0.28);
-    vignette.fillCircle(width / 2, height / 2, Math.max(width, height) * 0.9);
-    vignette.setBlendMode(Phaser.BlendModes.MULTIPLY);
 
     // 背景の装飾ライン
     const deco = this.add.graphics();
@@ -99,8 +94,7 @@ export class TitleScene extends Phaser.Scene {
     addGlow(title, { color: 0xfbbf24, outerStrength: 6, innerStrength: 2 });
     addShine(title, { speed: 0.3, lineWidth: 0.4, gradient: 4 });
 
-    // PostFX: カメラにビネット + ブルーム
-    addCameraVignette(this.cameras.main, { radius: 0.4, strength: 0.22 });
+    // PostFX: カメラにブルーム
     addCameraBloom(this.cameras.main, { strength: 1.0, blurStrength: 0.6, steps: 3 });
 
     this.tweens.add({
