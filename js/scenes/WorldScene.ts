@@ -11,7 +11,7 @@ import {
 import { createWildMonsterForEncounter, rollWeatherForMap } from "../data/mapRules.ts";
 import { audioManager } from "../audio/AudioManager.ts";
 import { TouchControls } from "../ui/TouchControls.ts";
-import { FONT, COLORS, TEXT_COLORS, drawPanel } from "../ui/UIHelper.ts";
+import { FONT, COLORS, TEXT_COLORS, drawPanel, drawSelection } from "../ui/UIHelper.ts";
 import { addCameraBloom } from "../ui/FXHelper.ts";
 import {
   TILE_SIZE,
@@ -110,6 +110,7 @@ export class WorldScene extends Phaser.Scene {
     // キー入力
     this.keys.Z.on("down", () => {
       if (this._dialogActive) return; // ダイアログ表示中は NPC 会話をスキップ
+      if (this._starterChoiceActive) return;
       if (this._trainerBattlePending) return;
       if (this.isMoving || this.shopActive || this.isEncounterTransitioning) return;
       this.checkNpcInteraction();
@@ -681,6 +682,28 @@ export class WorldScene extends Phaser.Scene {
     this.infoText.setVisible(false);
     this.uiContainer.add(this.infoText);
 
+    const nameBg = this.add.graphics();
+    drawPanel(nameBg, 12, height - 104, 160, 34, {
+      radius: 10,
+      headerHeight: 0,
+      bgAlpha: 0.96,
+      glow: true,
+      borderColor: COLORS.BLUE_LIGHT,
+    });
+    nameBg.setVisible(false);
+    this.uiContainer.add(nameBg);
+    this.speakerNameBg = nameBg;
+
+    this.speakerNameText = this.add.text(92, height - 87, "", {
+      fontFamily: FONT.UI,
+      fontSize: 14,
+      color: TEXT_COLORS.INFO,
+      fontStyle: "700",
+      align: "center",
+    }).setOrigin(0.5);
+    this.speakerNameText.setVisible(false);
+    this.uiContainer.add(this.speakerNameText);
+
     this.updateDefaultInfoMessage();
   }
 
@@ -690,15 +713,29 @@ export class WorldScene extends Phaser.Scene {
       this.infoText.setText("");
       this.infoText.setVisible(false);
     }
+    if (this.speakerNameText) {
+      this.speakerNameText.setText("");
+      this.speakerNameText.setVisible(false);
+    }
+    if (this.speakerNameBg) this.speakerNameBg.setVisible(false);
     if (this.messageBg) this.messageBg.setVisible(false);
   }
 
-  setInfoText(text) {
+  setInfoText(text, speaker = "") {
     if (!this.infoText) return;
     const hasText = Boolean(text && String(text).trim().length > 0);
+    const speakerLabel = String(speaker || "").trim();
+    const hasSpeaker = hasText && speakerLabel.length > 0;
+
     this.infoText.setText(hasText ? text : "");
     this.infoText.setVisible(hasText);
+    if (this.speakerNameText) {
+      this.speakerNameText.setText(hasSpeaker ? speakerLabel : "");
+      this.speakerNameText.setVisible(hasSpeaker);
+    }
+    if (this.speakerNameBg) this.speakerNameBg.setVisible(hasSpeaker);
     if (this.messageBg) this.messageBg.setVisible(hasText);
+
     if (hasText) {
       this.infoText.alpha = 0;
       this.tweens.add({
@@ -707,7 +744,26 @@ export class WorldScene extends Phaser.Scene {
         duration: 180,
         ease: "sine.out",
       });
+      if (hasSpeaker && this.speakerNameText) {
+        this.speakerNameText.alpha = 0;
+        this.tweens.add({
+          targets: this.speakerNameText,
+          alpha: 1,
+          duration: 160,
+          ease: "sine.out",
+        });
+      }
     }
+  }
+
+  _splitDialogLine(line) {
+    const source = String(line || "").trim();
+    const match = source.match(/^([^:：\n]{1,16})\s*[：:]\s*(.+)$/u);
+    if (!match) return { speaker: "", text: source };
+    const speaker = match[1].trim();
+    const body = match[2].trim();
+    if (!speaker || !body) return { speaker: "", text: source };
+    return { speaker, text: body };
   }
 
   showMessage(text, duration = 3000) {
@@ -856,6 +912,12 @@ export class WorldScene extends Phaser.Scene {
     }
 
     if (this._dialogActive) {
+      if (this.encounterCooldown > 0) this.encounterCooldown -= delta;
+      return;
+    }
+
+    if (this._starterChoiceActive) {
+      this._handleStarterChoiceInput();
       if (this.encounterCooldown > 0) this.encounterCooldown -= delta;
       return;
     }
@@ -1091,7 +1153,8 @@ export class WorldScene extends Phaser.Scene {
       return;
     }
     const line = this._dialogQueue.shift();
-    this.setInfoText(line);
+    const { speaker, text } = this._splitDialogLine(line);
+    this.setInfoText(text, speaker);
   }
 
   _endDialogSequence() {
@@ -1369,7 +1432,7 @@ export class WorldScene extends Phaser.Scene {
 
     this.showDialogSequence([
       ...personality,
-      `${starterName} を えらびますか？ (Zキー: はい / Xキー: やめる)`,
+      `${starterName} を えらびますか？`,
     ], () => {
       // はい/やめるの選択
       this._pendingStarterConfirm = speciesId;
@@ -1381,27 +1444,113 @@ export class WorldScene extends Phaser.Scene {
     const nameMap = { EMBEAR: "エムベア🧸", FINBUB: "フィンバブ🐟", THORNVINE: "ソーンバイン🌿" };
     const starterName = nameMap[speciesId] || starter.name;
 
-    const confirmMsg = `${starterName} に けってい！ (Z:はい  X:やめる)`;
-    this.setInfoText(confirmMsg);
+    const confirmMsg = `${starterName} に けっていしますか？`;
+    this.setInfoText(confirmMsg, "博士");
     this._starterChoiceActive = true;
+    this._starterChoiceIndex = 0;
+    this._starterChoiceData = { speciesId, starter, calcStats };
+    this._renderStarterChoiceWindow();
+  }
 
-    const yesHandler = () => {
-      cleanup();
-      this._confirmStarterChoice(speciesId, starter, calcStats);
-    };
-    const noHandler = () => {
-      cleanup();
+  _renderStarterChoiceWindow() {
+    if (!this._starterChoiceActive) return;
+    if (!this.uiContainer) return;
+
+    const { width, height } = this.scale;
+    if (!this.starterChoiceContainer) {
+      this.starterChoiceContainer = this.add.container(0, 0).setScrollFactor(0);
+      this.uiContainer.add(this.starterChoiceContainer);
+    }
+    this.starterChoiceContainer.removeAll(true);
+
+    const panelX = width - 184;
+    const panelY = height - 146;
+    const panelW = 172;
+    const panelH = 74;
+
+    const panel = this.add.graphics();
+    drawPanel(panel, panelX, panelY, panelW, panelH, {
+      radius: 10,
+      headerHeight: 16,
+      bgAlpha: 0.97,
+      glow: true,
+      borderColor: COLORS.SELECT_BORDER,
+    });
+    this.starterChoiceContainer.add(panel);
+
+    const options = ["はい", "いいえ"];
+    const rowH = 24;
+    options.forEach((label, idx) => {
+      const rowY = panelY + 20 + idx * rowH;
+      if (this._starterChoiceIndex === idx) {
+        const focus = this.add.graphics();
+        drawSelection(focus, panelX + 8, rowY, panelW - 16, rowH - 2, { radius: 8 });
+        this.starterChoiceContainer.add(focus);
+      }
+
+      const marker = this.add.text(panelX + 16, rowY + 3, this._starterChoiceIndex === idx ? "▶" : " ", {
+        fontFamily: FONT.UI,
+        fontSize: 14,
+        color: this._starterChoiceIndex === idx ? TEXT_COLORS.ACCENT : TEXT_COLORS.SECONDARY,
+      });
+      const text = this.add.text(panelX + 34, rowY + 3, label, {
+        fontFamily: FONT.UI,
+        fontSize: 15,
+        color: this._starterChoiceIndex === idx ? TEXT_COLORS.WHITE : "#cbd5e1",
+        fontStyle: this._starterChoiceIndex === idx ? "700" : "400",
+      });
+      this.starterChoiceContainer.add([marker, text]);
+    });
+  }
+
+  _closeStarterChoiceWindow() {
+    this._starterChoiceActive = false;
+    this._starterChoiceData = null;
+    this._starterChoiceIndex = 0;
+    if (this.starterChoiceContainer) {
+      this.starterChoiceContainer.destroy(true);
+      this.starterChoiceContainer = null;
+    }
+  }
+
+  _handleStarterChoiceInput() {
+    const up = Phaser.Input.Keyboard.JustDown(this.cursors.up);
+    const down = Phaser.Input.Keyboard.JustDown(this.cursors.down);
+    const left = Phaser.Input.Keyboard.JustDown(this.cursors.left);
+    const right = Phaser.Input.Keyboard.JustDown(this.cursors.right);
+
+    if (up || left || down || right) {
+      this._starterChoiceIndex = this._starterChoiceIndex === 0 ? 1 : 0;
+      audioManager.playCursor();
+      this._renderStarterChoiceWindow();
+      return;
+    }
+
+    const confirm = Phaser.Input.Keyboard.JustDown(this.keys.Z)
+      || Phaser.Input.Keyboard.JustDown(this.keys.ENTER)
+      || Phaser.Input.Keyboard.JustDown(this.keys.SPACE);
+    if (confirm) {
+      const data = this._starterChoiceData;
+      if (!data) return;
+      if (this._starterChoiceIndex === 0) {
+        audioManager.playConfirm();
+        this._closeStarterChoiceWindow();
+        this._confirmStarterChoice(data.speciesId, data.starter, data.calcStats);
+      } else {
+        audioManager.playCancel();
+        this._closeStarterChoiceWindow();
+        this.updateDefaultInfoMessage();
+      }
+      return;
+    }
+
+    const cancel = Phaser.Input.Keyboard.JustDown(this.keys.X)
+      || Phaser.Input.Keyboard.JustDown(this.keys.ESC);
+    if (cancel) {
+      audioManager.playCancel();
+      this._closeStarterChoiceWindow();
       this.updateDefaultInfoMessage();
-    };
-
-    const cleanup = () => {
-      this.keys.Z.off("down", yesHandler);
-      this.keys.X.off("down", noHandler);
-      this._starterChoiceActive = false;
-    };
-
-    this.keys.Z.once("down", yesHandler);
-    this.keys.X.once("down", noHandler);
+    }
   }
 
   _confirmStarterChoice(speciesId, starter, calcStats) {
