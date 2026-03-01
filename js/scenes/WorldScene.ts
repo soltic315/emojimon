@@ -12,7 +12,7 @@ import { createWildMonsterForEncounter, rollWeatherForMapByHour } from "../data/
 import { audioManager } from "../audio/AudioManager.ts";
 import { TouchControls } from "../ui/TouchControls.ts";
 import { FONT, COLORS, TEXT_COLORS, drawPanel, drawSelection } from "../ui/UIHelper.ts";
-import { addCameraBloom, createParticleBurst, createWeatherParticles } from "../ui/FXHelper.ts";
+import { addCameraBloom, createParticleBurst } from "../ui/FXHelper.ts";
 import {
   TILE_SIZE,
   T,
@@ -34,6 +34,12 @@ import {
   renderShopMenu,
   handleShopInput,
 } from "./world/worldShop.ts";
+import {
+  getFieldPeriodByHour,
+  getFieldWeatherView,
+  refreshFieldTimeWeatherEffects,
+} from "./world/worldFieldEffects.ts";
+import { renderMinimap, updateMinimapDot } from "./world/worldMinimap.ts";
 
 export class WorldScene extends Phaser.Scene {
   constructor() {
@@ -276,73 +282,15 @@ export class WorldScene extends Phaser.Scene {
   }
 
   _getFieldPeriodByHour(hour) {
-    if (hour >= 6 && hour < 11) return { label: "朝", emoji: "🌅", color: 0xfef3c7, alpha: 0.08 };
-    if (hour >= 11 && hour < 17) return { label: "昼", emoji: "☀️", color: 0xf8fafc, alpha: 0.03 };
-    if (hour >= 17 && hour < 20) return { label: "夕", emoji: "🌇", color: 0xfb923c, alpha: 0.1 };
-    return { label: "夜", emoji: "🌙", color: 0x1e293b, alpha: 0.2 };
+    return getFieldPeriodByHour(hour);
   }
 
   _getFieldWeatherView(weather) {
-    switch (weather) {
-      case "SUNNY":
-        return { label: "晴れ", emoji: "☀️", color: 0xfbbf24, alpha: 0.08 };
-      case "RAINY":
-        return { label: "雨", emoji: "🌧️", color: 0x60a5fa, alpha: 0.14 };
-      case "WINDY":
-        return { label: "風", emoji: "🍃", color: 0x4ade80, alpha: 0.09 };
-      case "SNOWY":
-        return { label: "雪", emoji: "❄️", color: 0xbfdbfe, alpha: 0.15 };
-      default:
-        return { label: "穏やか", emoji: "⛅", color: 0x94a3b8, alpha: 0.06 };
-    }
+    return getFieldWeatherView(weather);
   }
 
   _refreshFieldTimeWeatherEffects(force = false) {
-    const timeInfo = gameState.getFieldTime();
-    const isInterior = this._isInteriorMap();
-    const weather = isInterior ? "NONE" : (gameState.getMapWeather(this.mapKey) || "NONE");
-    const period = this._getFieldPeriodByHour(timeInfo.hour);
-    const weatherView = isInterior
-      ? { label: "屋内", emoji: "🏠", color: 0x94a3b8, alpha: 0 }
-      : this._getFieldWeatherView(weather);
-    const weatherChanged = force || this.lastFieldWeather !== weather;
-
-    if (this.timeWeatherText) {
-      if (isInterior) {
-        this.timeWeatherText.setText(`${period.emoji} ${period.label} ${gameState.getFieldTimeLabel()}   ${weatherView.emoji} ${weatherView.label}`);
-      } else {
-        this.timeWeatherText.setText(
-          `${period.emoji} ${period.label} ${gameState.getFieldTimeLabel()}   ${weatherView.emoji} ${weatherView.label}`,
-        );
-      }
-    }
-
-    if (this.timeTintOverlay) {
-      this.timeTintOverlay
-        .setFillStyle(period.color, period.alpha)
-        .setVisible(true);
-    }
-
-    if (this.weatherTintOverlay) {
-      this.weatherTintOverlay
-        .setFillStyle(weatherView.color, weatherView.alpha)
-        .setVisible(weather !== "NONE");
-    }
-
-    if (weatherChanged) {
-      if (this.weatherParticles) {
-        this.weatherParticles.destroy();
-        this.weatherParticles = null;
-      }
-      if (weather !== "NONE") {
-        this.weatherParticles = createWeatherParticles(this, weather);
-        if (this.weatherParticles?.manager) {
-          this.weatherParticles.manager.setScrollFactor(0);
-          this.weatherParticles.manager.setDepth(6);
-        }
-      }
-      this.lastFieldWeather = weather;
-    }
+    refreshFieldTimeWeatherEffects(this, force);
   }
 
   _coordKey(x, y) {
@@ -1083,107 +1031,12 @@ export class WorldScene extends Phaser.Scene {
 
   /** ミニマップを描画 */
   _renderMinimap() {
-    const { width } = this.scale;
-    const mapW = this.mapWidth;
-    const mapH = this.mapHeight;
-    const scale = 3;
-    const miniW = mapW * scale;
-    const miniH = mapH * scale;
-    const mx = width - miniW - 16;
-    const my = 72;
-
-    const g = this.add.graphics().setScrollFactor(0);
-    drawPanel(g, mx - 10, my - 24, miniW + 20, miniH + 36, {
-      radius: 10,
-      headerHeight: 16,
-      bgAlpha: 0.9,
-    });
-
-    const label = this.add.text(mx - 3, my - 21, "MINIMAP", {
-      fontFamily: FONT.UI,
-      fontSize: 10,
-      color: "#bfdcff",
-      fontStyle: "700",
-    }).setScrollFactor(0);
-    this.uiContainer.add(label);
-
-    const tileColors = {
-      0: 0x243244,
-      1: 0x5b6472,
-      2: 0x1f7a46,
-      3: 0xb45309,
-      4: 0x166534,
-      5: 0x2563eb,
-      6: 0x7c3aed,
-      7: 0x8b7f72,
-    };
-
-    for (let y = 0; y < mapH; y++) {
-      for (let x = 0; x < mapW; x++) {
-        const tile = this.mapLayout[y][x];
-        const color = tileColors[tile] ?? 0x1f2933;
-        // 室内マップの地面は明るく
-        const adjustedColor = (tile === 0 && this.mapKey === "HOUSE1") ? 0xd1d5db : color;
-        g.fillStyle(adjustedColor, 0.94);
-        g.fillRect(mx + x * scale, my + y * scale, scale - 0.5, scale - 0.5);
-      }
-    }
-
-    const facilityMarkers = MAP_FACILITY_MARKERS[this.mapKey] || [];
-    facilityMarkers.forEach((facility) => {
-      if (facility.x < 0 || facility.y < 0 || facility.x >= mapW || facility.y >= mapH) return;
-      g.fillStyle(0xfacc15, 0.95);
-      g.fillRect(mx + facility.x * scale, my + facility.y * scale, scale, scale);
-    });
-
-    this.uiContainer.add(g);
-
-    // プレイヤーマーカー
-    this.minimapPlayerDot = this.add.circle(
-      mx + gameState.playerPosition.x * scale + scale / 2,
-      my + gameState.playerPosition.y * scale + scale / 2,
-      2.4, 0xfacc15, 1,
-    ).setScrollFactor(0);
-    this.uiContainer.add(this.minimapPlayerDot);
-
-    this.minimapPlayerRing = this.add.circle(this.minimapPlayerDot.x, this.minimapPlayerDot.y, 4.5, 0xfacc15, 0)
-      .setStrokeStyle(1, 0xfef08a, 0.9)
-      .setScrollFactor(0);
-    this.uiContainer.add(this.minimapPlayerRing);
-
-    // 点滅アニメ
-    this.tweens.add({
-      targets: this.minimapPlayerDot,
-      alpha: 0.3,
-      duration: 500,
-      yoyo: true,
-      repeat: -1,
-    });
-    this.tweens.add({
-      targets: this.minimapPlayerRing,
-      alpha: 0,
-      scale: 1.55,
-      duration: 900,
-      repeat: -1,
-      ease: "sine.out",
-    });
-
-    // ミニマップのプレイヤー位置情報を保存
-    this._minimapMx = mx;
-    this._minimapMy = my;
-    this._minimapScale = scale;
+    renderMinimap(this);
   }
 
   /** ミニマップのプレイヤー位置を更新 */
   _updateMinimapDot() {
-    if (!this.minimapPlayerDot) return;
-    const scale = this._minimapScale || 3;
-    this.minimapPlayerDot.x = this._minimapMx + gameState.playerPosition.x * scale + scale / 2;
-    this.minimapPlayerDot.y = this._minimapMy + gameState.playerPosition.y * scale + scale / 2;
-    if (this.minimapPlayerRing) {
-      this.minimapPlayerRing.x = this.minimapPlayerDot.x;
-      this.minimapPlayerRing.y = this.minimapPlayerDot.y;
-    }
+    updateMinimapDot(this);
   }
 
   update(time, delta) {
