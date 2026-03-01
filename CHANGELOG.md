@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## [1.9.10] - 2026-03-02
+
+### Note
+- `TitleScene` の責務を分割し、1ファイル肥大化を解消して保守性を向上。
+
+### Added
+- `js/scenes/title/titleVisuals.ts` を追加（タイトル背景・ロゴ・メニュー描画）。
+- `js/scenes/title/titleNameInput.ts` を追加（新規ゲーム名入力UI）。
+- `js/scenes/title/titleSettings.ts` を追加（設定パネル操作）。
+- `js/scenes/title/titleHelp.ts` を追加（ヘルプパネル表示）。
+
+### Changed
+- `js/scenes/TitleScene.ts` を委譲中心の薄いオーケストレーション構成へ変更。
+- `package.json` のバージョンを `1.9.9` から `1.9.10` に更新。
+
+### Fixed
+- なし（挙動変更なしのリファクタリング）。
+
+### Prompt
+- User: `TitleScene.tsをリファクタリング・分割することで1ファイルのサイズを減らしてください。必要なら外部ライブラリ等も活用してください。`
+- Assistant（対応方針）: `TitleScene.ts` を責務単位で分離し、既存挙動を維持したまま描画・名前入力・設定・ヘルプをモジュール化。`lint/typecheck/test/build` で回帰確認する。
+
 ## [1.9.8] - 2026-03-02
 
 ### Note
