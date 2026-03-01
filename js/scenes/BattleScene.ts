@@ -2995,7 +2995,13 @@ export class BattleScene extends Phaser.Scene {
     });
 
     // 相手モンスターが再出現
-    gsap.to(this.opponentEmojiText, {
+    gsap.killTweensOf(this.opponentEmojiText);
+    this.opponentEmojiText.setScale(1).setAlpha(1);
+    gsap.fromTo(this.opponentEmojiText, {
+      scaleX: 0.85,
+      scaleY: 0.85,
+      alpha: 1,
+    }, {
       scaleX: 1,
       scaleY: 1,
       alpha: 1,

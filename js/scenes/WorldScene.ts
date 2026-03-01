@@ -1648,6 +1648,7 @@ export class WorldScene extends Phaser.Scene {
     this._starterChoiceActive = true;
     this._starterChoiceIndex = 0;
     this._starterChoiceData = { speciesId, starter, calcStats };
+    this._starterChoiceInputGuardUntil = this.time.now + 140;
     this._renderStarterChoiceWindow();
   }
 
@@ -1713,12 +1714,15 @@ export class WorldScene extends Phaser.Scene {
   }
 
   _handleStarterChoiceInput() {
+    const inputGuardActive = Number.isFinite(this._starterChoiceInputGuardUntil)
+      && this.time.now < this._starterChoiceInputGuardUntil;
+
     const up = Phaser.Input.Keyboard.JustDown(this.cursors.up);
     const down = Phaser.Input.Keyboard.JustDown(this.cursors.down);
     const left = Phaser.Input.Keyboard.JustDown(this.cursors.left);
     const right = Phaser.Input.Keyboard.JustDown(this.cursors.right);
 
-    if (up || left || down || right) {
+    if (!inputGuardActive && (up || left || down || right)) {
       this._starterChoiceIndex = this._starterChoiceIndex === 0 ? 1 : 0;
       audioManager.playCursor();
       this._renderStarterChoiceWindow();
@@ -1728,6 +1732,10 @@ export class WorldScene extends Phaser.Scene {
     const confirm = Phaser.Input.Keyboard.JustDown(this.keys.Z)
       || Phaser.Input.Keyboard.JustDown(this.keys.ENTER)
       || Phaser.Input.Keyboard.JustDown(this.keys.SPACE);
+    if (inputGuardActive) {
+      return;
+    }
+
     if (confirm) {
       const data = this._starterChoiceData;
       if (!data) return;
