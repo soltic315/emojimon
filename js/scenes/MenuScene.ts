@@ -7,6 +7,7 @@ import { getItemById } from "../data/items.ts";
 import { calcStats, getMonsterMoves } from "../data/monsters.ts";
 import { audioManager } from "../audio/AudioManager.ts";
 import { FONT, COLORS, TEXT_COLORS, applyCanvasBrightness, drawPanel, drawSelection } from "../ui/UIHelper.ts";
+import { NAV_REPEAT_INITIAL_DELAY_MS, NAV_REPEAT_INTERVAL_MS } from "../ui/inputConstants.ts";
 import { MENU_ITEMS, GUIDE_PAGES } from "./menu/menuConstants.ts";
 import { clampScreenBrightness } from "./menu/settingsShared.ts";
 import {
@@ -48,8 +49,8 @@ export class MenuScene extends Phaser.Scene {
     this.mainNavNextRepeatAt = 0;
     this.subNavHoldDirection = 0;
     this.subNavNextRepeatAt = 0;
-    this.navRepeatDelayMs = 260;
-    this.navRepeatIntervalMs = 95;
+    this.navRepeatDelayMs = NAV_REPEAT_INITIAL_DELAY_MS;
+    this.navRepeatIntervalMs = NAV_REPEAT_INTERVAL_MS;
     this.guideTocIndex = 0;
     this.settingsConfirmActive = false;
     this.settingsConfirmIndex = 0;

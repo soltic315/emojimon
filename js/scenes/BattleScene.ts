@@ -172,7 +172,7 @@ export class BattleScene extends Phaser.Scene {
     this.weatherDuration = 4 + Math.floor(Math.random() * 4); // 4〜7ターン
 
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.keys = this.input.keyboard.addKeys("Z,ENTER,SPACE,X,W,A,S,D");
+    this.keys = this.input.keyboard.addKeys("Z,ENTER,SPACE,X,ESC,W,A,S,D");
 
     // タッチコントロール
     this.touchControls = new TouchControls(this);
@@ -696,6 +696,7 @@ export class BattleScene extends Phaser.Scene {
     this.keys.ENTER.on("down", handleConfirmDown);
     this.keys.SPACE.on("down", () => this.handleConfirm());
     this.keys.X.on("down", () => this.handleCancel());
+    this.keys.ESC.on("down", () => this.handleCancel());
 
     this.keys.Z.on("up", () => this._resetMessageFastForward());
     this.keys.ENTER.on("up", () => this._resetMessageFastForward());
@@ -3150,6 +3151,7 @@ export class BattleScene extends Phaser.Scene {
       this.keys.SPACE.removeAllListeners("down");
       this.keys.SPACE.removeAllListeners("up");
       this.keys.X.removeAllListeners("down");
+      this.keys.ESC.removeAllListeners("down");
     }
 
     // タッチコントロールを破棄

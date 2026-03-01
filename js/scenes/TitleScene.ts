@@ -202,7 +202,12 @@ export class TitleScene extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys();
     this.input.keyboard.on("keydown-Z", () => this.handleConfirm());
     this.input.keyboard.on("keydown-ENTER", () => this.handleConfirm());
+    this.input.keyboard.on("keydown-SPACE", () => this.handleConfirm());
     this.input.keyboard.on("keydown-X", () => {
+      if (this.helpVisible) this.hideHelp();
+      if (this.settingsVisible) this.hideSettings();
+    });
+    this.input.keyboard.on("keydown-ESC", () => {
       if (this.helpVisible) this.hideHelp();
       if (this.settingsVisible) this.hideSettings();
     });
@@ -422,9 +427,14 @@ export class TitleScene extends Phaser.Scene {
     // キー処理を一時的に上書き
     this.input.keyboard.off("keydown-Z");
     this.input.keyboard.off("keydown-ENTER");
+    this.input.keyboard.off("keydown-SPACE");
     this.input.keyboard.on("keydown-Z", () => this._confirmName());
     this.input.keyboard.on("keydown-ENTER", () => this._confirmName());
+    this.input.keyboard.on("keydown-SPACE", () => this._confirmName());
     this.input.keyboard.on("keydown-X", () => {
+      this._closeNameSelect();
+    });
+    this.input.keyboard.on("keydown-ESC", () => {
       this._closeNameSelect();
     });
   }
@@ -537,10 +547,17 @@ export class TitleScene extends Phaser.Scene {
     // Z/Enterを元に戻す
     this.input.keyboard.off("keydown-Z");
     this.input.keyboard.off("keydown-ENTER");
+    this.input.keyboard.off("keydown-SPACE");
     this.input.keyboard.off("keydown-X");
+    this.input.keyboard.off("keydown-ESC");
     this.input.keyboard.on("keydown-Z", () => this.handleConfirm());
     this.input.keyboard.on("keydown-ENTER", () => this.handleConfirm());
+    this.input.keyboard.on("keydown-SPACE", () => this.handleConfirm());
     this.input.keyboard.on("keydown-X", () => {
+      if (this.helpVisible) this.hideHelp();
+      if (this.settingsVisible) this.hideSettings();
+    });
+    this.input.keyboard.on("keydown-ESC", () => {
       if (this.helpVisible) this.hideHelp();
       if (this.settingsVisible) this.hideSettings();
     });

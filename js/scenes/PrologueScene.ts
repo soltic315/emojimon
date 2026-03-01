@@ -21,7 +21,7 @@ export class PrologueScene extends Phaser.Scene {
       "── すべての結晶が揃うと、天空の花園に古い門が開くと伝えられている。",
       `── そんな中、${gameState.playerName}は ハカセからの手紙を受け取り、`,
       "── エモじタウンの研究所を訪れることになった。",
-      "▶ Z/Enter で次へ",
+      "▶ Z/Enter/Space で次へ ・ X/ESC でスキップ",
     ];
     this.lineIndex = 0;
 
@@ -48,7 +48,7 @@ export class PrologueScene extends Phaser.Scene {
       lineSpacing: 8,
     });
 
-    this.hintText = this.add.text(width / 2, height - 36, "Z/Enter: 次へ", {
+    this.hintText = this.add.text(width / 2, height - 36, "Z/Enter/Space: 次へ  X/ESC: スキップ", {
       fontFamily: FONT.UI,
       fontSize: 14,
       color: "#94a3b8",
@@ -66,6 +66,8 @@ export class PrologueScene extends Phaser.Scene {
     this.input.keyboard.on("keydown-Z", () => this.nextLine());
     this.input.keyboard.on("keydown-ENTER", () => this.nextLine());
     this.input.keyboard.on("keydown-SPACE", () => this.nextLine());
+    this.input.keyboard.on("keydown-X", () => this.finishPrologue());
+    this.input.keyboard.on("keydown-ESC", () => this.finishPrologue());
 
     this.cameras.main.fadeIn(280, 0, 0, 0);
     this.renderCurrentLine();
@@ -87,6 +89,8 @@ export class PrologueScene extends Phaser.Scene {
   }
 
   finishPrologue() {
+    if (this._prologueFinished) return;
+    this._prologueFinished = true;
     gameState.storyFlags.introNarrationDone = true;
     audioManager.playConfirm();
     this.cameras.main.fadeOut(380, 0, 0, 0);

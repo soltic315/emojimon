@@ -34,7 +34,7 @@ export function resetMessageFastForward(scene: any) {
 }
 
 export function isFastForwardHeld(scene: any) {
-  const keyboardHold = scene.keys?.Z?.isDown || scene.keys?.SPACE?.isDown;
+  const keyboardHold = scene.keys?.Z?.isDown || scene.keys?.ENTER?.isDown || scene.keys?.SPACE?.isDown;
   const touchHold = scene.touchControls?.visible && scene.touchControls.isConfirmHeld();
   return !!(keyboardHold || touchHold);
 }

@@ -2,6 +2,7 @@ import { gameState } from "../../state/gameState.ts";
 import { getItemById } from "../../data/items.ts";
 import { audioManager } from "../../audio/AudioManager.ts";
 import { FONT, drawPanel, drawSelection } from "../../ui/UIHelper.ts";
+import { NAV_REPEAT_INITIAL_DELAY_MS, NAV_REPEAT_INTERVAL_MS } from "../../ui/inputConstants.ts";
 
 const SHOP_MODE = {
   ROOT: "ROOT",
@@ -191,6 +192,8 @@ export function openShopMenu(scene) {
   scene.shopMode = SHOP_MODE.ROOT;
   scene.shopSelectedIndex = 0;
   scene.shopInputGuardUntil = (scene.time?.now || 0) + 180;
+  scene.shopNavHoldDirection = 0;
+  scene.shopNavNextRepeatAt = 0;
   scene.shopItems = getShopInventory(scene.mapKey);
   clearShopMenu(scene);
   renderShopMenu(scene);
@@ -200,6 +203,8 @@ export function openShopMenu(scene) {
 export function closeShopMenu(scene) {
   audioManager.playCancel();
   scene.shopActive = false;
+  scene.shopNavHoldDirection = 0;
+  scene.shopNavNextRepeatAt = 0;
   clearShopMenu(scene);
   scene.updateDefaultInfoMessage();
 }
@@ -296,6 +301,50 @@ export function renderShopMenu(scene) {
   }
 }
 
+function moveShopCursor(scene, entries, direction) {
+  if (!Array.isArray(entries) || entries.length === 0) return;
+  const nextIndex = Phaser.Math.Clamp(scene.shopSelectedIndex + direction, 0, entries.length - 1);
+  if (nextIndex === scene.shopSelectedIndex) return;
+  scene.shopSelectedIndex = nextIndex;
+  audioManager.playCursor();
+  renderShopMenu(scene);
+}
+
+function handleShopVerticalRepeatInput(scene, entries, upPressed, downPressed, upHeld, downHeld) {
+  const now = scene.time?.now || 0;
+
+  if (upPressed) {
+    scene.shopNavHoldDirection = -1;
+    scene.shopNavNextRepeatAt = now + NAV_REPEAT_INITIAL_DELAY_MS;
+    moveShopCursor(scene, entries, -1);
+    return;
+  }
+
+  if (downPressed) {
+    scene.shopNavHoldDirection = 1;
+    scene.shopNavNextRepeatAt = now + NAV_REPEAT_INITIAL_DELAY_MS;
+    moveShopCursor(scene, entries, 1);
+    return;
+  }
+
+  const holdDirection = upHeld ? -1 : downHeld ? 1 : 0;
+  if (holdDirection === 0) {
+    scene.shopNavHoldDirection = 0;
+    return;
+  }
+
+  if (scene.shopNavHoldDirection !== holdDirection) {
+    scene.shopNavHoldDirection = holdDirection;
+    scene.shopNavNextRepeatAt = now + NAV_REPEAT_INITIAL_DELAY_MS;
+    return;
+  }
+
+  if (now >= (scene.shopNavNextRepeatAt || 0)) {
+    scene.shopNavNextRepeatAt = now + NAV_REPEAT_INTERVAL_MS;
+    moveShopCursor(scene, entries, holdDirection);
+  }
+}
+
 export function handleShopInput(scene) {
   const inputGuardActive = Number.isFinite(scene.shopInputGuardUntil)
     && scene.time?.now < scene.shopInputGuardUntil;
@@ -306,16 +355,10 @@ export function handleShopInput(scene) {
     || Phaser.Input.Keyboard.JustDown(scene.keys.W);
   const downPressed = Phaser.Input.Keyboard.JustDown(scene.cursors.down)
     || Phaser.Input.Keyboard.JustDown(scene.keys.S);
+  const upHeld = !!(scene.cursors.up.isDown || scene.keys.W.isDown);
+  const downHeld = !!(scene.cursors.down.isDown || scene.keys.S.isDown);
 
-  if (upPressed) {
-    scene.shopSelectedIndex = Math.max(0, scene.shopSelectedIndex - 1);
-    audioManager.playCursor();
-    renderShopMenu(scene);
-  } else if (downPressed) {
-    scene.shopSelectedIndex = Math.min(entries.length - 1, scene.shopSelectedIndex + 1);
-    audioManager.playCursor();
-    renderShopMenu(scene);
-  }
+  handleShopVerticalRepeatInput(scene, entries, upPressed, downPressed, upHeld, downHeld);
 
   const confirm = Phaser.Input.Keyboard.JustDown(scene.keys.Z)
     || Phaser.Input.Keyboard.JustDown(scene.keys.ENTER)
@@ -400,7 +443,7 @@ export function handleShopInput(scene) {
     }
   }
 
-  if (Phaser.Input.Keyboard.JustDown(scene.keys.X)) {
+  if (Phaser.Input.Keyboard.JustDown(scene.keys.X) || Phaser.Input.Keyboard.JustDown(scene.keys.ESC)) {
     if (scene.shopMode === SHOP_MODE.ROOT) {
       closeShopMenu(scene);
     } else {
