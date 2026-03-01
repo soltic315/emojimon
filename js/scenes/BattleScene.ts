@@ -150,7 +150,6 @@ import {
   performSwitch as performSwitchFn,
 } from "./battle/battleTurnFlow.ts";
 import {
-  registerWildStreakWin as registerWildStreakWinFn,
   handleVictory as handleVictoryFn,
   processVictoryRewards as processVictoryRewardsFn,
   grantHeldItemDrops as grantHeldItemDropsFn,
@@ -223,8 +222,6 @@ export class BattleScene extends Phaser.Scene {
     this.isFinalBoss = this.battle.isFinalBoss || false;
     this.resultType = null; // "win" | "lose" | "run" | "catch"
     this.isWildBattle = !this.battle.opponent?.trainer && !this.isBoss && !this.isArena && !this.isTrainer;
-    this.streakHandled = false;
-    this.streakAtBattleStart = gameState.getWildWinStreak ? gameState.getWildWinStreak() : 0;
     this._reactionProcThisAction = false;
 
     // ── エモ・スキップ判定 ──
@@ -760,13 +757,13 @@ export class BattleScene extends Phaser.Scene {
 
   bindInput() {
     const handleConfirmDown = () => {
-      // エモ・スキップ中は通常確定を無視（長押し判定に委ねる）
+      // エモ・スキップ有効中は通常確定を無視（自動スキップに委ねる）
       if (this.emoSkipAvailable && !this.emoSkipTriggered && this._isEmoSkipPhase()) return;
       this.handleConfirm();
     };
     this.keys.Z.on("down", handleConfirmDown);
     this.keys.ENTER.on("down", handleConfirmDown);
-    this.keys.SPACE.on("down", () => this.handleConfirm());
+    this.keys.SPACE.on("down", handleConfirmDown);
     this.keys.X.on("down", () => this.handleCancel());
     this.keys.ESC.on("down", () => this.handleCancel());
 
@@ -912,21 +909,11 @@ export class BattleScene extends Phaser.Scene {
   update(time, delta) {
     this._updateMessageFastForward(delta);
 
-    // ── エモ・スキップ 長押し判定 ──
+    // ── エモ・スキップ 自動判定 ──
     if (this.emoSkipAvailable && !this.emoSkipTriggered && this._isEmoSkipPhase()) {
-      if (this.keys.Z.isDown || this.keys.ENTER.isDown || this.keys.SPACE.isDown) {
-        this.emoSkipHoldTime += delta;
-        this._updateEmoSkipProgress(this.emoSkipHoldTime / this.emoSkipHoldThreshold);
-        if (this.emoSkipHoldTime >= this.emoSkipHoldThreshold) {
-          this.emoSkipTriggered = true;
-          this.executeEmoSkip();
-          return;
-        }
-      } else if (this.emoSkipHoldTime > 0) {
-        // キーを離したらリセット
-        this.emoSkipHoldTime = 0;
-        this._updateEmoSkipProgress(0);
-      }
+      this.emoSkipTriggered = true;
+      this.executeEmoSkip();
+      return;
     }
 
     // タッチ操作の処理
@@ -1109,9 +1096,6 @@ export class BattleScene extends Phaser.Scene {
   getEffectivenessLabel(effectiveness) {
     return getEffectivenessLabel(effectiveness);
   }
-
-  registerWildStreakWin() { registerWildStreakWinFn(this); }
-
 
   tryApplyMoveStatus(target, move) { return tryApplyMoveStatusFn(target, move); }
 
@@ -1318,13 +1302,6 @@ export class BattleScene extends Phaser.Scene {
     gameState.party.forEach((m) => {
       if (m && m.statusCondition) m.statusCondition = StatusCondition.NONE;
     });
-
-    if (this.isWildBattle && !this.streakHandled && (this.resultType === "run" || this.resultType === "lose")) {
-      if (typeof gameState.resetWildWinStreak === "function") {
-        gameState.resetWildWinStreak();
-      }
-      this.streakHandled = true;
-    }
 
     // 敗北時は回復して最後に回復した地点へ戻す（闘技場では現在地に留まる）
     if (this.resultType === "lose") {

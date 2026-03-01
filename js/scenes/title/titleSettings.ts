@@ -160,17 +160,27 @@ export function renderSettingsPanel(scene: TitleSceneLike): void {
   }).setOrigin(0.5);
   scene.settingsPanel.add(title);
 
+  const rowCount = Math.max(1, scene.settingsRows.length);
+  const listTop = 136;
+  const listBottom = height - 130;
+  const availableHeight = Math.max(220, listBottom - listTop);
+  const rowGap = rowCount > 1
+    ? Phaser.Math.Clamp(Math.floor(availableHeight / (rowCount - 1)), 30, 40)
+    : 40;
+  const rowFontSize = rowGap <= 32 ? 13 : 15;
+  const rowCardHeight = rowGap <= 32 ? 32 : 36;
+
   scene.settingsRows.forEach((row: { label: string }, index: number) => {
-    const y = 146 + index * 40;
+    const y = listTop + index * rowGap;
     const selected = index === scene.settingsIndex;
     const rowCard = scene.rexUI?.add
-      .roundRectangle(width / 2, y + 14, 352, 36, 8, selected ? 0x1f2937 : 0x0f172a, selected ? 0.92 : 0.66)
+      .roundRectangle(width / 2, y + Math.floor(rowCardHeight / 2), 352, rowCardHeight, 8, selected ? 0x1f2937 : 0x0f172a, selected ? 0.92 : 0.66)
       .setStrokeStyle(selected ? 2 : 1, selected ? 0xfbbf24 : 0x334155, selected ? 0.95 : 0.75);
     if (rowCard) scene.settingsPanel.add(rowCard);
 
     const text = scene.add.text(width / 2, y, selected ? `▶ ${row.label}` : `  ${row.label}`, {
       fontFamily: FONT.UI,
-      fontSize: 15,
+      fontSize: rowFontSize,
       color: selected ? "#fde68a" : "#e2e8f0",
     }).setOrigin(0.5, 0);
     scene.settingsPanel.add(text);

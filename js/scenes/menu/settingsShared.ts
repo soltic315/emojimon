@@ -5,7 +5,7 @@ const SPEED_LABEL_MAP = {
 };
 
 export function clampScreenBrightness(value) {
-  const safe = Number.isFinite(value) ? Math.round(value) : 100;
+  const safe = Number.isFinite(value) ? Math.round(value) : 115;
   return Math.min(140, Math.max(60, safe));
 }
 

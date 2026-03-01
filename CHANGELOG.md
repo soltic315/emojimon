@@ -1,5 +1,36 @@
 # CHANGELOG
 
+## [1.10.0] - 2026-03-02
+
+### Note
+- タイトル設定の表示崩れ、パーティ画面の可読性、エモスキップ挙動、初期明るさ、野生連勝機能の撤去を一括で調整。
+
+### Added
+- なし
+
+### Changed
+- `js/scenes/BattleScene.ts` と `js/scenes/battle/battleEmoSkip.ts` を変更し、エモスキップON時は条件成立バトルで長押し不要の自動スキップに変更。
+- `js/scenes/menu/views/partyView.ts` を変更し、選択中モンスターの詳細（能力値・EXP・わざPP）を専用詳細パネルへ表示する構成に変更。
+- `js/state/saveSchema.ts` と `js/scenes/menu/settingsShared.ts` を変更し、画面明るさの既定値を `115%` に調整。
+- `js/data/achievements.ts` を変更し、削除した野生連勝機能に依存しない達成条件へ更新。
+- `js/scenes/WorldScene.ts` / `js/scenes/battle/battleResultRewards.ts` / `js/scenes/battle/battleCatch.ts` / `js/state/gameState.ts` を変更し、やせいれんしょう関連ロジックを撤去。
+- `js/scenes/title/titleSettings.ts` を変更し、画面高さに応じた行間・文字サイズで設定項目を描画するよう調整。
+- `GAME_DESIGN.md` を更新（エモスキップ仕様、実績例、パーティ詳細表示）。
+- `package.json` と `package-lock.json` のバージョンを `1.9.14` から `1.10.0` に更新。
+
+### Fixed
+- タイトル画面の設定項目で文字が重なって読みにくくなる不具合を解消。
+- パーティ画面に表示されていた「🧪 えもじレシピ」表示を削除。
+
+### Prompt
+- User: `・タイトル画面の設定が文字が重なって表示されています
+・エモスキップONの場合はプレイヤーの長押し無しで自動的にスキップするようにしてください
+・パーティー画面でモンスターのステータス等が小さくて読めないので詳細画面に表示するようにしてください
+・パーティー画面に絵文字レシピという謎の文字列が表示されています
+・デフォルトの明るさが暗いです
+・やせいれんしょうの機能を削除してください`
+- Assistant（対応方針）: 6要望に対して最小差分でUI/バトル/状態管理を横断修正し、仕様書・バージョン・検証コマンド結果まで同期する。
+
 ## [1.9.14] - 2026-03-02
 
 ### Note

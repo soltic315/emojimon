@@ -9,6 +9,9 @@ export function renderPartyView(scene) {
   const panelW = width - SUB_PANEL_WIDTH_OFFSET;
   const panelX = 10;
   const panelY = 10;
+  const listWidth = Math.min(340, panelW - 260);
+  const detailX = panelX + listWidth + 12;
+  const detailW = Math.max(220, panelW - listWidth - 24);
 
   const bg = scene.add.graphics();
   drawPanel(bg, panelX, panelY, panelW, height - 20, { radius: 12, headerHeight: 24 });
@@ -45,28 +48,28 @@ export function renderPartyView(scene) {
 
   party.forEach((mon, index) => {
     if (!mon.species) return;
-    const y = panelY + 40 + index * 76;
+    const y = panelY + 40 + index * 62;
     const selected = index === scene.subMenuIndex;
     const stats = calcStats(mon.species, mon.level);
     const hpPct = Math.round((mon.currentHp / stats.maxHp) * 100);
 
     if (selected) {
       const selBg = scene.add.graphics();
-      drawSelection(selBg, panelX + 8, y - 4, panelW - 16, 58);
+      drawSelection(selBg, panelX + 8, y - 4, listWidth - 16, 52);
       scene.subPanel.add(selBg);
     }
 
     if (scene.partySwapMode && scene.partySwapIndex === index) {
       const swapBg = scene.add.graphics();
       swapBg.fillStyle(0x3b82f6, 0.2);
-      swapBg.fillRoundedRect(panelX + 8, y - 4, panelW - 16, 58, 8);
+      swapBg.fillRoundedRect(panelX + 8, y - 4, listWidth - 16, 52, 8);
       scene.subPanel.add(swapBg);
     }
 
     if (scene.partyFusionMode && scene.partyFusionIndex === index) {
       const fusionBg = scene.add.graphics();
       fusionBg.fillStyle(0x8b5cf6, 0.24);
-      fusionBg.fillRoundedRect(panelX + 8, y - 4, panelW - 16, 58, 8);
+      fusionBg.fillRoundedRect(panelX + 8, y - 4, listWidth - 16, 52, 8);
       scene.subPanel.add(fusionBg);
     }
 
@@ -86,7 +89,7 @@ export function renderPartyView(scene) {
     const typeLabel = mon.species.secondaryType
       ? `${mon.species.primaryType}/${mon.species.secondaryType}`
       : mon.species.primaryType;
-    const typeText = scene.add.text(panelX + panelW - 90, y, typeLabel, {
+    const typeText = scene.add.text(panelX + listWidth - 82, y, typeLabel, {
       fontFamily: FONT.UI,
       fontSize: 11,
       color: typeColor,
@@ -97,7 +100,7 @@ export function renderPartyView(scene) {
 
     const barX = panelX + 38;
     const barY = y + 22;
-    const barW = 120;
+    const barW = 104;
     const barH = 8;
     const hpRatio = mon.currentHp / stats.maxHp;
     const barColor = hpRatio > 0.5 ? 0x22c55e : hpRatio > 0.25 ? 0xf97316 : 0xef4444;
@@ -110,34 +113,67 @@ export function renderPartyView(scene) {
     const hpStr = `HP ${mon.currentHp}/${stats.maxHp} (${hpPct}%)`;
     const hpText = scene.add.text(barX + barW + 8, barY - 2, hpStr, {
       fontFamily: FONT.UI,
-      fontSize: 11,
+      fontSize: 10,
       color: "#9ca3af",
     });
     scene.subPanel.add(hpText);
-
-    const statStr = `ATK:${stats.attack} DEF:${stats.defense} SPD:${stats.speed}  EXP:${mon.exp || 0}/${mon.nextLevelExp}  キズナ:${mon.bond || 0}`;
-    const statText = scene.add.text(panelX + 38, y + 36, statStr, {
-      fontFamily: FONT.UI,
-      fontSize: 10,
-      color: "#6b7280",
-    });
-    scene.subPanel.add(statText);
-
-    const knownMoves = getMonsterMoves(mon);
-    if (knownMoves.length > 0) {
-      const ppParts = knownMoves.map((move, moveIndex) => {
-        const cur = (mon.pp && mon.pp[moveIndex] !== undefined) ? mon.pp[moveIndex] : (move.pp || 10);
-        return `${move.name}:${cur}/${move.pp || 10}`;
-      });
-      const ppStr = ppParts.join(" ");
-      const ppText = scene.add.text(panelX + 38, y + 50, ppStr, {
-        fontFamily: FONT.UI,
-        fontSize: 9,
-        color: "#6b7280",
-      });
-      scene.subPanel.add(ppText);
-    }
   });
+
+  const selectedMon = party[scene.subMenuIndex];
+  if (selectedMon?.species) {
+    const stats = calcStats(selectedMon.species, selectedMon.level);
+    const detailBg = scene.add.graphics();
+    drawPanel(detailBg, detailX, panelY + 40, detailW, height - 96, { radius: 10, headerHeight: 22 });
+    scene.subPanel.add(detailBg);
+
+    const detailTitle = scene.add.text(detailX + 12, panelY + 48, "📋 詳細", {
+      fontFamily: FONT.UI,
+      fontSize: 14,
+      color: "#fbbf24",
+    });
+    scene.subPanel.add(detailTitle);
+
+    const displayName = selectedMon.nickname || selectedMon.species.name;
+    const typeLabel = selectedMon.species.secondaryType
+      ? `${selectedMon.species.primaryType}/${selectedMon.species.secondaryType}`
+      : selectedMon.species.primaryType;
+    const hpPct = Math.round((selectedMon.currentHp / stats.maxHp) * 100);
+    const lines = [
+      `${selectedMon.species.emoji} ${displayName}`,
+      `Lv.${selectedMon.level}  タイプ: ${typeLabel}`,
+      `HP: ${selectedMon.currentHp}/${stats.maxHp} (${hpPct}%)`,
+      `ATK: ${stats.attack}   DEF: ${stats.defense}`,
+      `SPD: ${stats.speed}   キズナ: ${selectedMon.bond || 0}`,
+      `EXP: ${selectedMon.exp || 0}/${selectedMon.nextLevelExp}`,
+      "",
+      "わざ",
+    ];
+
+    const detailText = scene.add.text(detailX + 12, panelY + 74, lines.join("\n"), {
+      fontFamily: FONT.UI,
+      fontSize: 14,
+      color: "#e5e7eb",
+      lineSpacing: 4,
+    });
+    scene.subPanel.add(detailText);
+
+    const knownMoves = getMonsterMoves(selectedMon);
+    if (knownMoves.length > 0) {
+      const moveLines = knownMoves.map((move, moveIndex) => {
+        const cur = (selectedMon.pp && selectedMon.pp[moveIndex] !== undefined)
+          ? selectedMon.pp[moveIndex]
+          : (move.pp || 10);
+        return `・${move.name}  PP ${cur}/${move.pp || 10}`;
+      });
+      const moveText = scene.add.text(detailX + 12, panelY + 250, moveLines.join("\n"), {
+        fontFamily: FONT.UI,
+        fontSize: 13,
+        color: "#cbd5e1",
+        lineSpacing: 4,
+      });
+      scene.subPanel.add(moveText);
+    }
+  }
 
   const hint = scene.add.text(panelX + 16, height - 30, "Z:いれかえ  C:ごうせい  N:ニックネーム  X:もどる", {
     fontFamily: FONT.UI,
@@ -145,27 +181,6 @@ export function renderPartyView(scene) {
     color: "#6b7280",
   });
   scene.subPanel.add(hint);
-
-  const recipeTitle = scene.add.text(panelX + panelW - 300, height - 74, "🧪 えもじレシピ", {
-    fontFamily: FONT.UI,
-    fontSize: 11,
-    color: "#a78bfa",
-  });
-  scene.subPanel.add(recipeTitle);
-
-  const previews = gameState.getFusionPreviewForParty(scene.subMenuIndex);
-  if (previews.length > 0) {
-    const line = previews
-      .slice(0, 2)
-      .map((entry) => `${entry.materialEmoji}+${entry.resultEmoji}`)
-      .join("  ");
-    const previewText = scene.add.text(panelX + panelW - 300, height - 56, line, {
-      fontFamily: FONT.UI,
-      fontSize: 11,
-      color: "#ddd6fe",
-    });
-    scene.subPanel.add(previewText);
-  }
 }
 
 export function showPartyMessage(scene, text) {

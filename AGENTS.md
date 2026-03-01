@@ -22,7 +22,11 @@
 
 1. 変更対象と依存ファイルを確認する。
 2. 最小差分で実装する。
-3. コードの変更がある場合のみ、`npm run lint` / `npm run typecheck` / `npm run test` / `npm run build` を優先度順で確認し、Build成功まで確認する。
+3. コードの変更がある場合のみ、以下のコマンドで確認し、Build成功まで確認する。
+  - `npm run lint && echo "__LINT_OK__"`
+  - `npm run typecheck && echo "__TYPECHECK_OK__"`
+  - `npm run test && echo "__TEST_OK__"`
+  - `npm run build && echo "__BUILD_OK__"`
   - 検証コマンドは必ず逐次実行し、前のコマンドの完了（成功/失敗）を確認してから次のコマンドを実行する（同時実行・完了前の次コマンド投入は禁止）。
 4. 仕様に影響する場合、`GAME_DESIGN.md` を更新する。
 5. 導入・運用に影響する場合、`README.md` を更新する。

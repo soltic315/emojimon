@@ -2503,18 +2503,7 @@ export class WorldScene extends Phaser.Scene {
       return;
     }
 
-    // 連勝ボーナス：連勝が続くほど相手が強化され、低確率でレア個体が出現
-    const currentStreak = gameState.getWildWinStreak();
-    const levelBoost = Math.min(4, Math.floor(currentStreak / 2));
-    if (levelBoost > 0) {
-      wild.level += levelBoost;
-      const boostedStats = calcStats(wild.species, wild.level);
-      wild.currentHp = boostedStats.maxHp;
-      wild.nextLevelExp = 10 + 8 * wild.level;
-      wild.streakLevelBoost = levelBoost;
-    }
-
-    const rareChance = Math.min(0.22, 0.05 + currentStreak * 0.015);
+    const rareChance = 0.05;
     if (Math.random() < rareChance) {
       wild.isRareEncounter = true;
       wild.rewardMultiplier = 1.35;

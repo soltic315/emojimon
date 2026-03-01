@@ -22,15 +22,6 @@ import {
 } from "./battleConstants.ts";
 import { flashVictory } from "../../ui/FXHelper.ts";
 
-/** 野生連勝カウント更新 */
-export function registerWildStreakWin(scene) {
-  if (!scene.isWildBattle || scene.streakHandled) return;
-  if (typeof gameState.addWildWinStreak !== "function") return;
-  const streak = gameState.addWildWinStreak(1);
-  scene.streakHandled = true;
-  scene.enqueueMessage(`🔥 やせいれんしょう ${streak}！`);
-}
-
 /** 勝利処理 */
 export function handleVictory(scene) {
   scene.resultType = "win";
@@ -144,12 +135,9 @@ export function processVictoryRewards(scene, opponent, leader) {
   gameState.addMoney(moneyGain);
   scene.enqueueMessage(`${moneyGain}Gを てにいれた！`);
 
-  if (scene.isWildBattle) {
-    registerWildStreakWin(scene);
-    if (scene._isTutorialBattle) {
-      gameState.storyFlags.tutorialBattleDone = true;
-      gameState.save();
-    }
+  if (scene.isWildBattle && scene._isTutorialBattle) {
+    gameState.storyFlags.tutorialBattleDone = true;
+    gameState.save();
   }
 
   // 図鑑登録

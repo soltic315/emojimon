@@ -9,7 +9,7 @@ export function createEmoSkipUI(scene) {
   const cx = width / 2;
   const indicatorY = height * 0.82;
 
-  scene.emoSkipHintText = scene.add.text(cx, indicatorY - 20, "⚡ Zキー長押しで エモ・スキップ ⚡", {
+  scene.emoSkipHintText = scene.add.text(cx, indicatorY - 20, "⚡ エモ・スキップ発動中 ⚡", {
     fontFamily: FONT.UI,
     fontSize: 13,
     color: "#fbbf24",

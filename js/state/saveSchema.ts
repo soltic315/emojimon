@@ -16,7 +16,7 @@ export const DEFAULT_GAMEPLAY_SETTINGS = {
   shortEncounterEffect: false,
   emoSkipEnabled: true,
   autoSaveEnabled: true,
-  screenBrightness: 100,
+  screenBrightness: 115,
 };
 
 export const MAX_MONSTER_LEVEL = 100;
@@ -87,7 +87,6 @@ const saveDataSchema = z.object({
   totalBattles: z.number().finite().optional(),
   totalCatches: z.number().finite().optional(),
   playTimeMs: z.number().finite().optional(),
-  wildWinStreak: z.number().finite().optional(),
   discoveredFusionRecipes: z.array(z.string()).optional(),
   unlockedAchievements: z.array(z.string()).optional(),
   dailyChallenge: dailyChallengeSchema.nullable().optional(),
@@ -122,7 +121,7 @@ export function parseAndValidateSaveData(raw, sourceLabel) {
 
 export function sanitizeGameplaySettings(raw) {
   const speed = raw?.battleSpeed;
-  const rawBrightness = Number.isFinite(raw?.screenBrightness) ? Math.round(raw.screenBrightness) : 100;
+  const rawBrightness = Number.isFinite(raw?.screenBrightness) ? Math.round(raw.screenBrightness) : 115;
   const screenBrightness = Math.min(140, Math.max(60, rawBrightness));
   return {
     battleSpeed: speed === "FAST" || speed === "TURBO" ? speed : "NORMAL",

@@ -64,7 +64,6 @@ class GameState {
     this.totalBattles = 0;
     this.totalCatches = 0;
     this.playTimeMs = 0;
-    this.wildWinStreak = 0;
     this.box = []; // パーティ上限(6)を超えたモンスター保管
     this.discoveredFusionRecipes = [];
     this.dailyChallenge = null;
@@ -114,7 +113,6 @@ class GameState {
     this.totalBattles = 0;
     this.totalCatches = 0;
     this.playTimeMs = 0;
-    this.wildWinStreak = 0;
     this.box = [];
     this.discoveredFusionRecipes = [];
     this.dailyChallenge = null;
@@ -509,20 +507,6 @@ class GameState {
     return false;
   }
 
-  getWildWinStreak() {
-    return Math.max(0, Math.floor(this.wildWinStreak || 0));
-  }
-
-  addWildWinStreak(amount = 1) {
-    const safeAmount = Math.max(1, Math.floor(amount));
-    this.wildWinStreak = this.getWildWinStreak() + safeAmount;
-    return this.wildWinStreak;
-  }
-
-  resetWildWinStreak() {
-    this.wildWinStreak = 0;
-  }
-
   /** パーティ内のモンスターの並びを入れ替え */
   swapPartyOrder(indexA, indexB) {
     if (indexA < 0 || indexA >= this.party.length) return;
@@ -766,7 +750,6 @@ class GameState {
         totalBattles: this.totalBattles,
         totalCatches: this.totalCatches,
         playTimeMs: this.playTimeMs,
-        wildWinStreak: this.getWildWinStreak(),
         discoveredFusionRecipes: [...this.getFusionDiscoveries()],
         unlockedAchievements: Array.isArray(this.unlockedAchievements) ? [...this.unlockedAchievements] : [],
         dailyChallenge: this.getDailyChallenge(),
@@ -849,7 +832,6 @@ class GameState {
       this.totalBattles = clampInt(data.totalBattles, 0, MAX_COUNTER, 0);
       this.totalCatches = clampInt(data.totalCatches, 0, MAX_COUNTER, 0);
       this.playTimeMs = clampInt(data.playTimeMs, 0, MAX_PLAY_TIME_MS, 0);
-      this.wildWinStreak = clampInt(data.wildWinStreak, 0, MAX_COUNTER, 0);
       this.discoveredFusionRecipes = Array.isArray(data.discoveredFusionRecipes)
         ? [...new Set(data.discoveredFusionRecipes.filter((v) => typeof v === "string"))]
         : [];

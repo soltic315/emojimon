@@ -215,10 +215,6 @@ function completeCatchSuccess(scene, ballText, opponent) {
     }
   }
 
-  if (scene.isWildBattle) {
-    scene.registerWildStreakWin();
-  }
-
   scene._grantHeldItemDrops(opponent);
 
   // 初回捕獲チュートリアル
