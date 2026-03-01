@@ -154,6 +154,7 @@ class GameState {
     this.playerPosition = { x: 8, y: 10 };
     this.playerDirection = "down";
     this.currentMap = "EMOJI_TOWN";
+    this.visitedMapIds = ["EMOJI_TOWN"];
     this.mapWeatherByMap = {};
     this.fieldTimeMinutes = DEFAULT_FIELD_TIME_MINUTES;
     this.inBattle = false;
@@ -250,6 +251,7 @@ class GameState {
     this.playerPosition = { x: 8, y: 10 };
     this.playerDirection = "down";
     this.currentMap = "EMOJI_TOWN";
+    this.visitedMapIds = ["EMOJI_TOWN"];
     this.mapWeatherByMap = {};
     this.fieldTimeMinutes = DEFAULT_FIELD_TIME_MINUTES;
     this.inBattle = false;
@@ -532,6 +534,22 @@ class GameState {
     if (speciesId && !this.caughtIds.includes(speciesId)) {
       this.caughtIds.push(speciesId);
     }
+  }
+
+  /** 訪問済みマップを記録 */
+  markMapVisited(mapKey) {
+    if (typeof mapKey !== "string" || mapKey.length === 0) return;
+    if (!Array.isArray(this.visitedMapIds)) this.visitedMapIds = ["EMOJI_TOWN"];
+    if (!this.visitedMapIds.includes(mapKey)) {
+      this.visitedMapIds.push(mapKey);
+    }
+  }
+
+  /** 訪問済みかどうか */
+  hasVisitedMap(mapKey) {
+    if (typeof mapKey !== "string" || mapKey.length === 0) return false;
+    if (!Array.isArray(this.visitedMapIds)) return mapKey === "EMOJI_TOWN";
+    return this.visitedMapIds.includes(mapKey);
   }
 
   /** 経験値追加、レベルアップ数を返す */
@@ -837,6 +855,7 @@ class GameState {
         playerPosition: { ...this.playerPosition },
         playerDirection: this.playerDirection,
         currentMap: this.currentMap,
+        visitedMapIds: [...new Set(Array.isArray(this.visitedMapIds) ? this.visitedMapIds : ["EMOJI_TOWN"])],
         mapWeatherByMap: { ...(this.mapWeatherByMap || {}) },
         fieldTimeMinutes: this.getFieldTimeMinutes(),
         party: this.party.map((m) => ({
@@ -912,6 +931,11 @@ class GameState {
         ? loadedDirection
         : "down";
       this.currentMap = data.currentMap || "EMOJI_TOWN";
+      this.visitedMapIds = sanitizeIdList(data.visitedMapIds);
+      if (!this.visitedMapIds.includes("EMOJI_TOWN")) {
+        this.visitedMapIds.unshift("EMOJI_TOWN");
+      }
+      this.markMapVisited(this.currentMap);
       this.fieldTimeMinutes = normalizeFieldTimeMinutes(data.fieldTimeMinutes);
       const rawMapWeather = data.mapWeatherByMap;
       this.mapWeatherByMap = {};

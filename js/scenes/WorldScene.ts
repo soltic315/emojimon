@@ -66,6 +66,7 @@ export class WorldScene extends Phaser.Scene {
 
   create() {
     gameState.currentMap = this.mapKey;
+    gameState.markMapVisited(this.mapKey);
     gameState.ensureMapWeather(this.mapKey, () => rollWeatherForMapByHour(this.mapKey, gameState.getFieldTime().hour));
     audioManager.applySettings(gameState.audioSettings || {});
 

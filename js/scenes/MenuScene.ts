@@ -43,6 +43,15 @@ export class MenuScene extends Phaser.Scene {
     this.partyFusionMode = false;
     this.partyFusionIndex = -1;
     this.boxPendingIndex = -1; // ボックス交換待ちのインデックス
+    this.mainNavHoldDirection = 0;
+    this.mainNavNextRepeatAt = 0;
+    this.subNavHoldDirection = 0;
+    this.subNavNextRepeatAt = 0;
+    this.navRepeatDelayMs = 260;
+    this.navRepeatIntervalMs = 95;
+    this.guideTocIndex = 0;
+    this.settingsConfirmActive = false;
+    this.settingsConfirmIndex = 0;
 
     // 半透明オーバーレイ
     this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.5);
@@ -82,15 +91,22 @@ export class MenuScene extends Phaser.Scene {
   }
 
   _handleMainMenuNav() {
-    if (Phaser.Input.Keyboard.JustDown(this.cursors.up)) {
-      this.menuIndex = (this.menuIndex - 1 + MENU_ITEMS.length) % MENU_ITEMS.length;
-      audioManager.playCursor();
-      this._renderMainMenu();
-    } else if (Phaser.Input.Keyboard.JustDown(this.cursors.down)) {
-      this.menuIndex = (this.menuIndex + 1) % MENU_ITEMS.length;
-      audioManager.playCursor();
-      this._renderMainMenu();
-    }
+    this._handleVerticalRepeatInput({
+      isUpDown: Phaser.Input.Keyboard.JustDown(this.cursors.up),
+      isDownDown: Phaser.Input.Keyboard.JustDown(this.cursors.down),
+      isUpHeld: this.cursors.up.isDown,
+      isDownHeld: this.cursors.down.isDown,
+      holdDirectionKey: "mainNavHoldDirection",
+      nextRepeatAtKey: "mainNavNextRepeatAt",
+      onUp: () => {
+        this.menuIndex = (this.menuIndex - 1 + MENU_ITEMS.length) % MENU_ITEMS.length;
+        this._renderMainMenu();
+      },
+      onDown: () => {
+        this.menuIndex = (this.menuIndex + 1) % MENU_ITEMS.length;
+        this._renderMainMenu();
+      },
+    });
   }
 
   handleConfirm() {
@@ -123,6 +139,17 @@ export class MenuScene extends Phaser.Scene {
       case "guide":
         this.openSubMenu("guide");
         break;
+      case "save": {
+        const ok = gameState.save();
+        if (ok) {
+          audioManager.playSave();
+          this._showCenterMessage("セーブしました！", "#86efac");
+        } else {
+          audioManager.playCancel();
+          this._showCenterMessage("セーブに失敗しました…", "#fca5a5");
+        }
+        break;
+      }
       case "settings":
         this.openSubMenu("settings");
         break;
@@ -133,6 +160,14 @@ export class MenuScene extends Phaser.Scene {
   }
 
   handleCancel() {
+    if (this.settingsConfirmActive) {
+      audioManager.playCancel();
+      this.settingsConfirmActive = false;
+      this.settingsConfirmIndex = 0;
+      this._renderSubMenu();
+      return;
+    }
+
     audioManager.playCancel();
     if (this.partyFusionMode) {
       this.partyFusionMode = false;
@@ -162,6 +197,12 @@ export class MenuScene extends Phaser.Scene {
       this._renderSubMenu();
       return;
     }
+    if (this.subMenuType === "guide_detail") {
+      this.subMenuType = "guide_toc";
+      this.subMenuIndex = this.guideTocIndex || 0;
+      this._renderSubMenu();
+      return;
+    }
     if (this.subMenuActive) {
       this.subMenuActive = false;
       this.subMenuType = null;
@@ -179,24 +220,71 @@ export class MenuScene extends Phaser.Scene {
   // ── サブメニュー ──
   openSubMenu(type) {
     this.subMenuActive = true;
-    this.subMenuType = type;
-    this.subMenuIndex = 0;
+    this.settingsConfirmActive = false;
+    this.settingsConfirmIndex = 0;
+    if (type === "guide") {
+      this.subMenuType = "guide_toc";
+      this.subMenuIndex = this.guideTocIndex || 0;
+    } else {
+      this.subMenuType = type;
+      this.subMenuIndex = 0;
+    }
     this._renderSubMenu();
   }
 
   _handleSubMenuNav() {
-    if (Phaser.Input.Keyboard.JustDown(this.cursors.up)) {
-      this.subMenuIndex = Math.max(0, this.subMenuIndex - 1);
-      audioManager.playCursor();
-      this._renderSubMenu();
-    } else if (Phaser.Input.Keyboard.JustDown(this.cursors.down)) {
-      this.subMenuIndex++;
-      audioManager.playCursor();
-      this._renderSubMenu();
+    if (this.settingsConfirmActive) {
+      this._handleVerticalRepeatInput({
+        isUpDown: Phaser.Input.Keyboard.JustDown(this.cursors.up),
+        isDownDown: Phaser.Input.Keyboard.JustDown(this.cursors.down),
+        isUpHeld: this.cursors.up.isDown,
+        isDownHeld: this.cursors.down.isDown,
+        holdDirectionKey: "subNavHoldDirection",
+        nextRepeatAtKey: "subNavNextRepeatAt",
+        onUp: () => {
+          this.settingsConfirmIndex = 0;
+          this._renderSubMenu();
+        },
+        onDown: () => {
+          this.settingsConfirmIndex = 1;
+          this._renderSubMenu();
+        },
+      });
+      return;
     }
+
+    this._handleVerticalRepeatInput({
+      isUpDown: Phaser.Input.Keyboard.JustDown(this.cursors.up),
+      isDownDown: Phaser.Input.Keyboard.JustDown(this.cursors.down),
+      isUpHeld: this.cursors.up.isDown,
+      isDownHeld: this.cursors.down.isDown,
+      holdDirectionKey: "subNavHoldDirection",
+      nextRepeatAtKey: "subNavNextRepeatAt",
+      onUp: () => {
+        this.subMenuIndex = Math.max(0, this.subMenuIndex - 1);
+        this._renderSubMenu();
+      },
+      onDown: () => {
+        this.subMenuIndex++;
+        this._renderSubMenu();
+      },
+    });
   }
 
   _handleSubMenuConfirm() {
+    if (this.settingsConfirmActive) {
+      if (this.settingsConfirmIndex === 0) {
+        this.settingsConfirmActive = false;
+        this.settingsConfirmIndex = 0;
+        this._executeDeleteSave();
+        return;
+      }
+      this.settingsConfirmActive = false;
+      this.settingsConfirmIndex = 0;
+      this._renderSubMenu();
+      return;
+    }
+
     if (this.subMenuType === "party") {
       this._handlePartyConfirm();
     } else if (this.subMenuType === "box") {
@@ -207,7 +295,7 @@ export class MenuScene extends Phaser.Scene {
       this._handleBagConfirm();
     } else if (this.subMenuType === "bag_target") {
       this._handleBagTargetConfirm();
-    } else if (this.subMenuType === "guide") {
+    } else if (this.subMenuType === "guide_toc" || this.subMenuType === "guide_detail") {
       this._handleGuideConfirm();
     } else if (this.subMenuType === "settings") {
       this._handleSettingsAction();
@@ -498,14 +586,24 @@ export class MenuScene extends Phaser.Scene {
 
   _handleGuideConfirm() {
     const pages = this._getGuidePages();
-    if (this.subMenuIndex < pages.length - 1) {
-      this.subMenuIndex += 1;
+    if (this.subMenuType === "guide_toc") {
+      this.guideTocIndex = Phaser.Math.Clamp(this.subMenuIndex, 0, Math.max(0, pages.length - 1));
+      this.subMenuIndex = this.guideTocIndex;
+      this.subMenuType = "guide_detail";
       this._renderSubMenu();
       return;
     }
-    this.subMenuActive = false;
-    this.subMenuType = null;
-    this.subPanel.removeAll(true);
+
+    if (this.subMenuIndex < pages.length - 1) {
+      this.subMenuIndex += 1;
+      this.guideTocIndex = this.subMenuIndex;
+      this._renderSubMenu();
+      return;
+    }
+
+    this.subMenuType = "guide_toc";
+    this.subMenuIndex = this.guideTocIndex || 0;
+    this._renderSubMenu();
   }
 
   // ── 設定画面 ──
@@ -572,27 +670,102 @@ export class MenuScene extends Phaser.Scene {
     } else if (row.key === "shortEncounterEffect") {
       this._toggleGameplayFlag("shortEncounterEffect");
       this._persistSettingsChanges(false);
+    } else if (row.key === "save") {
+      const ok = gameState.save();
+      if (ok) {
+        audioManager.playSave();
+        this._showCenterMessage("セーブしました！", "#86efac");
+      } else {
+        audioManager.playCancel();
+        this._showCenterMessage("セーブに失敗しました…", "#fca5a5");
+      }
     } else if (row.key === "deleteSave") {
-      gameState.deleteSave();
-      audioManager.playConfirm();
-      // 簡易確認メッセージ
-      const msg = this.add.text(this.scale.width / 2, this.scale.height / 2, "セーブデータを削除しました", {
-        fontFamily: FONT.UI,
-        fontSize: 16,
-        color: "#fca5a5",
-        backgroundColor: "#0f172a",
-        padding: { x: 16, y: 8 },
-      }).setOrigin(0.5).setDepth(100);
-      msg.setStroke("#000000", 2);
-      this.time.delayedCall(900, () => {
-        msg.destroy();
-        audioManager.stopBgm();
-        this.cameras.main.fadeOut(220, 0, 0, 0);
-        this.cameras.main.once("camerafadeoutcomplete", () => {
-          this.scene.stop(this.fromScene);
-          this.scene.start("TitleScene");
-        });
+      this.settingsConfirmActive = true;
+      this.settingsConfirmIndex = 1;
+      audioManager.playCursor();
+      this._renderSubMenu();
+    }
+  }
+
+  _executeDeleteSave() {
+    gameState.deleteSave();
+    audioManager.playConfirm();
+    const msg = this.add.text(this.scale.width / 2, this.scale.height / 2, "セーブデータを削除しました", {
+      fontFamily: FONT.UI,
+      fontSize: 16,
+      color: "#fca5a5",
+      backgroundColor: "#0f172a",
+      padding: { x: 16, y: 8 },
+    }).setOrigin(0.5).setDepth(100);
+    msg.setStroke("#000000", 2);
+    this.time.delayedCall(900, () => {
+      msg.destroy();
+      audioManager.stopBgm();
+      this.cameras.main.fadeOut(220, 0, 0, 0);
+      this.cameras.main.once("camerafadeoutcomplete", () => {
+        this.scene.stop(this.fromScene);
+        this.scene.start("TitleScene");
       });
+    });
+  }
+
+  _showCenterMessage(text, color = "#fde68a") {
+    const msg = this.add.text(this.scale.width / 2, this.scale.height / 2, text, {
+      fontFamily: FONT.UI,
+      fontSize: 16,
+      color,
+      backgroundColor: "#0f172a",
+      padding: { x: 14, y: 8 },
+    }).setOrigin(0.5).setDepth(100);
+    msg.setStroke("#000000", 2);
+    this.time.delayedCall(900, () => msg.destroy());
+  }
+
+  _handleVerticalRepeatInput({
+    isUpDown,
+    isDownDown,
+    isUpHeld,
+    isDownHeld,
+    holdDirectionKey,
+    nextRepeatAtKey,
+    onUp,
+    onDown,
+  }) {
+    const now = this.time.now;
+
+    if (isUpDown) {
+      this[holdDirectionKey] = -1;
+      this[nextRepeatAtKey] = now + this.navRepeatDelayMs;
+      audioManager.playCursor();
+      onUp();
+      return;
+    }
+
+    if (isDownDown) {
+      this[holdDirectionKey] = 1;
+      this[nextRepeatAtKey] = now + this.navRepeatDelayMs;
+      audioManager.playCursor();
+      onDown();
+      return;
+    }
+
+    const holdDirection = isUpHeld ? -1 : isDownHeld ? 1 : 0;
+    if (holdDirection === 0) {
+      this[holdDirectionKey] = 0;
+      return;
+    }
+
+    if (this[holdDirectionKey] !== holdDirection) {
+      this[holdDirectionKey] = holdDirection;
+      this[nextRepeatAtKey] = now + this.navRepeatDelayMs;
+      return;
+    }
+
+    if (now >= this[nextRepeatAtKey]) {
+      this[nextRepeatAtKey] = now + this.navRepeatIntervalMs;
+      audioManager.playCursor();
+      if (holdDirection < 0) onUp();
+      else onDown();
     }
   }
 }

@@ -12,6 +12,34 @@ const SUB_PANEL_LEFT_MARGIN = 10;
 const MAIN_SUB_PANEL_GAP = 10;
 const SUB_PANEL_WIDTH_OFFSET = MAIN_MENU_PANEL_WIDTH + MAIN_MENU_RIGHT_MARGIN + SUB_PANEL_LEFT_MARGIN + MAIN_SUB_PANEL_GAP;
 
+const GLOBAL_MAP_HIDDEN_KEYS = new Set([
+  "HOUSE1",
+  "LAB",
+  "TOWN_SHOP",
+  "FOREST_GYM",
+  "VOLCANO_SHOP",
+  "FROZEN_GYM",
+  "FROZEN_SHOP",
+  "GARDEN_SHOP",
+  "SWAMP_SHOP",
+  "SAND_VALLEY_SHOP",
+  "BASIN_SHOP",
+]);
+
+function fitLabelToWidth(textObj, original, maxWidth) {
+  if (!textObj || typeof original !== "string") return;
+  if (textObj.width <= maxWidth) return;
+
+  const chars = [...original];
+  let cut = chars.length;
+  while (cut > 1) {
+    const candidate = `${chars.slice(0, cut - 1).join("")}…`;
+    textObj.setText(candidate);
+    if (textObj.width <= maxWidth) return;
+    cut -= 1;
+  }
+}
+
 export function renderMainMenu(scene) {
   scene.menuPanel.removeAll(true);
   const { width } = scene.scale;
@@ -35,11 +63,13 @@ export function renderMainMenu(scene) {
     }
 
     const label = `${item.icon} ${item.label}`;
-    const text = scene.add.text(panelX + 20, y, selected ? `▶ ${label}` : `  ${label}`, {
+    const rawText = selected ? `▶ ${label}` : `  ${label}`;
+    const text = scene.add.text(panelX + 20, y, rawText, {
       fontFamily: FONT.UI,
       fontSize: 16,
       color: selected ? "#fde68a" : "#e5e7eb",
     });
+    fitLabelToWidth(text, rawText, panelW - 30);
     scene.menuPanel.add(text);
   });
 }
@@ -72,6 +102,12 @@ export function renderSubMenu(scene) {
       renderGlobalMapView(scene);
       break;
     case "guide":
+      renderGuideView(scene);
+      break;
+    case "guide_toc":
+      renderGuideTocView(scene);
+      break;
+    case "guide_detail":
       renderGuideView(scene);
       break;
     case "settings":
@@ -569,6 +605,7 @@ export function renderPokedexView(scene) {
   scene.subPanel.add(bg);
 
   const allMons = getAllMonsters();
+  const byId = new Map(allMons.map((mon) => [mon.id, mon]));
   const caughtCount = gameState.caughtIds.length;
   const seenCount = gameState.seenIds.length;
 
@@ -580,7 +617,8 @@ export function renderPokedexView(scene) {
     });
   scene.subPanel.add(title);
 
-  const visibleCount = Math.floor((height - 80) / 28);
+  const detailPanelTop = height - 182;
+  const visibleCount = Math.max(1, Math.floor((detailPanelTop - (panelY + 44)) / 28));
   const maxIndex = allMons.length - 1;
   scene.subMenuIndex = Math.min(scene.subMenuIndex, maxIndex);
   const scrollStart = Math.max(0, Math.min(scene.subMenuIndex - Math.floor(visibleCount / 2), maxIndex - visibleCount + 1));
@@ -636,20 +674,104 @@ export function renderPokedexView(scene) {
     scene.subPanel.add(markText);
   }
 
+  const detailBg = scene.add.graphics();
+  drawPanel(detailBg, panelX + 10, detailPanelTop, panelW - 20, 156, { radius: 8, headerHeight: 22 });
+  scene.subPanel.add(detailBg);
+
   const selectedMon = allMons[scene.subMenuIndex];
-  if (selectedMon && gameState.seenIds.includes(selectedMon.id)) {
-    const descY = height - 60;
-    const desc = gameState.caughtIds.includes(selectedMon.id)
-      ? selectedMon.description || "情報なし"
-      : "つかまえると くわしい情報がみれる";
-    const descText = scene.add.text(panelX + 16, descY, desc, {
+  if (!selectedMon || !gameState.seenIds.includes(selectedMon.id)) {
+    const unknown = scene.add.text(panelX + 22, detailPanelTop + 34, "未発見のモンスターです", {
+      fontFamily: FONT.UI,
+      fontSize: 12,
+      color: "#9ca3af",
+    });
+    scene.subPanel.add(unknown);
+    return;
+  }
+
+  const detailTitle = scene.add.text(panelX + 22, detailPanelTop + 8, "詳細", {
+    fontFamily: FONT.UI,
+    fontSize: 14,
+    color: "#fbbf24",
+  });
+  scene.subPanel.add(detailTitle);
+
+  const isCaught = gameState.caughtIds.includes(selectedMon.id);
+  if (!isCaught) {
+    const limited = scene.add.text(panelX + 22, detailPanelTop + 34, "つかまえると詳細（ステータス・わざ・進化）が表示されます", {
+      fontFamily: FONT.UI,
+      fontSize: 12,
+      color: "#9ca3af",
+      wordWrap: { width: panelW - 48 },
+    });
+    scene.subPanel.add(limited);
+    const descText = scene.add.text(panelX + 22, detailPanelTop + 70, selectedMon.description || "情報なし", {
       fontFamily: FONT.UI,
       fontSize: 11,
-      color: "#9ca3af",
-      wordWrap: { width: panelW - 32 },
+      color: "#cbd5e1",
+      wordWrap: { width: panelW - 48 },
     });
     scene.subPanel.add(descText);
+    return;
   }
+
+  const typeLabel = selectedMon.secondaryType
+    ? `${selectedMon.primaryType}/${selectedMon.secondaryType}`
+    : selectedMon.primaryType;
+  const stats = selectedMon.baseStats || {};
+  const statLine = `タイプ:${typeLabel}  HP:${stats.maxHp ?? "?"}  ATK:${stats.attack ?? "?"}  DEF:${stats.defense ?? "?"}  SPD:${stats.speed ?? "?"}`;
+  const statText = scene.add.text(panelX + 22, detailPanelTop + 34, statLine, {
+    fontFamily: FONT.UI,
+    fontSize: 11,
+    color: "#e5e7eb",
+    wordWrap: { width: panelW - 48 },
+  });
+  scene.subPanel.add(statText);
+
+  const evolution = selectedMon.evolution;
+  let evoLine = "進化: なし";
+  if (evolution?.evolvesTo) {
+    const evoTarget = byId.get(evolution.evolvesTo);
+    const evoName = evoTarget ? `${evoTarget.emoji} ${evoTarget.name}` : evolution.evolvesTo;
+    if (evolution.condition?.type === "LEVEL") {
+      evoLine = `進化: Lv.${evolution.condition.value} で ${evoName}`;
+    } else if (evolution.condition?.type === "ITEM") {
+      evoLine = `進化: ${evolution.condition.value} で ${evoName}`;
+    } else {
+      evoLine = `進化: ${evoName}`;
+    }
+  }
+  const evoText = scene.add.text(panelX + 22, detailPanelTop + 54, evoLine, {
+    fontFamily: FONT.UI,
+    fontSize: 11,
+    color: "#c4b5fd",
+    wordWrap: { width: panelW - 48 },
+  });
+  scene.subPanel.add(evoText);
+
+  const learnset = Array.isArray(selectedMon.learnset) ? selectedMon.learnset : [];
+  const moveLines = learnset.slice(0, 6).map((move, idx) => {
+    const level = Array.isArray(selectedMon.learnsetLevels)
+      ? (selectedMon.learnsetLevels[idx] ?? (1 + idx * 2))
+      : (1 + idx * 2);
+    return `Lv.${level} ${move.name || move.id || "？？？"}`;
+  });
+  const moveText = scene.add.text(panelX + 22, detailPanelTop + 76, `わざ: ${moveLines.join(" / ") || "なし"}`, {
+    fontFamily: FONT.UI,
+    fontSize: 10,
+    color: "#93c5fd",
+    wordWrap: { width: panelW - 48 },
+    lineSpacing: 3,
+  });
+  scene.subPanel.add(moveText);
+
+  const descText = scene.add.text(panelX + 22, detailPanelTop + 116, selectedMon.description || "情報なし", {
+    fontFamily: FONT.UI,
+    fontSize: 10,
+    color: "#9ca3af",
+    wordWrap: { width: panelW - 48 },
+  });
+  scene.subPanel.add(descText);
 }
 
 export function renderTrainerView(scene) {
@@ -704,16 +826,35 @@ export function renderTrainerView(scene) {
     `スターライト : ${gameState.starQuestDone ? "✅ 完了" : "📋 進行中"}`,
   ];
 
-  let y = panelY + 44;
-  info.forEach((line) => {
+  const lineH = 22;
+  const listTop = panelY + 44;
+  const listBottom = height - 52;
+  const visibleCount = Math.max(1, Math.floor((listBottom - listTop) / lineH));
+  const maxStart = Math.max(0, info.length - visibleCount);
+  scene.subMenuIndex = Phaser.Math.Clamp(scene.subMenuIndex, 0, maxStart);
+
+  for (let visibleIndex = 0; visibleIndex < visibleCount; visibleIndex++) {
+    const lineIndex = scene.subMenuIndex + visibleIndex;
+    if (lineIndex >= info.length) break;
+    const line = info[lineIndex];
+    const y = listTop + visibleIndex * lineH;
     const text = scene.add.text(panelX + 24, y, line, {
       fontFamily: FONT.UI,
       fontSize: 13,
       color: line.startsWith("──") ? "#fbbf24" : "#d1d5db",
+      wordWrap: { width: panelW - 48 },
     });
     scene.subPanel.add(text);
-    y += 22;
-  });
+  }
+
+  if (maxStart > 0) {
+    const hint = scene.add.text(panelX + 16, height - 30, "↑↓:スクロール  X:もどる", {
+      fontFamily: FONT.UI,
+      fontSize: 11,
+      color: "#6b7280",
+    });
+    scene.subPanel.add(hint);
+  }
 }
 
 export function renderGlobalMapView(scene) {
@@ -738,11 +879,17 @@ export function renderGlobalMapView(scene) {
   });
   scene.subPanel.add(title);
 
-  const mapKeys = Object.keys(MAPS);
+  const mapKeys = Object.keys(MAPS).filter((mapKey) => !GLOBAL_MAP_HIDDEN_KEYS.has(mapKey));
   const currentMapKey = gameState.currentMap || "EMOJI_TOWN";
-  const currentMapName = MAPS[currentMapKey]?.name || "???";
+  const fallbackOutdoorKey = (DOOR_TRANSITIONS[currentMapKey] || []).find((transition) => mapKeys.includes(transition.target))?.target;
+  const effectiveCurrentMapKey = mapKeys.includes(currentMapKey)
+    ? currentMapKey
+    : (fallbackOutdoorKey || "EMOJI_TOWN");
+  const visitedSet = new Set(Array.isArray(gameState.visitedMapIds) ? gameState.visitedMapIds : []);
+  visitedSet.add(effectiveCurrentMapKey);
+  const currentMapName = MAPS[effectiveCurrentMapKey]?.name || "???";
   scene.subMenuIndex = Phaser.Math.Clamp(scene.subMenuIndex, 0, Math.max(0, mapKeys.length - 1));
-  const selectedMapKey = mapKeys[scene.subMenuIndex] || currentMapKey;
+  const selectedMapKey = mapKeys[scene.subMenuIndex] || effectiveCurrentMapKey;
 
   const nodeLayout = {
     EMOJI_TOWN: { x: 0.08, y: 0.56 },
@@ -810,6 +957,7 @@ export function renderGlobalMapView(scene) {
     const transitions = DOOR_TRANSITIONS[source] || [];
     transitions.forEach((transition) => {
       const target = transition.target;
+      if (!mapKeys.includes(target)) return;
       if (!nodeCenters[target]) return;
       const edgeKey = [source, target].sort().join("__");
       if (edgeKeys.has(edgeKey)) return;
@@ -831,10 +979,12 @@ export function renderGlobalMapView(scene) {
 
   mapKeys.forEach((mapKey) => {
     const center = nodeCenters[mapKey];
-    const isCurrent = mapKey === currentMapKey;
+    const isCurrent = mapKey === effectiveCurrentMapKey;
     const isSelected = mapKey === selectedMapKey;
+    const isVisited = visitedSet.has(mapKey);
 
-    const node = scene.add.circle(center.x, center.y, isSelected ? 7 : 5, isCurrent ? 0xfacc15 : 0x94a3b8, 0.95);
+    const nodeColor = isCurrent ? 0xfacc15 : (isVisited ? 0x94a3b8 : 0x475569);
+    const node = scene.add.circle(center.x, center.y, isSelected ? 7 : 5, nodeColor, 0.95);
     scene.subPanel.add(node);
 
     if (isSelected) {
@@ -842,11 +992,11 @@ export function renderGlobalMapView(scene) {
       scene.subPanel.add(ring);
     }
 
-    const mapLabel = MAPS[mapKey]?.name || mapKey;
+    const mapLabel = isVisited ? (MAPS[mapKey]?.name || mapKey) : "？？？";
     const label = scene.add.text(center.x + 8, center.y - 8, mapLabel, {
       fontFamily: FONT.UI,
       fontSize: 10,
-      color: isCurrent ? "#fde68a" : (isSelected ? "#fbbf24" : "#cbd5e1"),
+      color: isCurrent ? "#fde68a" : (isSelected ? "#fbbf24" : (isVisited ? "#cbd5e1" : "#64748b")),
     });
     scene.subPanel.add(label);
 
@@ -864,7 +1014,8 @@ export function renderGlobalMapView(scene) {
     if (index >= mapKeys.length) break;
     const mapKey = mapKeys[index];
     const selected = index === scene.subMenuIndex;
-    const isCurrent = mapKey === currentMapKey;
+    const isCurrent = mapKey === effectiveCurrentMapKey;
+    const isVisited = visitedSet.has(mapKey);
     const y = listTop + vi * rowH;
 
     if (selected) {
@@ -874,11 +1025,11 @@ export function renderGlobalMapView(scene) {
     }
 
     const prefix = isCurrent ? "📍" : "  ";
-    const mapName = MAPS[mapKey]?.name || mapKey;
+    const mapName = isVisited ? (MAPS[mapKey]?.name || mapKey) : "？？？";
     const rowText = scene.add.text(panelX + 24, y, `${selected ? "▶" : " "} ${prefix} ${mapName}`, {
       fontFamily: FONT.UI,
       fontSize: 14,
-      color: selected ? "#fbbf24" : (isCurrent ? "#93c5fd" : "#e5e7eb"),
+      color: selected ? "#fbbf24" : (isCurrent ? "#93c5fd" : (isVisited ? "#e5e7eb" : "#64748b")),
     });
     scene.subPanel.add(rowText);
   }
@@ -888,7 +1039,8 @@ export function renderGlobalMapView(scene) {
   divider.fillRoundedRect(panelX + 12, panelY + 286, panelW - 24, 2, 1);
   scene.subPanel.add(divider);
 
-  const selectedName = MAPS[selectedMapKey]?.name || selectedMapKey;
+  const selectedVisited = visitedSet.has(selectedMapKey);
+  const selectedName = selectedVisited ? (MAPS[selectedMapKey]?.name || selectedMapKey) : "？？？";
   const connectionTitle = scene.add.text(panelX + 20, panelY + 300, `接続先: ${selectedName}`, {
     fontFamily: FONT.UI,
     fontSize: 13,
@@ -896,9 +1048,12 @@ export function renderGlobalMapView(scene) {
   });
   scene.subPanel.add(connectionTitle);
 
-  const targets = Array.from(new Set((DOOR_TRANSITIONS[selectedMapKey] || []).map((transition) => {
-    return MAPS[transition.target]?.name || transition.target;
-  })));
+  const targets = Array.from(new Set((DOOR_TRANSITIONS[selectedMapKey] || [])
+    .filter((transition) => mapKeys.includes(transition.target))
+    .map((transition) => {
+      const targetVisited = visitedSet.has(transition.target);
+      return targetVisited ? (MAPS[transition.target]?.name || transition.target) : "？？？";
+    })));
 
   const connectionLines = targets.length > 0
     ? targets.map((name) => `・${name}`)
@@ -912,6 +1067,60 @@ export function renderGlobalMapView(scene) {
   scene.subPanel.add(connectionBody);
 
   const hint = scene.add.text(panelX + 16, height - 30, "↑↓:エリア選択  X:もどる", {
+    fontFamily: FONT.UI,
+    fontSize: 11,
+    color: "#6b7280",
+  });
+  scene.subPanel.add(hint);
+}
+
+export function renderGuideTocView(scene) {
+  const { width, height } = scene.scale;
+  const panelW = width - SUB_PANEL_WIDTH_OFFSET;
+  const panelX = 10;
+  const panelY = 10;
+
+  const bg = scene.add.graphics();
+  drawPanel(bg, panelX, panelY, panelW, height - 20, { radius: 12, headerHeight: 24 });
+  scene.subPanel.add(bg);
+
+  const title = scene.add.text(panelX + 16, panelY + 10, "🧭 ガイド目次", {
+    fontFamily: FONT.UI,
+    fontSize: 18,
+    color: "#fbbf24",
+  });
+  scene.subPanel.add(title);
+
+  const rowH = 32;
+  const listTop = panelY + 44;
+  const visibleCount = Math.max(1, Math.floor((height - 90) / rowH));
+  const maxIndex = GUIDE_PAGES.length - 1;
+  scene.subMenuIndex = Phaser.Math.Clamp(scene.subMenuIndex, 0, maxIndex);
+  const scrollStart = Math.max(0, Math.min(scene.subMenuIndex - Math.floor(visibleCount / 2), maxIndex - visibleCount + 1));
+
+  for (let vi = 0; vi < visibleCount; vi++) {
+    const index = scrollStart + vi;
+    if (index > maxIndex) break;
+    const y = listTop + vi * rowH;
+    const selected = index === scene.subMenuIndex;
+    const page = GUIDE_PAGES[index];
+
+    if (selected) {
+      const selBg = scene.add.graphics();
+      drawSelection(selBg, panelX + 12, y - 3, panelW - 24, 28, { radius: 6 });
+      scene.subPanel.add(selBg);
+    }
+
+    const row = scene.add.text(panelX + 24, y, `${selected ? "▶" : " "} ${String(index + 1).padStart(2, "0")}. ${page.title}`, {
+      fontFamily: FONT.UI,
+      fontSize: 14,
+      color: selected ? "#fbbf24" : "#e5e7eb",
+    });
+    fitLabelToWidth(row, `${selected ? "▶" : " "} ${String(index + 1).padStart(2, "0")}. ${page.title}`, panelW - 40);
+    scene.subPanel.add(row);
+  }
+
+  const hint = scene.add.text(panelX + 16, height - 30, "↑↓:項目選択  Z:ひらく  X:もどる", {
     fontFamily: FONT.UI,
     fontSize: 11,
     color: "#6b7280",
@@ -933,7 +1142,7 @@ export function renderGuideView(scene) {
   scene.subMenuIndex = Phaser.Math.Clamp(scene.subMenuIndex, 0, maxPage);
   const page = GUIDE_PAGES[scene.subMenuIndex];
 
-  const title = scene.add.text(panelX + 16, panelY + 10, page.title, {
+  const title = scene.add.text(panelX + 16, panelY + 10, `🧭 ${page.title} (${scene.subMenuIndex + 1}/${GUIDE_PAGES.length})`, {
     fontFamily: FONT.UI,
     fontSize: 18,
     color: "#fbbf24",
@@ -949,7 +1158,7 @@ export function renderGuideView(scene) {
   });
   scene.subPanel.add(body);
 
-  const hint = scene.add.text(panelX + 16, height - 30, "↑↓:ページ切替  Z:次ページ  X:もどる", {
+  const hint = scene.add.text(panelX + 16, height - 30, "↑↓:項目切替  Z:次へ  X:目次へ", {
     fontFamily: FONT.UI,
     fontSize: 11,
     color: "#6b7280",
@@ -989,6 +1198,7 @@ export function renderSettingsView(scene) {
     { key: "battleSpeed", label: `バトル速度: ${battleSpeedLabel}` },
     { key: "autoAdvanceMessages", label: `メッセージ自動送り: ${gameplay.autoAdvanceMessages ? "ON" : "OFF"}` },
     { key: "shortEncounterEffect", label: `エンカウント演出短縮: ${gameplay.shortEncounterEffect ? "ON" : "OFF"}` },
+    { key: "save", label: "セーブ" },
     { key: "deleteSave", label: "セーブデータ削除" },
   ];
 
@@ -1008,7 +1218,9 @@ export function renderSettingsView(scene) {
     const text = scene.add.text(panelX + 24, y, selected ? `▶ ${row.label}` : `  ${row.label}`, {
       fontFamily: FONT.UI,
       fontSize: 14,
-      color: selected ? "#fbbf24" : (row.key === "deleteSave" ? "#ef4444" : "#e5e7eb"),
+      color: selected
+        ? "#fbbf24"
+        : (row.key === "deleteSave" ? "#ef4444" : row.key === "save" ? "#86efac" : "#e5e7eb"),
     });
     scene.subPanel.add(text);
   });
@@ -1026,4 +1238,49 @@ export function renderSettingsView(scene) {
   scene.input.keyboard.off("keydown-RIGHT");
   scene.input.keyboard.on("keydown-LEFT", () => scene._adjustVolume(-0.05));
   scene.input.keyboard.on("keydown-RIGHT", () => scene._adjustVolume(0.05));
+
+  if (scene.settingsConfirmActive) {
+    const overlay = scene.add.graphics();
+    overlay.fillStyle(0x000000, 0.62);
+    overlay.fillRect(panelX, panelY, panelW, height - 20);
+    scene.subPanel.add(overlay);
+
+    const dialogW = Math.min(380, panelW - 40);
+    const dialogH = 144;
+    const dialogX = panelX + (panelW - dialogW) / 2;
+    const dialogY = panelY + (height - 20 - dialogH) / 2;
+    const dialogBg = scene.add.graphics();
+    drawPanel(dialogBg, dialogX, dialogY, dialogW, dialogH, { radius: 10, headerHeight: 24 });
+    scene.subPanel.add(dialogBg);
+
+    const titleText = scene.add.text(dialogX + 14, dialogY + 10, "⚠ セーブデータを削除しますか？", {
+      fontFamily: FONT.UI,
+      fontSize: 14,
+      color: "#fca5a5",
+    });
+    scene.subPanel.add(titleText);
+
+    const noteText = scene.add.text(dialogX + 14, dialogY + 42, "削除するとメイン/バックアップの両方が消えます。", {
+      fontFamily: FONT.UI,
+      fontSize: 12,
+      color: "#cbd5e1",
+      wordWrap: { width: dialogW - 28 },
+    });
+    scene.subPanel.add(noteText);
+
+    const yesSelected = scene.settingsConfirmIndex === 0;
+    const noSelected = !yesSelected;
+    const yesText = scene.add.text(dialogX + 34, dialogY + 98, `${yesSelected ? "▶" : " "} はい（削除する）`, {
+      fontFamily: FONT.UI,
+      fontSize: 13,
+      color: yesSelected ? "#fbbf24" : "#e5e7eb",
+    });
+    const noText = scene.add.text(dialogX + dialogW - 150, dialogY + 98, `${noSelected ? "▶" : " "} いいえ`, {
+      fontFamily: FONT.UI,
+      fontSize: 13,
+      color: noSelected ? "#fbbf24" : "#e5e7eb",
+    });
+    scene.subPanel.add(yesText);
+    scene.subPanel.add(noText);
+  }
 }
