@@ -395,8 +395,9 @@ export function initMonstersFromJson(json) {
 
     const learnset = learnsetEntries.map((entry) => entry.move);
     const learnsetLevels = learnsetEntries.map((entry) => entry.level);
-    const abilityId = raw.abilityId || DEFAULT_ABILITY_BY_TYPE[raw.primaryType] || "STURDY";
-    const abilityRates = normalizeAbilityRates(raw.ability, abilityId);
+    const fallbackAbilityId = DEFAULT_ABILITY_BY_TYPE[raw.primaryType] || "STURDY";
+    const abilityRates = normalizeAbilityRates(raw.ability, fallbackAbilityId);
+    const abilityId = abilityRates[0]?.abilityId || fallbackAbilityId;
     const spawnRate = Number.isFinite(raw.spawnRate) ? Math.max(0, raw.spawnRate) : 1;
 
     MONSTERS[raw.id] = {
