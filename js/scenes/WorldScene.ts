@@ -33,6 +33,8 @@ import {
   SWIMMABLE_WATER_TILES,
   FIRE_ICE_BLOCKS,
   FIELD_HIDDEN_ITEMS,
+  TELEPORT_PADS,
+  POISON_SWAMP_DAMAGE,
 } from "./world/worldMapData.ts";
 import {
   getShopInventory,
@@ -98,6 +100,9 @@ export class WorldScene extends Phaser.Scene {
     this.fieldMarkers = [];
     this._shownFieldHints = new Set();
     this._labIntroTriggered = false;
+    this._darkOverlayShown = false;
+    this._darkOverlay = null;
+    this._poisonStepCount = 0;
 
     this.createTilemap();
     this.createFieldAtmosphere();
@@ -332,9 +337,37 @@ export class WorldScene extends Phaser.Scene {
     }
 
     if (targetMapKey === "CRYSTAL_CAVE") {
+      if (!sf.swampRangerBeaten) return "洞窟へ進む前に、湿地のレンジャー試験を突破しよう。";
       if (!sf.forestScoutBeaten) return "洞窟へ進む前に、森のレンジャー試験を突破しよう。";
       if (catches < 6) return `洞窟の入場条件: 捕獲数 6体以上（現在 ${catches}体）`;
       if (battles < 18) return `洞窟の入場条件: バトル数 18回以上（現在 ${battles}回）`;
+    }
+
+    if (targetMapKey === "MISTY_SWAMP") {
+      if (!sf.forestScoutBeaten) return "湿地へ進む前に、森のレンジャー試験を突破しよう。";
+    }
+
+    if (targetMapKey === "CORAL_REEF") {
+      if (!sf.swampRangerBeaten) return "珊瑚の浜へ進む前に、湿地のレンジャーに認められよう。";
+    }
+
+    if (targetMapKey === "SAND_VALLEY") {
+      if (!sf.volcanoEvilBossBeaten) return "砂塵の谷へは、マグマ峠のボスを倒す必要がある。";
+      if (avgLevel < 15) return `砂塵の谷の通行条件: パーティ平均Lv15以上（現在 Lv${avgLevel}）`;
+    }
+
+    if (targetMapKey === "SHADOW_GROVE") {
+      if (!sf.darkTowerVoidBeaten) return "影の森へは、ダークタワー幹部を倒す必要がある。";
+    }
+
+    if (targetMapKey === "ANCIENT_LIBRARY") {
+      if (!sf.frozenPeakGymCleared) return "古代図書館へは、氷峰ジムをクリアする必要がある。";
+      if (avgLevel < 24) return `古代図書館の通行条件: パーティ平均Lv24以上（現在 Lv${avgLevel}）`;
+    }
+
+    if (targetMapKey === "STARFALL_BASIN") {
+      if (!sf.ruinsFinalDone) return "星降り盆地へは、メインストーリークリア後に入れる。";
+      if (!sf.legendaryDefeated) return "星降り盆地へは、天空の花園の伝説を倒す必要がある。";
     }
 
     if (targetMapKey === "VOLCANIC_PASS") {
@@ -355,6 +388,7 @@ export class WorldScene extends Phaser.Scene {
       if (!sf.darkTowerVoidBeaten) return "遺跡へ進む前に、ダークタワー最深部の幹部を倒そう。";
       if (!sf.frozenPeakGymCleared || !sf.frozenPeakRivalBeaten) return "遺跡への道は、氷峰ジムとライバル戦の突破後に開かれる。";
       if (!sf.frozenSageBeaten) return "遺跡へ進む前に、氷峰の賢者試験を突破しよう。";
+      if (!sf.libraryScholarBeaten) return "遺跡へ進む前に、古代図書館の学者を倒そう。";
       if (avgLevel < 30) return `遺跡の入場条件: パーティ平均Lv30以上（現在 Lv${avgLevel}）`;
     }
 
@@ -493,6 +527,146 @@ export class WorldScene extends Phaser.Scene {
     return true;
   }
 
+  /** 毒沼ダメージ：パーティ全員に少量ダメージ */
+  _applyPoisonSwampDamage() {
+    if (!gameState.party || gameState.party.length === 0) return;
+    let totalDmg = 0;
+    gameState.party.forEach((mon) => {
+      if (mon.currentHp > 0) {
+        const dmg = Math.min(mon.currentHp, POISON_SWAMP_DAMAGE);
+        mon.currentHp -= dmg;
+        totalDmg += dmg;
+      }
+    });
+    if (totalDmg > 0) {
+      // 5歩に1回だけメッセージ表示
+      this._poisonStepCount = (this._poisonStepCount || 0) + 1;
+      if (this._poisonStepCount % 5 === 1) {
+        this.showMessage("☠️ 毒沼でパーティにダメージ！", 1200);
+      }
+      // 全滅チェック
+      const allDown = gameState.party.every((mon) => mon.currentHp <= 0);
+      if (allDown) {
+        this.showMessage("パーティが全滅した… 町に戻ろう…", 2400);
+        this.time.delayedCall(2500, () => {
+          gameState.party.forEach((mon) => {
+            const stats = calcStats(mon.species, mon.level);
+            mon.currentHp = Math.floor(stats.maxHp / 2);
+          });
+          gameState.save();
+          this.scene.restart({ mapKey: "EMOJI_TOWN", startX: 8, startY: 10 });
+        });
+      }
+    }
+  }
+
+  /** テレポートパッド：ペアのパッドへワープ */
+  _handleTeleportPad(x, y) {
+    const pads = TELEPORT_PADS[this.mapKey];
+    if (!pads) {
+      this.handleRandomEncounter(x, y);
+      return;
+    }
+    const pad = pads.find((p) => (p.x1 === x && p.y1 === y) || (p.x2 === x && p.y2 === y));
+    if (!pad) {
+      this.handleRandomEncounter(x, y);
+      return;
+    }
+    const destX = pad.x1 === x && pad.y1 === y ? pad.x2 : pad.x1;
+    const destY = pad.x1 === x && pad.y1 === y ? pad.y2 : pad.y1;
+
+    audioManager.playHeal();
+    this.cameras.main.flash(300, 100, 50, 200);
+    this.time.delayedCall(200, () => {
+      gameState.setPlayerPosition(destX, destY);
+      this.player.x = destX * TILE_SIZE + TILE_SIZE / 2;
+      this.player.y = destY * TILE_SIZE + TILE_SIZE / 2;
+      this._updateMinimapDot();
+      this.showMessage("⚡ テレポート！", 1000);
+    });
+  }
+
+  /** 氷床スライド：壁か非氷タイルにぶつかるまで滑る */
+  _handleIceFloorSlide(dx, dy) {
+    if (dx === 0 && dy === 0) return;
+    const curX = gameState.playerPosition.x;
+    const curY = gameState.playerPosition.y;
+    const nextX = curX + dx;
+    const nextY = curY + dy;
+
+    // 次のタイルが壁か範囲外なら停止
+    if (this.isBlocked(nextX, nextY) || this.mapLayout[nextY]?.[nextX] !== T.ICE_FLOOR) {
+      this.handleRandomEncounter(curX, curY);
+      return;
+    }
+
+    // 滑り続ける
+    this.isMoving = true;
+    this.tweens.add({
+      targets: this.player,
+      x: nextX * TILE_SIZE + TILE_SIZE / 2,
+      y: nextY * TILE_SIZE + TILE_SIZE / 2,
+      duration: 100,
+      ease: "linear",
+      onComplete: () => {
+        this.isMoving = false;
+        gameState.setPlayerPosition(nextX, nextY);
+        this._updateMinimapDot();
+        this._collectHiddenItemIfExists(nextX, nextY);
+        // 再帰的にスライド継続
+        if (this.mapLayout[nextY]?.[nextX] === T.ICE_FLOOR) {
+          this._handleIceFloorSlide(dx, dy);
+        } else {
+          this.handleRandomEncounter(nextX, nextY);
+        }
+      },
+    });
+  }
+
+  /** 暗闇オーバーレイ表示 */
+  _showDarkOverlay() {
+    if (this._darkOverlayShown) return;
+    this._darkOverlayShown = true;
+    // でんきタイプがいれば暗闇を照らす
+    if (this._hasPartyType("ELECTRIC")) {
+      if (!this._shownFieldHints.has("dark_lit")) {
+        this._shownFieldHints.add("dark_lit");
+        this.showMessage("⚡ でんきタイプが闇を照らしている！", 1800);
+      }
+      return;
+    }
+    // 暗闇エフェクト（視界制限）
+    if (!this._darkOverlay) {
+      const { width, height } = this.scale;
+      this._darkOverlay = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.7)
+        .setScrollFactor(0)
+        .setDepth(900);
+    }
+    this.showMessage("👁️ 暗闇だ… でんきタイプがいれば照らせるかも", 2200);
+  }
+
+  /** 暗闇オーバーレイ解除 */
+  _clearDarkOverlay() {
+    if (this._darkOverlay) {
+      this._darkOverlay.destroy();
+      this._darkOverlay = null;
+    }
+    this._darkOverlayShown = false;
+  }
+
+  /** 砂地エンカウント（通常より低確率＋メッセージ） */
+  _handleSandEncounter(tileX, tileY) {
+    this.stepsSinceLastEncounter = (this.stepsSinceLastEncounter || 0) + 1;
+    const baseChance = 0.08; // 砂地は低確率
+    const pityBonus = Math.min(0.15, this.stepsSinceLastEncounter * 0.008);
+    const chance = Math.min(0.5, baseChance + pityBonus);
+    if (Math.random() < chance) {
+      this.encounterCooldown = 1500;
+      this.stepsSinceLastEncounter = 0;
+      this.startBattle(true);
+    }
+  }
+
   createTilemap() {
     const { width, height } = this.scale;
     const worldWidth = this.mapWidth * TILE_SIZE;
@@ -622,6 +796,11 @@ export class WorldScene extends Phaser.Scene {
       case T.WATER: baseKey = "tile-water"; break;
       case T.GYM: baseKey = "tile-gym"; break;
       case T.PATH: baseKey = "tile-path"; break;
+      case T.POISON: baseKey = "tile-grass"; break;  // 毒沼（草系テクスチャ・紫がかっている）
+      case T.TELEPORT: baseKey = "tile-door"; break;  // テレポートパッド
+      case T.ICE_FLOOR: baseKey = "tile-water"; break; // 氷床
+      case T.DARK: baseKey = "tile-path"; break;       // 暗闇通路
+      case T.SAND: baseKey = "tile-ground"; break;     // 砂地
       default:
         baseKey = this._isInteriorMap() ? "tile-floor" : "tile-ground";
     }
@@ -656,6 +835,9 @@ export class WorldScene extends Phaser.Scene {
       "FROZEN_GYM",
       "FROZEN_SHOP",
       "GARDEN_SHOP",
+      "SWAMP_SHOP",
+      "SAND_VALLEY_SHOP",
+      "BASIN_SHOP",
     ]);
     return interiorMaps.has(this.mapKey);
   }
@@ -2080,6 +2262,19 @@ export class WorldScene extends Phaser.Scene {
       ruins_guardian: "LIGHTNIX",
       ruins_final: "SKYPIP",
       garden_champion: "ETERNIA",
+      // 新エリアのトレーナー
+      swamp_ranger: "RIPPLYNX",
+      swamp_evil: "GHOSTAIL",
+      coral_diver: "CORALION",
+      desert_nomad: "CACTURION",
+      desert_rival: rivalSpeciesId,
+      shadow_beast: "COSMOWL",
+      library_scholar: "SPIRALHORN",
+      elite_wind: "THUNDAGLE",
+      elite_flame: "SERPYRO",
+      elite_tide: "WHALORD",
+      elite_frost: "GLACIDRAKE",
+      basin_final_rival: rivalSpeciesId,
     };
 
     const speciesId = opponentSpeciesMap[battleKey] || "EMBEAR";
@@ -2364,6 +2559,177 @@ export class WorldScene extends Phaser.Scene {
           });
         }
         break;
+      // ── 新エリアトレーナー ──
+      case "swamp_ranger":
+        if (won && !sf.swampRangerBeaten) {
+          sf.swampRangerBeaten = true;
+          this.showDialogSequence([
+            "カワセ: 湿地での立ち回り、見事だ！",
+            "カワセ: この先の珊瑚の浜にも行ってみるといい。",
+            "📘 湿地レンジャー試験をクリアした！",
+          ], () => {
+            gameState.addMoney(250);
+            gameState.save();
+            this.createUi();
+          });
+        }
+        break;
+      case "swamp_evil":
+        if (won && !sf.swampEvilBeaten) {
+          sf.swampEvilBeaten = true;
+          this.showDialogSequence([
+            "したっぱ: ぐぅ…湿地の実験も失敗か…!",
+            "したっぱ: ここの毒沼研究データは持っていけ…もう用済みだ。",
+          ], () => {
+            gameState.addMoney(180);
+            gameState.save();
+            this.createUi();
+          });
+        }
+        break;
+      case "coral_diver":
+        if (won && !sf.coralDiverBeaten) {
+          sf.coralDiverBeaten = true;
+          this.showDialogSequence([
+            "ウミノ: さすが！ 水中の戦いにも慣れているな！",
+            "ウミノ: この浜の奥には珊瑚の真珠が眠っている…みずタイプに託してみな。",
+            "📘 珊瑚ダイバー試験をクリアした！",
+          ], () => {
+            gameState.addMoney(280);
+            gameState.save();
+            this.createUi();
+          });
+        }
+        break;
+      case "desert_nomad":
+        if (won && !sf.desertNomadBeaten) {
+          sf.desertNomadBeaten = true;
+          this.showDialogSequence([
+            "サジン: 砂嵐の中でも冷静だったな…認めよう！",
+            "サジン: この谷の奥にある砂漠の遺物…探してみるのもいいだろう。",
+            "📘 砂漠の遊牧試験をクリアした！",
+          ], () => {
+            gameState.addMoney(400);
+            gameState.save();
+            this.createUi();
+          });
+        }
+        break;
+      case "desert_rival":
+        if (won && !sf.desertRivalBeaten) {
+          sf.desertRivalBeaten = true;
+          this.showDialogSequence([
+            "レン: くっ…！ 砂漠でも負けるのか…！",
+            "レン: でもな、この砂の中を一緒に歩いてると…なんか楽しいよな。",
+            "レン: 次は氷峰で勝負だ！ 絶対に追いついてやる！",
+          ]);
+        }
+        break;
+      case "shadow_beast":
+        if (won && !sf.shadowBeastBeaten) {
+          sf.shadowBeastBeaten = true;
+          this.showDialogSequence([
+            "ヤミカ: …影の番人として 最後の試練を終えた。",
+            "ヤミカ: この森の奥には ダーク団の研究所跡がある…。",
+            "ヤミカ: そこに残されたデータが 何かの手がかりになるかもしれない。",
+            "📘 影の森の番人を倒した！",
+          ], () => {
+            sf.shadowLabFound = true;
+            gameState.addMoney(450);
+            gameState.save();
+            this.createUi();
+          });
+        }
+        break;
+      case "library_scholar":
+        if (won && !sf.libraryScholarBeaten) {
+          sf.libraryScholarBeaten = true;
+          this.showDialogSequence([
+            "アカネ: 見事だ！ 知識だけでなく実戦の力もある！",
+            "アカネ: この図書館のテレポートパズルを解けば、古代の秘宝にたどり着ける…。",
+            "アカネ: 遺跡への道も開けるだろう。頑張りなさい！",
+            "📘 古代図書館の学者試験をクリアした！",
+          ], () => {
+            gameState.addMoney(500);
+            gameState.save();
+            this.createUi();
+          });
+        }
+        break;
+      case "elite_wind":
+        if (won && !sf.eliteFourWind) {
+          sf.eliteFourWind = true;
+          this.showDialogSequence([
+            "ハヤテ: 風のように素早い…見事だ。",
+            "ハヤテ: 四天王の第一関門突破おめでとう。",
+            "🏅 四天王ハヤテに勝利した！",
+          ], () => {
+            gameState.addMoney(800);
+            gameState.save();
+            this.createUi();
+          });
+        }
+        break;
+      case "elite_flame":
+        if (won && !sf.eliteFourFlame) {
+          sf.eliteFourFlame = true;
+          this.showDialogSequence([
+            "カグラ: 炎をも凌ぐ情熱…素晴らしい。",
+            "カグラ: 次の試練も乗り越えなさい。",
+            "🏅 四天王カグラに勝利した！",
+          ], () => {
+            gameState.addMoney(900);
+            gameState.save();
+            this.createUi();
+          });
+        }
+        break;
+      case "elite_tide":
+        if (won && !sf.eliteFourTide) {
+          sf.eliteFourTide = true;
+          this.showDialogSequence([
+            "ミナモ: 潮流を制する者か…見事。",
+            "ミナモ: 最後の一人が待っている。覚悟を決めなさい。",
+            "🏅 四天王ミナモに勝利した！",
+          ], () => {
+            gameState.addMoney(1000);
+            gameState.save();
+            this.createUi();
+          });
+        }
+        break;
+      case "elite_frost":
+        if (won && !sf.eliteFourFrost) {
+          sf.eliteFourFrost = true;
+          this.showDialogSequence([
+            "ヒョウガ: …氷をも溶かす熱き魂。四天王すべてを制覇したな。",
+            "ヒョウガ: だが、真の最終試練は…この盆地の最奥で待っている。",
+            "🏅 四天王ヒョウガに勝利した！ 四天王完全制覇！",
+            "✨ 星降り盆地の最奥への道が開いた…！",
+          ], () => {
+            gameState.addMoney(1200);
+            gameState.save();
+            this.createUi();
+          });
+        }
+        break;
+      case "basin_final_rival":
+        if (won && !sf.basinFinalRival) {
+          sf.basinFinalRival = true;
+          this.showDialogSequence([
+            "レン: …ついに この時が来たか。",
+            "レン: おまえとの最後のバトル…全力で挑んだけど、やっぱり敵わなかったな。",
+            "レン: でもな…おまえと旅をしてきたこの時間は 最高だった。",
+            "レン: ありがとう。おまえは 最高のライバルだ。",
+            `🎉 ライバル レンとの最終決戦に勝利した！`,
+            "🌟 すべての試練を乗り越えた… 真のチャンピオンの誕生だ！",
+          ], () => {
+            gameState.addMoney(3000);
+            gameState.save();
+            this.createUi();
+          });
+        }
+        break;
       default:
         break;
     }
@@ -2570,6 +2936,39 @@ export class WorldScene extends Phaser.Scene {
 
         // エンカウント判定
         this._collectHiddenItemIfExists(newX, newY);
+
+        // 毒沼ダメージ
+        if (tileType === T.POISON) {
+          this._applyPoisonSwampDamage();
+        }
+
+        // テレポートパッド
+        if (tileType === T.TELEPORT) {
+          this._handleTeleportPad(newX, newY);
+          return;
+        }
+
+        // 氷床スライド
+        if (tileType === T.ICE_FLOOR) {
+          this._handleIceFloorSlide(dx, dy);
+          return;
+        }
+
+        // 暗闇エリア進入
+        if (tileType === T.DARK && !this._darkOverlayShown) {
+          this._showDarkOverlay();
+        }
+        // 暗闇エリアから出たらオーバーレイ解除
+        if (tileType !== T.DARK && this._darkOverlayShown) {
+          this._clearDarkOverlay();
+        }
+
+        // 砂地エンカウント（低確率）
+        if (tileType === T.SAND) {
+          this._handleSandEncounter(newX, newY);
+          return;
+        }
+
         this.handleRandomEncounter(newX, newY);
       },
     });
@@ -2606,8 +3005,8 @@ export class WorldScene extends Phaser.Scene {
 
   handleRandomEncounter(tileX, tileY) {
     const tile = this.mapLayout[tileY][tileX];
-    // 草むらと森タイルでエンカウント
-    const isGrass = tile === T.GRASS;
+    // 草むら・森・毒沼タイルでエンカウント
+    const isGrass = tile === T.GRASS || tile === T.POISON;
     const isForest = tile === T.FOREST;
     if ((!isGrass && !isForest) || this.encounterCooldown > 0) return;
 

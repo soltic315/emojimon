@@ -115,6 +115,12 @@ let ruinsPool = [];
 let darkTowerPool = [];
 let frozenPeakPool = [];
 let gardenPool = [];
+let swampPool = [];
+let coralPool = [];
+let sandValleyPool = [];
+let shadowGrovePool = [];
+let libraryPool = [];
+let basinPool = [];
 let gymBossData = null;
 let gymBoss2Data = null;
 let fusionRecipes = { ...DEFAULT_FUSION_RECIPES };
@@ -491,6 +497,30 @@ export function initMonstersFromJson(json) {
   const gardenIds = Array.isArray(json.gardenPoolIds) ? json.gardenPoolIds : [];
   gardenPool = gardenIds.map((id) => MONSTERS[id]).filter(Boolean);
 
+  // 霧の湿地の出現テーブル
+  const swampIds = Array.isArray(json.swampPoolIds) ? json.swampPoolIds : [];
+  swampPool = swampIds.map((id) => MONSTERS[id]).filter(Boolean);
+
+  // 珊瑚の浜の出現テーブル
+  const coralIds = Array.isArray(json.coralPoolIds) ? json.coralPoolIds : [];
+  coralPool = coralIds.map((id) => MONSTERS[id]).filter(Boolean);
+
+  // 砂塵の谷の出現テーブル
+  const sandValleyIds = Array.isArray(json.sandValleyPoolIds) ? json.sandValleyPoolIds : [];
+  sandValleyPool = sandValleyIds.map((id) => MONSTERS[id]).filter(Boolean);
+
+  // 影の森の出現テーブル
+  const shadowGroveIds = Array.isArray(json.shadowGrovePoolIds) ? json.shadowGrovePoolIds : [];
+  shadowGrovePool = shadowGroveIds.map((id) => MONSTERS[id]).filter(Boolean);
+
+  // 古代図書館の出現テーブル
+  const libraryIds = Array.isArray(json.libraryPoolIds) ? json.libraryPoolIds : [];
+  libraryPool = libraryIds.map((id) => MONSTERS[id]).filter(Boolean);
+
+  // 星降り盆地の出現テーブル
+  const basinIds = Array.isArray(json.basinPoolIds) ? json.basinPoolIds : [];
+  basinPool = basinIds.map((id) => MONSTERS[id]).filter(Boolean);
+
   // ジムボス
   gymBossData = json.gymBoss || null;
   gymBoss2Data = json.gymBoss2 || null;
@@ -572,6 +602,66 @@ export function getGardenWildMonster() {
   const base = pickWeightedMonster(pool);
   if (!base) return null;
   const level = Phaser.Math.Between(25, 35);
+
+  return createMonsterEntry(base, level);
+}
+
+/** 霧の湿地用の野生モンスター */
+export function getSwampWildMonster() {
+  const pool = swampPool.length > 0 ? swampPool : forestPool;
+  const base = pickWeightedMonster(pool);
+  if (!base) return null;
+  const level = Phaser.Math.Between(7, 11);
+
+  return createMonsterEntry(base, level);
+}
+
+/** 珊瑚の浜用の野生モンスター */
+export function getCoralWildMonster() {
+  const pool = coralPool.length > 0 ? coralPool : forestPool;
+  const base = pickWeightedMonster(pool);
+  if (!base) return null;
+  const level = Phaser.Math.Between(8, 13);
+
+  return createMonsterEntry(base, level);
+}
+
+/** 砂塵の谷用の野生モンスター */
+export function getSandValleyWildMonster() {
+  const pool = sandValleyPool.length > 0 ? sandValleyPool : volcanoPool;
+  const base = pickWeightedMonster(pool);
+  if (!base) return null;
+  const level = Phaser.Math.Between(15, 20);
+
+  return createMonsterEntry(base, level);
+}
+
+/** 影の森用の野生モンスター */
+export function getShadowGroveWildMonster() {
+  const pool = shadowGrovePool.length > 0 ? shadowGrovePool : darkTowerPool;
+  const base = pickWeightedMonster(pool);
+  if (!base) return null;
+  const level = Phaser.Math.Between(20, 26);
+
+  return createMonsterEntry(base, level);
+}
+
+/** 古代図書館用の野生モンスター */
+export function getLibraryWildMonster() {
+  const pool = libraryPool.length > 0 ? libraryPool : ruinsPool;
+  const base = pickWeightedMonster(pool);
+  if (!base) return null;
+  const level = Phaser.Math.Between(24, 30);
+
+  return createMonsterEntry(base, level);
+}
+
+/** 星降り盆地用の野生モンスター */
+export function getBasinWildMonster() {
+  const pool = basinPool.length > 0 ? basinPool : gardenPool;
+  const base = pickWeightedMonster(pool);
+  if (!base) return null;
+  const level = Phaser.Math.Between(35, 45);
 
   return createMonsterEntry(base, level);
 }

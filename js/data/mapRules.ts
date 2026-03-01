@@ -7,18 +7,30 @@ import {
   getDarkTowerWildMonster,
   getFrozenPeakWildMonster,
   getGardenWildMonster,
+  getSwampWildMonster,
+  getCoralWildMonster,
+  getSandValleyWildMonster,
+  getShadowGroveWildMonster,
+  getLibraryWildMonster,
+  getBasinWildMonster,
 } from "./monsters.ts";
 
 export const MAP_KEYS = {
   EMOJI_TOWN: "EMOJI_TOWN",
   HOUSE1: "HOUSE1",
   FOREST: "FOREST",
+  MISTY_SWAMP: "MISTY_SWAMP",
+  CORAL_REEF: "CORAL_REEF",
   CRYSTAL_CAVE: "CRYSTAL_CAVE",
   VOLCANIC_PASS: "VOLCANIC_PASS",
+  SAND_VALLEY: "SAND_VALLEY",
   SKY_RUINS: "SKY_RUINS",
   DARK_TOWER: "DARK_TOWER",
+  SHADOW_GROVE: "SHADOW_GROVE",
+  ANCIENT_LIBRARY: "ANCIENT_LIBRARY",
   FROZEN_PEAK: "FROZEN_PEAK",
   CELESTIAL_GARDEN: "CELESTIAL_GARDEN",
+  STARFALL_BASIN: "STARFALL_BASIN",
 };
 
 export const WEATHER = {
@@ -70,6 +82,38 @@ const WEATHER_ROLL_TABLE_BY_MAP = {
     { weather: WEATHER.SUNNY, threshold: 0.7 },
     { weather: WEATHER.NONE, threshold: 1 },
   ],
+  [MAP_KEYS.MISTY_SWAMP]: [
+    { weather: WEATHER.RAINY, threshold: 0.5 },
+    { weather: WEATHER.WINDY, threshold: 0.7 },
+    { weather: WEATHER.NONE, threshold: 1 },
+  ],
+  [MAP_KEYS.CORAL_REEF]: [
+    { weather: WEATHER.SUNNY, threshold: 0.4 },
+    { weather: WEATHER.RAINY, threshold: 0.65 },
+    { weather: WEATHER.WINDY, threshold: 0.8 },
+    { weather: WEATHER.NONE, threshold: 1 },
+  ],
+  [MAP_KEYS.SAND_VALLEY]: [
+    { weather: WEATHER.SUNNY, threshold: 0.55 },
+    { weather: WEATHER.WINDY, threshold: 0.8 },
+    { weather: WEATHER.NONE, threshold: 1 },
+  ],
+  [MAP_KEYS.SHADOW_GROVE]: [
+    { weather: WEATHER.NONE, threshold: 0.6 },
+    { weather: WEATHER.RAINY, threshold: 0.8 },
+    { weather: WEATHER.WINDY, threshold: 1 },
+  ],
+  [MAP_KEYS.ANCIENT_LIBRARY]: [
+    { weather: WEATHER.NONE, threshold: 0.7 },
+    { weather: WEATHER.WINDY, threshold: 0.85 },
+    { weather: WEATHER.SUNNY, threshold: 1 },
+  ],
+  [MAP_KEYS.STARFALL_BASIN]: [
+    { weather: WEATHER.WINDY, threshold: 0.35 },
+    { weather: WEATHER.SNOWY, threshold: 0.55 },
+    { weather: WEATHER.SUNNY, threshold: 0.75 },
+    { weather: WEATHER.NONE, threshold: 1 },
+  ],
   DEFAULT: [
     { weather: WEATHER.SUNNY, threshold: 0.25 },
     { weather: WEATHER.RAINY, threshold: 0.4 },
@@ -86,6 +130,12 @@ const BATTLE_BACKGROUND_THEME_BY_MAP = {
   [MAP_KEYS.DARK_TOWER]: "CAVE",
   [MAP_KEYS.FROZEN_PEAK]: "CAVE",
   [MAP_KEYS.CELESTIAL_GARDEN]: "RUINS",
+  [MAP_KEYS.MISTY_SWAMP]: "FOREST",
+  [MAP_KEYS.CORAL_REEF]: "FOREST",
+  [MAP_KEYS.SAND_VALLEY]: "VOLCANO",
+  [MAP_KEYS.SHADOW_GROVE]: "CAVE",
+  [MAP_KEYS.ANCIENT_LIBRARY]: "RUINS",
+  [MAP_KEYS.STARFALL_BASIN]: "RUINS",
 };
 
 const FOREST_ENCOUNTER_FACTORY_BY_MAP = {
@@ -95,6 +145,12 @@ const FOREST_ENCOUNTER_FACTORY_BY_MAP = {
   [MAP_KEYS.DARK_TOWER]: getDarkTowerWildMonster,
   [MAP_KEYS.FROZEN_PEAK]: getFrozenPeakWildMonster,
   [MAP_KEYS.CELESTIAL_GARDEN]: getGardenWildMonster,
+  [MAP_KEYS.MISTY_SWAMP]: getSwampWildMonster,
+  [MAP_KEYS.CORAL_REEF]: getCoralWildMonster,
+  [MAP_KEYS.SAND_VALLEY]: getSandValleyWildMonster,
+  [MAP_KEYS.SHADOW_GROVE]: getShadowGroveWildMonster,
+  [MAP_KEYS.ANCIENT_LIBRARY]: getLibraryWildMonster,
+  [MAP_KEYS.STARFALL_BASIN]: getBasinWildMonster,
 };
 
 export function normalizeMapKey(mapKey) {
