@@ -8,11 +8,11 @@ import {
   getMonsterMoves,
   syncMonsterMoves,
 } from "../data/monsters.ts";
-import { createWildMonsterForEncounter, rollWeatherForMap } from "../data/mapRules.ts";
+import { createWildMonsterForEncounter, rollWeatherForMapByHour } from "../data/mapRules.ts";
 import { audioManager } from "../audio/AudioManager.ts";
 import { TouchControls } from "../ui/TouchControls.ts";
 import { FONT, COLORS, TEXT_COLORS, drawPanel, drawSelection } from "../ui/UIHelper.ts";
-import { addCameraBloom, createParticleBurst } from "../ui/FXHelper.ts";
+import { addCameraBloom, createParticleBurst, createWeatherParticles } from "../ui/FXHelper.ts";
 import {
   TILE_SIZE,
   T,
@@ -49,7 +49,7 @@ export class WorldScene extends Phaser.Scene {
 
   create() {
     gameState.currentMap = this.mapKey;
-    gameState.ensureMapWeather(this.mapKey, () => rollWeatherForMap(this.mapKey));
+    gameState.ensureMapWeather(this.mapKey, () => rollWeatherForMapByHour(this.mapKey, gameState.getFieldTime().hour));
     audioManager.applySettings(gameState.audioSettings || {});
 
     const mapDef = MAPS[this.mapKey] || MAPS.EMOJI_TOWN;
@@ -76,6 +76,7 @@ export class WorldScene extends Phaser.Scene {
     this.stepCount = 0;
     this.moveInputCooldown = 0;
     this.moveRepeatDelay = 130;
+    this.fieldMinuteTickMs = 0;
 
     this.activeIceBlocks = this._buildActiveIceBlocks();
     this.hiddenItems = this._buildHiddenItems();
@@ -142,6 +143,9 @@ export class WorldScene extends Phaser.Scene {
 
     // ── 研究所の博士説明自動発火 ──
     this._checkLabProfessorIntro();
+
+    // 時刻・天候表示を初期化
+    this._refreshFieldTimeWeatherEffects(true);
   }
 
   /**
@@ -205,6 +209,7 @@ export class WorldScene extends Phaser.Scene {
     this._renderFieldActionMarkers();
     this.updateDefaultInfoMessage();
     this.setInfoText(this.defaultInfoMessage);
+    this._refreshFieldTimeWeatherEffects(true);
     audioManager.playAreaBgm(this.mapKey);
 
     // 闘技場の進行チェック
@@ -258,7 +263,78 @@ export class WorldScene extends Phaser.Scene {
       this.messageTimer.remove();
       this.messageTimer = null;
     }
+    if (this.weatherParticles) {
+      this.weatherParticles.destroy();
+      this.weatherParticles = null;
+    }
+    this.timeTintOverlay?.destroy();
+    this.weatherTintOverlay?.destroy();
+    this.timeWeatherPanel?.destroy();
+    this.timeWeatherText?.destroy();
     this._clearFieldMarkers();
+  }
+
+  _getFieldPeriodByHour(hour) {
+    if (hour >= 6 && hour < 11) return { label: "朝", emoji: "🌅", color: 0xfef3c7, alpha: 0.08 };
+    if (hour >= 11 && hour < 17) return { label: "昼", emoji: "☀️", color: 0xf8fafc, alpha: 0.03 };
+    if (hour >= 17 && hour < 20) return { label: "夕", emoji: "🌇", color: 0xfb923c, alpha: 0.1 };
+    return { label: "夜", emoji: "🌙", color: 0x1e293b, alpha: 0.2 };
+  }
+
+  _getFieldWeatherView(weather) {
+    switch (weather) {
+      case "SUNNY":
+        return { label: "晴れ", emoji: "☀️", color: 0xfbbf24, alpha: 0.08 };
+      case "RAINY":
+        return { label: "雨", emoji: "🌧️", color: 0x60a5fa, alpha: 0.14 };
+      case "WINDY":
+        return { label: "風", emoji: "🍃", color: 0x4ade80, alpha: 0.09 };
+      case "SNOWY":
+        return { label: "雪", emoji: "❄️", color: 0xbfdbfe, alpha: 0.15 };
+      default:
+        return { label: "穏やか", emoji: "⛅", color: 0x94a3b8, alpha: 0.06 };
+    }
+  }
+
+  _refreshFieldTimeWeatherEffects(force = false) {
+    const timeInfo = gameState.getFieldTime();
+    const weather = gameState.getMapWeather(this.mapKey) || "NONE";
+    const period = this._getFieldPeriodByHour(timeInfo.hour);
+    const weatherView = this._getFieldWeatherView(weather);
+    const weatherChanged = force || this.lastFieldWeather !== weather;
+
+    if (this.timeWeatherText) {
+      this.timeWeatherText.setText(
+        `${period.emoji} ${period.label} ${gameState.getFieldTimeLabel()}   ${weatherView.emoji} ${weatherView.label}`,
+      );
+    }
+
+    if (this.timeTintOverlay) {
+      this.timeTintOverlay
+        .setFillStyle(period.color, period.alpha)
+        .setVisible(true);
+    }
+
+    if (this.weatherTintOverlay) {
+      this.weatherTintOverlay
+        .setFillStyle(weatherView.color, weatherView.alpha)
+        .setVisible(weather !== "NONE");
+    }
+
+    if (weatherChanged) {
+      if (this.weatherParticles) {
+        this.weatherParticles.destroy();
+        this.weatherParticles = null;
+      }
+      if (weather !== "NONE") {
+        this.weatherParticles = createWeatherParticles(this, weather);
+        if (this.weatherParticles?.manager) {
+          this.weatherParticles.manager.setScrollFactor(0);
+          this.weatherParticles.manager.setDepth(6);
+        }
+      }
+      this.lastFieldWeather = weather;
+    }
   }
 
   _coordKey(x, y) {
@@ -580,6 +656,15 @@ export class WorldScene extends Phaser.Scene {
       });
     }
 
+    this.timeTintOverlay = this.add.rectangle(width / 2, height / 2, width, height, 0xf8fafc, 0)
+      .setScrollFactor(0)
+      .setDepth(5)
+      .setBlendMode(Phaser.BlendModes.SCREEN);
+
+    this.weatherTintOverlay = this.add.rectangle(width / 2, height / 2, width, height, 0x94a3b8, 0)
+      .setScrollFactor(0)
+      .setDepth(5);
+
   }
 
   createPlayer() {
@@ -726,7 +811,7 @@ export class WorldScene extends Phaser.Scene {
   createUi() {
     // 既存のUI要素を破棄
     if (this.uiContainer) this.uiContainer.destroy(true);
-    this.uiContainer = this.add.container(0, 0).setScrollFactor(0);
+    this.uiContainer = this.add.container(0, 0).setScrollFactor(0).setDepth(30);
 
     const { width, height } = this.scale;
 
@@ -774,7 +859,30 @@ export class WorldScene extends Phaser.Scene {
     this.speakerNameText.setVisible(false);
     this.uiContainer.add(this.speakerNameText);
 
+    const weatherPanelWidth = 230;
+    const weatherPanelX = width - weatherPanelWidth - 12;
+    const weatherPanelY = 10;
+
+    this.timeWeatherPanel = this.add.graphics();
+    drawPanel(this.timeWeatherPanel, weatherPanelX, weatherPanelY, weatherPanelWidth, 34, {
+      radius: 10,
+      headerHeight: 0,
+      bgAlpha: 0.92,
+      glow: true,
+      borderColor: COLORS.BLUE_LIGHT,
+    });
+    this.uiContainer.add(this.timeWeatherPanel);
+
+    this.timeWeatherText = this.add.text(weatherPanelX + 12, weatherPanelY + 10, "", {
+      fontFamily: FONT.UI,
+      fontSize: 12,
+      color: "#e2e8f0",
+      fontStyle: "700",
+    });
+    this.uiContainer.add(this.timeWeatherText);
+
     this.updateDefaultInfoMessage();
+    this._refreshFieldTimeWeatherEffects(true);
   }
 
   updateDefaultInfoMessage() {
@@ -952,6 +1060,17 @@ export class WorldScene extends Phaser.Scene {
   update(time, delta) {
     // プレイ時間カウント
     gameState.playTimeMs += delta;
+    this.fieldMinuteTickMs += delta;
+    if (this.fieldMinuteTickMs >= 1200) {
+      const passedMinutes = Math.floor(this.fieldMinuteTickMs / 1200);
+      this.fieldMinuteTickMs -= passedMinutes * 1200;
+      const advanced = gameState.advanceFieldTime(passedMinutes);
+      if (advanced.hourChanged) {
+        const weather = rollWeatherForMapByHour(this.mapKey, advanced.currentHour);
+        gameState.setMapWeather(this.mapKey, weather);
+      }
+      this._refreshFieldTimeWeatherEffects(advanced.hourChanged);
+    }
 
     // タッチ操作のconfirm/cancel
     if (this.touchControls && this.touchControls.visible) {

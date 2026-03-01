@@ -113,6 +113,76 @@ export function rollWeatherForMap(mapKey, randomValue = Math.random()) {
   return found ? found.weather : WEATHER.NONE;
 }
 
+function normalizeHour(hour) {
+  if (!Number.isFinite(hour)) return 12;
+  const normalized = Math.floor(hour) % 24;
+  return normalized >= 0 ? normalized : normalized + 24;
+}
+
+function getTimeWeatherMultiplier(weather, hour) {
+  const h = normalizeHour(hour);
+  const isMorning = h >= 6 && h < 11;
+  const isDaytime = h >= 11 && h < 17;
+  const isEvening = h >= 17 && h < 20;
+
+  if (isMorning) {
+    if (weather === WEATHER.SUNNY) return 1.45;
+    if (weather === WEATHER.RAINY) return 0.85;
+    if (weather === WEATHER.WINDY) return 0.95;
+    return 1;
+  }
+
+  if (isDaytime) {
+    if (weather === WEATHER.SUNNY) return 1.3;
+    if (weather === WEATHER.RAINY) return 0.9;
+    if (weather === WEATHER.SNOWY) return 0.95;
+    if (weather === WEATHER.NONE) return 0.95;
+    return 1;
+  }
+
+  if (isEvening) {
+    if (weather === WEATHER.WINDY) return 1.25;
+    if (weather === WEATHER.RAINY) return 1.1;
+    if (weather === WEATHER.SUNNY) return 0.9;
+    return 1;
+  }
+
+  if (weather === WEATHER.RAINY) return 1.25;
+  if (weather === WEATHER.WINDY) return 1.2;
+  if (weather === WEATHER.SNOWY) return 1.3;
+  if (weather === WEATHER.SUNNY) return 0.55;
+  if (weather === WEATHER.NONE) return 1.05;
+  return 1;
+}
+
+export function rollWeatherForMapByHour(mapKey, hour, randomValue = Math.random()) {
+  const safeMapKey = normalizeMapKey(mapKey);
+  const table = WEATHER_ROLL_TABLE_BY_MAP[safeMapKey] || WEATHER_ROLL_TABLE_BY_MAP.DEFAULT;
+
+  let previousThreshold = 0;
+  const weightedTable = table.map((entry) => {
+    const baseWeight = Math.max(0, entry.threshold - previousThreshold);
+    previousThreshold = entry.threshold;
+    const adjustedWeight = baseWeight * getTimeWeatherMultiplier(entry.weather, hour);
+    return {
+      weather: entry.weather,
+      weight: adjustedWeight,
+    };
+  });
+
+  const totalWeight = weightedTable.reduce((sum, entry) => sum + entry.weight, 0);
+  if (totalWeight <= 0) return WEATHER.NONE;
+
+  const safeRandom = Math.min(0.999999, Math.max(0, Number.isFinite(randomValue) ? randomValue : 0));
+  let cursor = safeRandom * totalWeight;
+  for (const entry of weightedTable) {
+    cursor -= entry.weight;
+    if (cursor < 0) return entry.weather;
+  }
+
+  return weightedTable[weightedTable.length - 1]?.weather || WEATHER.NONE;
+}
+
 export function createWildMonsterForEncounter(mapKey, isForest = false) {
   if (!isForest) return getRandomWildMonster();
 

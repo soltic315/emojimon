@@ -20,7 +20,9 @@ const MAX_ITEM_QUANTITY = 999;
 const MAX_MONEY = 9_999_999;
 const MAX_COUNTER = 999_999;
 const MAX_PLAY_TIME_MS = 31_536_000_000; // 365日分
-const VALID_WEATHER_KEYS = ["NONE", "SUNNY", "RAINY", "WINDY"];
+const VALID_WEATHER_KEYS = ["NONE", "SUNNY", "RAINY", "WINDY", "SNOWY"];
+const MINUTES_PER_DAY = 24 * 60;
+const DEFAULT_FIELD_TIME_MINUTES = 8 * 60;
 
 function sanitizeGameplaySettings(raw) {
   const speed = raw?.battleSpeed;
@@ -34,6 +36,12 @@ function sanitizeGameplaySettings(raw) {
 function clampInt(value, min, max, fallback = min) {
   if (!Number.isFinite(value)) return fallback;
   return Math.min(max, Math.max(min, Math.floor(value)));
+}
+
+function normalizeFieldTimeMinutes(value) {
+  if (!Number.isFinite(value)) return DEFAULT_FIELD_TIME_MINUTES;
+  const normalized = Math.floor(value) % MINUTES_PER_DAY;
+  return normalized >= 0 ? normalized : normalized + MINUTES_PER_DAY;
 }
 
 function sanitizeIdList(raw) {
@@ -157,6 +165,7 @@ class GameState {
     this.playerDirection = "down";
     this.currentMap = "EMOJI_TOWN";
     this.mapWeatherByMap = {};
+    this.fieldTimeMinutes = DEFAULT_FIELD_TIME_MINUTES;
     this.inBattle = false;
     this.activeBattle = null;
     this.party = [];
@@ -231,6 +240,7 @@ class GameState {
     this.playerDirection = "down";
     this.currentMap = "EMOJI_TOWN";
     this.mapWeatherByMap = {};
+    this.fieldTimeMinutes = DEFAULT_FIELD_TIME_MINUTES;
     this.inBattle = false;
     this.activeBattle = null;
 
@@ -435,6 +445,46 @@ class GameState {
 
     const rolledWeather = typeof weatherFactory === "function" ? weatherFactory() : null;
     return this.setMapWeather(mapKey, rolledWeather);
+  }
+
+  getFieldTimeMinutes() {
+    return normalizeFieldTimeMinutes(this.fieldTimeMinutes);
+  }
+
+  setFieldTimeMinutes(minutes) {
+    this.fieldTimeMinutes = normalizeFieldTimeMinutes(minutes);
+    return this.fieldTimeMinutes;
+  }
+
+  advanceFieldTime(minutes) {
+    const previousMinutes = this.getFieldTimeMinutes();
+    const nextMinutes = normalizeFieldTimeMinutes(previousMinutes + (Number.isFinite(minutes) ? minutes : 0));
+    this.fieldTimeMinutes = nextMinutes;
+    const previousHour = Math.floor(previousMinutes / 60);
+    const currentHour = Math.floor(nextMinutes / 60);
+    return {
+      previousMinutes,
+      currentMinutes: nextMinutes,
+      previousHour,
+      currentHour,
+      hourChanged: previousHour !== currentHour,
+    };
+  }
+
+  getFieldTime() {
+    const totalMinutes = this.getFieldTimeMinutes();
+    const hour = Math.floor(totalMinutes / 60);
+    const minute = totalMinutes % 60;
+    return {
+      totalMinutes,
+      hour,
+      minute,
+    };
+  }
+
+  getFieldTimeLabel() {
+    const { hour, minute } = this.getFieldTime();
+    return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
   }
 
   /** 図鑑: モンスターを見た */
@@ -753,6 +803,7 @@ class GameState {
         playerDirection: this.playerDirection,
         currentMap: this.currentMap,
         mapWeatherByMap: { ...(this.mapWeatherByMap || {}) },
+        fieldTimeMinutes: this.getFieldTimeMinutes(),
         party: this.party.map((m) => ({
           speciesId: m.species ? m.species.id : null,
           level: m.level,
@@ -820,6 +871,7 @@ class GameState {
         ? loadedDirection
         : "down";
       this.currentMap = data.currentMap || "EMOJI_TOWN";
+      this.fieldTimeMinutes = normalizeFieldTimeMinutes(data.fieldTimeMinutes);
       const rawMapWeather = data.mapWeatherByMap;
       this.mapWeatherByMap = {};
       if (rawMapWeather && typeof rawMapWeather === "object") {

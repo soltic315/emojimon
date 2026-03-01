@@ -4,6 +4,7 @@ import {
   WEATHER,
   getBattleBackgroundTheme,
   normalizeMapKey,
+  rollWeatherForMapByHour,
   rollWeatherForMap,
 } from "../js/data/mapRules.ts";
 
@@ -31,5 +32,15 @@ describe("mapRules helpers", () => {
     expect(rollWeatherForMap("UNKNOWN", 0.3)).toBe(WEATHER.RAINY);
     expect(rollWeatherForMap("UNKNOWN", 0.45)).toBe(WEATHER.WINDY);
     expect(rollWeatherForMap("UNKNOWN", 0.8)).toBe(WEATHER.NONE);
+  });
+
+  it("時間帯によって同じ乱数でも天候が変化する", () => {
+    expect(rollWeatherForMapByHour("UNKNOWN", 8, 0.3)).toBe(WEATHER.SUNNY);
+    expect(rollWeatherForMapByHour("UNKNOWN", 22, 0.3)).toBe(WEATHER.RAINY);
+  });
+
+  it("氷峰では夜間の方がSNOWYになりやすい", () => {
+    expect(rollWeatherForMapByHour(MAP_KEYS.FROZEN_PEAK, 12, 0.46)).toBe(WEATHER.WINDY);
+    expect(rollWeatherForMapByHour(MAP_KEYS.FROZEN_PEAK, 23, 0.46)).toBe(WEATHER.SNOWY);
   });
 });
