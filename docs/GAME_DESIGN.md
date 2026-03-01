@@ -305,9 +305,11 @@ nextLevelExp = 10 + 8 × level
 - 既存キーを削除しない
 - 型互換を壊さない
 - IDは英大文字スネークケースを維持
+- 同一ファイル内でID重複を禁止する（moves / monsters / items / abilities）
 - モンスターの `learnset` は `{ "move": "MOVE_ID", "level": number }` 形式を正とする
 - `level` は 1 以上の整数で、該当レベル到達時に技を習得する
 - 旧形式（技ID文字列のみの配列）は廃止し、起動時検証で不正として扱う
+- 参照整合性を必須とする（例: `learnset.move` は moves、`ability.abilityId` は abilities、`heldItems.itemId` は items、進化先/レシピ/出現プールIDは monsters に存在すること）
 
 ### 8.2 対象ファイル
 

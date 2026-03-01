@@ -148,6 +148,82 @@ function buildDailyChallenge(dateKey) {
   };
 }
 
+const DEFAULT_STORY_FLAGS = Object.freeze({
+  prologueDone: false,
+  starterChosen: false,
+  rivalIntroDone: false,
+  townRivalBeaten: false,
+  forestCrystalFound: false,
+  forestRivalBeaten: false,
+  caveEvilBeaten: false,
+  caveRivalBeaten3: false,
+  darkTowerGruntBeaten: false,
+  darkTowerVoidBeaten: false,
+  volcanoEvilBossBeaten: false,
+  frozenPeakGymCleared: false,
+  frozenPeakRivalBeaten: false,
+  frozenPeakIceQuest: false,
+  ruinsFinalDone: false,
+  legendaryDefeated: false,
+  forestScoutBeaten: false,
+  caveScholarBeaten: false,
+  darkTowerSentinelBeaten: false,
+  volcanicScoutBeaten: false,
+  frozenSageBeaten: false,
+  ruinsGuardianBeaten: false,
+  starterSpeciesId: null,
+  forestSwimTreasureTaken: false,
+  caveHiddenItemFound: false,
+  swampRangerBeaten: false,
+  swampEvilBeaten: false,
+  swampHerbFound: false,
+  coralDiverBeaten: false,
+  coralWaterQuest: false,
+  coralPearlFound: false,
+  desertNomadBeaten: false,
+  desertRivalBeaten: false,
+  desertRelicFound: false,
+  shadowBeastBeaten: false,
+  shadowLabFound: false,
+  shadowDataFound: false,
+  libraryScholarBeaten: false,
+  libraryPuzzleSolved: false,
+  eliteFourWind: false,
+  eliteFourFlame: false,
+  eliteFourTide: false,
+  eliteFourFrost: false,
+  basinFinalRival: false,
+  basinStarFound: false,
+  introNarrationDone: false,
+  tutorialMoveDone: false,
+  tutorialBattleDone: false,
+  tutorialCatchDone: false,
+  tutorialMenuDone: false,
+  momFarewellDone: false,
+});
+
+function createDefaultStoryFlags() {
+  return { ...DEFAULT_STORY_FLAGS };
+}
+
+function sanitizeStoryFlags(raw) {
+  const sanitized = createDefaultStoryFlags();
+  if (!raw || typeof raw !== "object") return sanitized;
+
+  Object.keys(sanitized).forEach((key) => {
+    if (key === "starterSpeciesId") {
+      const starterSpeciesId = raw[key];
+      sanitized.starterSpeciesId = typeof starterSpeciesId === "string" && starterSpeciesId.length > 0
+        ? starterSpeciesId
+        : null;
+      return;
+    }
+    sanitized[key] = !!raw[key];
+  });
+
+  return sanitized;
+}
+
 class GameState {
   constructor() {
     this.playerName = "ユウ";
@@ -183,62 +259,7 @@ class GameState {
       seVolume: 0.5,
     };
     this.gameplaySettings = { ...DEFAULT_GAMEPLAY_SETTINGS };
-    // ── ストーリー進行フラグ ──
-    this.storyFlags = {
-      prologueDone: false,          // プロローグ（博士の話）完了
-      starterChosen: false,         // スターターモンスター選択済み
-      rivalIntroDone: false,        // ライバル「レン」との初対面済み
-      townRivalBeaten: false,       // タウンでライバルを撃破
-      forestCrystalFound: false,    // 森のエモじクリスタル解放
-      forestRivalBeaten: false,     // 森でライバルを撃破
-      caveEvilBeaten: false,        // 洞窟でダーク団幹部「シャドウ」撃破
-      caveRivalBeaten3: false,      // 洞窟でライバル3戦目
-      darkTowerGruntBeaten: false,  // ダーク団アジトしたっぱ撃破
-      darkTowerVoidBeaten: false,   // ダーク団幹部「ヴォイド」撃破 [3/5]
-      volcanoEvilBossBeaten: false, // マグマ峠でダーク団ボス「ライオット」撃破 [4/5]
-      frozenPeakGymCleared: false,  // 氷峰ジムクリア
-      frozenPeakRivalBeaten: false, // 氷峰でライバル撃破
-      frozenPeakIceQuest: false,    // 氷峰こおりクエスト完了
-      ruinsFinalDone: false,        // 遺跡で最終決戦完了 [5/5]
-      legendaryDefeated: false,     // 伝説のモンスター撃破（ポストゲーム）
-      forestScoutBeaten: false,     // 森の訓練トレーナー撃破
-      caveScholarBeaten: false,     // 洞窟の戦術家トレーナー撃破
-      darkTowerSentinelBeaten: false, // ダークタワーの番兵撃破
-      volcanicScoutBeaten: false,   // マグマ峠の斥候トレーナー撃破
-      frozenSageBeaten: false,      // 氷峰の賢者トレーナー撃破
-      ruinsGuardianBeaten: false,   // 遺跡の守人トレーナー撃破
-      starterSpeciesId: null,       // 選んだスターターの種族ID
-      forestSwimTreasureTaken: false, // 森の泳ぎ探索報酬
-      caveHiddenItemFound: false,     // 洞窟の暗闘アイテム
-      // ── 新エリア進行フラグ ──
-      swampRangerBeaten: false,       // 霧の湿地レンジャー撃破
-      swampEvilBeaten: false,         // 霧の湿地ダーク団撃破
-      swampHerbFound: false,          // 湿地の薬草クエスト完了
-      coralDiverBeaten: false,        // 珊瑚の浜ダイバー撃破
-      coralWaterQuest: false,         // 珊瑚の浜水中探索完了
-      coralPearlFound: false,         // 珊瑚の真珠発見
-      desertNomadBeaten: false,       // 砂塵の谷遊牧民撃破
-      desertRivalBeaten: false,       // 砂塵の谷ライバル撃破
-      desertRelicFound: false,        // 砂漠の遺物発見
-      shadowBeastBeaten: false,       // 影の森ボス撃破
-      shadowLabFound: false,          // 影の森研究所発見
-      shadowDataFound: false,         // 影のデータ収集完了
-      libraryScholarBeaten: false,    // 古代図書館学者撃破
-      libraryPuzzleSolved: false,     // 図書館テレポートパズル解決
-      eliteFourWind: false,           // 四天王ハヤテ撃破
-      eliteFourFlame: false,          // 四天王カグラ撃破
-      eliteFourTide: false,           // 四天王ミナモ撃破
-      eliteFourFrost: false,          // 四天王ヒョウガ撃破
-      basinFinalRival: false,         // 星降り盆地最終ライバル撃破
-      basinStarFound: false,          // 星の欠片発見
-      // ── チュートリアル進行フラグ ──
-      introNarrationDone: false,      // 初回ナレーション済み
-      tutorialMoveDone: false,        // 移動チュートリアル済み
-      tutorialBattleDone: false,      // 初回バトルチュートリアル済み
-      tutorialCatchDone: false,       // 捕獲チュートリアル済み
-      tutorialMenuDone: false,        // メニューチュートリアル済み
-      momFarewellDone: false,         // 母の見送りイベント済み
-    };
+    this.storyFlags = createDefaultStoryFlags();
     this.refreshDailyChallenge();
     this.loadAudioSettings();
   }
@@ -281,62 +302,7 @@ class GameState {
     this.refreshDailyChallenge();
     this.audioSettings = prevAudioSettings;
     this.gameplaySettings = sanitizeGameplaySettings(prevGameplaySettings);
-    // ストーリーフラグをリセット
-    this.storyFlags = {
-      prologueDone: false,
-      starterChosen: false,
-      rivalIntroDone: false,
-      townRivalBeaten: false,
-      forestCrystalFound: false,
-      forestRivalBeaten: false,
-      caveEvilBeaten: false,
-      caveRivalBeaten3: false,
-      darkTowerGruntBeaten: false,
-      darkTowerVoidBeaten: false,
-      volcanoEvilBossBeaten: false,
-      frozenPeakGymCleared: false,
-      frozenPeakRivalBeaten: false,
-      frozenPeakIceQuest: false,
-      ruinsFinalDone: false,
-      legendaryDefeated: false,
-      forestScoutBeaten: false,
-      caveScholarBeaten: false,
-      darkTowerSentinelBeaten: false,
-      volcanicScoutBeaten: false,
-      frozenSageBeaten: false,
-      ruinsGuardianBeaten: false,
-      starterSpeciesId: null,
-      forestSwimTreasureTaken: false,
-      caveHiddenItemFound: false,
-      // 新エリアフラグ
-      swampRangerBeaten: false,
-      swampEvilBeaten: false,
-      swampHerbFound: false,
-      coralDiverBeaten: false,
-      coralWaterQuest: false,
-      coralPearlFound: false,
-      desertNomadBeaten: false,
-      desertRivalBeaten: false,
-      desertRelicFound: false,
-      shadowBeastBeaten: false,
-      shadowLabFound: false,
-      shadowDataFound: false,
-      libraryScholarBeaten: false,
-      libraryPuzzleSolved: false,
-      eliteFourWind: false,
-      eliteFourFlame: false,
-      eliteFourTide: false,
-      eliteFourFrost: false,
-      basinFinalRival: false,
-      basinStarFound: false,
-      // チュートリアルフラグ
-      introNarrationDone: false,
-      tutorialMoveDone: false,
-      tutorialBattleDone: false,
-      tutorialCatchDone: false,
-      tutorialMenuDone: false,
-      momFarewellDone: false,
-    };
+    this.storyFlags = createDefaultStoryFlags();
   }
 
   refreshDailyChallenge() {
@@ -983,40 +949,7 @@ class GameState {
       this.gameplaySettings = sanitizeGameplaySettings(data.gameplaySettings);
       this.saveAudioSettings();
       // ストーリーフラグのロード（古いセーブデータには存在しない可能性）
-      this.storyFlags = {
-        prologueDone: !!data.storyFlags?.prologueDone,
-        starterChosen: !!data.storyFlags?.starterChosen,
-        rivalIntroDone: !!data.storyFlags?.rivalIntroDone,
-        townRivalBeaten: !!data.storyFlags?.townRivalBeaten,
-        forestCrystalFound: !!data.storyFlags?.forestCrystalFound,
-        forestRivalBeaten: !!data.storyFlags?.forestRivalBeaten,
-        caveEvilBeaten: !!data.storyFlags?.caveEvilBeaten,
-        caveRivalBeaten3: !!data.storyFlags?.caveRivalBeaten3,
-        darkTowerGruntBeaten: !!data.storyFlags?.darkTowerGruntBeaten,
-        darkTowerVoidBeaten: !!data.storyFlags?.darkTowerVoidBeaten,
-        volcanoEvilBossBeaten: !!data.storyFlags?.volcanoEvilBossBeaten,
-        frozenPeakGymCleared: !!data.storyFlags?.frozenPeakGymCleared,
-        frozenPeakRivalBeaten: !!data.storyFlags?.frozenPeakRivalBeaten,
-        frozenPeakIceQuest: !!data.storyFlags?.frozenPeakIceQuest,
-        ruinsFinalDone: !!data.storyFlags?.ruinsFinalDone,
-        legendaryDefeated: !!data.storyFlags?.legendaryDefeated,
-        forestScoutBeaten: !!data.storyFlags?.forestScoutBeaten,
-        caveScholarBeaten: !!data.storyFlags?.caveScholarBeaten,
-        darkTowerSentinelBeaten: !!data.storyFlags?.darkTowerSentinelBeaten,
-        volcanicScoutBeaten: !!data.storyFlags?.volcanicScoutBeaten,
-        frozenSageBeaten: !!data.storyFlags?.frozenSageBeaten,
-        ruinsGuardianBeaten: !!data.storyFlags?.ruinsGuardianBeaten,
-        starterSpeciesId: data.storyFlags?.starterSpeciesId || null,
-        forestSwimTreasureTaken: !!data.storyFlags?.forestSwimTreasureTaken,
-        caveHiddenItemFound: !!data.storyFlags?.caveHiddenItemFound,
-        // チュートリアルフラグ
-        introNarrationDone: !!data.storyFlags?.introNarrationDone,
-        tutorialMoveDone: !!data.storyFlags?.tutorialMoveDone,
-        tutorialBattleDone: !!data.storyFlags?.tutorialBattleDone,
-        tutorialCatchDone: !!data.storyFlags?.tutorialCatchDone,
-        tutorialMenuDone: !!data.storyFlags?.tutorialMenuDone,
-        momFarewellDone: !!data.storyFlags?.momFarewellDone,
-      };
+      this.storyFlags = sanitizeStoryFlags(data.storyFlags);
       // 古いセーブ互換: パーティがある場合はstarterChosenをtrueに
       if (this.party.length > 0 && !this.storyFlags.starterChosen) {
         this.storyFlags.starterChosen = true;

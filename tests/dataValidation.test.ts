@@ -89,4 +89,18 @@ describe("data validation", () => {
     raw.moves.moves[0].accuracy = 1.5;
     expect(() => validateGameData(raw)).toThrowError(/検証に失敗/);
   });
+
+  it("learnsetが存在しない技IDを参照した場合はエラーを投げる", () => {
+    const raw = createValidData();
+    raw.monsters.monsters[0].learnset[0].move = "UNKNOWN_MOVE";
+
+    expect(() => validateGameData(raw)).toThrowError(/learnset/);
+  });
+
+  it("abilityが存在しない特性IDを参照した場合はエラーを投げる", () => {
+    const raw = createValidData();
+    raw.monsters.monsters[0].ability[0].abilityId = "UNKNOWN_ABILITY";
+
+    expect(() => validateGameData(raw)).toThrowError(/abilityId/);
+  });
 });

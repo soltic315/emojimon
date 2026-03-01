@@ -146,6 +146,109 @@ function formatIssues(label, issues) {
   return [headline, ...details].join("\n");
 }
 
+function collectDuplicateIdErrors(label, ids) {
+  const seen = new Set();
+  const duplicated = new Set();
+
+  ids.forEach((id) => {
+    if (seen.has(id)) {
+      duplicated.add(id);
+      return;
+    }
+    seen.add(id);
+  });
+
+  return [...duplicated].map((id) => `・${label}: ID "${id}" が重複しています`);
+}
+
+function collectReferenceIntegrityErrors(validated) {
+  const errors = [];
+  const moves = validated.moves.moves;
+  const monsters = validated.monsters.monsters;
+  const items = validated.items.items;
+  const abilities = validated.abilities.abilities;
+
+  const moveIdSet = new Set(moves.map((move) => move.id));
+  const monsterIdSet = new Set(monsters.map((monster) => monster.id));
+  const itemIdSet = new Set(items.map((item) => item.id));
+  const abilityIdSet = new Set(abilities.map((ability) => ability.id));
+
+  errors.push(...collectDuplicateIdErrors("moves.json", moves.map((move) => move.id)));
+  errors.push(...collectDuplicateIdErrors("monsters.json", monsters.map((monster) => monster.id)));
+  errors.push(...collectDuplicateIdErrors("items.json", items.map((item) => item.id)));
+  errors.push(...collectDuplicateIdErrors("abilities.json", abilities.map((ability) => ability.id)));
+
+  monsters.forEach((monster, monsterIndex) => {
+    monster.learnset.forEach((entry, learnsetIndex) => {
+      if (!moveIdSet.has(entry.move)) {
+        errors.push(`・monsters.json: monsters[${monsterIndex}].learnset[${learnsetIndex}].move "${entry.move}" が moves.json に存在しません`);
+      }
+    });
+
+    monster.ability.forEach((entry, abilityIndex) => {
+      if (!abilityIdSet.has(entry.abilityId)) {
+        errors.push(`・monsters.json: monsters[${monsterIndex}].ability[${abilityIndex}].abilityId "${entry.abilityId}" が abilities.json に存在しません`);
+      }
+    });
+
+    monster.heldItems.forEach((entry, heldItemIndex) => {
+      if (!itemIdSet.has(entry.itemId)) {
+        errors.push(`・monsters.json: monsters[${monsterIndex}].heldItems[${heldItemIndex}].itemId "${entry.itemId}" が items.json に存在しません`);
+      }
+    });
+
+    if (Array.isArray(monster.recipe)) {
+      monster.recipe.forEach((pair, pairIndex) => {
+        pair.forEach((recipeMonster, recipeMonsterIndex) => {
+          if (!monsterIdSet.has(recipeMonster.monsterId)) {
+            errors.push(`・monsters.json: monsters[${monsterIndex}].recipe[${pairIndex}][${recipeMonsterIndex}].monsterId "${recipeMonster.monsterId}" が monsters.json に存在しません`);
+          }
+        });
+      });
+    }
+
+    if (monster.evolution?.evolvesTo && !monsterIdSet.has(monster.evolution.evolvesTo)) {
+      errors.push(`・monsters.json: monsters[${monsterIndex}].evolution.evolvesTo "${monster.evolution.evolvesTo}" が monsters.json に存在しません`);
+    }
+
+    if (monster.evolution?.condition?.type === "ITEM" && typeof monster.evolution.condition.value === "string") {
+      const evolutionItemId = monster.evolution.condition.value;
+      if (!itemIdSet.has(evolutionItemId)) {
+        errors.push(`・monsters.json: monsters[${monsterIndex}].evolution.condition.value "${evolutionItemId}" が items.json に存在しません`);
+      }
+    }
+  });
+
+  const pools = [
+    ["wildPoolIds", validated.monsters.wildPoolIds || []],
+    ["forestPoolIds", validated.monsters.forestPoolIds || []],
+    ["cavePoolIds", validated.monsters.cavePoolIds || []],
+    ["volcanoPoolIds", validated.monsters.volcanoPoolIds || []],
+    ["ruinsPoolIds", validated.monsters.ruinsPoolIds || []],
+    ["darkTowerPoolIds", validated.monsters.darkTowerPoolIds || []],
+    ["frozenPeakPoolIds", validated.monsters.frozenPeakPoolIds || []],
+    ["gardenPoolIds", validated.monsters.gardenPoolIds || []],
+  ];
+
+  pools.forEach(([poolName, poolIds]) => {
+    poolIds.forEach((monsterId, poolIndex) => {
+      if (!monsterIdSet.has(monsterId)) {
+        errors.push(`・monsters.json: ${poolName}[${poolIndex}] "${monsterId}" が monsters.json に存在しません`);
+      }
+    });
+  });
+
+  if (validated.monsters.gymBoss && !monsterIdSet.has(validated.monsters.gymBoss.id)) {
+    errors.push(`・monsters.json: gymBoss.id "${validated.monsters.gymBoss.id}" が monsters.json に存在しません`);
+  }
+
+  if (validated.monsters.gymBoss2 && !monsterIdSet.has(validated.monsters.gymBoss2.id)) {
+    errors.push(`・monsters.json: gymBoss2.id "${validated.monsters.gymBoss2.id}" が monsters.json に存在しません`);
+  }
+
+  return errors;
+}
+
 export function validateGameData(raw) {
   const movesResult = movesDataSchema.safeParse(raw.moves);
   const monstersResult = monstersDataSchema.safeParse(raw.monsters);
@@ -162,10 +265,18 @@ export function validateGameData(raw) {
     throw new Error(`ゲームデータ検証に失敗しました。\n${errors.join("\n")}`);
   }
 
-  return {
+  const validated = {
     moves: movesResult.data,
     monsters: monstersResult.data,
     items: itemsResult.data,
     abilities: abilitiesResult.data,
   };
+
+  errors.push(...collectReferenceIntegrityErrors(validated));
+
+  if (errors.length > 0) {
+    throw new Error(`ゲームデータ検証に失敗しました。\n${errors.join("\n")}`);
+  }
+
+  return validated;
 }

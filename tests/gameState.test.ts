@@ -89,4 +89,26 @@ describe("gameState map weather", () => {
     expect(loaded).toBe(true);
     expect(gameState.playerName).toBe("復旧元データ");
   });
+
+  it("ロード時にストーリー進行フラグを欠落なく復元する", () => {
+    gameState.storyFlags.shadowDataFound = true;
+    gameState.storyFlags.libraryPuzzleSolved = true;
+    gameState.storyFlags.eliteFourFrost = true;
+    gameState.storyFlags.starterSpeciesId = "MON_TEST";
+
+    expect(gameState.save()).toBe(true);
+
+    gameState.storyFlags.shadowDataFound = false;
+    gameState.storyFlags.libraryPuzzleSolved = false;
+    gameState.storyFlags.eliteFourFrost = false;
+    gameState.storyFlags.starterSpeciesId = null;
+
+    const loaded = gameState.load();
+
+    expect(loaded).toBe(true);
+    expect(gameState.storyFlags.shadowDataFound).toBe(true);
+    expect(gameState.storyFlags.libraryPuzzleSolved).toBe(true);
+    expect(gameState.storyFlags.eliteFourFrost).toBe(true);
+    expect(gameState.storyFlags.starterSpeciesId).toBe("MON_TEST");
+  });
 });
