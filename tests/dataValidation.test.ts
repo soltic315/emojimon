@@ -29,7 +29,7 @@ function createValidData() {
             defense: 40,
             speed: 40,
           },
-          learnset: ["TACKLE"],
+          learnset: [{ move: "TACKLE", level: 1 }],
           catchRate: 0.3,
         },
       ],

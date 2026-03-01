@@ -94,6 +94,7 @@ export interface MonsterSpecies {
   abilityId: string;
   baseStats: BaseStats;
   learnset: Move[];
+  learnsetLevels?: number[];
   description: string;
   catchRate: number;
   evolveTo: string | null;

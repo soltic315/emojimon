@@ -1,7 +1,7 @@
 import { gameState } from "../../state/gameState.ts";
-import { getBattleBackgroundTheme, rollWeatherForMap } from "../../data/mapRules.ts";
+import { WEATHER, getBattleBackgroundTheme, rollWeatherForMap } from "../../data/mapRules.ts";
 import { FONT } from "../../ui/UIHelper.ts";
-import { WEATHER, WEATHER_INFO } from "./battleConstants.ts";
+import { WEATHER_INFO } from "./battleConstants.ts";
 
 /** 背景の環境演出を生成 */
 export function createBattleAtmosphere(scene: any, width: number, height: number) {

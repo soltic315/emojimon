@@ -205,8 +205,17 @@ export function getUnlockedMoveCount(level, totalMoves) {
 
 export function getMovesForLevel(species, level) {
   if (!species || !Array.isArray(species.learnset)) return [];
-  const unlockedCount = getUnlockedMoveCount(level, species.learnset.length);
-  return species.learnset.slice(0, unlockedCount);
+  const safeLevel = Math.max(1, Math.floor(level || 1));
+  const levels = Array.isArray(species.learnsetLevels) ? species.learnsetLevels : [];
+
+  return species.learnset.filter((_, index) => {
+    const fallbackLevel = 1 + index * 2;
+    const rawLevel = levels[index];
+    const learnLevel = Number.isFinite(rawLevel)
+      ? Math.max(1, Math.floor(rawLevel))
+      : fallbackLevel;
+    return learnLevel <= safeLevel;
+  });
 }
 
 export function getMonsterMoves(monsterEntry) {
@@ -268,7 +277,20 @@ export function initMonstersFromJson(json) {
   });
 
   json.monsters.forEach((raw) => {
-    const learnset = (raw.learnset || []).map((moveId) => MOVES[moveId]).filter(Boolean);
+    const learnsetEntries = (raw.learnset || [])
+      .map((entry, index) => {
+        const moveId = entry?.move;
+        const defaultLevel = 1 + index * 2;
+        const rawLevel = entry?.level;
+        const level = Number.isFinite(rawLevel) ? Math.max(1, Math.floor(rawLevel)) : defaultLevel;
+        const move = MOVES[moveId];
+        if (!move) return null;
+        return { move, level };
+      })
+      .filter(Boolean);
+
+    const learnset = learnsetEntries.map((entry) => entry.move);
+    const learnsetLevels = learnsetEntries.map((entry) => entry.level);
     const abilityId = raw.abilityId || DEFAULT_ABILITY_BY_TYPE[raw.primaryType] || "STURDY";
 
     MONSTERS[raw.id] = {
@@ -280,6 +302,7 @@ export function initMonstersFromJson(json) {
       abilityId,
       baseStats: raw.baseStats,
       learnset,
+      learnsetLevels,
       description: raw.description || "",
       catchRate: raw.catchRate,
       evolveTo: raw.evolveTo || null,

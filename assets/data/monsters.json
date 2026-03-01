@@ -12,10 +12,22 @@
         "speed": 65
       },
       "learnset": [
-        "TACKLE",
-        "EMBER",
-        "FOCUS",
-        "FIRE_FANG"
+        {
+          "move": "TACKLE",
+          "level": 1
+        },
+        {
+          "move": "EMBER",
+          "level": 3
+        },
+        {
+          "move": "FOCUS",
+          "level": 5
+        },
+        {
+          "move": "FIRE_FANG",
+          "level": 7
+        }
       ],
       "catchRate": 0.3,
       "description": "小さな炎をまとったクマ。いたずら好きだが仲間想い。",
@@ -36,10 +48,22 @@
         "speed": 72
       },
       "learnset": [
-        "FIRE_FANG",
-        "FLAME_BURST",
-        "BODY_SLAM",
-        "INFERNO"
+        {
+          "move": "FIRE_FANG",
+          "level": 1
+        },
+        {
+          "move": "FLAME_BURST",
+          "level": 6
+        },
+        {
+          "move": "BODY_SLAM",
+          "level": 12
+        },
+        {
+          "move": "INFERNO",
+          "level": 18
+        }
       ],
       "catchRate": 0.15,
       "description": "エムベアの進化形。体を炎でまとい、力強く戦う。",
@@ -58,10 +82,22 @@
         "speed": 43
       },
       "learnset": [
-        "TACKLE",
-        "WATER_SPLASH",
-        "DEFENSE_CURL",
-        "BUBBLE_BEAM"
+        {
+          "move": "TACKLE",
+          "level": 1
+        },
+        {
+          "move": "WATER_SPLASH",
+          "level": 3
+        },
+        {
+          "move": "DEFENSE_CURL",
+          "level": 5
+        },
+        {
+          "move": "BUBBLE_BEAM",
+          "level": 7
+        }
       ],
       "catchRate": 0.4,
       "description": "体のほとんどが水でできたモンスター。のんびり屋。",
@@ -82,10 +118,22 @@
         "speed": 52
       },
       "learnset": [
-        "BUBBLE_BEAM",
-        "HYDRO_PUMP",
-        "BODY_SLAM",
-        "HEAL_PULSE"
+        {
+          "move": "BUBBLE_BEAM",
+          "level": 1
+        },
+        {
+          "move": "HYDRO_PUMP",
+          "level": 3
+        },
+        {
+          "move": "BODY_SLAM",
+          "level": 5
+        },
+        {
+          "move": "HEAL_PULSE",
+          "level": 7
+        }
       ],
       "catchRate": 0.12,
       "description": "ドロプレットの進化形。嵐をまとう海の覇者。",
@@ -104,10 +152,22 @@
         "speed": 45
       },
       "learnset": [
-        "TACKLE",
-        "LEAF_DART",
-        "VINE_WHIP",
-        "GROWL"
+        {
+          "move": "TACKLE",
+          "level": 1
+        },
+        {
+          "move": "LEAF_DART",
+          "level": 3
+        },
+        {
+          "move": "VINE_WHIP",
+          "level": 5
+        },
+        {
+          "move": "GROWL",
+          "level": 7
+        }
       ],
       "catchRate": 0.35,
       "description": "風に乗って素早く動く草の妖精。森を守っている。",
@@ -128,10 +188,22 @@
         "speed": 55
       },
       "learnset": [
-        "RAZOR_LEAF",
-        "SOLAR_BEAM",
-        "BODY_SLAM",
-        "DEFENSE_CURL"
+        {
+          "move": "RAZOR_LEAF",
+          "level": 1
+        },
+        {
+          "move": "SOLAR_BEAM",
+          "level": 3
+        },
+        {
+          "move": "BODY_SLAM",
+          "level": 5
+        },
+        {
+          "move": "DEFENSE_CURL",
+          "level": 7
+        }
       ],
       "catchRate": 0.1,
       "description": "リーフリングの進化形。巨木の王が森を統治する。",
@@ -150,9 +222,18 @@
         "speed": 80
       },
       "learnset": [
-        "QUICK_ATTACK",
-        "HYPER_VOICE",
-        "FOCUS"
+        {
+          "move": "QUICK_ATTACK",
+          "level": 1
+        },
+        {
+          "move": "HYPER_VOICE",
+          "level": 3
+        },
+        {
+          "move": "FOCUS",
+          "level": 5
+        }
       ],
       "catchRate": 0.5,
       "description": "夜空から落ちてきた星のかけら。きらめく光で敵をひるませると言われている。",
@@ -171,10 +252,22 @@
         "speed": 72
       },
       "learnset": [
-        "QUICK_ATTACK",
-        "EMBER",
-        "FLAME_BURST",
-        "FOCUS"
+        {
+          "move": "QUICK_ATTACK",
+          "level": 1
+        },
+        {
+          "move": "EMBER",
+          "level": 3
+        },
+        {
+          "move": "FLAME_BURST",
+          "level": 5
+        },
+        {
+          "move": "FOCUS",
+          "level": 7
+        }
       ],
       "catchRate": 0.3,
       "description": "炎の翼を持つ高速の鳥。空から急降下して獲物を狩る。",
@@ -193,10 +286,22 @@
         "speed": 32
       },
       "learnset": [
-        "TACKLE",
-        "AQUA_JET",
-        "BUBBLE_BEAM",
-        "DEFENSE_CURL"
+        {
+          "move": "TACKLE",
+          "level": 1
+        },
+        {
+          "move": "AQUA_JET",
+          "level": 3
+        },
+        {
+          "move": "BUBBLE_BEAM",
+          "level": 5
+        },
+        {
+          "move": "DEFENSE_CURL",
+          "level": 7
+        }
       ],
       "catchRate": 0.35,
       "description": "硬い甲羅に守られた水亀。動きは遅いが守りは鉄壁。",
@@ -215,10 +320,22 @@
         "speed": 50
       },
       "learnset": [
-        "VINE_WHIP",
-        "RAZOR_LEAF",
-        "TOXIC_STING",
-        "GROWL"
+        {
+          "move": "VINE_WHIP",
+          "level": 1
+        },
+        {
+          "move": "RAZOR_LEAF",
+          "level": 3
+        },
+        {
+          "move": "TOXIC_STING",
+          "level": 5
+        },
+        {
+          "move": "GROWL",
+          "level": 7
+        }
       ],
       "catchRate": 0.4,
       "description": "つるを自在に操る植物モンスター。素早い連続攻撃が得意。",
@@ -237,10 +354,22 @@
         "speed": 75
       },
       "learnset": [
-        "QUICK_ATTACK",
-        "SHADOW_CLAW",
-        "VENOM_BITE",
-        "FOCUS"
+        {
+          "move": "QUICK_ATTACK",
+          "level": 1
+        },
+        {
+          "move": "SHADOW_CLAW",
+          "level": 3
+        },
+        {
+          "move": "VENOM_BITE",
+          "level": 5
+        },
+        {
+          "move": "FOCUS",
+          "level": 7
+        }
       ],
       "catchRate": 0.25,
       "description": "影に潜む謎の獣。夜になると活発になる素早いハンター。",
@@ -259,10 +388,22 @@
         "speed": 35
       },
       "learnset": [
-        "TACKLE",
-        "HYPER_VOICE",
-        "DEFENSE_CURL",
-        "BODY_SLAM"
+        {
+          "move": "TACKLE",
+          "level": 1
+        },
+        {
+          "move": "HYPER_VOICE",
+          "level": 3
+        },
+        {
+          "move": "DEFENSE_CURL",
+          "level": 5
+        },
+        {
+          "move": "BODY_SLAM",
+          "level": 7
+        }
       ],
       "catchRate": 0.2,
       "description": "体が宝石でできた希少なモンスター。硬さは折り紙つき。",
@@ -281,10 +422,22 @@
         "speed": 40
       },
       "learnset": [
-        "FIRE_FANG",
-        "FLAME_BURST",
-        "BLAZE_RUSH",
-        "INFERNO"
+        {
+          "move": "FIRE_FANG",
+          "level": 1
+        },
+        {
+          "move": "FLAME_BURST",
+          "level": 3
+        },
+        {
+          "move": "BLAZE_RUSH",
+          "level": 5
+        },
+        {
+          "move": "INFERNO",
+          "level": 7
+        }
       ],
       "catchRate": 0.14,
       "description": "火山の奥で眠る熔岩獣。重い一撃で押し切る。",
@@ -303,10 +456,22 @@
         "speed": 58
       },
       "learnset": [
-        "AQUA_JET",
-        "BUBBLE_BEAM",
-        "TIDAL_WAVE",
-        "HEAL_PULSE"
+        {
+          "move": "AQUA_JET",
+          "level": 1
+        },
+        {
+          "move": "BUBBLE_BEAM",
+          "level": 3
+        },
+        {
+          "move": "TIDAL_WAVE",
+          "level": 5
+        },
+        {
+          "move": "HEAL_PULSE",
+          "level": 7
+        }
       ],
       "catchRate": 0.2,
       "description": "冷たい洞窟湖を泳ぐ狩人。波を操る。",
@@ -325,10 +490,22 @@
         "speed": 54
       },
       "learnset": [
-        "RAZOR_LEAF",
-        "SOLAR_BEAM",
-        "NATURE_GUARD",
-        "TOXIC_STING"
+        {
+          "move": "RAZOR_LEAF",
+          "level": 1
+        },
+        {
+          "move": "SOLAR_BEAM",
+          "level": 3
+        },
+        {
+          "move": "NATURE_GUARD",
+          "level": 5
+        },
+        {
+          "move": "TOXIC_STING",
+          "level": 7
+        }
       ],
       "catchRate": 0.18,
       "description": "結晶草原に生きる幸運の守り手。防御が高い。",
@@ -347,10 +524,22 @@
         "speed": 82
       },
       "learnset": [
-        "QUICK_ATTACK",
-        "MOONBEAM",
-        "STONE_BASH",
-        "FOCUS"
+        {
+          "move": "QUICK_ATTACK",
+          "level": 1
+        },
+        {
+          "move": "MOONBEAM",
+          "level": 3
+        },
+        {
+          "move": "STONE_BASH",
+          "level": 5
+        },
+        {
+          "move": "FOCUS",
+          "level": 7
+        }
       ],
       "catchRate": 0.12,
       "description": "月明かりに現れる幻影。すばやく鋭い連撃を放つ。",
@@ -369,10 +558,22 @@
         "speed": 60
       },
       "learnset": [
-        "TACKLE",
-        "EMBER",
-        "CINDER_SPIN",
-        "FOCUS"
+        {
+          "move": "TACKLE",
+          "level": 1
+        },
+        {
+          "move": "EMBER",
+          "level": 3
+        },
+        {
+          "move": "CINDER_SPIN",
+          "level": 5
+        },
+        {
+          "move": "FOCUS",
+          "level": 7
+        }
       ],
       "catchRate": 0.33,
       "description": "火の粉をまとって走る幼い炎狐。",
@@ -393,10 +594,22 @@
         "speed": 62
       },
       "learnset": [
-        "LAVA_PRESS",
-        "FLAME_BURST",
-        "PHOENIX_FLARE",
-        "IRON_HIDE"
+        {
+          "move": "LAVA_PRESS",
+          "level": 1
+        },
+        {
+          "move": "FLAME_BURST",
+          "level": 3
+        },
+        {
+          "move": "PHOENIX_FLARE",
+          "level": 5
+        },
+        {
+          "move": "IRON_HIDE",
+          "level": 7
+        }
       ],
       "catchRate": 0.09,
       "description": "溶岩帯を支配する巨大な炎獣。",
@@ -415,10 +628,22 @@
         "speed": 74
       },
       "learnset": [
-        "QUICK_ATTACK",
-        "FIRE_FANG",
-        "BLAZE_RUSH",
-        "COMET_KICK"
+        {
+          "move": "QUICK_ATTACK",
+          "level": 1
+        },
+        {
+          "move": "FIRE_FANG",
+          "level": 3
+        },
+        {
+          "move": "BLAZE_RUSH",
+          "level": 5
+        },
+        {
+          "move": "COMET_KICK",
+          "level": 7
+        }
       ],
       "catchRate": 0.17,
       "description": "灰の荒野を駆ける紅い牙のハウンド。",
@@ -437,10 +662,22 @@
         "speed": 52
       },
       "learnset": [
-        "TACKLE",
-        "WATER_SPLASH",
-        "STEAM_BLAST",
-        "DEFENSE_CURL"
+        {
+          "move": "TACKLE",
+          "level": 1
+        },
+        {
+          "move": "WATER_SPLASH",
+          "level": 3
+        },
+        {
+          "move": "STEAM_BLAST",
+          "level": 5
+        },
+        {
+          "move": "DEFENSE_CURL",
+          "level": 7
+        }
       ],
       "catchRate": 0.36,
       "description": "泡の尾びれで跳ねる川辺の小魚。",
@@ -461,10 +698,22 @@
         "speed": 49
       },
       "learnset": [
-        "BUBBLE_BEAM",
-        "FROST_TIDE",
-        "HYDRO_PUMP",
-        "OCEAN_BLESS"
+        {
+          "move": "BUBBLE_BEAM",
+          "level": 1
+        },
+        {
+          "move": "FROST_TIDE",
+          "level": 3
+        },
+        {
+          "move": "HYDRO_PUMP",
+          "level": 5
+        },
+        {
+          "move": "OCEAN_BLESS",
+          "level": 7
+        }
       ],
       "catchRate": 0.11,
       "description": "氷水をまとった古代の守護魚。",
@@ -483,10 +732,22 @@
         "speed": 79
       },
       "learnset": [
-        "AQUA_JET",
-        "STEAM_BLAST",
-        "HEAL_PULSE",
-        "MOONBEAM"
+        {
+          "move": "AQUA_JET",
+          "level": 1
+        },
+        {
+          "move": "STEAM_BLAST",
+          "level": 3
+        },
+        {
+          "move": "HEAL_PULSE",
+          "level": 5
+        },
+        {
+          "move": "MOONBEAM",
+          "level": 7
+        }
       ],
       "catchRate": 0.16,
       "description": "霧の海を滑るように泳ぐ神秘のレイ。",
@@ -505,10 +766,22 @@
         "speed": 48
       },
       "learnset": [
-        "TACKLE",
-        "LEAF_DART",
-        "ROOT_TRAP",
-        "GROWL"
+        {
+          "move": "TACKLE",
+          "level": 1
+        },
+        {
+          "move": "LEAF_DART",
+          "level": 3
+        },
+        {
+          "move": "ROOT_TRAP",
+          "level": 5
+        },
+        {
+          "move": "GROWL",
+          "level": 7
+        }
       ],
       "catchRate": 0.34,
       "description": "芽吹きの音で仲間を呼ぶ草の精。",
@@ -529,10 +802,22 @@
         "speed": 57
       },
       "learnset": [
-        "THORN_BARRAGE",
-        "PETAL_STORM",
-        "SOLAR_BEAM",
-        "NATURE_GUARD"
+        {
+          "move": "THORN_BARRAGE",
+          "level": 1
+        },
+        {
+          "move": "PETAL_STORM",
+          "level": 3
+        },
+        {
+          "move": "SOLAR_BEAM",
+          "level": 5
+        },
+        {
+          "move": "NATURE_GUARD",
+          "level": 7
+        }
       ],
       "catchRate": 0.1,
       "description": "花弁の嵐で戦場を包む花王。",
@@ -551,10 +836,22 @@
         "speed": 51
       },
       "learnset": [
-        "VINE_WHIP",
-        "RAZOR_LEAF",
-        "STONE_BASH",
-        "IRON_HIDE"
+        {
+          "move": "VINE_WHIP",
+          "level": 1
+        },
+        {
+          "move": "RAZOR_LEAF",
+          "level": 3
+        },
+        {
+          "move": "STONE_BASH",
+          "level": 5
+        },
+        {
+          "move": "IRON_HIDE",
+          "level": 7
+        }
       ],
       "catchRate": 0.14,
       "description": "苔むした角で突進する森の番人。",
@@ -573,10 +870,22 @@
         "speed": 84
       },
       "learnset": [
-        "QUICK_ATTACK",
-        "SKY_SLASH",
-        "FOCUS",
-        "BRIGHT_HEART"
+        {
+          "move": "QUICK_ATTACK",
+          "level": 1
+        },
+        {
+          "move": "SKY_SLASH",
+          "level": 3
+        },
+        {
+          "move": "FOCUS",
+          "level": 5
+        },
+        {
+          "move": "BRIGHT_HEART",
+          "level": 7
+        }
       ],
       "catchRate": 0.31,
       "description": "空高く舞う風の案内役。",
@@ -597,10 +906,22 @@
         "speed": 90
       },
       "learnset": [
-        "SKY_SLASH",
-        "HYPER_VOICE",
-        "COMET_KICK",
-        "SPIRIT_HOWL"
+        {
+          "move": "SKY_SLASH",
+          "level": 1
+        },
+        {
+          "move": "HYPER_VOICE",
+          "level": 3
+        },
+        {
+          "move": "COMET_KICK",
+          "level": 5
+        },
+        {
+          "move": "SPIRIT_HOWL",
+          "level": 7
+        }
       ],
       "catchRate": 0.08,
       "description": "遺跡上空に現れる光翼の守護鳥。",
@@ -619,10 +940,22 @@
         "speed": 76
       },
       "learnset": [
-        "SHADOW_CLAW",
-        "MOONBEAM",
-        "COMET_KICK",
-        "BRIGHT_HEART"
+        {
+          "move": "SHADOW_CLAW",
+          "level": 1
+        },
+        {
+          "move": "MOONBEAM",
+          "level": 3
+        },
+        {
+          "move": "COMET_KICK",
+          "level": 5
+        },
+        {
+          "move": "BRIGHT_HEART",
+          "level": 7
+        }
       ],
       "catchRate": 0.12,
       "description": "古代文字を宿した尾で獲物を惑わす。",
@@ -641,10 +974,22 @@
         "speed": 68
       },
       "learnset": [
-        "TACKLE",
-        "SPARK",
-        "CHARGE",
-        "THUNDER_FANG"
+        {
+          "move": "TACKLE",
+          "level": 1
+        },
+        {
+          "move": "SPARK",
+          "level": 3
+        },
+        {
+          "move": "CHARGE",
+          "level": 5
+        },
+        {
+          "move": "THUNDER_FANG",
+          "level": 7
+        }
       ],
       "catchRate": 0.32,
       "description": "体毛に静電気を宿した子犬。走ると火花が散る。",
@@ -665,10 +1010,22 @@
         "speed": 78
       },
       "learnset": [
-        "THUNDER_FANG",
-        "THUNDERBOLT",
-        "BODY_SLAM",
-        "DISCHARGE"
+        {
+          "move": "THUNDER_FANG",
+          "level": 1
+        },
+        {
+          "move": "THUNDERBOLT",
+          "level": 3
+        },
+        {
+          "move": "BODY_SLAM",
+          "level": 5
+        },
+        {
+          "move": "DISCHARGE",
+          "level": 7
+        }
       ],
       "catchRate": 0.14,
       "description": "雷鳴のように速く駆ける電撃犬。",
@@ -687,10 +1044,22 @@
         "speed": 70
       },
       "learnset": [
-        "TACKLE",
-        "SPARK",
-        "QUICK_ATTACK",
-        "THUNDERBOLT"
+        {
+          "move": "TACKLE",
+          "level": 1
+        },
+        {
+          "move": "SPARK",
+          "level": 3
+        },
+        {
+          "move": "QUICK_ATTACK",
+          "level": 5
+        },
+        {
+          "move": "THUNDERBOLT",
+          "level": 7
+        }
       ],
       "catchRate": 0.38,
       "description": "夜の草むらで光る小さな甲虫。",
@@ -709,10 +1078,22 @@
         "speed": 50
       },
       "learnset": [
-        "TACKLE",
-        "SPARK",
-        "BODY_SLAM",
-        "DISCHARGE"
+        {
+          "move": "TACKLE",
+          "level": 1
+        },
+        {
+          "move": "SPARK",
+          "level": 3
+        },
+        {
+          "move": "BODY_SLAM",
+          "level": 5
+        },
+        {
+          "move": "DISCHARGE",
+          "level": 7
+        }
       ],
       "catchRate": 0.25,
       "description": "角に雷を溜め、強力な突進を放つ。",
@@ -733,10 +1114,22 @@
         "speed": 58
       },
       "learnset": [
-        "THUNDERBOLT",
-        "THUNDER",
-        "BODY_SLAM",
-        "VOLT_TACKLE"
+        {
+          "move": "THUNDERBOLT",
+          "level": 1
+        },
+        {
+          "move": "THUNDER",
+          "level": 3
+        },
+        {
+          "move": "BODY_SLAM",
+          "level": 5
+        },
+        {
+          "move": "VOLT_TACKLE",
+          "level": 7
+        }
       ],
       "catchRate": 0.1,
       "description": "嵐を呼ぶ巨角の雷獣。一撃は山を割る。",
@@ -755,10 +1148,22 @@
         "speed": 75
       },
       "learnset": [
-        "THUNDER_FANG",
-        "THUNDERBOLT",
-        "DISCHARGE",
-        "THUNDER"
+        {
+          "move": "THUNDER_FANG",
+          "level": 1
+        },
+        {
+          "move": "THUNDERBOLT",
+          "level": 3
+        },
+        {
+          "move": "DISCHARGE",
+          "level": 5
+        },
+        {
+          "move": "THUNDER",
+          "level": 7
+        }
       ],
       "catchRate": 0.1,
       "description": "遺跡に住む伝説的な雷竜。",
@@ -777,10 +1182,22 @@
         "speed": 72
       },
       "learnset": [
-        "SPARK",
-        "THUNDERBOLT",
-        "DISCHARGE",
-        "CHARGE"
+        {
+          "move": "SPARK",
+          "level": 1
+        },
+        {
+          "move": "THUNDERBOLT",
+          "level": 3
+        },
+        {
+          "move": "DISCHARGE",
+          "level": 5
+        },
+        {
+          "move": "CHARGE",
+          "level": 7
+        }
       ],
       "catchRate": 0.18,
       "description": "プラズマの翅を持つ夜行性モンスター。",
@@ -799,11 +1216,26 @@
         "speed": 55
       },
       "learnset": [
-        "TACKLE",
-        "ICE_SHARD",
-        "FROST_BITE",
-        "GROWL",
-        "ICY_WIND"
+        {
+          "move": "TACKLE",
+          "level": 1
+        },
+        {
+          "move": "ICE_SHARD",
+          "level": 3
+        },
+        {
+          "move": "FROST_BITE",
+          "level": 5
+        },
+        {
+          "move": "GROWL",
+          "level": 7
+        },
+        {
+          "move": "ICY_WIND",
+          "level": 9
+        }
       ],
       "catchRate": 0.3,
       "description": "冷気をまとった子猫。息は白く凍る。",
@@ -824,10 +1256,22 @@
         "speed": 65
       },
       "learnset": [
-        "FROST_BITE",
-        "ICE_BEAM",
-        "BODY_SLAM",
-        "AURORA_VEIL"
+        {
+          "move": "FROST_BITE",
+          "level": 1
+        },
+        {
+          "move": "ICE_BEAM",
+          "level": 3
+        },
+        {
+          "move": "BODY_SLAM",
+          "level": 5
+        },
+        {
+          "move": "AURORA_VEIL",
+          "level": 7
+        }
       ],
       "catchRate": 0.12,
       "description": "吹雪を操る氷の猫王。尾は結晶化している。",
@@ -846,11 +1290,26 @@
         "speed": 40
       },
       "learnset": [
-        "TACKLE",
-        "ICE_SHARD",
-        "DEFENSE_CURL",
-        "ICE_BEAM",
-        "ICY_WIND"
+        {
+          "move": "TACKLE",
+          "level": 1
+        },
+        {
+          "move": "ICE_SHARD",
+          "level": 3
+        },
+        {
+          "move": "DEFENSE_CURL",
+          "level": 5
+        },
+        {
+          "move": "ICE_BEAM",
+          "level": 7
+        },
+        {
+          "move": "ICY_WIND",
+          "level": 9
+        }
       ],
       "catchRate": 0.28,
       "description": "氷の上を滑るように歩くペンギン型モンスター。",
@@ -869,10 +1328,22 @@
         "speed": 48
       },
       "learnset": [
-        "ICE_SHARD",
-        "FROST_BITE",
-        "FROST_BREATH",
-        "BLIZZARD"
+        {
+          "move": "ICE_SHARD",
+          "level": 1
+        },
+        {
+          "move": "FROST_BITE",
+          "level": 3
+        },
+        {
+          "move": "FROST_BREATH",
+          "level": 5
+        },
+        {
+          "move": "BLIZZARD",
+          "level": 7
+        }
       ],
       "catchRate": 0.2,
       "description": "全身が氷の結晶で覆われた鋼蠍。",
@@ -891,10 +1362,22 @@
         "speed": 60
       },
       "learnset": [
-        "TACKLE",
-        "ICE_SHARD",
-        "FROST_BREATH",
-        "HAIL_SHELL"
+        {
+          "move": "TACKLE",
+          "level": 1
+        },
+        {
+          "move": "ICE_SHARD",
+          "level": 3
+        },
+        {
+          "move": "FROST_BREATH",
+          "level": 5
+        },
+        {
+          "move": "HAIL_SHELL",
+          "level": 7
+        }
       ],
       "catchRate": 0.24,
       "description": "雪原を優雅に駆ける小鹿。角は氷で透き通る。",
@@ -915,10 +1398,22 @@
         "speed": 72
       },
       "learnset": [
-        "ICE_BEAM",
-        "BLIZZARD",
-        "AURORA_VEIL",
-        "FROST_BREATH"
+        {
+          "move": "ICE_BEAM",
+          "level": 1
+        },
+        {
+          "move": "BLIZZARD",
+          "level": 3
+        },
+        {
+          "move": "AURORA_VEIL",
+          "level": 5
+        },
+        {
+          "move": "FROST_BREATH",
+          "level": 7
+        }
       ],
       "catchRate": 0.1,
       "description": "氷の薄衣をまとう蝶。はばたきが吹雪を呼ぶ。",
@@ -937,10 +1432,22 @@
         "speed": 38
       },
       "learnset": [
-        "FROST_BITE",
-        "ICE_BEAM",
-        "BODY_SLAM",
-        "HAIL_SHELL"
+        {
+          "move": "FROST_BITE",
+          "level": 1
+        },
+        {
+          "move": "ICE_BEAM",
+          "level": 3
+        },
+        {
+          "move": "BODY_SLAM",
+          "level": 5
+        },
+        {
+          "move": "HAIL_SHELL",
+          "level": 7
+        }
       ],
       "catchRate": 0.1,
       "description": "極寒の地を支配する巨大な氷熊。",
@@ -959,10 +1466,22 @@
         "speed": 62
       },
       "learnset": [
-        "TACKLE",
-        "EMBER",
-        "HEAT_COIL",
-        "FIRE_FANG"
+        {
+          "move": "TACKLE",
+          "level": 1
+        },
+        {
+          "move": "EMBER",
+          "level": 3
+        },
+        {
+          "move": "HEAT_COIL",
+          "level": 5
+        },
+        {
+          "move": "FIRE_FANG",
+          "level": 7
+        }
       ],
       "catchRate": 0.28,
       "description": "灼熱の鱗を持つ火蛇。獲物に巻きついて焼く。",
@@ -983,10 +1502,22 @@
         "speed": 70
       },
       "learnset": [
-        "FIRE_FANG",
-        "FLAME_BURST",
-        "SOLAR_FLARE",
-        "BODY_SLAM"
+        {
+          "move": "FIRE_FANG",
+          "level": 1
+        },
+        {
+          "move": "FLAME_BURST",
+          "level": 3
+        },
+        {
+          "move": "SOLAR_FLARE",
+          "level": 5
+        },
+        {
+          "move": "BODY_SLAM",
+          "level": 7
+        }
       ],
       "catchRate": 0.08,
       "description": "猛炎を吐く火竜蛇。怒りの炎は山を焦がす。",
@@ -1005,10 +1536,22 @@
         "speed": 76
       },
       "learnset": [
-        "EMBER",
-        "SOLAR_FLARE",
-        "PHOENIX_FLARE",
-        "BRIGHT_HEART"
+        {
+          "move": "EMBER",
+          "level": 1
+        },
+        {
+          "move": "SOLAR_FLARE",
+          "level": 3
+        },
+        {
+          "move": "PHOENIX_FLARE",
+          "level": 5
+        },
+        {
+          "move": "BRIGHT_HEART",
+          "level": 7
+        }
       ],
       "catchRate": 0.06,
       "description": "太陽の欠片から生まれた神獣。灼熱の光を放つ。",
@@ -1027,10 +1570,22 @@
         "speed": 42
       },
       "learnset": [
-        "WATER_SPLASH",
-        "BUBBLE_BEAM",
-        "DEFENSE_CURL",
-        "TIDAL_CRUSH"
+        {
+          "move": "WATER_SPLASH",
+          "level": 1
+        },
+        {
+          "move": "BUBBLE_BEAM",
+          "level": 3
+        },
+        {
+          "move": "DEFENSE_CURL",
+          "level": 5
+        },
+        {
+          "move": "TIDAL_CRUSH",
+          "level": 7
+        }
       ],
       "catchRate": 0.2,
       "description": "珊瑚の鎧をまとった海の戦士。守りは鉄壁。",
@@ -1049,10 +1604,22 @@
         "speed": 68
       },
       "learnset": [
-        "AQUA_JET",
-        "DEEP_DIVE",
-        "TIDAL_WAVE",
-        "HYDRO_PUMP"
+        {
+          "move": "AQUA_JET",
+          "level": 1
+        },
+        {
+          "move": "DEEP_DIVE",
+          "level": 3
+        },
+        {
+          "move": "TIDAL_WAVE",
+          "level": 5
+        },
+        {
+          "move": "HYDRO_PUMP",
+          "level": 7
+        }
       ],
       "catchRate": 0.12,
       "description": "深海の闇から襲う巨大イカ。吸盤の力は凄まじい。",
@@ -1071,10 +1638,22 @@
         "speed": 40
       },
       "learnset": [
-        "TIDAL_CRUSH",
-        "HYDRO_PUMP",
-        "OCEAN_BLESS",
-        "BODY_SLAM"
+        {
+          "move": "TIDAL_CRUSH",
+          "level": 1
+        },
+        {
+          "move": "HYDRO_PUMP",
+          "level": 3
+        },
+        {
+          "move": "OCEAN_BLESS",
+          "level": 5
+        },
+        {
+          "move": "BODY_SLAM",
+          "level": 7
+        }
       ],
       "catchRate": 0.05,
       "description": "海の王と呼ばれる巨大鯨。その咆哮は嵐をも鎮める。",
@@ -1093,10 +1672,22 @@
         "speed": 44
       },
       "learnset": [
-        "TOXIC_STING",
-        "THORN_BARRAGE",
-        "RAZOR_LEAF",
-        "IRON_HIDE"
+        {
+          "move": "TOXIC_STING",
+          "level": 1
+        },
+        {
+          "move": "THORN_BARRAGE",
+          "level": 3
+        },
+        {
+          "move": "RAZOR_LEAF",
+          "level": 5
+        },
+        {
+          "move": "IRON_HIDE",
+          "level": 7
+        }
       ],
       "catchRate": 0.18,
       "description": "乾燥地帯に立つサボテン戦士。トゲの反撃が痛い。",
@@ -1115,10 +1706,22 @@
         "speed": 46
       },
       "learnset": [
-        "TACKLE",
-        "LEAF_DART",
-        "SPORE_CLOUD",
-        "FUNGAL_BURST"
+        {
+          "move": "TACKLE",
+          "level": 1
+        },
+        {
+          "move": "LEAF_DART",
+          "level": 3
+        },
+        {
+          "move": "SPORE_CLOUD",
+          "level": 5
+        },
+        {
+          "move": "FUNGAL_BURST",
+          "level": 7
+        }
       ],
       "catchRate": 0.3,
       "description": "胞子で仲間を呼ぶキノコの妖精。眠りの粉をまく。",
@@ -1139,10 +1742,22 @@
         "speed": 54
       },
       "learnset": [
-        "FUNGAL_BURST",
-        "SOLAR_BEAM",
-        "SPORE_CLOUD",
-        "NATURE_GUARD"
+        {
+          "move": "FUNGAL_BURST",
+          "level": 1
+        },
+        {
+          "move": "SOLAR_BEAM",
+          "level": 3
+        },
+        {
+          "move": "SPORE_CLOUD",
+          "level": 5
+        },
+        {
+          "move": "NATURE_GUARD",
+          "level": 7
+        }
       ],
       "catchRate": 0.1,
       "description": "秋の森を統べるキノコ王。胞子の霧で戦場を支配する。",
@@ -1161,10 +1776,22 @@
         "speed": 85
       },
       "learnset": [
-        "QUICK_ATTACK",
-        "PHANTOM_RUSH",
-        "SHADOW_CLAW",
-        "SPIRIT_HOWL"
+        {
+          "move": "QUICK_ATTACK",
+          "level": 1
+        },
+        {
+          "move": "PHANTOM_RUSH",
+          "level": 3
+        },
+        {
+          "move": "SHADOW_CLAW",
+          "level": 5
+        },
+        {
+          "move": "SPIRIT_HOWL",
+          "level": 7
+        }
       ],
       "catchRate": 0.15,
       "description": "影に溶け込む幽霊のような獣。気配なく忍び寄る。",
@@ -1183,10 +1810,22 @@
         "speed": 66
       },
       "learnset": [
-        "MOONBEAM",
-        "COSMIC_RAY",
-        "HYPER_VOICE",
-        "BRIGHT_HEART"
+        {
+          "move": "MOONBEAM",
+          "level": 1
+        },
+        {
+          "move": "COSMIC_RAY",
+          "level": 3
+        },
+        {
+          "move": "HYPER_VOICE",
+          "level": 5
+        },
+        {
+          "move": "BRIGHT_HEART",
+          "level": 7
+        }
       ],
       "catchRate": 0.1,
       "description": "宇宙の知恵を持つ神秘のフクロウ。星の光で未来を見通す。",
@@ -1205,10 +1844,22 @@
         "speed": 35
       },
       "learnset": [
-        "BODY_SLAM",
-        "STONE_BASH",
-        "IRON_HIDE",
-        "COMET_KICK"
+        {
+          "move": "BODY_SLAM",
+          "level": 1
+        },
+        {
+          "move": "STONE_BASH",
+          "level": 3
+        },
+        {
+          "move": "IRON_HIDE",
+          "level": 5
+        },
+        {
+          "move": "COMET_KICK",
+          "level": 7
+        }
       ],
       "catchRate": 0.12,
       "description": "螺旋の角で突進する巨獣。一撃の重さは大地を揺るがす。",
@@ -1227,10 +1878,22 @@
         "speed": 70
       },
       "learnset": [
-        "SPARK",
-        "THUNDERBOLT",
-        "STORM_WING",
-        "QUICK_ATTACK"
+        {
+          "move": "SPARK",
+          "level": 1
+        },
+        {
+          "move": "THUNDERBOLT",
+          "level": 3
+        },
+        {
+          "move": "STORM_WING",
+          "level": 5
+        },
+        {
+          "move": "QUICK_ATTACK",
+          "level": 7
+        }
       ],
       "catchRate": 0.22,
       "description": "体がネオンのように光る深海魚。放電で獲物を捕る。",
@@ -1249,10 +1912,22 @@
         "speed": 72
       },
       "learnset": [
-        "QUICK_ATTACK",
-        "SPARK",
-        "STORM_WING",
-        "THUNDER_FANG"
+        {
+          "move": "QUICK_ATTACK",
+          "level": 1
+        },
+        {
+          "move": "SPARK",
+          "level": 3
+        },
+        {
+          "move": "STORM_WING",
+          "level": 5
+        },
+        {
+          "move": "THUNDER_FANG",
+          "level": 7
+        }
       ],
       "catchRate": 0.24,
       "description": "雷雲を飛ぶ若鷲。翼に稲妻が走る。",
@@ -1273,10 +1948,22 @@
         "speed": 82
       },
       "learnset": [
-        "STORM_WING",
-        "THUNDERBOLT",
-        "PLASMA_CANNON",
-        "COMET_KICK"
+        {
+          "move": "STORM_WING",
+          "level": 1
+        },
+        {
+          "move": "THUNDERBOLT",
+          "level": 3
+        },
+        {
+          "move": "PLASMA_CANNON",
+          "level": 5
+        },
+        {
+          "move": "COMET_KICK",
+          "level": 7
+        }
       ],
       "catchRate": 0.07,
       "description": "嵐の中で王として君臨する雷鷲。稲妻を自在に操る。",
@@ -1295,11 +1982,26 @@
         "speed": 45
       },
       "learnset": [
-        "ICE_SHARD",
-        "FROST_BREATH",
-        "HAIL_SHELL",
-        "FROST_QUAKE",
-        "ICY_WIND"
+        {
+          "move": "ICE_SHARD",
+          "level": 1
+        },
+        {
+          "move": "FROST_BREATH",
+          "level": 3
+        },
+        {
+          "move": "HAIL_SHELL",
+          "level": 5
+        },
+        {
+          "move": "FROST_QUAKE",
+          "level": 7
+        },
+        {
+          "move": "ICY_WIND",
+          "level": 9
+        }
       ],
       "catchRate": 0.22,
       "description": "永久凍土で生まれた雪の精霊。冷気の盾で身を守る。",
@@ -1318,10 +2020,22 @@
         "speed": 52
       },
       "learnset": [
-        "FROST_QUAKE",
-        "BLIZZARD",
-        "ICE_BEAM",
-        "BODY_SLAM"
+        {
+          "move": "FROST_QUAKE",
+          "level": 1
+        },
+        {
+          "move": "BLIZZARD",
+          "level": 3
+        },
+        {
+          "move": "ICE_BEAM",
+          "level": 5
+        },
+        {
+          "move": "BODY_SLAM",
+          "level": 7
+        }
       ],
       "catchRate": 0.06,
       "description": "氷山を住処とする伝説の氷竜。吹雪の中にその姿が見える。",
@@ -1340,10 +2054,22 @@
         "speed": 80
       },
       "learnset": [
-        "ETERNAL_LIGHT",
-        "COSMIC_RAY",
-        "HYPER_VOICE",
-        "BRIGHT_HEART"
+        {
+          "move": "ETERNAL_LIGHT",
+          "level": 1
+        },
+        {
+          "move": "COSMIC_RAY",
+          "level": 3
+        },
+        {
+          "move": "HYPER_VOICE",
+          "level": 5
+        },
+        {
+          "move": "BRIGHT_HEART",
+          "level": 7
+        }
       ],
       "catchRate": 0.03,
       "description": "エモじクリスタルの力で眠り続けた伝説のモンスター。すべての命を見守る。",
@@ -1362,10 +2088,22 @@
         "speed": 61
       },
       "learnset": [
-        "TACKLE",
-        "EMBER",
-        "EMBER_SWEEP",
-        "FOCUS"
+        {
+          "move": "TACKLE",
+          "level": 1
+        },
+        {
+          "move": "EMBER",
+          "level": 3
+        },
+        {
+          "move": "EMBER_SWEEP",
+          "level": 5
+        },
+        {
+          "move": "FOCUS",
+          "level": 7
+        }
       ],
       "catchRate": 0.27,
       "description": "炭火のしっぽを振って火花を散らす森の小獣。",
@@ -1386,10 +2124,22 @@
         "speed": 72
       },
       "learnset": [
-        "EMBER_SWEEP",
-        "FLAME_BURST",
-        "PHOENIX_FLARE",
-        "IRON_HIDE"
+        {
+          "move": "EMBER_SWEEP",
+          "level": 1
+        },
+        {
+          "move": "FLAME_BURST",
+          "level": 3
+        },
+        {
+          "move": "PHOENIX_FLARE",
+          "level": 5
+        },
+        {
+          "move": "IRON_HIDE",
+          "level": 7
+        }
       ],
       "catchRate": 0.08,
       "description": "炎の尾で弧を描き、戦場を焦土に変える紅竜。",
@@ -1408,10 +2158,22 @@
         "speed": 56
       },
       "learnset": [
-        "WATER_SPLASH",
-        "AQUA_JET",
-        "RIVER_SONG",
-        "DEFENSE_CURL"
+        {
+          "move": "WATER_SPLASH",
+          "level": 1
+        },
+        {
+          "move": "AQUA_JET",
+          "level": 3
+        },
+        {
+          "move": "RIVER_SONG",
+          "level": 5
+        },
+        {
+          "move": "DEFENSE_CURL",
+          "level": 7
+        }
       ],
       "catchRate": 0.29,
       "description": "川辺で石を磨く水の職人。歌うような水流を操る。",
@@ -1432,10 +2194,22 @@
         "speed": 52
       },
       "learnset": [
-        "BUBBLE_BEAM",
-        "RIVER_SONG",
-        "TIDAL_WAVE",
-        "HYDRO_PUMP"
+        {
+          "move": "BUBBLE_BEAM",
+          "level": 1
+        },
+        {
+          "move": "RIVER_SONG",
+          "level": 3
+        },
+        {
+          "move": "TIDAL_WAVE",
+          "level": 5
+        },
+        {
+          "move": "HYDRO_PUMP",
+          "level": 7
+        }
       ],
       "catchRate": 0.09,
       "description": "大河の流れを背負って進む重装の水獣。",
@@ -1454,10 +2228,22 @@
         "speed": 55
       },
       "learnset": [
-        "LEAF_DART",
-        "VINE_WHIP",
-        "BRAMBLE_EDGE",
-        "GROWL"
+        {
+          "move": "LEAF_DART",
+          "level": 1
+        },
+        {
+          "move": "VINE_WHIP",
+          "level": 3
+        },
+        {
+          "move": "BRAMBLE_EDGE",
+          "level": 5
+        },
+        {
+          "move": "GROWL",
+          "level": 7
+        }
       ],
       "catchRate": 0.26,
       "description": "蔦を編んだ腕で素早く斬り込む若木の戦士。",
@@ -1476,10 +2262,22 @@
         "speed": 80
       },
       "learnset": [
-        "SPARK",
-        "THUNDER_FANG",
-        "ARC_SPIN",
-        "COMET_KICK"
+        {
+          "move": "SPARK",
+          "level": 1
+        },
+        {
+          "move": "THUNDER_FANG",
+          "level": 3
+        },
+        {
+          "move": "ARC_SPIN",
+          "level": 5
+        },
+        {
+          "move": "COMET_KICK",
+          "level": 7
+        }
       ],
       "catchRate": 0.13,
       "description": "雷光を引き連れて駆ける稲妻の狼。",
@@ -1498,11 +2296,26 @@
         "speed": 78
       },
       "learnset": [
-        "ICE_SHARD",
-        "FROST_BREATH",
-        "POLAR_PULSE",
-        "AURORA_VEIL",
-        "ICY_WIND"
+        {
+          "move": "ICE_SHARD",
+          "level": 1
+        },
+        {
+          "move": "FROST_BREATH",
+          "level": 3
+        },
+        {
+          "move": "POLAR_PULSE",
+          "level": 5
+        },
+        {
+          "move": "AURORA_VEIL",
+          "level": 7
+        },
+        {
+          "move": "ICY_WIND",
+          "level": 9
+        }
       ],
       "catchRate": 0.14,
       "description": "氷風に乗って鳴く冬の渡り鳥。",
@@ -1521,10 +2334,22 @@
         "speed": 64
       },
       "learnset": [
-        "TACKLE",
-        "EMBER",
-        "EMBER_RAIN",
-        "FOCUS"
+        {
+          "move": "TACKLE",
+          "level": 1
+        },
+        {
+          "move": "EMBER",
+          "level": 3
+        },
+        {
+          "move": "EMBER_RAIN",
+          "level": 5
+        },
+        {
+          "move": "FOCUS",
+          "level": 7
+        }
       ],
       "catchRate": 0.27,
       "description": "体毛が淡く光る炎の子犬。夜道を照らす案内役。",
@@ -1545,10 +2370,22 @@
         "speed": 72
       },
       "learnset": [
-        "FIRE_FANG",
-        "EMBER_RAIN",
-        "PHOENIX_FLARE",
-        "IRON_HIDE"
+        {
+          "move": "FIRE_FANG",
+          "level": 1
+        },
+        {
+          "move": "EMBER_RAIN",
+          "level": 3
+        },
+        {
+          "move": "PHOENIX_FLARE",
+          "level": 5
+        },
+        {
+          "move": "IRON_HIDE",
+          "level": 7
+        }
       ],
       "catchRate": 0.08,
       "description": "日輪の熱を刃に宿す灼熱の狩人。",
@@ -1573,10 +2410,22 @@
         "speed": 57
       },
       "learnset": [
-        "WATER_SPLASH",
-        "AQUA_JET",
-        "TIDE_LANCE",
-        "DEFENSE_CURL"
+        {
+          "move": "WATER_SPLASH",
+          "level": 1
+        },
+        {
+          "move": "AQUA_JET",
+          "level": 3
+        },
+        {
+          "move": "TIDE_LANCE",
+          "level": 5
+        },
+        {
+          "move": "DEFENSE_CURL",
+          "level": 7
+        }
       ],
       "catchRate": 0.28,
       "description": "霧の川辺に巣を作る器用な水の職人。",
@@ -1597,10 +2446,22 @@
         "speed": 55
       },
       "learnset": [
-        "BUBBLE_BEAM",
-        "TIDE_LANCE",
-        "TIDAL_WAVE",
-        "RIVER_SONG"
+        {
+          "move": "BUBBLE_BEAM",
+          "level": 1
+        },
+        {
+          "move": "TIDE_LANCE",
+          "level": 3
+        },
+        {
+          "move": "TIDAL_WAVE",
+          "level": 5
+        },
+        {
+          "move": "RIVER_SONG",
+          "level": 7
+        }
       ],
       "catchRate": 0.09,
       "description": "深霧の水路を守る重装の水獣。",
@@ -1625,10 +2486,22 @@
         "speed": 56
       },
       "learnset": [
-        "LEAF_DART",
-        "VINE_WHIP",
-        "MOSS_BARRIER",
-        "GROWL"
+        {
+          "move": "LEAF_DART",
+          "level": 1
+        },
+        {
+          "move": "VINE_WHIP",
+          "level": 3
+        },
+        {
+          "move": "MOSS_BARRIER",
+          "level": 5
+        },
+        {
+          "move": "GROWL",
+          "level": 7
+        }
       ],
       "catchRate": 0.25,
       "description": "苔の耳で風を読む俊敏な草うさぎ。",
@@ -1655,10 +2528,22 @@
         "speed": 60
       },
       "learnset": [
-        "RAZOR_LEAF",
-        "VERDANT_BLADE",
-        "SOLAR_BEAM",
-        "NATURE_GUARD"
+        {
+          "move": "RAZOR_LEAF",
+          "level": 1
+        },
+        {
+          "move": "VERDANT_BLADE",
+          "level": 3
+        },
+        {
+          "move": "SOLAR_BEAM",
+          "level": 5
+        },
+        {
+          "move": "NATURE_GUARD",
+          "level": 7
+        }
       ],
       "catchRate": 0.08,
       "description": "深森の意志を背負う樹角の守護獣。",
@@ -1683,10 +2568,22 @@
         "speed": 71
       },
       "learnset": [
-        "SPARK",
-        "THUNDER_STEP",
-        "CHARGE",
-        "QUICK_ATTACK"
+        {
+          "move": "SPARK",
+          "level": 1
+        },
+        {
+          "move": "THUNDER_STEP",
+          "level": 3
+        },
+        {
+          "move": "CHARGE",
+          "level": 5
+        },
+        {
+          "move": "QUICK_ATTACK",
+          "level": 7
+        }
       ],
       "catchRate": 0.24,
       "description": "稲妻で駆動する歯車獣。直線加速が得意。",
@@ -1713,10 +2610,22 @@
         "speed": 84
       },
       "learnset": [
-        "THUNDER_FANG",
-        "THUNDERBOLT",
-        "PLASMA_CANNON",
-        "ARC_SPIN"
+        {
+          "move": "THUNDER_FANG",
+          "level": 1
+        },
+        {
+          "move": "THUNDERBOLT",
+          "level": 3
+        },
+        {
+          "move": "PLASMA_CANNON",
+          "level": 5
+        },
+        {
+          "move": "ARC_SPIN",
+          "level": 7
+        }
       ],
       "catchRate": 0.07,
       "description": "暴風に雷をまとう空域支配者。",
@@ -1748,10 +2657,22 @@
         "speed": 58
       },
       "learnset": [
-        "ICE_SHARD",
-        "FROST_BITE",
-        "CRYO_LANCE",
-        "HAIL_SHELL"
+        {
+          "move": "ICE_SHARD",
+          "level": 1
+        },
+        {
+          "move": "FROST_BITE",
+          "level": 3
+        },
+        {
+          "move": "CRYO_LANCE",
+          "level": 5
+        },
+        {
+          "move": "HAIL_SHELL",
+          "level": 7
+        }
       ],
       "catchRate": 0.23,
       "description": "雪雲の毛並みを持つ幼い氷羊。",
@@ -1771,10 +2692,22 @@
         "speed": 56
       },
       "learnset": [
-        "ICE_BEAM",
-        "CRYO_LANCE",
-        "BLIZZARD",
-        "AURORA_VEIL"
+        {
+          "move": "ICE_BEAM",
+          "level": 1
+        },
+        {
+          "move": "CRYO_LANCE",
+          "level": 3
+        },
+        {
+          "move": "BLIZZARD",
+          "level": 5
+        },
+        {
+          "move": "AURORA_VEIL",
+          "level": 7
+        }
       ],
       "catchRate": 0.07,
       "description": "凍原に氷紋を刻む白角の巨獣。",

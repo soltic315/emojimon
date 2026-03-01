@@ -43,6 +43,11 @@ const subEmojiSchema = z.object({
   size: z.number().positive().optional(),
 });
 
+const learnsetEntrySchema = z.object({
+  move: z.string().min(1),
+  level: z.number().int().min(1),
+});
+
 const monsterSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
@@ -50,7 +55,7 @@ const monsterSchema = z.object({
   sub_emoji: z.array(subEmojiSchema),
   primaryType: z.string().min(1),
   baseStats: baseStatsSchema,
-  learnset: z.array(z.string().min(1)),
+  learnset: z.array(learnsetEntrySchema),
   catchRate: z.number().min(0).max(1),
   description: z.string().optional(),
   abilityId: z.string().optional(),
