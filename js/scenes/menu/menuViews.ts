@@ -4,6 +4,7 @@ import { getAllMonsters, calcStats, getMonsterMoves } from "../../data/monsters.
 import { audioManager } from "../../audio/AudioManager.ts";
 import { FONT, drawPanel, drawSelection } from "../../ui/UIHelper.ts";
 import { MENU_ITEMS, GUIDE_PAGES } from "./menuConstants.ts";
+import { buildUnifiedSettingsRows } from "./settingsShared.ts";
 import { MAPS, DOOR_TRANSITIONS } from "../world/worldMapData.ts";
 import {
   getAchievementsByCategory,
@@ -296,13 +297,6 @@ export function renderPartyView(scene) {
       color: "#ddd6fe",
     });
     scene.subPanel.add(previewText);
-  } else {
-    const fallback = scene.add.text(panelX + panelW - 300, height - 56, "いろいろな組み合わせを試そう", {
-      fontFamily: FONT.UI,
-      fontSize: 10,
-      color: "#6b7280",
-    });
-    scene.subPanel.add(fallback);
   }
 }
 
@@ -913,21 +907,19 @@ export function renderGlobalMapView(scene) {
 
   const nodeLayout = {
     EMOJI_TOWN: { x: 0.08, y: 0.56 },
-    HOUSE1: { x: 0.06, y: 0.34 },
-    LAB: { x: 0.14, y: 0.34 },
-    TOWN_SHOP: { x: 0.08, y: 0.78 },
-    FOREST: { x: 0.26, y: 0.56 },
-    FOREST_GYM: { x: 0.26, y: 0.33 },
-    CRYSTAL_CAVE: { x: 0.44, y: 0.56 },
-    DARK_TOWER: { x: 0.44, y: 0.82 },
-    VOLCANIC_PASS: { x: 0.62, y: 0.56 },
-    VOLCANO_SHOP: { x: 0.62, y: 0.82 },
-    FROZEN_PEAK: { x: 0.78, y: 0.56 },
-    FROZEN_GYM: { x: 0.78, y: 0.33 },
-    FROZEN_SHOP: { x: 0.78, y: 0.82 },
-    SKY_RUINS: { x: 0.9, y: 0.42 },
-    CELESTIAL_GARDEN: { x: 0.9, y: 0.7 },
-    GARDEN_SHOP: { x: 0.98, y: 0.82 },
+    FOREST: { x: 0.2, y: 0.56 },
+    MISTY_SWAMP: { x: 0.33, y: 0.44 },
+    CORAL_REEF: { x: 0.47, y: 0.44 },
+    CRYSTAL_CAVE: { x: 0.33, y: 0.64 },
+    DARK_TOWER: { x: 0.46, y: 0.76 },
+    SHADOW_GROVE: { x: 0.58, y: 0.76 },
+    VOLCANIC_PASS: { x: 0.47, y: 0.64 },
+    SAND_VALLEY: { x: 0.62, y: 0.64 },
+    FROZEN_PEAK: { x: 0.76, y: 0.64 },
+    ANCIENT_LIBRARY: { x: 0.86, y: 0.52 },
+    SKY_RUINS: { x: 0.94, y: 0.4 },
+    CELESTIAL_GARDEN: { x: 0.94, y: 0.68 },
+    STARFALL_BASIN: { x: 0.98, y: 0.82 },
   };
 
   const nodeCenters = {};
@@ -1203,24 +1195,7 @@ export function renderSettingsView(scene) {
   });
   scene.subPanel.add(title);
 
-  const settings = gameState.audioSettings;
-  const gameplay = gameState.gameplaySettings || {};
-  const speedLabelMap = {
-    NORMAL: "ノーマル",
-    FAST: "はやい",
-    TURBO: "さいこうそく",
-  };
-  const battleSpeedLabel = speedLabelMap[gameplay.battleSpeed] || speedLabelMap.NORMAL;
-  const rows = [
-    { key: "mute", label: `ミュート: ${settings.muted ? "ON" : "OFF"}` },
-    { key: "bgm", label: `BGM音量 : ${"█".repeat(Math.round(settings.bgmVolume * 10))}${"░".repeat(10 - Math.round(settings.bgmVolume * 10))} ${Math.round(settings.bgmVolume * 100)}%` },
-    { key: "se", label: `SE音量  : ${"█".repeat(Math.round(settings.seVolume * 10))}${"░".repeat(10 - Math.round(settings.seVolume * 10))} ${Math.round(settings.seVolume * 100)}%` },
-    { key: "battleSpeed", label: `バトル速度: ${battleSpeedLabel}` },
-    { key: "autoAdvanceMessages", label: `メッセージ自動送り: ${gameplay.autoAdvanceMessages ? "ON" : "OFF"}` },
-    { key: "shortEncounterEffect", label: `エンカウント演出短縮: ${gameplay.shortEncounterEffect ? "ON" : "OFF"}` },
-    { key: "save", label: "セーブ" },
-    { key: "deleteSave", label: "セーブデータ削除" },
-  ];
+  const rows = buildUnifiedSettingsRows(gameState.audioSettings, gameState.gameplaySettings);
 
   scene.settingsRows = rows;
   scene.subMenuIndex = Math.min(scene.subMenuIndex, rows.length - 1);
@@ -1238,9 +1213,7 @@ export function renderSettingsView(scene) {
     const text = scene.add.text(panelX + 24, y, selected ? `▶ ${row.label}` : `  ${row.label}`, {
       fontFamily: FONT.UI,
       fontSize: 14,
-      color: selected
-        ? "#fbbf24"
-        : (row.key === "deleteSave" ? "#ef4444" : row.key === "save" ? "#86efac" : "#e5e7eb"),
+      color: selected ? "#fbbf24" : "#e5e7eb",
     });
     scene.subPanel.add(text);
   });
@@ -1258,51 +1231,6 @@ export function renderSettingsView(scene) {
   scene.input.keyboard.off("keydown-RIGHT");
   scene.input.keyboard.on("keydown-LEFT", () => scene._adjustVolume(-0.05));
   scene.input.keyboard.on("keydown-RIGHT", () => scene._adjustVolume(0.05));
-
-  if (scene.settingsConfirmActive) {
-    const overlay = scene.add.graphics();
-    overlay.fillStyle(0x000000, 0.62);
-    overlay.fillRect(panelX, panelY, panelW, height - 20);
-    scene.subPanel.add(overlay);
-
-    const dialogW = Math.min(380, panelW - 40);
-    const dialogH = 144;
-    const dialogX = panelX + (panelW - dialogW) / 2;
-    const dialogY = panelY + (height - 20 - dialogH) / 2;
-    const dialogBg = scene.add.graphics();
-    drawPanel(dialogBg, dialogX, dialogY, dialogW, dialogH, { radius: 10, headerHeight: 24 });
-    scene.subPanel.add(dialogBg);
-
-    const titleText = scene.add.text(dialogX + 14, dialogY + 10, "⚠ セーブデータを削除しますか？", {
-      fontFamily: FONT.UI,
-      fontSize: 14,
-      color: "#fca5a5",
-    });
-    scene.subPanel.add(titleText);
-
-    const noteText = scene.add.text(dialogX + 14, dialogY + 42, "削除するとメイン/バックアップの両方が消えます。", {
-      fontFamily: FONT.UI,
-      fontSize: 12,
-      color: "#cbd5e1",
-      wordWrap: { width: dialogW - 28 },
-    });
-    scene.subPanel.add(noteText);
-
-    const yesSelected = scene.settingsConfirmIndex === 0;
-    const noSelected = !yesSelected;
-    const yesText = scene.add.text(dialogX + 34, dialogY + 98, `${yesSelected ? "▶" : " "} はい（削除する）`, {
-      fontFamily: FONT.UI,
-      fontSize: 13,
-      color: yesSelected ? "#fbbf24" : "#e5e7eb",
-    });
-    const noText = scene.add.text(dialogX + dialogW - 150, dialogY + 98, `${noSelected ? "▶" : " "} いいえ`, {
-      fontFamily: FONT.UI,
-      fontSize: 13,
-      color: noSelected ? "#fbbf24" : "#e5e7eb",
-    });
-    scene.subPanel.add(yesText);
-    scene.subPanel.add(noText);
-  }
 }
 
 // ── 実績画面 ──

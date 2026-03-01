@@ -16,6 +16,9 @@ const DEFAULT_GAMEPLAY_SETTINGS = {
   battleSpeed: "NORMAL",
   autoAdvanceMessages: false,
   shortEncounterEffect: false,
+  emoSkipEnabled: true,
+  autoSaveEnabled: true,
+  screenBrightness: 100,
 };
 
 const MAX_MONSTER_LEVEL = 100;
@@ -29,10 +32,15 @@ const DEFAULT_FIELD_TIME_MINUTES = 8 * 60;
 
 function sanitizeGameplaySettings(raw) {
   const speed = raw?.battleSpeed;
+  const rawBrightness = Number.isFinite(raw?.screenBrightness) ? Math.round(raw.screenBrightness) : 100;
+  const screenBrightness = Math.min(140, Math.max(60, rawBrightness));
   return {
     battleSpeed: speed === "FAST" || speed === "TURBO" ? speed : "NORMAL",
     autoAdvanceMessages: !!raw?.autoAdvanceMessages,
     shortEncounterEffect: !!raw?.shortEncounterEffect,
+    emoSkipEnabled: raw?.emoSkipEnabled !== false,
+    autoSaveEnabled: raw?.autoSaveEnabled !== false,
+    screenBrightness,
   };
 }
 
@@ -243,6 +251,7 @@ class GameState {
     this.playerPosition = { x: 8, y: 10 };
     this.playerDirection = "down";
     this.currentMap = "EMOJI_TOWN";
+    this.lastHealPoint = { mapKey: "EMOJI_TOWN", x: 10, y: 10 };
     this.visitedMapIds = ["EMOJI_TOWN"];
     this.mapWeatherByMap = {};
     this.fieldTimeMinutes = DEFAULT_FIELD_TIME_MINUTES;
@@ -287,6 +296,7 @@ class GameState {
     this.playerPosition = { x: 8, y: 10 };
     this.playerDirection = "down";
     this.currentMap = "EMOJI_TOWN";
+    this.lastHealPoint = { mapKey: "EMOJI_TOWN", x: 10, y: 10 };
     this.visitedMapIds = ["EMOJI_TOWN"];
     this.mapWeatherByMap = {};
     this.fieldTimeMinutes = DEFAULT_FIELD_TIME_MINUTES;
@@ -416,6 +426,31 @@ class GameState {
   setPlayerPosition(tileX, tileY) {
     this.playerPosition.x = tileX;
     this.playerPosition.y = tileY;
+  }
+
+  setLastHealPoint(mapKey, x, y) {
+    this.lastHealPoint = {
+      mapKey: typeof mapKey === "string" && mapKey.length > 0 ? mapKey : "EMOJI_TOWN",
+      x: clampInt(x, 0, 255, 10),
+      y: clampInt(y, 0, 255, 10),
+    };
+    return { ...this.lastHealPoint };
+  }
+
+  getLastHealPoint() {
+    const point = this.lastHealPoint;
+    if (!point || typeof point !== "object") {
+      return { mapKey: "EMOJI_TOWN", x: 10, y: 10 };
+    }
+    return {
+      mapKey: typeof point.mapKey === "string" && point.mapKey.length > 0 ? point.mapKey : "EMOJI_TOWN",
+      x: clampInt(point.x, 0, 255, 10),
+      y: clampInt(point.y, 0, 255, 10),
+    };
+  }
+
+  isAutoSaveEnabled() {
+    return this.gameplaySettings?.autoSaveEnabled !== false;
   }
 
   setBattle(battlePayload) {
@@ -875,6 +910,7 @@ class GameState {
         playerPosition: { ...this.playerPosition },
         playerDirection: this.playerDirection,
         currentMap: this.currentMap,
+        lastHealPoint: this.getLastHealPoint(),
         visitedMapIds: [...new Set(Array.isArray(this.visitedMapIds) ? this.visitedMapIds : ["EMOJI_TOWN"])],
         mapWeatherByMap: { ...(this.mapWeatherByMap || {}) },
         fieldTimeMinutes: this.getFieldTimeMinutes(),
@@ -954,6 +990,13 @@ class GameState {
         ? loadedDirection
         : "down";
       this.currentMap = data.currentMap || "EMOJI_TOWN";
+      this.lastHealPoint = {
+        mapKey: typeof data.lastHealPoint?.mapKey === "string" && data.lastHealPoint.mapKey.length > 0
+          ? data.lastHealPoint.mapKey
+          : "EMOJI_TOWN",
+        x: clampInt(data.lastHealPoint?.x, 0, 255, 10),
+        y: clampInt(data.lastHealPoint?.y, 0, 255, 10),
+      };
       this.visitedMapIds = sanitizeIdList(data.visitedMapIds);
       if (!this.visitedMapIds.includes("EMOJI_TOWN")) {
         this.visitedMapIds.unshift("EMOJI_TOWN");

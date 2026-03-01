@@ -23,6 +23,7 @@ import {
   drawExpBar,
   createMonsterEmojiDisplay,
   setMonsterEmoji,
+  applyCanvasBrightness,
 } from "../ui/UIHelper.ts";
 import {
   BattleState,
@@ -142,7 +143,9 @@ export class BattleScene extends Phaser.Scene {
     // 野生バトルかつプレイヤーのレベルが相手より10以上高い場合に解禁
     const playerLevel = this.battle.player?.level || 1;
     const opponentLevel = this.battle.opponent?.level || 1;
-    this.emoSkipAvailable = this.isWildBattle && (playerLevel - opponentLevel >= EMO_SKIP_LEVEL_GAP);
+    this.emoSkipAvailable = (gameState.gameplaySettings?.emoSkipEnabled !== false)
+      && this.isWildBattle
+      && (playerLevel - opponentLevel >= EMO_SKIP_LEVEL_GAP);
     this.emoSkipHoldTime = 0;
     this.emoSkipTriggered = false;
     this.emoSkipHoldThreshold = EMO_SKIP_HOLD_MS;
@@ -161,6 +164,7 @@ export class BattleScene extends Phaser.Scene {
     this._touchNavCooldown = 0;
 
     audioManager.applySettings(gameState.audioSettings || {});
+    applyCanvasBrightness(this, gameState.gameplaySettings?.screenBrightness);
 
     this.battleSpeedMultiplier = this._resolveBattleSpeedMultiplier();
     this.tweens.timeScale = this.battleSpeedMultiplier;
@@ -202,10 +206,6 @@ export class BattleScene extends Phaser.Scene {
     // エモ・スキップ ヒント表示
     if (this.emoSkipAvailable) {
       this._createEmoSkipUI();
-    }
-
-    if (this.isWildBattle && this.streakAtBattleStart >= 2) {
-      this.enqueueMessage(`🔥 やせいれんしょう ${this.streakAtBattleStart} の いきおい！`);
     }
 
     if (this.battle.opponent?.isRareEncounter) {
@@ -1159,9 +1159,6 @@ export class BattleScene extends Phaser.Scene {
     const streak = gameState.addWildWinStreak(1);
     this.streakHandled = true;
     this.enqueueMessage(`🔥 やせいれんしょう ${streak}！`);
-    if (streak > 0 && streak % 5 === 0) {
-      this.enqueueMessage("れんしょうボーナスが さらに あがった！");
-    }
   }
 
   tryApplyMoveStatus(target, move) {
@@ -1663,17 +1660,15 @@ export class BattleScene extends Phaser.Scene {
 
   /** 勝利/スキップ共通の報酬処理（経験値・レベルアップ・進化・お金・連勝） */
   _processVictoryRewards(opponent, leader) {
-    const streakBefore = gameState.getWildWinStreak ? gameState.getWildWinStreak() : 0;
-    const streakBonusMul = this.isWildBattle ? 1 + Math.min(0.5, streakBefore * 0.08) : 1;
     const encounterBonusMul = opponent.rewardMultiplier || 1;
-    const totalBonusMul = streakBonusMul * encounterBonusMul;
+    const totalBonusMul = encounterBonusMul;
 
     // 経験値計算（レベル補正付き）
     const expMultiplier = this.isArena ? EXP_MULT_ARENA : (this.isBoss ? EXP_MULT_GYM : (this.isTrainer ? EXP_MULT_TRAINER : EXP_MULT_WILD));
     const levelFactor = Math.max(1, (opponent.level || 1)) / 5;
     const expGain = Math.max(1, Math.floor(opponent.species.baseExpYield * levelFactor * expMultiplier * totalBonusMul));
     this.enqueueMessage(`${expGain} けいけんちを かくとく！`);
-    if (totalBonusMul > 1.01) {
+    if (encounterBonusMul > 1.01) {
       const bonusPct = Math.round((totalBonusMul - 1) * 100);
       this.enqueueMessage(`ボーナスで けいけんち +${bonusPct}%！`);
     }
@@ -2659,11 +2654,10 @@ export class BattleScene extends Phaser.Scene {
     let modifier = 0.8;
     if (hpRatio < 0.25) modifier = 1.6;
     else if (hpRatio < 0.5) modifier = 1.2;
-    const streakBonus = this.isWildBattle ? 1 + Math.min(0.24, this.streakAtBattleStart * 0.02) : 1;
     const encounterBonus = opponent.catchRateMultiplier || 1;
     // インフィニティボール（catchBonus >= 100）は確定捕獲
     const isMasterBall = ball.bonus >= 100;
-    const finalRate = isMasterBall ? 1.0 : Math.min(0.96, baseRate * modifier * ball.bonus * streakBonus * encounterBonus);
+    const finalRate = isMasterBall ? 1.0 : Math.min(0.96, baseRate * modifier * ball.bonus * encounterBonus);
     const success = Math.random() < finalRate;
 
     this.clearMenuTexts();
@@ -2975,7 +2969,7 @@ export class BattleScene extends Phaser.Scene {
       this.streakHandled = true;
     }
 
-    // 敗北時は回復してタウンに戻す（闘技場では現在地に留まる）
+    // 敗北時は回復して最後に回復した地点へ戻す（闘技場では現在地に留まる）
     if (this.resultType === "lose") {
       gameState.party.forEach((m) => {
         if (m.species) {
@@ -2983,8 +2977,9 @@ export class BattleScene extends Phaser.Scene {
         }
       });
       if (!this.isArena) {
-        gameState.setPlayerPosition(10, 10);
-        gameState.currentMap = "EMOJI_TOWN";
+        const respawn = gameState.getLastHealPoint();
+        gameState.setPlayerPosition(respawn.x, respawn.y);
+        gameState.currentMap = respawn.mapKey;
       }
     }
 
@@ -2992,15 +2987,18 @@ export class BattleScene extends Phaser.Scene {
     gameState.checkAchievements();
 
     // バトル終了時にオートセーブ
-    gameState.save();
+    if (gameState.isAutoSaveEnabled()) {
+      gameState.save();
+    }
 
     this.cameras.main.fadeOut(400, 0, 0, 0);
     this.cameras.main.once("camerafadeoutcomplete", () => {
       this.scene.stop();
       if (this.resultType === "lose" && !this.isArena) {
+        const respawn = gameState.getLastHealPoint();
         // WorldScene を完全再起動
         this.scene.stop(this.fromSceneKey || "WorldScene");
-        this.scene.start("WorldScene", { mapKey: "EMOJI_TOWN", startX: 10, startY: 10 });
+        this.scene.start("WorldScene", { mapKey: respawn.mapKey, startX: respawn.x, startY: respawn.y });
       } else {
         this.scene.resume(this.fromSceneKey || "WorldScene");
       }

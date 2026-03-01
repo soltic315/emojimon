@@ -19,6 +19,7 @@ import {
   drawPanel,
   drawSelection,
   createMonsterEmojiDisplay,
+  applyCanvasBrightness,
 } from "../ui/UIHelper.ts";
 import { addCameraBloom, createParticleBurst } from "../ui/FXHelper.ts";
 import {
@@ -69,6 +70,7 @@ export class WorldScene extends Phaser.Scene {
     gameState.markMapVisited(this.mapKey);
     gameState.ensureMapWeather(this.mapKey, () => rollWeatherForMapByHour(this.mapKey, gameState.getFieldTime().hour));
     audioManager.applySettings(gameState.audioSettings || {});
+    applyCanvasBrightness(this, gameState.gameplaySettings?.screenBrightness);
 
     const mapDef = MAPS[this.mapKey] || MAPS.EMOJI_TOWN;
     this.mapWidth = mapDef.width;
@@ -278,6 +280,7 @@ export class WorldScene extends Phaser.Scene {
 
   /** オートセーブ（インジケーター付き） */
   autoSave() {
+    if (!gameState.isAutoSaveEnabled()) return false;
     const ok = gameState.save();
     if (ok) this._showAutoSaveIndicator();
     return ok;
@@ -297,7 +300,7 @@ export class WorldScene extends Phaser.Scene {
     });
 
     // 実績アンロック後にオートセーブ
-    gameState.save();
+    this.autoSave();
   }
 
   /** 実績達成のトースト通知を表示 */
@@ -670,14 +673,17 @@ export class WorldScene extends Phaser.Scene {
       // 全滅チェック
       const allDown = gameState.party.every((mon) => mon.currentHp <= 0);
       if (allDown) {
-        this.showMessage("パーティが全滅した… 町に戻ろう…", 2400);
+        this.showMessage("パーティが全滅した… 最後の回復所に戻ろう…", 2400);
         this.time.delayedCall(2500, () => {
           gameState.party.forEach((mon) => {
             const stats = calcStats(mon.species, mon.level);
-            mon.currentHp = Math.floor(stats.maxHp / 2);
+            mon.currentHp = stats.maxHp;
           });
+          const respawn = gameState.getLastHealPoint();
+          gameState.setPlayerPosition(respawn.x, respawn.y);
+          gameState.currentMap = respawn.mapKey;
           gameState.save();
-          this.scene.restart({ mapKey: "EMOJI_TOWN", startX: 8, startY: 10 });
+          this.scene.restart({ mapKey: respawn.mapKey, startX: respawn.x, startY: respawn.y });
         });
       }
     }
@@ -881,9 +887,10 @@ export class WorldScene extends Phaser.Scene {
       this.groundLayer.add(body);
 
       const roofHeight = Math.max(14, Math.floor(height * 0.5));
+      const roofBaseY = baseY + Math.max(3, Math.floor(TILE_SIZE * 0.15));
       const roof = this.add.triangle(
         baseX + width / 2,
-        baseY,
+        roofBaseY,
         -width / 2 - 3,
         0,
         width / 2 + 3,
@@ -897,7 +904,7 @@ export class WorldScene extends Phaser.Scene {
 
       if (building.emoji || building.label) {
         const labelText = `${building.emoji || ""} ${building.label || ""}`.trim();
-        const label = this.add.text(baseX + width / 2, baseY - roofHeight - 4, labelText, {
+        const label = this.add.text(baseX + width / 2, roofBaseY - roofHeight - 4, labelText, {
           fontFamily: FONT.UI,
           fontSize: 10,
           color: "#f8fafc",
@@ -1513,9 +1520,11 @@ export class WorldScene extends Phaser.Scene {
               m.statusCondition = "NONE";
             }
           });
+          gameState.setLastHealPoint(this.mapKey, gameState.playerPosition.x, gameState.playerPosition.y);
           audioManager.playHeal();
           this._playHealNpcEffect(npc);
           this.showMessage("パーティが全回復した！", 2600);
+          this.autoSave();
         };
 
         const nurseLine = npc.text || "おかえり！ 今日はぐっすり休んでいこうね。";

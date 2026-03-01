@@ -1,6 +1,6 @@
 {
   "name": "emojimon",
-  "version": "1.8.1",
+  "version": "1.9.0",
   "description": "ブラウザで遊べるポケモン風ターン制バトルゲーム（絵文字モンスター）",
   "private": true,
   "type": "module",

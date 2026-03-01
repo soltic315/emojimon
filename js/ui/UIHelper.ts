@@ -82,6 +82,20 @@ export const TEXT_COLORS = {
 };
 
 /**
+ * 設定値に応じてゲームキャンバスの明るさを適用する
+ * @param {Phaser.Scene|Phaser.Game} target
+ * @param {number} brightnessPercent
+ */
+export function applyCanvasBrightness(target, brightnessPercent = 100) {
+  const game = target?.game || target;
+  const canvas = game?.canvas;
+  if (!canvas) return;
+  const safe = Number.isFinite(brightnessPercent) ? Math.round(brightnessPercent) : 100;
+  const clamped = Math.min(140, Math.max(60, safe));
+  canvas.style.filter = `brightness(${clamped}%)`;
+}
+
+/**
  * プロフェッショナルなパネル背景を描画する
  * ドロップシャドウ、ヘッダーグラデーション、インナーグロウ付き
  *

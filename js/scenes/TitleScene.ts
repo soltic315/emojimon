@@ -1,7 +1,8 @@
 import { gameState } from "../state/gameState.ts";
 import { audioManager } from "../audio/AudioManager.ts";
-import { FONT, COLORS, TEXT_COLORS, drawPanel, drawSelection, createAmbientParticles } from "../ui/UIHelper.ts";
+import { FONT, COLORS, TEXT_COLORS, drawPanel, drawSelection, createAmbientParticles, applyCanvasBrightness } from "../ui/UIHelper.ts";
 import { addCameraBloom, addGlow, addShine } from "../ui/FXHelper.ts";
+import { buildUnifiedSettingsRows, clampScreenBrightness } from "./menu/settingsShared.ts";
 import { gsap } from "gsap";
 
 export class TitleScene extends Phaser.Scene {
@@ -15,9 +16,10 @@ export class TitleScene extends Phaser.Scene {
     this.hasSave = gameState.hasSaveData();
     this.settingsVisible = false;
     this.settingsIndex = 0;
-    this.settingsRows = ["mute", "bgm", "se", "close"];
+    this.settingsRows = [];
 
     audioManager.applySettings(gameState.audioSettings);
+    applyCanvasBrightness(this, gameState.gameplaySettings?.screenBrightness);
 
     // ── 背景グラデーション ──
     // ── 背景 ──
@@ -136,8 +138,7 @@ export class TitleScene extends Phaser.Scene {
       this.menuOptions.push({ label: "つづきから", action: "continue" });
     }
     this.menuOptions.push({ label: "はじめから", action: "new" });
-    this.menuOptions.push({ label: "サウンド設定", action: "settings" });
-    this.menuOptions.push({ label: "あそびかた", action: "help" });
+    this.menuOptions.push({ label: "設定", action: "settings" });
 
     this.menuTexts = [];
     this.menuBgs = [];
@@ -308,8 +309,6 @@ export class TitleScene extends Phaser.Scene {
       this.continueGame();
     } else if (action === "settings") {
       this.showSettings();
-    } else if (action === "help") {
-      this.showHelp();
     }
   }
 
@@ -707,12 +706,26 @@ export class TitleScene extends Phaser.Scene {
 
   applyAudioSettings() {
     audioManager.applySettings(gameState.audioSettings);
+    applyCanvasBrightness(this, gameState.gameplaySettings?.screenBrightness);
   }
 
-  updateAudioSettings(mutator) {
-    mutator(gameState.audioSettings);
+  _cycleBattleSpeed(direction = 1) {
+    const order = ["NORMAL", "FAST", "TURBO"];
+    const current = gameState.gameplaySettings?.battleSpeed || "NORMAL";
+    const idx = Math.max(0, order.indexOf(current));
+    const nextIndex = (idx + direction + order.length) % order.length;
+    gameState.gameplaySettings.battleSpeed = order[nextIndex];
+  }
+
+  _toggleGameplayFlag(flagKey) {
+    gameState.gameplaySettings[flagKey] = !gameState.gameplaySettings[flagKey];
+  }
+
+  updateSettings(mutator) {
+    mutator(gameState.audioSettings, gameState.gameplaySettings);
     gameState.audioSettings.bgmVolume = Phaser.Math.Clamp(gameState.audioSettings.bgmVolume, 0, 1);
     gameState.audioSettings.seVolume = Phaser.Math.Clamp(gameState.audioSettings.seVolume, 0, 1);
+    gameState.gameplaySettings.screenBrightness = clampScreenBrightness(gameState.gameplaySettings.screenBrightness);
     gameState.saveAudioSettings();
     this.applyAudioSettings();
     this.renderSettingsPanel();
@@ -736,23 +749,38 @@ export class TitleScene extends Phaser.Scene {
     const left = Phaser.Input.Keyboard.JustDown(this.cursors.left);
     const right = Phaser.Input.Keyboard.JustDown(this.cursors.right);
     if (left || right) {
-      const delta = right ? 0.05 : -0.05;
-      const row = this.settingsRows[this.settingsIndex];
+      const delta = right ? 1 : -1;
+      const row = this.settingsRows[this.settingsIndex]?.key;
       if (row === "bgm") {
-        this.updateAudioSettings((s) => {
-          s.bgmVolume += delta;
-          s.muted = false;
+        this.updateSettings((audio) => {
+          audio.bgmVolume += delta * 0.05;
+          audio.muted = false;
         });
         audioManager.playCursor();
       } else if (row === "se") {
-        this.updateAudioSettings((s) => {
-          s.seVolume += delta;
-          s.muted = false;
+        this.updateSettings((audio) => {
+          audio.seVolume += delta * 0.05;
+          audio.muted = false;
         });
         audioManager.playCursor();
       } else if (row === "mute") {
-        this.updateAudioSettings((s) => {
-          s.muted = !s.muted;
+        this.updateSettings((audio) => {
+          audio.muted = !audio.muted;
+        });
+        audioManager.playCursor();
+      } else if (row === "battleSpeed") {
+        this.updateSettings((_, gameplay) => {
+          this._cycleBattleSpeed(delta >= 0 ? 1 : -1);
+        });
+        audioManager.playCursor();
+      } else if (row === "autoAdvanceMessages" || row === "shortEncounterEffect" || row === "emoSkipEnabled" || row === "autoSaveEnabled") {
+        this.updateSettings((_, gameplay) => {
+          gameplay[row] = !gameplay[row];
+        });
+        audioManager.playCursor();
+      } else if (row === "screenBrightness") {
+        this.updateSettings((_, gameplay) => {
+          gameplay.screenBrightness = clampScreenBrightness((gameplay.screenBrightness || 100) + (delta * 10));
         });
         audioManager.playCursor();
       }
@@ -760,16 +788,30 @@ export class TitleScene extends Phaser.Scene {
   }
 
   handleSettingsConfirm() {
-    const row = this.settingsRows[this.settingsIndex];
+    const row = this.settingsRows[this.settingsIndex]?.key;
     if (row === "mute") {
-      this.updateAudioSettings((s) => {
-        s.muted = !s.muted;
+      this.updateSettings((audio) => {
+        audio.muted = !audio.muted;
       });
       return;
     }
 
-    if (row === "close") {
-      this.hideSettings();
+    if (row === "battleSpeed") {
+      this.updateSettings(() => this._cycleBattleSpeed(1));
+      return;
+    }
+
+    if (row === "autoAdvanceMessages" || row === "shortEncounterEffect" || row === "emoSkipEnabled" || row === "autoSaveEnabled") {
+      this.updateSettings((_, gameplay) => {
+        gameplay[row] = !gameplay[row];
+      });
+      return;
+    }
+
+    if (row === "screenBrightness") {
+      this.updateSettings((_, gameplay) => {
+        gameplay.screenBrightness = clampScreenBrightness((gameplay.screenBrightness || 100) + 10);
+      });
     }
   }
 
@@ -782,7 +824,8 @@ export class TitleScene extends Phaser.Scene {
     }
 
     const { width, height } = this.scale;
-    const settings = gameState.audioSettings;
+    this.settingsRows = buildUnifiedSettingsRows(gameState.audioSettings, gameState.gameplaySettings);
+    this.settingsIndex = Phaser.Math.Clamp(this.settingsIndex, 0, Math.max(0, this.settingsRows.length - 1));
 
     this.settingsPanel = this.add.container(0, 0);
 
@@ -798,31 +841,24 @@ export class TitleScene extends Phaser.Scene {
       .setStrokeStyle(1, 0x334155, 0.7);
     if (headerCard) this.settingsPanel.add(headerCard);
 
-    const title = this.add.text(width / 2, 92, "サウンド設定", {
+    const title = this.add.text(width / 2, 92, "設定", {
       fontFamily: FONT.UI,
       fontSize: 24,
       color: "#fde68a",
     }).setOrigin(0.5);
     this.settingsPanel.add(title);
 
-    const rows = [
-      `ミュート: ${settings.muted ? "ON" : "OFF"}`,
-      `BGM音量 : ${Math.round(settings.bgmVolume * 100)}%`,
-      `SE音量  : ${Math.round(settings.seVolume * 100)}%`,
-      "とじる",
-    ];
-
-    rows.forEach((label, index) => {
-      const y = 146 + index * 44;
+    this.settingsRows.forEach((row, index) => {
+      const y = 146 + index * 40;
       const selected = index === this.settingsIndex;
       const rowCard = this.rexUI?.add
         .roundRectangle(width / 2, y + 14, 352, 36, 8, selected ? 0x1f2937 : 0x0f172a, selected ? 0.92 : 0.66)
         .setStrokeStyle(selected ? 2 : 1, selected ? 0xfbbf24 : 0x334155, selected ? 0.95 : 0.75);
       if (rowCard) this.settingsPanel.add(rowCard);
 
-      const text = this.add.text(width / 2, y, selected ? `▶ ${label}` : `  ${label}`, {
+      const text = this.add.text(width / 2, y, selected ? `▶ ${row.label}` : `  ${row.label}`, {
         fontFamily: FONT.UI,
-        fontSize: 19,
+        fontSize: 15,
         color: selected ? "#fde68a" : "#e2e8f0",
       }).setOrigin(0.5, 0);
       this.settingsPanel.add(text);

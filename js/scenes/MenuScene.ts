@@ -6,8 +6,9 @@ import { gameState } from "../state/gameState.ts";
 import { getItemById } from "../data/items.ts";
 import { calcStats, getMonsterMoves } from "../data/monsters.ts";
 import { audioManager } from "../audio/AudioManager.ts";
-import { FONT, COLORS, TEXT_COLORS } from "../ui/UIHelper.ts";
+import { FONT, COLORS, TEXT_COLORS, applyCanvasBrightness } from "../ui/UIHelper.ts";
 import { MENU_ITEMS, GUIDE_PAGES } from "./menu/menuConstants.ts";
+import { clampScreenBrightness } from "./menu/settingsShared.ts";
 import {
   renderMainMenu,
   renderSubMenu,
@@ -52,6 +53,7 @@ export class MenuScene extends Phaser.Scene {
     this.guideTocIndex = 0;
     this.settingsConfirmActive = false;
     this.settingsConfirmIndex = 0;
+    applyCanvasBrightness(this, gameState.gameplaySettings?.screenBrightness);
 
     // 半透明オーバーレイ
     this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.5);
@@ -654,6 +656,7 @@ export class MenuScene extends Phaser.Scene {
 
   _persistSettingsChanges(playSe = true) {
     audioManager.applySettings(gameState.audioSettings);
+    applyCanvasBrightness(this, gameState.gameplaySettings?.screenBrightness);
     gameState.saveAudioSettings();
     if (playSe) audioManager.playCursor();
     this._renderSubMenu();
@@ -676,6 +679,14 @@ export class MenuScene extends Phaser.Scene {
       this._toggleGameplayFlag("autoAdvanceMessages");
     } else if (row.key === "shortEncounterEffect") {
       this._toggleGameplayFlag("shortEncounterEffect");
+    } else if (row.key === "emoSkipEnabled") {
+      this._toggleGameplayFlag("emoSkipEnabled");
+    } else if (row.key === "autoSaveEnabled") {
+      this._toggleGameplayFlag("autoSaveEnabled");
+    } else if (row.key === "screenBrightness") {
+      const current = clampScreenBrightness(gameState.gameplaySettings?.screenBrightness);
+      const step = delta >= 0 ? 10 : -10;
+      gameState.gameplaySettings.screenBrightness = clampScreenBrightness(current + step);
     } else {
       return;
     }
@@ -699,20 +710,16 @@ export class MenuScene extends Phaser.Scene {
     } else if (row.key === "shortEncounterEffect") {
       this._toggleGameplayFlag("shortEncounterEffect");
       this._persistSettingsChanges(false);
-    } else if (row.key === "save") {
-      const ok = gameState.save();
-      if (ok) {
-        audioManager.playSave();
-        this._showCenterMessage("セーブしました！", "#86efac");
-      } else {
-        audioManager.playCancel();
-        this._showCenterMessage("セーブに失敗しました…", "#fca5a5");
-      }
-    } else if (row.key === "deleteSave") {
-      this.settingsConfirmActive = true;
-      this.settingsConfirmIndex = 1;
-      audioManager.playCursor();
-      this._renderSubMenu();
+    } else if (row.key === "emoSkipEnabled") {
+      this._toggleGameplayFlag("emoSkipEnabled");
+      this._persistSettingsChanges(false);
+    } else if (row.key === "autoSaveEnabled") {
+      this._toggleGameplayFlag("autoSaveEnabled");
+      this._persistSettingsChanges(false);
+    } else if (row.key === "screenBrightness") {
+      const current = clampScreenBrightness(gameState.gameplaySettings?.screenBrightness);
+      gameState.gameplaySettings.screenBrightness = clampScreenBrightness(current + 10);
+      this._persistSettingsChanges(false);
     }
   }
 
