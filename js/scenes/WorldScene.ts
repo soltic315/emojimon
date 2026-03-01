@@ -877,18 +877,21 @@ export class WorldScene extends Phaser.Scene {
 
       const roofHeight = Math.max(14, Math.floor(height * 0.5));
       const roofBaseY = baseY + Math.max(3, Math.floor(TILE_SIZE * 0.15));
-      const roof = this.add.triangle(
-        baseX + width / 2,
-        roofBaseY,
-        -width / 2 - 3,
-        0,
-        width / 2 + 3,
+      const roofOverhang = 3;
+      const roof = this.add.polygon(
         0,
         0,
-        -roofHeight,
+        [
+          baseX - roofOverhang,
+          roofBaseY,
+          baseX + width + roofOverhang,
+          roofBaseY,
+          baseX + width / 2,
+          roofBaseY - roofHeight,
+        ],
         building.roofColor || 0xb91c1c,
         0.88,
-      ).setOrigin(0.5, 1);
+      ).setOrigin(0, 0);
       this.groundLayer.add(roof);
 
       if (building.emoji || building.label) {
