@@ -11,12 +11,18 @@
         "defense": 43,
         "speed": 65
       },
-      "learnset": ["TACKLE", "EMBER", "FOCUS", "FIRE_FANG"],
+      "learnset": [
+        "TACKLE",
+        "EMBER",
+        "FOCUS",
+        "FIRE_FANG"
+      ],
       "catchRate": 0.3,
       "description": "小さな炎をまとったクマ。いたずら好きだが仲間想い。",
       "abilityId": "BLAZE",
       "evolveTo": "PYREBEAR",
-      "evolveLevel": 12
+      "evolveLevel": 12,
+      "sub_emoji": []
     },
     {
       "id": "PYREBEAR",
@@ -29,10 +35,16 @@
         "defense": 58,
         "speed": 72
       },
-      "learnset": ["FIRE_FANG", "FLAME_BURST", "BODY_SLAM", "INFERNO"],
+      "learnset": [
+        "FIRE_FANG",
+        "FLAME_BURST",
+        "BODY_SLAM",
+        "INFERNO"
+      ],
       "catchRate": 0.15,
       "description": "エムベアの進化形。体を炎でまとい、力強く戦う。",
-      "abilityId": "BLAZE"
+      "abilityId": "BLAZE",
+      "sub_emoji": []
     },
     {
       "id": "DROPLET",
@@ -45,12 +57,18 @@
         "defense": 65,
         "speed": 43
       },
-      "learnset": ["TACKLE", "WATER_SPLASH", "DEFENSE_CURL", "BUBBLE_BEAM"],
+      "learnset": [
+        "TACKLE",
+        "WATER_SPLASH",
+        "DEFENSE_CURL",
+        "BUBBLE_BEAM"
+      ],
       "catchRate": 0.4,
       "description": "体のほとんどが水でできたモンスター。のんびり屋。",
       "abilityId": "TORRENT",
       "evolveTo": "TIDALON",
-      "evolveLevel": 14
+      "evolveLevel": 14,
+      "sub_emoji": []
     },
     {
       "id": "TIDALON",
@@ -63,10 +81,16 @@
         "defense": 82,
         "speed": 52
       },
-      "learnset": ["BUBBLE_BEAM", "HYDRO_PUMP", "BODY_SLAM", "HEAL_PULSE"],
+      "learnset": [
+        "BUBBLE_BEAM",
+        "HYDRO_PUMP",
+        "BODY_SLAM",
+        "HEAL_PULSE"
+      ],
       "catchRate": 0.12,
       "description": "ドロプレットの進化形。嵐をまとう海の覇者。",
-      "abilityId": "TORRENT"
+      "abilityId": "TORRENT",
+      "sub_emoji": []
     },
     {
       "id": "LEAFLING",
@@ -79,12 +103,18 @@
         "defense": 49,
         "speed": 45
       },
-      "learnset": ["TACKLE", "LEAF_DART", "VINE_WHIP", "GROWL"],
+      "learnset": [
+        "TACKLE",
+        "LEAF_DART",
+        "VINE_WHIP",
+        "GROWL"
+      ],
       "catchRate": 0.35,
       "description": "風に乗って素早く動く草の妖精。森を守っている。",
       "abilityId": "OVERGROW",
       "evolveTo": "THORNKING",
-      "evolveLevel": 13
+      "evolveLevel": 13,
+      "sub_emoji": []
     },
     {
       "id": "THORNKING",
@@ -97,10 +127,16 @@
         "defense": 70,
         "speed": 55
       },
-      "learnset": ["RAZOR_LEAF", "SOLAR_BEAM", "BODY_SLAM", "DEFENSE_CURL"],
+      "learnset": [
+        "RAZOR_LEAF",
+        "SOLAR_BEAM",
+        "BODY_SLAM",
+        "DEFENSE_CURL"
+      ],
       "catchRate": 0.1,
       "description": "リーフリングの進化形。巨木の王が森を統治する。",
-      "abilityId": "OVERGROW"
+      "abilityId": "OVERGROW",
+      "sub_emoji": []
     },
     {
       "id": "STARLITE",
@@ -113,10 +149,15 @@
         "defense": 35,
         "speed": 80
       },
-      "learnset": ["QUICK_ATTACK", "HYPER_VOICE", "FOCUS"],
+      "learnset": [
+        "QUICK_ATTACK",
+        "HYPER_VOICE",
+        "FOCUS"
+      ],
       "catchRate": 0.5,
       "description": "夜空から落ちてきた星のかけら。きらめく光で敵をひるませると言われている。",
-      "abilityId": "STURDY"
+      "abilityId": "STURDY",
+      "sub_emoji": []
     },
     {
       "id": "BLAZEBIRD",
@@ -129,10 +170,16 @@
         "defense": 40,
         "speed": 72
       },
-      "learnset": ["QUICK_ATTACK", "EMBER", "FLAME_BURST", "FOCUS"],
+      "learnset": [
+        "QUICK_ATTACK",
+        "EMBER",
+        "FLAME_BURST",
+        "FOCUS"
+      ],
       "catchRate": 0.3,
       "description": "炎の翼を持つ高速の鳥。空から急降下して獲物を狩る。",
-      "abilityId": "BLAZE"
+      "abilityId": "BLAZE",
+      "sub_emoji": []
     },
     {
       "id": "AQUASHELL",
@@ -145,10 +192,16 @@
         "defense": 75,
         "speed": 32
       },
-      "learnset": ["TACKLE", "AQUA_JET", "BUBBLE_BEAM", "DEFENSE_CURL"],
+      "learnset": [
+        "TACKLE",
+        "AQUA_JET",
+        "BUBBLE_BEAM",
+        "DEFENSE_CURL"
+      ],
       "catchRate": 0.35,
       "description": "硬い甲羅に守られた水亀。動きは遅いが守りは鉄壁。",
-      "abilityId": "TORRENT"
+      "abilityId": "TORRENT",
+      "sub_emoji": []
     },
     {
       "id": "THORNVINE",
@@ -161,10 +214,16 @@
         "defense": 48,
         "speed": 50
       },
-      "learnset": ["VINE_WHIP", "RAZOR_LEAF", "TOXIC_STING", "GROWL"],
+      "learnset": [
+        "VINE_WHIP",
+        "RAZOR_LEAF",
+        "TOXIC_STING",
+        "GROWL"
+      ],
       "catchRate": 0.4,
       "description": "つるを自在に操る植物モンスター。素早い連続攻撃が得意。",
-      "abilityId": "OVERGROW"
+      "abilityId": "OVERGROW",
+      "sub_emoji": []
     },
     {
       "id": "SHADOWPAW",
@@ -177,10 +236,16 @@
         "defense": 38,
         "speed": 75
       },
-      "learnset": ["QUICK_ATTACK", "SHADOW_CLAW", "VENOM_BITE", "FOCUS"],
+      "learnset": [
+        "QUICK_ATTACK",
+        "SHADOW_CLAW",
+        "VENOM_BITE",
+        "FOCUS"
+      ],
       "catchRate": 0.25,
       "description": "影に潜む謎の獣。夜になると活発になる素早いハンター。",
-      "abilityId": "INTIMIDATE"
+      "abilityId": "INTIMIDATE",
+      "sub_emoji": []
     },
     {
       "id": "CRYSTALINE",
@@ -193,10 +258,16 @@
         "defense": 80,
         "speed": 35
       },
-      "learnset": ["TACKLE", "HYPER_VOICE", "DEFENSE_CURL", "BODY_SLAM"],
+      "learnset": [
+        "TACKLE",
+        "HYPER_VOICE",
+        "DEFENSE_CURL",
+        "BODY_SLAM"
+      ],
       "catchRate": 0.2,
       "description": "体が宝石でできた希少なモンスター。硬さは折り紙つき。",
-      "abilityId": "STURDY"
+      "abilityId": "STURDY",
+      "sub_emoji": []
     },
     {
       "id": "MAGMOG",
@@ -209,10 +280,16 @@
         "defense": 62,
         "speed": 40
       },
-      "learnset": ["FIRE_FANG", "FLAME_BURST", "BLAZE_RUSH", "INFERNO"],
+      "learnset": [
+        "FIRE_FANG",
+        "FLAME_BURST",
+        "BLAZE_RUSH",
+        "INFERNO"
+      ],
       "catchRate": 0.14,
       "description": "火山の奥で眠る熔岩獣。重い一撃で押し切る。",
-      "abilityId": "BLAZE"
+      "abilityId": "BLAZE",
+      "sub_emoji": []
     },
     {
       "id": "RIPPLYNX",
@@ -225,10 +302,16 @@
         "defense": 66,
         "speed": 58
       },
-      "learnset": ["AQUA_JET", "BUBBLE_BEAM", "TIDAL_WAVE", "HEAL_PULSE"],
+      "learnset": [
+        "AQUA_JET",
+        "BUBBLE_BEAM",
+        "TIDAL_WAVE",
+        "HEAL_PULSE"
+      ],
       "catchRate": 0.2,
       "description": "冷たい洞窟湖を泳ぐ狩人。波を操る。",
-      "abilityId": "TORRENT"
+      "abilityId": "TORRENT",
+      "sub_emoji": []
     },
     {
       "id": "BRAMBLEON",
@@ -241,10 +324,16 @@
         "defense": 64,
         "speed": 54
       },
-      "learnset": ["RAZOR_LEAF", "SOLAR_BEAM", "NATURE_GUARD", "TOXIC_STING"],
+      "learnset": [
+        "RAZOR_LEAF",
+        "SOLAR_BEAM",
+        "NATURE_GUARD",
+        "TOXIC_STING"
+      ],
       "catchRate": 0.18,
       "description": "結晶草原に生きる幸運の守り手。防御が高い。",
-      "abilityId": "OVERGROW"
+      "abilityId": "OVERGROW",
+      "sub_emoji": []
     },
     {
       "id": "MOONMITE",
@@ -257,10 +346,16 @@
         "defense": 48,
         "speed": 82
       },
-      "learnset": ["QUICK_ATTACK", "MOONBEAM", "STONE_BASH", "FOCUS"],
+      "learnset": [
+        "QUICK_ATTACK",
+        "MOONBEAM",
+        "STONE_BASH",
+        "FOCUS"
+      ],
       "catchRate": 0.12,
       "description": "月明かりに現れる幻影。すばやく鋭い連撃を放つ。",
-      "abilityId": "INTIMIDATE"
+      "abilityId": "INTIMIDATE",
+      "sub_emoji": []
     },
     {
       "id": "CINDERCUB",
@@ -273,12 +368,18 @@
         "defense": 40,
         "speed": 60
       },
-      "learnset": ["TACKLE", "EMBER", "CINDER_SPIN", "FOCUS"],
+      "learnset": [
+        "TACKLE",
+        "EMBER",
+        "CINDER_SPIN",
+        "FOCUS"
+      ],
       "catchRate": 0.33,
       "description": "火の粉をまとって走る幼い炎狐。",
       "abilityId": "BLAZE",
       "evolveTo": "VOLCANOX",
-      "evolveLevel": 16
+      "evolveLevel": 16,
+      "sub_emoji": []
     },
     {
       "id": "VOLCANOX",
@@ -291,10 +392,16 @@
         "defense": 66,
         "speed": 62
       },
-      "learnset": ["LAVA_PRESS", "FLAME_BURST", "PHOENIX_FLARE", "IRON_HIDE"],
+      "learnset": [
+        "LAVA_PRESS",
+        "FLAME_BURST",
+        "PHOENIX_FLARE",
+        "IRON_HIDE"
+      ],
       "catchRate": 0.09,
       "description": "溶岩帯を支配する巨大な炎獣。",
-      "abilityId": "BLAZE"
+      "abilityId": "BLAZE",
+      "sub_emoji": []
     },
     {
       "id": "ASHHOUND",
@@ -307,10 +414,16 @@
         "defense": 52,
         "speed": 74
       },
-      "learnset": ["QUICK_ATTACK", "FIRE_FANG", "BLAZE_RUSH", "COMET_KICK"],
+      "learnset": [
+        "QUICK_ATTACK",
+        "FIRE_FANG",
+        "BLAZE_RUSH",
+        "COMET_KICK"
+      ],
       "catchRate": 0.17,
       "description": "灰の荒野を駆ける紅い牙のハウンド。",
-      "abilityId": "BLAZE"
+      "abilityId": "BLAZE",
+      "sub_emoji": []
     },
     {
       "id": "FINBUB",
@@ -323,12 +436,18 @@
         "defense": 57,
         "speed": 52
       },
-      "learnset": ["TACKLE", "WATER_SPLASH", "STEAM_BLAST", "DEFENSE_CURL"],
+      "learnset": [
+        "TACKLE",
+        "WATER_SPLASH",
+        "STEAM_BLAST",
+        "DEFENSE_CURL"
+      ],
       "catchRate": 0.36,
       "description": "泡の尾びれで跳ねる川辺の小魚。",
       "abilityId": "TORRENT",
       "evolveTo": "GLACIERA",
-      "evolveLevel": 17
+      "evolveLevel": 17,
+      "sub_emoji": []
     },
     {
       "id": "GLACIERA",
@@ -341,10 +460,16 @@
         "defense": 86,
         "speed": 49
       },
-      "learnset": ["BUBBLE_BEAM", "FROST_TIDE", "HYDRO_PUMP", "OCEAN_BLESS"],
+      "learnset": [
+        "BUBBLE_BEAM",
+        "FROST_TIDE",
+        "HYDRO_PUMP",
+        "OCEAN_BLESS"
+      ],
       "catchRate": 0.11,
       "description": "氷水をまとった古代の守護魚。",
-      "abilityId": "TORRENT"
+      "abilityId": "TORRENT",
+      "sub_emoji": []
     },
     {
       "id": "MISTRAY",
@@ -357,10 +482,16 @@
         "defense": 60,
         "speed": 79
       },
-      "learnset": ["AQUA_JET", "STEAM_BLAST", "HEAL_PULSE", "MOONBEAM"],
+      "learnset": [
+        "AQUA_JET",
+        "STEAM_BLAST",
+        "HEAL_PULSE",
+        "MOONBEAM"
+      ],
       "catchRate": 0.16,
       "description": "霧の海を滑るように泳ぐ神秘のレイ。",
-      "abilityId": "TORRENT"
+      "abilityId": "TORRENT",
+      "sub_emoji": []
     },
     {
       "id": "SPROUTLE",
@@ -373,12 +504,18 @@
         "defense": 52,
         "speed": 48
       },
-      "learnset": ["TACKLE", "LEAF_DART", "ROOT_TRAP", "GROWL"],
+      "learnset": [
+        "TACKLE",
+        "LEAF_DART",
+        "ROOT_TRAP",
+        "GROWL"
+      ],
       "catchRate": 0.34,
       "description": "芽吹きの音で仲間を呼ぶ草の精。",
       "abilityId": "OVERGROW",
       "evolveTo": "BLOOMRA",
-      "evolveLevel": 16
+      "evolveLevel": 16,
+      "sub_emoji": []
     },
     {
       "id": "BLOOMRA",
@@ -391,10 +528,16 @@
         "defense": 72,
         "speed": 57
       },
-      "learnset": ["THORN_BARRAGE", "PETAL_STORM", "SOLAR_BEAM", "NATURE_GUARD"],
+      "learnset": [
+        "THORN_BARRAGE",
+        "PETAL_STORM",
+        "SOLAR_BEAM",
+        "NATURE_GUARD"
+      ],
       "catchRate": 0.1,
       "description": "花弁の嵐で戦場を包む花王。",
-      "abilityId": "OVERGROW"
+      "abilityId": "OVERGROW",
+      "sub_emoji": []
     },
     {
       "id": "MOSSHORN",
@@ -407,10 +550,16 @@
         "defense": 69,
         "speed": 51
       },
-      "learnset": ["VINE_WHIP", "RAZOR_LEAF", "STONE_BASH", "IRON_HIDE"],
+      "learnset": [
+        "VINE_WHIP",
+        "RAZOR_LEAF",
+        "STONE_BASH",
+        "IRON_HIDE"
+      ],
       "catchRate": 0.14,
       "description": "苔むした角で突進する森の番人。",
-      "abilityId": "INTIMIDATE"
+      "abilityId": "INTIMIDATE",
+      "sub_emoji": []
     },
     {
       "id": "SKYPIP",
@@ -423,12 +572,18 @@
         "defense": 39,
         "speed": 84
       },
-      "learnset": ["QUICK_ATTACK", "SKY_SLASH", "FOCUS", "BRIGHT_HEART"],
+      "learnset": [
+        "QUICK_ATTACK",
+        "SKY_SLASH",
+        "FOCUS",
+        "BRIGHT_HEART"
+      ],
       "catchRate": 0.31,
       "description": "空高く舞う風の案内役。",
       "abilityId": "INTIMIDATE",
       "evolveTo": "AURORO",
-      "evolveLevel": 18
+      "evolveLevel": 18,
+      "sub_emoji": []
     },
     {
       "id": "AURORO",
@@ -441,10 +596,16 @@
         "defense": 59,
         "speed": 90
       },
-      "learnset": ["SKY_SLASH", "HYPER_VOICE", "COMET_KICK", "SPIRIT_HOWL"],
+      "learnset": [
+        "SKY_SLASH",
+        "HYPER_VOICE",
+        "COMET_KICK",
+        "SPIRIT_HOWL"
+      ],
       "catchRate": 0.08,
       "description": "遺跡上空に現れる光翼の守護鳥。",
-      "abilityId": "SWIFT_SWIM"
+      "abilityId": "SWIFT_SWIM",
+      "sub_emoji": []
     },
     {
       "id": "RUNEFOX",
@@ -457,564 +618,1141 @@
         "defense": 55,
         "speed": 76
       },
-      "learnset": ["SHADOW_CLAW", "MOONBEAM", "COMET_KICK", "BRIGHT_HEART"],
+      "learnset": [
+        "SHADOW_CLAW",
+        "MOONBEAM",
+        "COMET_KICK",
+        "BRIGHT_HEART"
+      ],
       "catchRate": 0.12,
       "description": "古代文字を宿した尾で獲物を惑わす。",
-      "abilityId": "INTIMIDATE"
+      "abilityId": "INTIMIDATE",
+      "sub_emoji": []
     },
     {
       "id": "VOLTPUP",
       "name": "ボルトパプ",
       "emoji": "⚡",
       "primaryType": "ELECTRIC",
-      "baseStats": { "maxHp": 40, "attack": 50, "defense": 42, "speed": 68 },
-      "learnset": ["TACKLE", "SPARK", "CHARGE", "THUNDER_FANG"],
+      "baseStats": {
+        "maxHp": 40,
+        "attack": 50,
+        "defense": 42,
+        "speed": 68
+      },
+      "learnset": [
+        "TACKLE",
+        "SPARK",
+        "CHARGE",
+        "THUNDER_FANG"
+      ],
       "catchRate": 0.32,
       "description": "体毛に静電気を宿した子犬。走ると火花が散る。",
       "abilityId": "MOTOR_DRIVE",
       "evolveTo": "SHOCKHOUND",
-      "evolveLevel": 14
+      "evolveLevel": 14,
+      "sub_emoji": []
     },
     {
       "id": "SHOCKHOUND",
       "name": "ショックハウンド",
       "emoji": "🐕",
       "primaryType": "ELECTRIC",
-      "baseStats": { "maxHp": 65, "attack": 72, "defense": 60, "speed": 78 },
-      "learnset": ["THUNDER_FANG", "THUNDERBOLT", "BODY_SLAM", "DISCHARGE"],
+      "baseStats": {
+        "maxHp": 65,
+        "attack": 72,
+        "defense": 60,
+        "speed": 78
+      },
+      "learnset": [
+        "THUNDER_FANG",
+        "THUNDERBOLT",
+        "BODY_SLAM",
+        "DISCHARGE"
+      ],
       "catchRate": 0.14,
       "description": "雷鳴のように速く駆ける電撃犬。",
-      "abilityId": "MOTOR_DRIVE"
+      "abilityId": "MOTOR_DRIVE",
+      "sub_emoji": []
     },
     {
       "id": "SPARKBUG",
       "name": "スパークバグ",
       "emoji": "🪲",
       "primaryType": "ELECTRIC",
-      "baseStats": { "maxHp": 38, "attack": 55, "defense": 35, "speed": 70 },
-      "learnset": ["TACKLE", "SPARK", "QUICK_ATTACK", "THUNDERBOLT"],
+      "baseStats": {
+        "maxHp": 38,
+        "attack": 55,
+        "defense": 35,
+        "speed": 70
+      },
+      "learnset": [
+        "TACKLE",
+        "SPARK",
+        "QUICK_ATTACK",
+        "THUNDERBOLT"
+      ],
       "catchRate": 0.38,
       "description": "夜の草むらで光る小さな甲虫。",
-      "abilityId": "MOTOR_DRIVE"
+      "abilityId": "MOTOR_DRIVE",
+      "sub_emoji": []
     },
     {
       "id": "THUNDERAM",
       "name": "サンダラム",
       "emoji": "🐏",
       "primaryType": "ELECTRIC",
-      "baseStats": { "maxHp": 48, "attack": 58, "defense": 55, "speed": 50 },
-      "learnset": ["TACKLE", "SPARK", "BODY_SLAM", "DISCHARGE"],
+      "baseStats": {
+        "maxHp": 48,
+        "attack": 58,
+        "defense": 55,
+        "speed": 50
+      },
+      "learnset": [
+        "TACKLE",
+        "SPARK",
+        "BODY_SLAM",
+        "DISCHARGE"
+      ],
       "catchRate": 0.25,
       "description": "角に雷を溜め、強力な突進を放つ。",
       "abilityId": "INTIMIDATE",
       "evolveTo": "STORMRAM",
-      "evolveLevel": 17
+      "evolveLevel": 17,
+      "sub_emoji": []
     },
     {
       "id": "STORMRAM",
       "name": "ストームラム",
       "emoji": "⛈️",
       "primaryType": "ELECTRIC",
-      "baseStats": { "maxHp": 72, "attack": 82, "defense": 70, "speed": 58 },
-      "learnset": ["THUNDERBOLT", "THUNDER", "BODY_SLAM", "VOLT_TACKLE"],
-      "catchRate": 0.10,
+      "baseStats": {
+        "maxHp": 72,
+        "attack": 82,
+        "defense": 70,
+        "speed": 58
+      },
+      "learnset": [
+        "THUNDERBOLT",
+        "THUNDER",
+        "BODY_SLAM",
+        "VOLT_TACKLE"
+      ],
+      "catchRate": 0.1,
       "description": "嵐を呼ぶ巨角の雷獣。一撃は山を割る。",
-      "abilityId": "INTIMIDATE"
+      "abilityId": "INTIMIDATE",
+      "sub_emoji": []
     },
     {
       "id": "ZAPDRAKE",
       "name": "ザップドレイク",
       "emoji": "🐲",
       "primaryType": "ELECTRIC",
-      "baseStats": { "maxHp": 55, "attack": 68, "defense": 52, "speed": 75 },
-      "learnset": ["THUNDER_FANG", "THUNDERBOLT", "DISCHARGE", "THUNDER"],
-      "catchRate": 0.10,
+      "baseStats": {
+        "maxHp": 55,
+        "attack": 68,
+        "defense": 52,
+        "speed": 75
+      },
+      "learnset": [
+        "THUNDER_FANG",
+        "THUNDERBOLT",
+        "DISCHARGE",
+        "THUNDER"
+      ],
+      "catchRate": 0.1,
       "description": "遺跡に住む伝説的な雷竜。",
-      "abilityId": "MOTOR_DRIVE"
+      "abilityId": "MOTOR_DRIVE",
+      "sub_emoji": []
     },
     {
       "id": "PLASMOTH",
       "name": "プラズモス",
       "emoji": "🦠",
       "primaryType": "ELECTRIC",
-      "baseStats": { "maxHp": 52, "attack": 60, "defense": 48, "speed": 72 },
-      "learnset": ["SPARK", "THUNDERBOLT", "DISCHARGE", "CHARGE"],
+      "baseStats": {
+        "maxHp": 52,
+        "attack": 60,
+        "defense": 48,
+        "speed": 72
+      },
+      "learnset": [
+        "SPARK",
+        "THUNDERBOLT",
+        "DISCHARGE",
+        "CHARGE"
+      ],
       "catchRate": 0.18,
       "description": "プラズマの翅を持つ夜行性モンスター。",
-      "abilityId": "SWIFT_SWIM"
+      "abilityId": "SWIFT_SWIM",
+      "sub_emoji": []
     },
     {
       "id": "FROSTKIT",
       "name": "フロストキット",
       "emoji": "🐱",
       "primaryType": "ICE",
-      "baseStats": { "maxHp": 42, "attack": 48, "defense": 50, "speed": 55 },
-      "learnset": ["TACKLE", "ICE_SHARD", "FROST_BITE", "GROWL", "ICY_WIND"],
-      "catchRate": 0.30,
+      "baseStats": {
+        "maxHp": 42,
+        "attack": 48,
+        "defense": 50,
+        "speed": 55
+      },
+      "learnset": [
+        "TACKLE",
+        "ICE_SHARD",
+        "FROST_BITE",
+        "GROWL",
+        "ICY_WIND"
+      ],
+      "catchRate": 0.3,
       "description": "冷気をまとった子猫。息は白く凍る。",
       "abilityId": "ICE_BODY",
       "evolveTo": "BLIZZCAT",
-      "evolveLevel": 15
+      "evolveLevel": 15,
+      "sub_emoji": []
     },
     {
       "id": "BLIZZCAT",
       "name": "ブリザキャット",
       "emoji": "❄️",
       "primaryType": "ICE",
-      "baseStats": { "maxHp": 68, "attack": 70, "defense": 72, "speed": 65 },
-      "learnset": ["FROST_BITE", "ICE_BEAM", "BODY_SLAM", "AURORA_VEIL"],
+      "baseStats": {
+        "maxHp": 68,
+        "attack": 70,
+        "defense": 72,
+        "speed": 65
+      },
+      "learnset": [
+        "FROST_BITE",
+        "ICE_BEAM",
+        "BODY_SLAM",
+        "AURORA_VEIL"
+      ],
       "catchRate": 0.12,
       "description": "吹雪を操る氷の猫王。尾は結晶化している。",
-      "abilityId": "ICE_BODY"
+      "abilityId": "ICE_BODY",
+      "sub_emoji": []
     },
     {
       "id": "ICEPECK",
       "name": "アイスペック",
       "emoji": "🐧",
       "primaryType": "ICE",
-      "baseStats": { "maxHp": 50, "attack": 45, "defense": 60, "speed": 40 },
-      "learnset": ["TACKLE", "ICE_SHARD", "DEFENSE_CURL", "ICE_BEAM", "ICY_WIND"],
+      "baseStats": {
+        "maxHp": 50,
+        "attack": 45,
+        "defense": 60,
+        "speed": 40
+      },
+      "learnset": [
+        "TACKLE",
+        "ICE_SHARD",
+        "DEFENSE_CURL",
+        "ICE_BEAM",
+        "ICY_WIND"
+      ],
       "catchRate": 0.28,
       "description": "氷の上を滑るように歩くペンギン型モンスター。",
-      "abilityId": "ICE_BODY"
+      "abilityId": "ICE_BODY",
+      "sub_emoji": []
     },
     {
       "id": "CRYSTEEL",
       "name": "クリスティール",
       "emoji": "🦂",
       "primaryType": "ICE",
-      "baseStats": { "maxHp": 45, "attack": 62, "defense": 55, "speed": 48 },
-      "learnset": ["ICE_SHARD", "FROST_BITE", "FROST_BREATH", "BLIZZARD"],
-      "catchRate": 0.20,
+      "baseStats": {
+        "maxHp": 45,
+        "attack": 62,
+        "defense": 55,
+        "speed": 48
+      },
+      "learnset": [
+        "ICE_SHARD",
+        "FROST_BITE",
+        "FROST_BREATH",
+        "BLIZZARD"
+      ],
+      "catchRate": 0.2,
       "description": "全身が氷の結晶で覆われた鋼蠍。",
-      "abilityId": "INTIMIDATE"
+      "abilityId": "INTIMIDATE",
+      "sub_emoji": []
     },
     {
       "id": "SNOWFAWN",
       "name": "スノウフォーン",
       "emoji": "🦌",
       "primaryType": "ICE",
-      "baseStats": { "maxHp": 46, "attack": 44, "defense": 52, "speed": 60 },
-      "learnset": ["TACKLE", "ICE_SHARD", "FROST_BREATH", "HAIL_SHELL"],
+      "baseStats": {
+        "maxHp": 46,
+        "attack": 44,
+        "defense": 52,
+        "speed": 60
+      },
+      "learnset": [
+        "TACKLE",
+        "ICE_SHARD",
+        "FROST_BREATH",
+        "HAIL_SHELL"
+      ],
       "catchRate": 0.24,
       "description": "雪原を優雅に駆ける小鹿。角は氷で透き通る。",
       "abilityId": "ICE_BODY",
       "evolveTo": "FROSTVEIL",
-      "evolveLevel": 16
+      "evolveLevel": 16,
+      "sub_emoji": []
     },
     {
       "id": "FROSTVEIL",
       "name": "フロストヴェール",
       "emoji": "🦋",
       "primaryType": "ICE",
-      "baseStats": { "maxHp": 65, "attack": 62, "defense": 68, "speed": 72 },
-      "learnset": ["ICE_BEAM", "BLIZZARD", "AURORA_VEIL", "FROST_BREATH"],
-      "catchRate": 0.10,
+      "baseStats": {
+        "maxHp": 65,
+        "attack": 62,
+        "defense": 68,
+        "speed": 72
+      },
+      "learnset": [
+        "ICE_BEAM",
+        "BLIZZARD",
+        "AURORA_VEIL",
+        "FROST_BREATH"
+      ],
+      "catchRate": 0.1,
       "description": "氷の薄衣をまとう蝶。はばたきが吹雪を呼ぶ。",
-      "abilityId": "SWIFT_SWIM"
+      "abilityId": "SWIFT_SWIM",
+      "sub_emoji": []
     },
     {
       "id": "TUNDRABEAR",
       "name": "ツンドラベア",
       "emoji": "🐻‍❄️",
       "primaryType": "ICE",
-      "baseStats": { "maxHp": 70, "attack": 65, "defense": 70, "speed": 38 },
-      "learnset": ["FROST_BITE", "ICE_BEAM", "BODY_SLAM", "HAIL_SHELL"],
-      "catchRate": 0.10,
+      "baseStats": {
+        "maxHp": 70,
+        "attack": 65,
+        "defense": 70,
+        "speed": 38
+      },
+      "learnset": [
+        "FROST_BITE",
+        "ICE_BEAM",
+        "BODY_SLAM",
+        "HAIL_SHELL"
+      ],
+      "catchRate": 0.1,
       "description": "極寒の地を支配する巨大な氷熊。",
-      "abilityId": "ICE_BODY"
+      "abilityId": "ICE_BODY",
+      "sub_emoji": []
     },
     {
       "id": "CHARCOIL",
       "name": "チャーコイル",
       "emoji": "🐍",
       "primaryType": "FIRE",
-      "baseStats": { "maxHp": 44, "attack": 58, "defense": 42, "speed": 62 },
-      "learnset": ["TACKLE", "EMBER", "HEAT_COIL", "FIRE_FANG"],
+      "baseStats": {
+        "maxHp": 44,
+        "attack": 58,
+        "defense": 42,
+        "speed": 62
+      },
+      "learnset": [
+        "TACKLE",
+        "EMBER",
+        "HEAT_COIL",
+        "FIRE_FANG"
+      ],
       "catchRate": 0.28,
       "description": "灼熱の鱗を持つ火蛇。獲物に巻きついて焼く。",
       "abilityId": "BLAZE",
       "evolveTo": "SERPYRO",
-      "evolveLevel": 18
+      "evolveLevel": 18,
+      "sub_emoji": []
     },
     {
       "id": "SERPYRO",
       "name": "サーパイロ",
       "emoji": "🐉",
       "primaryType": "FIRE",
-      "baseStats": { "maxHp": 72, "attack": 82, "defense": 64, "speed": 70 },
-      "learnset": ["FIRE_FANG", "FLAME_BURST", "SOLAR_FLARE", "BODY_SLAM"],
+      "baseStats": {
+        "maxHp": 72,
+        "attack": 82,
+        "defense": 64,
+        "speed": 70
+      },
+      "learnset": [
+        "FIRE_FANG",
+        "FLAME_BURST",
+        "SOLAR_FLARE",
+        "BODY_SLAM"
+      ],
       "catchRate": 0.08,
       "description": "猛炎を吐く火竜蛇。怒りの炎は山を焦がす。",
-      "abilityId": "BLAZE"
+      "abilityId": "BLAZE",
+      "sub_emoji": []
     },
     {
       "id": "SOLFLARE",
       "name": "ソルフレア",
       "emoji": "☀️",
       "primaryType": "FIRE",
-      "baseStats": { "maxHp": 68, "attack": 80, "defense": 56, "speed": 76 },
-      "learnset": ["EMBER", "SOLAR_FLARE", "PHOENIX_FLARE", "BRIGHT_HEART"],
+      "baseStats": {
+        "maxHp": 68,
+        "attack": 80,
+        "defense": 56,
+        "speed": 76
+      },
+      "learnset": [
+        "EMBER",
+        "SOLAR_FLARE",
+        "PHOENIX_FLARE",
+        "BRIGHT_HEART"
+      ],
       "catchRate": 0.06,
       "description": "太陽の欠片から生まれた神獣。灼熱の光を放つ。",
-      "abilityId": "BLAZE"
+      "abilityId": "BLAZE",
+      "sub_emoji": []
     },
     {
       "id": "CORALION",
       "name": "コラリオン",
       "emoji": "🪸",
       "primaryType": "WATER",
-      "baseStats": { "maxHp": 62, "attack": 52, "defense": 78, "speed": 42 },
-      "learnset": ["WATER_SPLASH", "BUBBLE_BEAM", "DEFENSE_CURL", "TIDAL_CRUSH"],
-      "catchRate": 0.20,
+      "baseStats": {
+        "maxHp": 62,
+        "attack": 52,
+        "defense": 78,
+        "speed": 42
+      },
+      "learnset": [
+        "WATER_SPLASH",
+        "BUBBLE_BEAM",
+        "DEFENSE_CURL",
+        "TIDAL_CRUSH"
+      ],
+      "catchRate": 0.2,
       "description": "珊瑚の鎧をまとった海の戦士。守りは鉄壁。",
-      "abilityId": "TORRENT"
+      "abilityId": "TORRENT",
+      "sub_emoji": []
     },
     {
       "id": "ABYSSQUID",
       "name": "アビスクイッド",
       "emoji": "🦑",
       "primaryType": "WATER",
-      "baseStats": { "maxHp": 56, "attack": 76, "defense": 50, "speed": 68 },
-      "learnset": ["AQUA_JET", "DEEP_DIVE", "TIDAL_WAVE", "HYDRO_PUMP"],
+      "baseStats": {
+        "maxHp": 56,
+        "attack": 76,
+        "defense": 50,
+        "speed": 68
+      },
+      "learnset": [
+        "AQUA_JET",
+        "DEEP_DIVE",
+        "TIDAL_WAVE",
+        "HYDRO_PUMP"
+      ],
       "catchRate": 0.12,
       "description": "深海の闇から襲う巨大イカ。吸盤の力は凄まじい。",
-      "abilityId": "TORRENT"
+      "abilityId": "TORRENT",
+      "sub_emoji": []
     },
     {
       "id": "WHALORD",
       "name": "ウェイロード",
       "emoji": "🐳",
       "primaryType": "WATER",
-      "baseStats": { "maxHp": 82, "attack": 70, "defense": 72, "speed": 40 },
-      "learnset": ["TIDAL_CRUSH", "HYDRO_PUMP", "OCEAN_BLESS", "BODY_SLAM"],
+      "baseStats": {
+        "maxHp": 82,
+        "attack": 70,
+        "defense": 72,
+        "speed": 40
+      },
+      "learnset": [
+        "TIDAL_CRUSH",
+        "HYDRO_PUMP",
+        "OCEAN_BLESS",
+        "BODY_SLAM"
+      ],
       "catchRate": 0.05,
       "description": "海の王と呼ばれる巨大鯨。その咆哮は嵐をも鎮める。",
-      "abilityId": "TORRENT"
+      "abilityId": "TORRENT",
+      "sub_emoji": []
     },
     {
       "id": "CACTURION",
       "name": "カクタリオン",
       "emoji": "🌵",
       "primaryType": "GRASS",
-      "baseStats": { "maxHp": 58, "attack": 72, "defense": 68, "speed": 44 },
-      "learnset": ["TOXIC_STING", "THORN_BARRAGE", "RAZOR_LEAF", "IRON_HIDE"],
+      "baseStats": {
+        "maxHp": 58,
+        "attack": 72,
+        "defense": 68,
+        "speed": 44
+      },
+      "learnset": [
+        "TOXIC_STING",
+        "THORN_BARRAGE",
+        "RAZOR_LEAF",
+        "IRON_HIDE"
+      ],
       "catchRate": 0.18,
       "description": "乾燥地帯に立つサボテン戦士。トゲの反撃が痛い。",
-      "abilityId": "OVERGROW"
+      "abilityId": "OVERGROW",
+      "sub_emoji": []
     },
     {
       "id": "FLORAMIS",
       "name": "フローラミス",
       "emoji": "🍄",
       "primaryType": "GRASS",
-      "baseStats": { "maxHp": 46, "attack": 48, "defense": 54, "speed": 46 },
-      "learnset": ["TACKLE", "LEAF_DART", "SPORE_CLOUD", "FUNGAL_BURST"],
-      "catchRate": 0.30,
+      "baseStats": {
+        "maxHp": 46,
+        "attack": 48,
+        "defense": 54,
+        "speed": 46
+      },
+      "learnset": [
+        "TACKLE",
+        "LEAF_DART",
+        "SPORE_CLOUD",
+        "FUNGAL_BURST"
+      ],
+      "catchRate": 0.3,
       "description": "胞子で仲間を呼ぶキノコの妖精。眠りの粉をまく。",
       "abilityId": "OVERGROW",
       "evolveTo": "FUNGORIA",
-      "evolveLevel": 17
+      "evolveLevel": 17,
+      "sub_emoji": []
     },
     {
       "id": "FUNGORIA",
       "name": "ファンゴリア",
       "emoji": "🍂",
       "primaryType": "GRASS",
-      "baseStats": { "maxHp": 74, "attack": 68, "defense": 74, "speed": 54 },
-      "learnset": ["FUNGAL_BURST", "SOLAR_BEAM", "SPORE_CLOUD", "NATURE_GUARD"],
-      "catchRate": 0.10,
+      "baseStats": {
+        "maxHp": 74,
+        "attack": 68,
+        "defense": 74,
+        "speed": 54
+      },
+      "learnset": [
+        "FUNGAL_BURST",
+        "SOLAR_BEAM",
+        "SPORE_CLOUD",
+        "NATURE_GUARD"
+      ],
+      "catchRate": 0.1,
       "description": "秋の森を統べるキノコ王。胞子の霧で戦場を支配する。",
-      "abilityId": "OVERGROW"
+      "abilityId": "OVERGROW",
+      "sub_emoji": []
     },
     {
       "id": "GHOSTAIL",
       "name": "ゴーステイル",
       "emoji": "👻",
       "primaryType": "NORMAL",
-      "baseStats": { "maxHp": 45, "attack": 70, "defense": 40, "speed": 85 },
-      "learnset": ["QUICK_ATTACK", "PHANTOM_RUSH", "SHADOW_CLAW", "SPIRIT_HOWL"],
+      "baseStats": {
+        "maxHp": 45,
+        "attack": 70,
+        "defense": 40,
+        "speed": 85
+      },
+      "learnset": [
+        "QUICK_ATTACK",
+        "PHANTOM_RUSH",
+        "SHADOW_CLAW",
+        "SPIRIT_HOWL"
+      ],
       "catchRate": 0.15,
       "description": "影に溶け込む幽霊のような獣。気配なく忍び寄る。",
-      "abilityId": "INTIMIDATE"
+      "abilityId": "INTIMIDATE",
+      "sub_emoji": []
     },
     {
       "id": "COSMOWL",
       "name": "コスモウル",
       "emoji": "🦉",
       "primaryType": "NORMAL",
-      "baseStats": { "maxHp": 64, "attack": 74, "defense": 58, "speed": 66 },
-      "learnset": ["MOONBEAM", "COSMIC_RAY", "HYPER_VOICE", "BRIGHT_HEART"],
-      "catchRate": 0.10,
+      "baseStats": {
+        "maxHp": 64,
+        "attack": 74,
+        "defense": 58,
+        "speed": 66
+      },
+      "learnset": [
+        "MOONBEAM",
+        "COSMIC_RAY",
+        "HYPER_VOICE",
+        "BRIGHT_HEART"
+      ],
+      "catchRate": 0.1,
       "description": "宇宙の知恵を持つ神秘のフクロウ。星の光で未来を見通す。",
-      "abilityId": "STURDY"
+      "abilityId": "STURDY",
+      "sub_emoji": []
     },
     {
       "id": "SPIRALHORN",
       "name": "スパイラルホーン",
       "emoji": "🦬",
       "primaryType": "NORMAL",
-      "baseStats": { "maxHp": 78, "attack": 75, "defense": 72, "speed": 35 },
-      "learnset": ["BODY_SLAM", "STONE_BASH", "IRON_HIDE", "COMET_KICK"],
+      "baseStats": {
+        "maxHp": 78,
+        "attack": 75,
+        "defense": 72,
+        "speed": 35
+      },
+      "learnset": [
+        "BODY_SLAM",
+        "STONE_BASH",
+        "IRON_HIDE",
+        "COMET_KICK"
+      ],
       "catchRate": 0.12,
       "description": "螺旋の角で突進する巨獣。一撃の重さは大地を揺るがす。",
-      "abilityId": "INTIMIDATE"
+      "abilityId": "INTIMIDATE",
+      "sub_emoji": []
     },
     {
       "id": "NEONRAY",
       "name": "ネオンレイ",
       "emoji": "🐠",
       "primaryType": "ELECTRIC",
-      "baseStats": { "maxHp": 48, "attack": 62, "defense": 44, "speed": 70 },
-      "learnset": ["SPARK", "THUNDERBOLT", "STORM_WING", "QUICK_ATTACK"],
+      "baseStats": {
+        "maxHp": 48,
+        "attack": 62,
+        "defense": 44,
+        "speed": 70
+      },
+      "learnset": [
+        "SPARK",
+        "THUNDERBOLT",
+        "STORM_WING",
+        "QUICK_ATTACK"
+      ],
       "catchRate": 0.22,
       "description": "体がネオンのように光る深海魚。放電で獲物を捕る。",
-      "abilityId": "MOTOR_DRIVE"
+      "abilityId": "MOTOR_DRIVE",
+      "sub_emoji": []
     },
     {
       "id": "LIGHTNIX",
       "name": "ライトニクス",
       "emoji": "🦅",
       "primaryType": "ELECTRIC",
-      "baseStats": { "maxHp": 46, "attack": 60, "defense": 44, "speed": 72 },
-      "learnset": ["QUICK_ATTACK", "SPARK", "STORM_WING", "THUNDER_FANG"],
+      "baseStats": {
+        "maxHp": 46,
+        "attack": 60,
+        "defense": 44,
+        "speed": 72
+      },
+      "learnset": [
+        "QUICK_ATTACK",
+        "SPARK",
+        "STORM_WING",
+        "THUNDER_FANG"
+      ],
       "catchRate": 0.24,
       "description": "雷雲を飛ぶ若鷲。翼に稲妻が走る。",
       "abilityId": "MOTOR_DRIVE",
       "evolveTo": "THUNDAGLE",
-      "evolveLevel": 19
+      "evolveLevel": 19,
+      "sub_emoji": []
     },
     {
       "id": "THUNDAGLE",
       "name": "サンダグル",
       "emoji": "🌩️",
       "primaryType": "ELECTRIC",
-      "baseStats": { "maxHp": 70, "attack": 84, "defense": 60, "speed": 82 },
-      "learnset": ["STORM_WING", "THUNDERBOLT", "PLASMA_CANNON", "COMET_KICK"],
+      "baseStats": {
+        "maxHp": 70,
+        "attack": 84,
+        "defense": 60,
+        "speed": 82
+      },
+      "learnset": [
+        "STORM_WING",
+        "THUNDERBOLT",
+        "PLASMA_CANNON",
+        "COMET_KICK"
+      ],
       "catchRate": 0.07,
       "description": "嵐の中で王として君臨する雷鷲。稲妻を自在に操る。",
-      "abilityId": "MOTOR_DRIVE"
+      "abilityId": "MOTOR_DRIVE",
+      "sub_emoji": []
     },
     {
       "id": "POLARYX",
       "name": "ポラリクス",
       "emoji": "⛄",
       "primaryType": "ICE",
-      "baseStats": { "maxHp": 60, "attack": 50, "defense": 65, "speed": 45 },
-      "learnset": ["ICE_SHARD", "FROST_BREATH", "HAIL_SHELL", "FROST_QUAKE", "ICY_WIND"],
+      "baseStats": {
+        "maxHp": 60,
+        "attack": 50,
+        "defense": 65,
+        "speed": 45
+      },
+      "learnset": [
+        "ICE_SHARD",
+        "FROST_BREATH",
+        "HAIL_SHELL",
+        "FROST_QUAKE",
+        "ICY_WIND"
+      ],
       "catchRate": 0.22,
       "description": "永久凍土で生まれた雪の精霊。冷気の盾で身を守る。",
-      "abilityId": "ICE_BODY"
+      "abilityId": "ICE_BODY",
+      "sub_emoji": []
     },
     {
       "id": "GLACIDRAKE",
       "name": "グラシドレイク",
       "emoji": "🏔️",
       "primaryType": "ICE",
-      "baseStats": { "maxHp": 75, "attack": 82, "defense": 70, "speed": 52 },
-      "learnset": ["FROST_QUAKE", "BLIZZARD", "ICE_BEAM", "BODY_SLAM"],
+      "baseStats": {
+        "maxHp": 75,
+        "attack": 82,
+        "defense": 70,
+        "speed": 52
+      },
+      "learnset": [
+        "FROST_QUAKE",
+        "BLIZZARD",
+        "ICE_BEAM",
+        "BODY_SLAM"
+      ],
       "catchRate": 0.06,
       "description": "氷山を住処とする伝説の氷竜。吹雪の中にその姿が見える。",
-      "abilityId": "ICE_BODY"
+      "abilityId": "ICE_BODY",
+      "sub_emoji": []
     },
     {
       "id": "ETERNIA",
       "name": "エテルニア",
       "emoji": "✨",
       "primaryType": "NORMAL",
-      "baseStats": { "maxHp": 85, "attack": 85, "defense": 80, "speed": 80 },
-      "learnset": ["ETERNAL_LIGHT", "COSMIC_RAY", "HYPER_VOICE", "BRIGHT_HEART"],
+      "baseStats": {
+        "maxHp": 85,
+        "attack": 85,
+        "defense": 80,
+        "speed": 80
+      },
+      "learnset": [
+        "ETERNAL_LIGHT",
+        "COSMIC_RAY",
+        "HYPER_VOICE",
+        "BRIGHT_HEART"
+      ],
       "catchRate": 0.03,
       "description": "エモじクリスタルの力で眠り続けた伝説のモンスター。すべての命を見守る。",
-      "abilityId": "STURDY"
+      "abilityId": "STURDY",
+      "sub_emoji": []
     },
     {
       "id": "CINDLO",
       "name": "シンドロ",
       "emoji": "🦝",
       "primaryType": "FIRE",
-      "baseStats": { "maxHp": 47, "attack": 60, "defense": 44, "speed": 61 },
-      "learnset": ["TACKLE", "EMBER", "EMBER_SWEEP", "FOCUS"],
+      "baseStats": {
+        "maxHp": 47,
+        "attack": 60,
+        "defense": 44,
+        "speed": 61
+      },
+      "learnset": [
+        "TACKLE",
+        "EMBER",
+        "EMBER_SWEEP",
+        "FOCUS"
+      ],
       "catchRate": 0.27,
       "description": "炭火のしっぽを振って火花を散らす森の小獣。",
       "abilityId": "BLAZE",
       "evolveTo": "CINDRAKE",
-      "evolveLevel": 20
+      "evolveLevel": 20,
+      "sub_emoji": []
     },
     {
       "id": "CINDRAKE",
       "name": "シンドレイク",
       "emoji": "🐲",
       "primaryType": "FIRE",
-      "baseStats": { "maxHp": 75, "attack": 84, "defense": 62, "speed": 72 },
-      "learnset": ["EMBER_SWEEP", "FLAME_BURST", "PHOENIX_FLARE", "IRON_HIDE"],
+      "baseStats": {
+        "maxHp": 75,
+        "attack": 84,
+        "defense": 62,
+        "speed": 72
+      },
+      "learnset": [
+        "EMBER_SWEEP",
+        "FLAME_BURST",
+        "PHOENIX_FLARE",
+        "IRON_HIDE"
+      ],
       "catchRate": 0.08,
       "description": "炎の尾で弧を描き、戦場を焦土に変える紅竜。",
-      "abilityId": "BLAZE"
+      "abilityId": "BLAZE",
+      "sub_emoji": []
     },
     {
       "id": "RILLY",
       "name": "リリー",
       "emoji": "🦦",
       "primaryType": "WATER",
-      "baseStats": { "maxHp": 48, "attack": 51, "defense": 59, "speed": 56 },
-      "learnset": ["WATER_SPLASH", "AQUA_JET", "RIVER_SONG", "DEFENSE_CURL"],
+      "baseStats": {
+        "maxHp": 48,
+        "attack": 51,
+        "defense": 59,
+        "speed": 56
+      },
+      "learnset": [
+        "WATER_SPLASH",
+        "AQUA_JET",
+        "RIVER_SONG",
+        "DEFENSE_CURL"
+      ],
       "catchRate": 0.29,
       "description": "川辺で石を磨く水の職人。歌うような水流を操る。",
       "abilityId": "TORRENT",
       "evolveTo": "RILLARGO",
-      "evolveLevel": 20
+      "evolveLevel": 20,
+      "sub_emoji": []
     },
     {
       "id": "RILLARGO",
       "name": "リラルゴ",
       "emoji": "🛶",
       "primaryType": "WATER",
-      "baseStats": { "maxHp": 77, "attack": 68, "defense": 84, "speed": 52 },
-      "learnset": ["BUBBLE_BEAM", "RIVER_SONG", "TIDAL_WAVE", "HYDRO_PUMP"],
+      "baseStats": {
+        "maxHp": 77,
+        "attack": 68,
+        "defense": 84,
+        "speed": 52
+      },
+      "learnset": [
+        "BUBBLE_BEAM",
+        "RIVER_SONG",
+        "TIDAL_WAVE",
+        "HYDRO_PUMP"
+      ],
       "catchRate": 0.09,
       "description": "大河の流れを背負って進む重装の水獣。",
-      "abilityId": "TORRENT"
+      "abilityId": "TORRENT",
+      "sub_emoji": []
     },
     {
       "id": "BRAMBIT",
       "name": "ブランビット",
       "emoji": "🪴",
       "primaryType": "GRASS",
-      "baseStats": { "maxHp": 49, "attack": 58, "defense": 53, "speed": 55 },
-      "learnset": ["LEAF_DART", "VINE_WHIP", "BRAMBLE_EDGE", "GROWL"],
+      "baseStats": {
+        "maxHp": 49,
+        "attack": 58,
+        "defense": 53,
+        "speed": 55
+      },
+      "learnset": [
+        "LEAF_DART",
+        "VINE_WHIP",
+        "BRAMBLE_EDGE",
+        "GROWL"
+      ],
       "catchRate": 0.26,
       "description": "蔦を編んだ腕で素早く斬り込む若木の戦士。",
-      "abilityId": "OVERGROW"
+      "abilityId": "OVERGROW",
+      "sub_emoji": []
     },
     {
       "id": "ARCWOLF",
       "name": "アークウルフ",
       "emoji": "🐺",
       "primaryType": "ELECTRIC",
-      "baseStats": { "maxHp": 58, "attack": 74, "defense": 52, "speed": 80 },
-      "learnset": ["SPARK", "THUNDER_FANG", "ARC_SPIN", "COMET_KICK"],
+      "baseStats": {
+        "maxHp": 58,
+        "attack": 74,
+        "defense": 52,
+        "speed": 80
+      },
+      "learnset": [
+        "SPARK",
+        "THUNDER_FANG",
+        "ARC_SPIN",
+        "COMET_KICK"
+      ],
       "catchRate": 0.13,
       "description": "雷光を引き連れて駆ける稲妻の狼。",
-      "abilityId": "MOTOR_DRIVE"
+      "abilityId": "MOTOR_DRIVE",
+      "sub_emoji": []
     },
     {
       "id": "ICELARK",
       "name": "アイスラーク",
       "emoji": "🐦",
       "primaryType": "ICE",
-      "baseStats": { "maxHp": 54, "attack": 50, "defense": 56, "speed": 78 },
-      "learnset": ["ICE_SHARD", "FROST_BREATH", "POLAR_PULSE", "AURORA_VEIL", "ICY_WIND"],
+      "baseStats": {
+        "maxHp": 54,
+        "attack": 50,
+        "defense": 56,
+        "speed": 78
+      },
+      "learnset": [
+        "ICE_SHARD",
+        "FROST_BREATH",
+        "POLAR_PULSE",
+        "AURORA_VEIL",
+        "ICY_WIND"
+      ],
       "catchRate": 0.14,
       "description": "氷風に乗って鳴く冬の渡り鳥。",
-      "abilityId": "ICE_BODY"
+      "abilityId": "ICE_BODY",
+      "sub_emoji": []
     },
     {
       "id": "LUMIPUP",
       "name": "ルミパプ",
       "emoji": "🐕‍🦺",
       "primaryType": "FIRE",
-      "baseStats": { "maxHp": 45, "attack": 57, "defense": 43, "speed": 64 },
-      "learnset": ["TACKLE", "EMBER", "EMBER_RAIN", "FOCUS"],
+      "baseStats": {
+        "maxHp": 45,
+        "attack": 57,
+        "defense": 43,
+        "speed": 64
+      },
+      "learnset": [
+        "TACKLE",
+        "EMBER",
+        "EMBER_RAIN",
+        "FOCUS"
+      ],
       "catchRate": 0.27,
       "description": "体毛が淡く光る炎の子犬。夜道を照らす案内役。",
       "abilityId": "BLAZE",
       "evolveTo": "SOLMANTIS",
-      "evolveLevel": 18
+      "evolveLevel": 18,
+      "sub_emoji": []
     },
     {
       "id": "SOLMANTIS",
       "name": "ソルマンティス",
-      "emoji": "🔥🦗",
+      "emoji": "🔥",
       "primaryType": "FIRE",
-      "baseStats": { "maxHp": 74, "attack": 83, "defense": 61, "speed": 72 },
-      "learnset": ["FIRE_FANG", "EMBER_RAIN", "PHOENIX_FLARE", "IRON_HIDE"],
+      "baseStats": {
+        "maxHp": 74,
+        "attack": 83,
+        "defense": 61,
+        "speed": 72
+      },
+      "learnset": [
+        "FIRE_FANG",
+        "EMBER_RAIN",
+        "PHOENIX_FLARE",
+        "IRON_HIDE"
+      ],
       "catchRate": 0.08,
       "description": "日輪の熱を刃に宿す灼熱の狩人。",
-      "abilityId": "BLAZE"
+      "abilityId": "BLAZE",
+      "sub_emoji": [
+        {
+          "emoji": "🦗",
+          "point": "top-right",
+          "size": 0.5
+        }
+      ]
     },
     {
       "id": "MISTOTTER",
       "name": "ミストッター",
       "emoji": "🦫",
       "primaryType": "WATER",
-      "baseStats": { "maxHp": 49, "attack": 52, "defense": 58, "speed": 57 },
-      "learnset": ["WATER_SPLASH", "AQUA_JET", "TIDE_LANCE", "DEFENSE_CURL"],
+      "baseStats": {
+        "maxHp": 49,
+        "attack": 52,
+        "defense": 58,
+        "speed": 57
+      },
+      "learnset": [
+        "WATER_SPLASH",
+        "AQUA_JET",
+        "TIDE_LANCE",
+        "DEFENSE_CURL"
+      ],
       "catchRate": 0.28,
       "description": "霧の川辺に巣を作る器用な水の職人。",
       "abilityId": "TORRENT",
       "evolveTo": "ABYSSMART",
-      "evolveLevel": 18
+      "evolveLevel": 18,
+      "sub_emoji": []
     },
     {
       "id": "ABYSSMART",
       "name": "アビスマート",
-      "emoji": "🌫️🦦",
+      "emoji": "🌫️",
       "primaryType": "WATER",
-      "baseStats": { "maxHp": 76, "attack": 69, "defense": 83, "speed": 55 },
-      "learnset": ["BUBBLE_BEAM", "TIDE_LANCE", "TIDAL_WAVE", "RIVER_SONG"],
+      "baseStats": {
+        "maxHp": 76,
+        "attack": 69,
+        "defense": 83,
+        "speed": 55
+      },
+      "learnset": [
+        "BUBBLE_BEAM",
+        "TIDE_LANCE",
+        "TIDAL_WAVE",
+        "RIVER_SONG"
+      ],
       "catchRate": 0.09,
       "description": "深霧の水路を守る重装の水獣。",
-      "abilityId": "TORRENT"
+      "abilityId": "TORRENT",
+      "sub_emoji": [
+        {
+          "emoji": "🦦",
+          "point": "top-right",
+          "size": 0.5
+        }
+      ]
     },
     {
       "id": "FERNBIT",
       "name": "ファーンビット",
-      "emoji": "🍀🐇",
+      "emoji": "🍀",
       "primaryType": "GRASS",
-      "baseStats": { "maxHp": 50, "attack": 59, "defense": 52, "speed": 56 },
-      "learnset": ["LEAF_DART", "VINE_WHIP", "MOSS_BARRIER", "GROWL"],
+      "baseStats": {
+        "maxHp": 50,
+        "attack": 59,
+        "defense": 52,
+        "speed": 56
+      },
+      "learnset": [
+        "LEAF_DART",
+        "VINE_WHIP",
+        "MOSS_BARRIER",
+        "GROWL"
+      ],
       "catchRate": 0.25,
       "description": "苔の耳で風を読む俊敏な草うさぎ。",
       "abilityId": "OVERGROW",
       "evolveTo": "GROVYRA",
-      "evolveLevel": 18
+      "evolveLevel": 18,
+      "sub_emoji": [
+        {
+          "emoji": "🐇",
+          "point": "top-right",
+          "size": 0.5
+        }
+      ]
     },
     {
       "id": "GROVYRA",
       "name": "グローヴィラ",
-      "emoji": "🌲🦌",
+      "emoji": "🌲",
       "primaryType": "GRASS",
-      "baseStats": { "maxHp": 78, "attack": 79, "defense": 74, "speed": 60 },
-      "learnset": ["RAZOR_LEAF", "VERDANT_BLADE", "SOLAR_BEAM", "NATURE_GUARD"],
+      "baseStats": {
+        "maxHp": 78,
+        "attack": 79,
+        "defense": 74,
+        "speed": 60
+      },
+      "learnset": [
+        "RAZOR_LEAF",
+        "VERDANT_BLADE",
+        "SOLAR_BEAM",
+        "NATURE_GUARD"
+      ],
       "catchRate": 0.08,
       "description": "深森の意志を背負う樹角の守護獣。",
-      "abilityId": "OVERGROW"
+      "abilityId": "OVERGROW",
+      "sub_emoji": [
+        {
+          "emoji": "🦌",
+          "point": "top-right",
+          "size": 0.5
+        }
+      ]
     },
     {
       "id": "BOLTRON",
       "name": "ボルトロン",
-      "emoji": "⚙️⚡",
+      "emoji": "⚙️",
       "primaryType": "ELECTRIC",
-      "baseStats": { "maxHp": 46, "attack": 58, "defense": 46, "speed": 71 },
-      "learnset": ["SPARK", "THUNDER_STEP", "CHARGE", "QUICK_ATTACK"],
+      "baseStats": {
+        "maxHp": 46,
+        "attack": 58,
+        "defense": 46,
+        "speed": 71
+      },
+      "learnset": [
+        "SPARK",
+        "THUNDER_STEP",
+        "CHARGE",
+        "QUICK_ATTACK"
+      ],
       "catchRate": 0.24,
       "description": "稲妻で駆動する歯車獣。直線加速が得意。",
       "abilityId": "MOTOR_DRIVE",
       "evolveTo": "TEMPESTEL",
-      "evolveLevel": 20
+      "evolveLevel": 20,
+      "sub_emoji": [
+        {
+          "emoji": "⚡",
+          "point": "top-right",
+          "size": 0.5
+        }
+      ]
     },
     {
       "id": "TEMPESTEL",
       "name": "テンペステル",
-      "emoji": "🌪️⚡",
+      "emoji": "🌪️",
       "primaryType": "ELECTRIC",
-      "baseStats": { "maxHp": 72, "attack": 86, "defense": 63, "speed": 84 },
-      "learnset": ["THUNDER_FANG", "THUNDERBOLT", "PLASMA_CANNON", "ARC_SPIN"],
+      "baseStats": {
+        "maxHp": 72,
+        "attack": 86,
+        "defense": 63,
+        "speed": 84
+      },
+      "learnset": [
+        "THUNDER_FANG",
+        "THUNDERBOLT",
+        "PLASMA_CANNON",
+        "ARC_SPIN"
+      ],
       "catchRate": 0.07,
       "description": "暴風に雷をまとう空域支配者。",
-      "abilityId": "MOTOR_DRIVE"
+      "abilityId": "MOTOR_DRIVE",
+      "sub_emoji": [
+        {
+          "emoji": "⚡",
+          "point": "top-right",
+          "size": 0.5
+        }
+      ]
     },
     {
       "id": "SNOWLING",
       "name": "スノウリング",
       "emoji": "🐑",
       "sub_emoji": [
-        { "emoji": "❄️", "point": "top-right", "size": 0.5 }
+        {
+          "emoji": "❄️",
+          "point": "top-right",
+          "size": 0.5
+        }
       ],
       "primaryType": "ICE",
-      "baseStats": { "maxHp": 48, "attack": 51, "defense": 55, "speed": 58 },
-      "learnset": ["ICE_SHARD", "FROST_BITE", "CRYO_LANCE", "HAIL_SHELL"],
+      "baseStats": {
+        "maxHp": 48,
+        "attack": 51,
+        "defense": 55,
+        "speed": 58
+      },
+      "learnset": [
+        "ICE_SHARD",
+        "FROST_BITE",
+        "CRYO_LANCE",
+        "HAIL_SHELL"
+      ],
       "catchRate": 0.23,
       "description": "雪雲の毛並みを持つ幼い氷羊。",
       "abilityId": "ICE_BODY",
@@ -1024,23 +1762,201 @@
     {
       "id": "GLAZELK",
       "name": "グレイズルク",
-      "emoji": "🫎❄️",
+      "emoji": "🫎",
       "primaryType": "ICE",
-      "baseStats": { "maxHp": 79, "attack": 74, "defense": 80, "speed": 56 },
-      "learnset": ["ICE_BEAM", "CRYO_LANCE", "BLIZZARD", "AURORA_VEIL"],
+      "baseStats": {
+        "maxHp": 79,
+        "attack": 74,
+        "defense": 80,
+        "speed": 56
+      },
+      "learnset": [
+        "ICE_BEAM",
+        "CRYO_LANCE",
+        "BLIZZARD",
+        "AURORA_VEIL"
+      ],
       "catchRate": 0.07,
       "description": "凍原に氷紋を刻む白角の巨獣。",
-      "abilityId": "ICE_BODY"
+      "abilityId": "ICE_BODY",
+      "sub_emoji": [
+        {
+          "emoji": "❄️",
+          "point": "top-right",
+          "size": 0.5
+        }
+      ]
     }
   ],
-  "wildPoolIds": ["DROPLET", "LEAFLING", "STARLITE", "BLAZEBIRD", "AQUASHELL", "THORNVINE", "SHADOWPAW", "CINDERCUB", "FINBUB", "SPROUTLE", "SKYPIP", "VOLTPUP", "SPARKBUG", "FLORAMIS", "LIGHTNIX", "CINDLO", "RILLY", "BRAMBIT", "LUMIPUP", "MISTOTTER", "FERNBIT", "BOLTRON", "SNOWLING"],
-  "forestPoolIds": ["LEAFLING", "THORNVINE", "SHADOWPAW", "CRYSTALINE", "SPROUTLE", "MOSSHORN", "SKYPIP", "RUNEFOX", "VOLTPUP", "FROSTKIT", "FLORAMIS", "CHARCOIL", "BRAMBIT", "RILLY", "LUMIPUP", "MISTOTTER", "FERNBIT", "BOLTRON"],
-  "cavePoolIds": ["CRYSTALINE", "MAGMOG", "RIPPLYNX", "BRAMBLEON", "MOONMITE", "PYREBEAR", "TIDALON", "THORNKING", "VOLCANOX", "GLACIERA", "BLOOMRA", "AURORO", "PLASMOTH", "ICEPECK", "CRYSTEEL", "FROSTKIT", "GHOSTAIL", "NEONRAY", "CACTURION", "CINDRAKE", "ARCWOLF", "SOLMANTIS", "ABYSSMART", "GROVYRA", "TEMPESTEL", "GLAZELK"],
-  "volcanoPoolIds": ["MAGMOG", "VOLCANOX", "ASHHOUND", "GLACIERA", "MISTRAY", "MOONMITE", "RUNEFOX", "THUNDERAM", "PLASMOTH", "CHARCOIL", "SERPYRO", "SOLFLARE", "CACTURION", "CINDRAKE", "SOLMANTIS", "TEMPESTEL"],
-  "ruinsPoolIds": ["AURORO", "RUNEFOX", "BLOOMRA", "GLACIERA", "VOLCANOX", "MOONMITE", "BRAMBLEON", "TIDALON", "ZAPDRAKE", "STORMRAM", "SNOWFAWN", "TUNDRABEAR", "FROSTVEIL", "CRYSTEEL", "ABYSSQUID", "WHALORD", "SPIRALHORN", "COSMOWL", "THUNDAGLE", "SERPYRO", "RILLARGO", "ICELARK", "SOLMANTIS", "ABYSSMART", "GROVYRA", "TEMPESTEL", "GLAZELK"],
-  "darkTowerPoolIds": ["SHADOWPAW", "MOONMITE", "GHOSTAIL", "COSMOWL", "CRYSTEEL", "NEONRAY", "PLASMOTH", "CHARCOIL", "ARCWOLF", "TEMPESTEL", "GLAZELK"],
-  "frozenPeakPoolIds": ["FROSTKIT", "BLIZZCAT", "ICEPECK", "CRYSTEEL", "TUNDRABEAR", "POLARYX", "GLACIDRAKE", "SNOWFAWN", "FROSTVEIL", "CORALION", "ICELARK", "SNOWLING", "GLAZELK"],
-  "gardenPoolIds": ["SOLFLARE", "WHALORD", "AURORO", "SERPYRO", "FUNGORIA", "THUNDAGLE", "GLACIDRAKE", "SPIRALHORN", "COSMOWL", "ABYSSQUID", "CACTURION", "STORMRAM", "RILLARGO", "CINDRAKE", "SOLMANTIS", "ABYSSMART", "GROVYRA", "TEMPESTEL", "GLAZELK"],
+  "wildPoolIds": [
+    "DROPLET",
+    "LEAFLING",
+    "STARLITE",
+    "BLAZEBIRD",
+    "AQUASHELL",
+    "THORNVINE",
+    "SHADOWPAW",
+    "CINDERCUB",
+    "FINBUB",
+    "SPROUTLE",
+    "SKYPIP",
+    "VOLTPUP",
+    "SPARKBUG",
+    "FLORAMIS",
+    "LIGHTNIX",
+    "CINDLO",
+    "RILLY",
+    "BRAMBIT",
+    "LUMIPUP",
+    "MISTOTTER",
+    "FERNBIT",
+    "BOLTRON",
+    "SNOWLING"
+  ],
+  "forestPoolIds": [
+    "LEAFLING",
+    "THORNVINE",
+    "SHADOWPAW",
+    "CRYSTALINE",
+    "SPROUTLE",
+    "MOSSHORN",
+    "SKYPIP",
+    "RUNEFOX",
+    "VOLTPUP",
+    "FROSTKIT",
+    "FLORAMIS",
+    "CHARCOIL",
+    "BRAMBIT",
+    "RILLY",
+    "LUMIPUP",
+    "MISTOTTER",
+    "FERNBIT",
+    "BOLTRON"
+  ],
+  "cavePoolIds": [
+    "CRYSTALINE",
+    "MAGMOG",
+    "RIPPLYNX",
+    "BRAMBLEON",
+    "MOONMITE",
+    "PYREBEAR",
+    "TIDALON",
+    "THORNKING",
+    "VOLCANOX",
+    "GLACIERA",
+    "BLOOMRA",
+    "AURORO",
+    "PLASMOTH",
+    "ICEPECK",
+    "CRYSTEEL",
+    "FROSTKIT",
+    "GHOSTAIL",
+    "NEONRAY",
+    "CACTURION",
+    "CINDRAKE",
+    "ARCWOLF",
+    "SOLMANTIS",
+    "ABYSSMART",
+    "GROVYRA",
+    "TEMPESTEL",
+    "GLAZELK"
+  ],
+  "volcanoPoolIds": [
+    "MAGMOG",
+    "VOLCANOX",
+    "ASHHOUND",
+    "GLACIERA",
+    "MISTRAY",
+    "MOONMITE",
+    "RUNEFOX",
+    "THUNDERAM",
+    "PLASMOTH",
+    "CHARCOIL",
+    "SERPYRO",
+    "SOLFLARE",
+    "CACTURION",
+    "CINDRAKE",
+    "SOLMANTIS",
+    "TEMPESTEL"
+  ],
+  "ruinsPoolIds": [
+    "AURORO",
+    "RUNEFOX",
+    "BLOOMRA",
+    "GLACIERA",
+    "VOLCANOX",
+    "MOONMITE",
+    "BRAMBLEON",
+    "TIDALON",
+    "ZAPDRAKE",
+    "STORMRAM",
+    "SNOWFAWN",
+    "TUNDRABEAR",
+    "FROSTVEIL",
+    "CRYSTEEL",
+    "ABYSSQUID",
+    "WHALORD",
+    "SPIRALHORN",
+    "COSMOWL",
+    "THUNDAGLE",
+    "SERPYRO",
+    "RILLARGO",
+    "ICELARK",
+    "SOLMANTIS",
+    "ABYSSMART",
+    "GROVYRA",
+    "TEMPESTEL",
+    "GLAZELK"
+  ],
+  "darkTowerPoolIds": [
+    "SHADOWPAW",
+    "MOONMITE",
+    "GHOSTAIL",
+    "COSMOWL",
+    "CRYSTEEL",
+    "NEONRAY",
+    "PLASMOTH",
+    "CHARCOIL",
+    "ARCWOLF",
+    "TEMPESTEL",
+    "GLAZELK"
+  ],
+  "frozenPeakPoolIds": [
+    "FROSTKIT",
+    "BLIZZCAT",
+    "ICEPECK",
+    "CRYSTEEL",
+    "TUNDRABEAR",
+    "POLARYX",
+    "GLACIDRAKE",
+    "SNOWFAWN",
+    "FROSTVEIL",
+    "CORALION",
+    "ICELARK",
+    "SNOWLING",
+    "GLAZELK"
+  ],
+  "gardenPoolIds": [
+    "SOLFLARE",
+    "WHALORD",
+    "AURORO",
+    "SERPYRO",
+    "FUNGORIA",
+    "THUNDAGLE",
+    "GLACIDRAKE",
+    "SPIRALHORN",
+    "COSMOWL",
+    "ABYSSQUID",
+    "CACTURION",
+    "STORMRAM",
+    "RILLARGO",
+    "CINDRAKE",
+    "SOLMANTIS",
+    "ABYSSMART",
+    "GROVYRA",
+    "TEMPESTEL",
+    "GLAZELK"
+  ],
   "gymBoss": {
     "id": "PYREBEAR",
     "level": 15
@@ -1050,4 +1966,3 @@
     "level": 32
   }
 }
-

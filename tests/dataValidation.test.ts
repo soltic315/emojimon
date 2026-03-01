@@ -21,6 +21,7 @@ function createValidData() {
         {
           id: "TESTMON",
           name: "テストモン",
+          sub_emoji: [],
           primaryType: "NORMAL",
           baseStats: {
             maxHp: 40,

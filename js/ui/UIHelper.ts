@@ -425,9 +425,6 @@ export function createMonsterEmojiDisplay(scene, x, y, emoji, opts = {}) {
     fontSize = 56,
     color,
     subEmojis = null,
-    overlayScale = 0.68,
-    overlayOffsetX = 0,
-    overlayOffsetY = -2,
   } = opts;
 
   const container = scene.add.container(x, y);
@@ -466,18 +463,6 @@ export function createMonsterEmojiDisplay(scene, x, y, emoji, opts = {}) {
         ).setOrigin(0.5);
         container.add(overlay);
       });
-      return;
-    }
-
-    if (parts.length === 2) {
-      const base = scene.add.text(0, 0, parts[0], textStyle).setOrigin(0.5);
-      const overlay = scene.add.text(
-        overlayOffsetX,
-        overlayOffsetY,
-        parts[1],
-        { ...textStyle, fontSize: Math.max(10, Math.round(fontSize * overlayScale)) }
-      ).setOrigin(0.5);
-      container.add([base, overlay]);
       return;
     }
 
