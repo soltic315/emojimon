@@ -279,6 +279,7 @@ export class WorldScene extends Phaser.Scene {
     this.timeWeatherPanel?.destroy();
     this.timeWeatherText?.destroy();
     this._clearFieldMarkers();
+    this._clearStarterLabels();
   }
 
   _getFieldPeriodByHour(hour) {
@@ -709,12 +710,22 @@ export class WorldScene extends Phaser.Scene {
   }
 
   createNpcSprites() {
+    this._clearStarterLabels();
+
     this.npcs = getMapNpcs(this.mapKey);
     if (this.npcSprites) {
       this.npcSprites.forEach((s) => s.destroy());
     }
     this.npcSprites = [];
     this.npcs.forEach((npc) => {
+      const isStarterPedestal = this.mapKey === "LAB"
+        && !gameState.storyFlags.prologueDone
+        && typeof npc.story === "string"
+        && npc.story.startsWith("starter_");
+      if (isStarterPedestal) {
+        return;
+      }
+
       const wx = npc.x * TILE_SIZE + TILE_SIZE / 2;
       const wy = npc.y * TILE_SIZE + TILE_SIZE / 2;
       const texture = npc.texture || "npc";
@@ -750,6 +761,12 @@ export class WorldScene extends Phaser.Scene {
     if (this.mapKey === "LAB" && !gameState.storyFlags.prologueDone) {
       this._renderStarterLabels();
     }
+  }
+
+  _clearStarterLabels() {
+    if (!this.starterLabelSprites) return;
+    this.starterLabelSprites.forEach((sprite) => sprite?.destroy());
+    this.starterLabelSprites = [];
   }
 
   _playHealNpcEffect(npc) {
@@ -809,6 +826,9 @@ export class WorldScene extends Phaser.Scene {
 
   /** 研究所のスターター台座に絵文字ラベルを表示 */
   _renderStarterLabels() {
+    this._clearStarterLabels();
+    this.starterLabelSprites = [];
+
     const starterInfo = [
       { x: 3, y: 5, emoji: "🧸", name: "エムベア\n炎タイプ" },
       { x: 7, y: 5, emoji: "🐟", name: "フィンバブ\n水タイプ" },
@@ -817,15 +837,17 @@ export class WorldScene extends Phaser.Scene {
     starterInfo.forEach((s) => {
       const wx = s.x * TILE_SIZE + TILE_SIZE / 2;
       const wy = s.y * TILE_SIZE + TILE_SIZE / 2;
-      this.add.text(wx, wy - 18, s.emoji, {
+      const emoji = this.add.text(wx, wy - 18, s.emoji, {
         fontSize: 22,
       }).setOrigin(0.5).setScrollFactor(1);
-      this.add.text(wx, wy + 20, s.name, {
+      const label = this.add.text(wx, wy + 20, s.name, {
         fontFamily: FONT.UI,
         fontSize: 10,
         color: "#fde68a",
         align: "center",
       }).setOrigin(0.5).setScrollFactor(1);
+
+      this.starterLabelSprites.push(emoji, label);
     });
   }
 
@@ -1466,7 +1488,6 @@ export class WorldScene extends Phaser.Scene {
       "博士: …もちろん、ひとりじゃ 危険じゃからな。",
       "博士: まず この研究所にいる モンスターから 相棒を えらんでくれ！",
       "博士: 左から 🧸エムベア（ほのお）、🐟フィンバブ（みず）、🌿ソーンバイン（くさ）じゃ。",
-      "▶ それぞれの台座に近づいてZキーを押すと 相棒を選べます。",
     ]);
   }
 
@@ -1776,10 +1797,6 @@ export class WorldScene extends Phaser.Scene {
       `✨ ${starterName} と なかよくなった！`,
       `博士: すばらしい！ ${starterName}は いい相棒になるぞ！`,
       "博士: さて、旅に出る前に いくつか大事なことを教えよう。",
-      "📖 【操作ガイド①】WASDキーまたは矢印キーで 移動できます。",
-      "📖 【操作ガイド②】Zキーで NPCに話しかけたり メッセージを送れます。",
-      "📖 【操作ガイド③】Xキーで メニューを開けます。パーティやバッグを確認しよう。",
-      "📖 【操作ガイド④】Pキーで いつでもセーブできます。こまめにセーブしよう！",
       "博士: 町の草むらに入ると 野生のモンスターが出てくるぞ。",
       "博士: バトルでは『たたかう』で わざを選んで攻撃じゃ！",
       "博士: 相手を弱らせたら『アイテム』からボールを使うのじゃ。",

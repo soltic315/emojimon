@@ -219,13 +219,8 @@ export class BattleScene extends Phaser.Scene {
       }
     }
 
-    // ── 初回バトルチュートリアル ──
+    // ── 初回バトル判定（ガイド表示は行わない） ──
     this._isTutorialBattle = this.isWildBattle && !gameState.storyFlags.tutorialBattleDone;
-    if (this._isTutorialBattle) {
-      this.enqueueMessage("📖 【はじめてのバトル！】");
-      this.enqueueMessage("📖 画面下の コマンドメニューから 行動を選ぼう。");
-      this.enqueueMessage("📖 まずは『たたかう』で わざを使ってみよう！ W/Sキーで選択、Zキーで決定だ。");
-    }
   }
 
   clampStage(value) {
@@ -1654,14 +1649,9 @@ export class BattleScene extends Phaser.Scene {
     if (this.isWildBattle) {
       this.registerWildStreakWin();
 
-      // 初回バトル勝利チュートリアル
+      // 初回バトル完了フラグ更新
       if (this._isTutorialBattle) {
         gameState.storyFlags.tutorialBattleDone = true;
-        this.enqueueMessage("📖 【バトル勝利！】やったね！ はじめてのバトルに勝った！");
-        this.enqueueMessage("📖 経験値を貯めるとレベルアップ！ わざやステータスが強くなるよ。");
-        if (this.hasBallsInInventory()) {
-          this.enqueueMessage("📖 次は モンスターを つかまえてみよう！ HPを減らしてからボールを投げるのがコツだ。");
-        }
         gameState.save();
       }
     }
