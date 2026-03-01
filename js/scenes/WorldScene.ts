@@ -63,8 +63,9 @@ export class WorldScene extends Phaser.Scene {
 
     this.mapLayout = createMapLayout(this.mapKey);
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.keys = this.input.keyboard.addKeys("Z,SPACE,X,P,W,A,S,D,ESC");
+    this.keys = this.input.keyboard.addKeys("Z,ENTER,SPACE,X,P,W,A,S,D,ESC");
     this.keys.Z.removeAllListeners("down");
+    this.keys.ENTER.removeAllListeners("down");
     this.keys.P.removeAllListeners("down");
     this.keys.ESC.removeAllListeners("down");
     this.isMoving = false;
@@ -244,6 +245,7 @@ export class WorldScene extends Phaser.Scene {
     this.events.off("resume", this.handleSceneResume, this);
     if (this.keys) {
       this.keys.Z.removeAllListeners("down");
+      this.keys.ENTER?.removeAllListeners("down");
       this.keys.P.removeAllListeners("down");
       this.keys.X?.removeAllListeners("down");
       this.keys.ESC?.removeAllListeners("down");
@@ -1074,12 +1076,13 @@ export class WorldScene extends Phaser.Scene {
     this._dialogActive = true;
     this._showNextDialog();
 
-    // Zキー（1回分の追加リスナー）
-    this._dialogZListener = () => {
+    // Z/Enterキー（1回分の追加リスナー）
+    this._dialogAdvanceListener = () => {
       if (!this._dialogActive) return;
       this._showNextDialog();
     };
-    this.keys.Z.on("down", this._dialogZListener);
+    this.keys.Z.on("down", this._dialogAdvanceListener);
+    this.keys.ENTER.on("down", this._dialogAdvanceListener);
   }
 
   _showNextDialog() {
@@ -1093,9 +1096,10 @@ export class WorldScene extends Phaser.Scene {
 
   _endDialogSequence() {
     this._dialogActive = false;
-    if (this._dialogZListener) {
-      this.keys.Z.off("down", this._dialogZListener);
-      this._dialogZListener = null;
+    if (this._dialogAdvanceListener) {
+      this.keys.Z.off("down", this._dialogAdvanceListener);
+      this.keys.ENTER.off("down", this._dialogAdvanceListener);
+      this._dialogAdvanceListener = null;
     }
     this.updateDefaultInfoMessage();
     if (this._dialogOnComplete) {
