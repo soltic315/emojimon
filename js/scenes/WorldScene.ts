@@ -299,15 +299,22 @@ export class WorldScene extends Phaser.Scene {
 
   _refreshFieldTimeWeatherEffects(force = false) {
     const timeInfo = gameState.getFieldTime();
-    const weather = gameState.getMapWeather(this.mapKey) || "NONE";
+    const isInterior = this._isInteriorMap();
+    const weather = isInterior ? "NONE" : (gameState.getMapWeather(this.mapKey) || "NONE");
     const period = this._getFieldPeriodByHour(timeInfo.hour);
-    const weatherView = this._getFieldWeatherView(weather);
+    const weatherView = isInterior
+      ? { label: "屋内", emoji: "🏠", color: 0x94a3b8, alpha: 0 }
+      : this._getFieldWeatherView(weather);
     const weatherChanged = force || this.lastFieldWeather !== weather;
 
     if (this.timeWeatherText) {
-      this.timeWeatherText.setText(
-        `${period.emoji} ${period.label} ${gameState.getFieldTimeLabel()}   ${weatherView.emoji} ${weatherView.label}`,
-      );
+      if (isInterior) {
+        this.timeWeatherText.setText(`${period.emoji} ${period.label} ${gameState.getFieldTimeLabel()}   ${weatherView.emoji} ${weatherView.label}`);
+      } else {
+        this.timeWeatherText.setText(
+          `${period.emoji} ${period.label} ${gameState.getFieldTimeLabel()}   ${weatherView.emoji} ${weatherView.label}`,
+        );
+      }
     }
 
     if (this.timeTintOverlay) {
@@ -619,23 +626,24 @@ export class WorldScene extends Phaser.Scene {
       ).setStrokeStyle(2, 0xe2e8f0, 0.26);
       this.groundLayer.add(body);
 
+      const roofHeight = Math.max(14, Math.floor(height * 0.5));
       const roof = this.add.triangle(
         baseX + width / 2,
-        baseY - 2,
+        baseY + 1,
         -width / 2 - 3,
         0,
         width / 2 + 3,
         0,
         0,
-        -Math.max(14, Math.floor(height * 0.5)),
+        -roofHeight,
         building.roofColor || 0xb91c1c,
         0.88,
-      );
+      ).setOrigin(0.5, 1);
       this.groundLayer.add(roof);
 
       if (building.emoji || building.label) {
         const labelText = `${building.emoji || ""} ${building.label || ""}`.trim();
-        const label = this.add.text(baseX + width / 2, baseY - Math.max(20, Math.floor(height * 0.5)), labelText, {
+        const label = this.add.text(baseX + width / 2, baseY - roofHeight - 4, labelText, {
           fontFamily: FONT.UI,
           fontSize: 10,
           color: "#f8fafc",
