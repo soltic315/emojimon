@@ -6,10 +6,9 @@ import { gameState } from "../state/gameState.ts";
 import { getItemById } from "../data/items.ts";
 import { calcStats, getMonsterMoves } from "../data/monsters.ts";
 import { audioManager } from "../audio/AudioManager.ts";
-import { FONT, COLORS, TEXT_COLORS, applyCanvasBrightness, drawPanel, drawSelection } from "../ui/UIHelper.ts";
+import { applyCanvasBrightness } from "../ui/UIHelper.ts";
 import { NAV_REPEAT_INITIAL_DELAY_MS, NAV_REPEAT_INTERVAL_MS } from "../ui/inputConstants.ts";
 import { MENU_ITEMS, GUIDE_PAGES } from "./menu/menuConstants.ts";
-import { clampScreenBrightness } from "./menu/settingsShared.ts";
 import {
   renderMainMenu,
   renderSubMenu,
@@ -24,6 +23,26 @@ import {
   renderGuideView,
   renderSettingsView,
 } from "./menu/menuViews.ts";
+import { handleVerticalRepeatInput } from "./menu/menuSceneInput.ts";
+import {
+  handleNicknameShortcut,
+  openNicknameKeyboard,
+  handleNicknameKeyboardNavigation,
+  confirmNicknameInput,
+  deleteNicknameChar,
+  updateNicknameInputDisplay,
+  updateNicknameKeyboardDisplay,
+  closeNicknameKeyboard,
+} from "./menu/menuSceneNickname.ts";
+import {
+  cycleBattleSpeed,
+  toggleGameplayFlag,
+  persistSettingsChanges,
+  adjustVolume,
+  handleSettingsAction,
+  executeDeleteSave,
+  showCenterMessage,
+} from "./menu/menuSceneSettings.ts";
 
 export class MenuScene extends Phaser.Scene {
   constructor() {
@@ -427,217 +446,35 @@ export class MenuScene extends Phaser.Scene {
 
   // ── ニックネーム変更 ──
   handleNicknameShortcut() {
-    if (!this.subMenuActive || this.subMenuType !== "party") return;
-    if (this.partySwapMode || this.partyFusionMode) return;
-    const mon = gameState.party[this.subMenuIndex];
-    if (!mon || !mon.species) return;
-
-    this._openNicknameKeyboard(mon);
+    handleNicknameShortcut(this);
   }
 
   _openNicknameKeyboard(monster) {
-    if (!monster) return;
-
-    this.nicknameInputActive = true;
-    this.nicknameTargetMonster = monster;
-    this.nicknameInput = (monster.nickname || "").slice(0, 12);
-    this.nicknameKeyboardIndex = 0;
-    this.nicknameKeyboardKeys = [
-      "あ", "い", "う", "え", "お", "か",
-      "き", "く", "け", "こ", "さ", "し",
-      "す", "せ", "そ", "た", "ち", "つ",
-      "て", "と", "な", "に", "ぬ", "ね",
-      "の", "ま", "み", "む", "め", "も",
-      "や", "ゆ", "よ", "ん", "けす", "おわる",
-    ];
-    this.nicknameKeyboardButtons = [];
-
-    if (this.nicknamePanel) {
-      this.nicknamePanel.destroy(true);
-      this.nicknamePanel = null;
-    }
-
-    const { width, height } = this.scale;
-    const panelY = 26;
-    this.nicknamePanel = this.add.container(0, 0).setDepth(2000);
-
-    const shade = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.58);
-    this.nicknamePanel.add(shade);
-
-    const panelBg = this.add.graphics();
-    drawPanel(panelBg, width / 2 - 220, panelY, 440, height - 52, {
-      radius: 12,
-      headerHeight: 26,
-      bgAlpha: 0.96,
-      glow: true,
-      borderColor: COLORS.SELECT_BORDER,
-    });
-    this.nicknamePanel.add(panelBg);
-
-    const title = this.add.text(width / 2, panelY + 12, `${monster.species.emoji} ニックネーム入力`, {
-      fontFamily: FONT.UI,
-      fontSize: 16,
-      color: TEXT_COLORS.ACCENT,
-    }).setOrigin(0.5, 0);
-    this.nicknamePanel.add(title);
-
-    const inputBg = this.add.graphics();
-    drawSelection(inputBg, width / 2 - 150, panelY + 56, 300, 42, { radius: 8 });
-    this.nicknamePanel.add(inputBg);
-
-    this.nicknameInputText = this.add.text(width / 2, panelY + 66, "", {
-      fontFamily: FONT.UI,
-      fontSize: 22,
-      color: "#e5e7eb",
-      align: "center",
-    }).setOrigin(0.5, 0);
-    this.nicknamePanel.add(this.nicknameInputText);
-
-    const guide = this.add.text(width / 2, panelY + 106, "↑↓←→: もじ選択（最大12文字）", {
-      fontFamily: FONT.UI,
-      fontSize: 12,
-      color: "#94a3b8",
-    }).setOrigin(0.5, 0);
-    this.nicknamePanel.add(guide);
-
-    const controls = this.add.text(width / 2, panelY + 126, "Z/Enter: 決定  X: キャンセル", {
-      fontFamily: FONT.UI,
-      fontSize: 12,
-      color: "#94a3b8",
-    }).setOrigin(0.5, 0);
-    this.nicknamePanel.add(controls);
-
-    const keyStartX = width / 2 - 186;
-    const keyStartY = panelY + 154;
-    const keyW = 54;
-    const keyH = 30;
-    const keyGapX = 10;
-    const keyGapY = 8;
-
-    this.nicknameKeyboardKeys.forEach((label, index) => {
-      const col = index % this.nicknameKeyboardCols;
-      const row = Math.floor(index / this.nicknameKeyboardCols);
-      const x = keyStartX + col * (keyW + keyGapX);
-      const y = keyStartY + row * (keyH + keyGapY);
-
-      const bgKey = this.add.graphics();
-      const text = this.add.text(x + keyW / 2, y + keyH / 2, label, {
-        fontFamily: FONT.UI,
-        fontSize: 16,
-        color: "#e2e8f0",
-      }).setOrigin(0.5);
-      this.nicknamePanel.add(bgKey);
-      this.nicknamePanel.add(text);
-      this.nicknameKeyboardButtons.push({ bgKey, text, x, y, w: keyW, h: keyH });
-    });
-
-    this._updateNicknameInputDisplay();
-    this._updateNicknameKeyboardDisplay();
+    openNicknameKeyboard(this, monster);
   }
 
   _handleNicknameKeyboardNavigation() {
-    if (!this.nicknameInputActive) return;
-    const keyCount = this.nicknameKeyboardKeys?.length || 0;
-    const cols = this.nicknameKeyboardCols || 1;
-    if (keyCount === 0) return;
-
-    let moved = false;
-    if (Phaser.Input.Keyboard.JustDown(this.cursors.left)) {
-      this.nicknameKeyboardIndex = (this.nicknameKeyboardIndex - 1 + keyCount) % keyCount;
-      moved = true;
-    } else if (Phaser.Input.Keyboard.JustDown(this.cursors.right)) {
-      this.nicknameKeyboardIndex = (this.nicknameKeyboardIndex + 1) % keyCount;
-      moved = true;
-    } else if (Phaser.Input.Keyboard.JustDown(this.cursors.up)) {
-      this.nicknameKeyboardIndex = (this.nicknameKeyboardIndex - cols + keyCount) % keyCount;
-      moved = true;
-    } else if (Phaser.Input.Keyboard.JustDown(this.cursors.down)) {
-      this.nicknameKeyboardIndex = (this.nicknameKeyboardIndex + cols) % keyCount;
-      moved = true;
-    }
-
-    if (moved) {
-      audioManager.playCursor();
-      this._updateNicknameKeyboardDisplay();
-    }
+    handleNicknameKeyboardNavigation(this);
   }
 
   _confirmNicknameInput() {
-    if (!this.nicknameInputActive) return;
-    const key = this.nicknameKeyboardKeys?.[this.nicknameKeyboardIndex];
-    if (!key) return;
-
-    if (key === "けす") {
-      this._deleteNicknameChar();
-      return;
-    }
-
-    if (key === "おわる") {
-      this._closeNicknameKeyboard(true);
-      return;
-    }
-
-    const next = `${this.nicknameInput || ""}${key}`;
-    this.nicknameInput = Array.from(next).slice(0, 12).join("");
-    audioManager.playCursor();
-    this._updateNicknameInputDisplay();
+    confirmNicknameInput(this);
   }
 
   _deleteNicknameChar() {
-    const chars = Array.from(this.nicknameInput || "");
-    if (chars.length === 0) return;
-    chars.pop();
-    this.nicknameInput = chars.join("");
-    audioManager.playCursor();
-    this._updateNicknameInputDisplay();
+    deleteNicknameChar(this);
   }
 
   _updateNicknameInputDisplay() {
-    if (!this.nicknameInputText) return;
-    const chars = Array.from(this.nicknameInput || "");
-    const hasText = chars.length > 0;
-    const display = hasText ? chars.join("") : "（元の名前）";
-    this.nicknameInputText.setText(display);
-    this.nicknameInputText.setColor(hasText ? "#e5e7eb" : "#94a3b8");
+    updateNicknameInputDisplay(this);
   }
 
   _updateNicknameKeyboardDisplay() {
-    if (!this.nicknameKeyboardButtons) return;
-    this.nicknameKeyboardButtons.forEach((button, index) => {
-      const selected = index === this.nicknameKeyboardIndex;
-      button.bgKey.clear();
-      button.bgKey.fillStyle(selected ? 0x1f2937 : 0x0f172a, selected ? 0.94 : 0.7);
-      button.bgKey.fillRoundedRect(button.x, button.y, button.w, button.h, 8);
-      button.bgKey.lineStyle(selected ? 2 : 1, selected ? 0xfbbf24 : 0x334155, selected ? 0.95 : 0.75);
-      button.bgKey.strokeRoundedRect(button.x, button.y, button.w, button.h, 8);
-      button.text.setColor(selected ? "#fde68a" : "#e2e8f0");
-    });
+    updateNicknameKeyboardDisplay(this);
   }
 
   _closeNicknameKeyboard(applyChanges) {
-    const mon = this.nicknameTargetMonster;
-    const normalized = (this.nicknameInput || "").trim().slice(0, 12);
-
-    if (applyChanges && mon && mon.species) {
-      mon.nickname = normalized.length > 0 ? normalized : null;
-      audioManager.playConfirm();
-      if (mon.nickname) {
-        this._showPartyMessage(`${mon.species.name}に「${mon.nickname}」というニックネームをつけた！`);
-      } else {
-        this._showPartyMessage(`${mon.species.name}のニックネームを元に戻した！`);
-      }
-      this._renderSubMenu();
-    }
-
-    if (this.nicknamePanel) {
-      this.nicknamePanel.destroy(true);
-      this.nicknamePanel = null;
-    }
-    this.nicknameInputActive = false;
-    this.nicknameTargetMonster = null;
-    this.nicknameInput = "";
-    this.nicknameKeyboardButtons = [];
-    this.nicknameInputText = null;
+    closeNicknameKeyboard(this, applyChanges);
   }
 
   // ── ボックス画面 ──
@@ -859,118 +696,31 @@ export class MenuScene extends Phaser.Scene {
   }
 
   _cycleBattleSpeed(direction = 1) {
-    const order = ["NORMAL", "FAST", "TURBO"];
-    const current = gameState.gameplaySettings?.battleSpeed || "NORMAL";
-    const idx = Math.max(0, order.indexOf(current));
-    const nextIndex = (idx + direction + order.length) % order.length;
-    gameState.gameplaySettings.battleSpeed = order[nextIndex];
+    cycleBattleSpeed(direction);
   }
 
   _toggleGameplayFlag(flagKey) {
-    gameState.gameplaySettings[flagKey] = !gameState.gameplaySettings[flagKey];
+    toggleGameplayFlag(flagKey);
   }
 
   _persistSettingsChanges(playSe = true) {
-    audioManager.applySettings(gameState.audioSettings);
-    applyCanvasBrightness(this, gameState.gameplaySettings?.screenBrightness);
-    gameState.saveAudioSettings();
-    if (playSe) audioManager.playCursor();
-    this._renderSubMenu();
+    persistSettingsChanges(this, playSe);
   }
 
   _adjustVolume(delta) {
-    if (this.subMenuType !== "settings") return;
-    const row = this.settingsRows?.[this.subMenuIndex];
-    if (!row) return;
-
-    if (row.key === "bgm") {
-      gameState.audioSettings.bgmVolume = Phaser.Math.Clamp(gameState.audioSettings.bgmVolume + delta, 0, 1);
-    } else if (row.key === "se") {
-      gameState.audioSettings.seVolume = Phaser.Math.Clamp(gameState.audioSettings.seVolume + delta, 0, 1);
-    } else if (row.key === "mute") {
-      gameState.audioSettings.muted = !gameState.audioSettings.muted;
-    } else if (row.key === "battleSpeed") {
-      this._cycleBattleSpeed(delta >= 0 ? 1 : -1);
-    } else if (row.key === "autoAdvanceMessages") {
-      this._toggleGameplayFlag("autoAdvanceMessages");
-    } else if (row.key === "shortEncounterEffect") {
-      this._toggleGameplayFlag("shortEncounterEffect");
-    } else if (row.key === "emoSkipEnabled") {
-      this._toggleGameplayFlag("emoSkipEnabled");
-    } else if (row.key === "autoSaveEnabled") {
-      this._toggleGameplayFlag("autoSaveEnabled");
-    } else if (row.key === "screenBrightness") {
-      const current = clampScreenBrightness(gameState.gameplaySettings?.screenBrightness);
-      const step = delta >= 0 ? 10 : -10;
-      gameState.gameplaySettings.screenBrightness = clampScreenBrightness(current + step);
-    } else {
-      return;
-    }
-
-    this._persistSettingsChanges(true);
+    adjustVolume(this, delta);
   }
 
   _handleSettingsAction() {
-    const row = this.settingsRows?.[this.subMenuIndex];
-    if (!row) return;
-
-    if (row.key === "mute") {
-      gameState.audioSettings.muted = !gameState.audioSettings.muted;
-      this._persistSettingsChanges(false);
-    } else if (row.key === "battleSpeed") {
-      this._cycleBattleSpeed(1);
-      this._persistSettingsChanges(false);
-    } else if (row.key === "autoAdvanceMessages") {
-      this._toggleGameplayFlag("autoAdvanceMessages");
-      this._persistSettingsChanges(false);
-    } else if (row.key === "shortEncounterEffect") {
-      this._toggleGameplayFlag("shortEncounterEffect");
-      this._persistSettingsChanges(false);
-    } else if (row.key === "emoSkipEnabled") {
-      this._toggleGameplayFlag("emoSkipEnabled");
-      this._persistSettingsChanges(false);
-    } else if (row.key === "autoSaveEnabled") {
-      this._toggleGameplayFlag("autoSaveEnabled");
-      this._persistSettingsChanges(false);
-    } else if (row.key === "screenBrightness") {
-      const current = clampScreenBrightness(gameState.gameplaySettings?.screenBrightness);
-      gameState.gameplaySettings.screenBrightness = clampScreenBrightness(current + 10);
-      this._persistSettingsChanges(false);
-    }
+    handleSettingsAction(this);
   }
 
   _executeDeleteSave() {
-    gameState.deleteSave();
-    audioManager.playConfirm();
-    const msg = this.add.text(this.scale.width / 2, this.scale.height / 2, "セーブデータを削除しました", {
-      fontFamily: FONT.UI,
-      fontSize: 16,
-      color: "#fca5a5",
-      backgroundColor: "#0f172a",
-      padding: { x: 16, y: 8 },
-    }).setOrigin(0.5).setDepth(100);
-    msg.setStroke("#000000", 2);
-    this.time.delayedCall(900, () => {
-      msg.destroy();
-      audioManager.stopBgm();
-      this.cameras.main.fadeOut(220, 0, 0, 0);
-      this.cameras.main.once("camerafadeoutcomplete", () => {
-        this.scene.stop(this.fromScene);
-        this.scene.start("TitleScene");
-      });
-    });
+    executeDeleteSave(this);
   }
 
   _showCenterMessage(text, color = "#fde68a") {
-    const msg = this.add.text(this.scale.width / 2, this.scale.height / 2, text, {
-      fontFamily: FONT.UI,
-      fontSize: 16,
-      color,
-      backgroundColor: "#0f172a",
-      padding: { x: 14, y: 8 },
-    }).setOrigin(0.5).setDepth(100);
-    msg.setStroke("#000000", 2);
-    this.time.delayedCall(900, () => msg.destroy());
+    showCenterMessage(this, text, color);
   }
 
   _handleVerticalRepeatInput({
@@ -983,41 +733,15 @@ export class MenuScene extends Phaser.Scene {
     onUp,
     onDown,
   }) {
-    const now = this.time.now;
-
-    if (isUpDown) {
-      this[holdDirectionKey] = -1;
-      this[nextRepeatAtKey] = now + this.navRepeatDelayMs;
-      audioManager.playCursor();
-      onUp();
-      return;
-    }
-
-    if (isDownDown) {
-      this[holdDirectionKey] = 1;
-      this[nextRepeatAtKey] = now + this.navRepeatDelayMs;
-      audioManager.playCursor();
-      onDown();
-      return;
-    }
-
-    const holdDirection = isUpHeld ? -1 : isDownHeld ? 1 : 0;
-    if (holdDirection === 0) {
-      this[holdDirectionKey] = 0;
-      return;
-    }
-
-    if (this[holdDirectionKey] !== holdDirection) {
-      this[holdDirectionKey] = holdDirection;
-      this[nextRepeatAtKey] = now + this.navRepeatDelayMs;
-      return;
-    }
-
-    if (now >= this[nextRepeatAtKey]) {
-      this[nextRepeatAtKey] = now + this.navRepeatIntervalMs;
-      audioManager.playCursor();
-      if (holdDirection < 0) onUp();
-      else onDown();
-    }
+    handleVerticalRepeatInput(this, {
+      isUpDown,
+      isDownDown,
+      isUpHeld,
+      isDownHeld,
+      holdDirectionKey,
+      nextRepeatAtKey,
+      onUp,
+      onDown,
+    });
   }
 }

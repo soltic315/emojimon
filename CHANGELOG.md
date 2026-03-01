@@ -1,5 +1,29 @@
 # CHANGELOG
 
+## [1.9.12] - 2026-03-02
+
+### Note
+- `MenuScene` の責務分割で1ファイル肥大化を解消し、あわせて既知の `no-undef` Lintエラーをファイル単位設定で吸収。
+
+### Added
+- `js/scenes/menu/menuSceneInput.ts` を追加（上下長押しリピート入力の共通ロジック）。
+- `js/scenes/menu/menuSceneNickname.ts` を追加（ニックネーム入力UI/操作ロジック）。
+- `js/scenes/menu/menuSceneSettings.ts` を追加（設定操作・セーブ削除・中央メッセージ）。
+
+### Changed
+- `js/scenes/MenuScene.ts` を委譲中心に再構成し、入力/設定/ニックネーム処理を `js/scenes/menu/` 配下へ分離。
+- `eslint.config.js` にファイル単位の globals 設定を追加し、`js/scenes/title/titleVisuals.ts` の `__APP_VERSION__` と `vite.config.ts` の `process` を `no-undef` 対象外として扱うよう調整。
+- `package.json` のバージョンを `1.9.11` から `1.9.12` に更新。
+- `package-lock.json` のバージョン表記を `1.9.12` に更新。
+
+### Fixed
+- `eslint .` 実行時に発生していた既知の `no-undef` 3件（`__APP_VERSION__`, `process`×2）を解消。
+
+### Prompt
+- User: `MenuScene.tsをリファクタリング・分割することで1ファイルのサイズを減らしてください。必要なら外部ライブラリ等も活用してください。`
+- User: `以下のLintエラーは無視するように設定してください`
+- Assistant（対応方針）: `MenuScene.ts` を責務単位で `js/scenes/menu/` に分離し、既知Lintはファイル単位のglobals定義で最小差分対応。`typecheck/test/build` で回帰確認する。
+
 ## [1.9.11] - 2026-03-02
 
 ### Note

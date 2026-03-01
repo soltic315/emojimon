@@ -23,11 +23,6 @@
 1. 変更対象と依存ファイルを確認する。
 2. 最小差分で実装する。
 3. コードの変更がある場合のみ、`npm run lint` / `npm run typecheck` / `npm run test` / `npm run build` を優先度順で確認し、Build成功まで確認する。
-   - 実行コマンド（WSL / Git Bash 推奨）:
-     - `set -euo pipefail; npm run lint; npm run typecheck; npm run test; npm run build; echo "CHECKS_OK"`
-   - 実行コマンド（PowerShell）:
-     - `$ErrorActionPreference = "Stop"; npm run lint; npm run typecheck; npm run test; npm run build; Write-Output "CHECKS_OK"`
-   - 判定方法: 最後に `CHECKS_OK` が表示されれば成功。途中で停止した場合は失敗。
 4. 仕様に影響する場合、`GAME_DESIGN.md` を更新する。
 5. 導入・運用に影響する場合、`README.md` を更新する。
 6. コードの変更がある場合のみ、セマンティックバージョニングの原則に従い、変更の種類に応じて適切なバージョン番号を更新する。

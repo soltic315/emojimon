@@ -33,4 +33,20 @@ export default [
       },
     },
   },
+  {
+    files: ["js/scenes/title/titleVisuals.ts"],
+    languageOptions: {
+      globals: {
+        __APP_VERSION__: "readonly",
+      },
+    },
+  },
+  {
+    files: ["vite.config.ts"],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
 ];
