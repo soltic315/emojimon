@@ -18,6 +18,7 @@ import {
   T,
   MAPS,
   MAP_FACILITY_MARKERS,
+  MAP_BUILDING_DECOR,
   getMapNpcs,
   createMapLayout,
   DOOR_TRANSITIONS,
@@ -566,6 +567,8 @@ export class WorldScene extends Phaser.Scene {
       }
     }
 
+    this.renderBuildingDecorations();
+
     // 草揺れアニメーション
     this.grassSprites.forEach((s, i) => {
       this.tweens.add({
@@ -596,6 +599,54 @@ export class WorldScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor(0x020617);
   }
 
+  renderBuildingDecorations() {
+    const buildings = MAP_BUILDING_DECOR[this.mapKey] || [];
+    if (!buildings.length) return;
+
+    buildings.forEach((building) => {
+      const baseX = building.x * TILE_SIZE;
+      const baseY = building.y * TILE_SIZE;
+      const width = building.w * TILE_SIZE;
+      const height = building.h * TILE_SIZE;
+
+      const body = this.add.rectangle(
+        baseX + width / 2,
+        baseY + height / 2,
+        width,
+        height,
+        building.wallColor || 0x9ca3af,
+        0.24,
+      ).setStrokeStyle(2, 0xe2e8f0, 0.26);
+      this.groundLayer.add(body);
+
+      const roof = this.add.triangle(
+        baseX + width / 2,
+        baseY - 2,
+        -width / 2 - 3,
+        0,
+        width / 2 + 3,
+        0,
+        0,
+        -Math.max(14, Math.floor(height * 0.5)),
+        building.roofColor || 0xb91c1c,
+        0.88,
+      );
+      this.groundLayer.add(roof);
+
+      if (building.emoji || building.label) {
+        const labelText = `${building.emoji || ""} ${building.label || ""}`.trim();
+        const label = this.add.text(baseX + width / 2, baseY - Math.max(20, Math.floor(height * 0.5)), labelText, {
+          fontFamily: FONT.UI,
+          fontSize: 10,
+          color: "#f8fafc",
+          stroke: "#0f172a",
+          strokeThickness: 3,
+        }).setOrigin(0.5);
+        this.groundLayer.add(label);
+      }
+    });
+  }
+
   getTileTextureKey(tile, x, y) {
     let baseKey;
     switch (tile) {
@@ -607,7 +658,7 @@ export class WorldScene extends Phaser.Scene {
       case T.GYM: baseKey = "tile-gym"; break;
       case T.PATH: baseKey = "tile-path"; break;
       default:
-        baseKey = (this.mapKey === "HOUSE1" || this.mapKey === "LAB") ? "tile-floor" : "tile-ground";
+        baseKey = this._isInteriorMap() ? "tile-floor" : "tile-ground";
     }
 
     const variants = {
@@ -628,6 +679,20 @@ export class WorldScene extends Phaser.Scene {
     const hash = ((x * 73856093) ^ (y * 19349663) ^ (tile * 83492791)) >>> 0;
     const variant = hash % count;
     return variant === 0 ? baseKey : `${baseKey}-${variant}`;
+  }
+
+  _isInteriorMap() {
+    const interiorMaps = new Set([
+      "HOUSE1",
+      "LAB",
+      "TOWN_SHOP",
+      "FOREST_GYM",
+      "VOLCANO_SHOP",
+      "FROZEN_GYM",
+      "FROZEN_SHOP",
+      "GARDEN_SHOP",
+    ]);
+    return interiorMaps.has(this.mapKey);
   }
 
   createFieldAtmosphere() {
@@ -1247,6 +1312,11 @@ export class WorldScene extends Phaser.Scene {
         return true;
       }
 
+      if (npc.gymLeader) {
+        this.handleGymInteraction();
+        return true;
+      }
+
       // 闘技場NPC
       if (npc.arena) {
         this.handleArenaInteraction();
@@ -1287,7 +1357,7 @@ export class WorldScene extends Phaser.Scene {
 
   handleGymInteraction() {
     // 現在のマップに応じてジムを判別
-    const isGym2 = this.mapKey === "FROZEN_PEAK";
+    const isGym2 = this.mapKey === "FROZEN_PEAK" || this.mapKey === "FROZEN_GYM";
     const cleared = isGym2 ? gameState.storyFlags.frozenPeakGymCleared : gameState.gymCleared;
     if (cleared) {
       this.showMessage("ジムはすでにクリア済みだ！ おめでとう！");

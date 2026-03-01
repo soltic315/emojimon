@@ -37,10 +37,24 @@ export const MAPS = {
     layout: null,
     bgm: "field",
   },
+  TOWN_SHOP: {
+    name: "タウンショップ",
+    width: 12,
+    height: 10,
+    layout: null,
+    bgm: "field",
+  },
   FOREST: {
     name: "エモの森",
     width: 25,
     height: 20,
+    layout: null,
+    bgm: "field",
+  },
+  FOREST_GYM: {
+    name: "森のジム",
+    width: 14,
+    height: 10,
     layout: null,
     bgm: "field",
   },
@@ -55,6 +69,13 @@ export const MAPS = {
     name: "マグマ峠",
     width: 28,
     height: 22,
+    layout: null,
+    bgm: "field",
+  },
+  VOLCANO_SHOP: {
+    name: "遠征補給所",
+    width: 12,
+    height: 10,
     layout: null,
     bgm: "field",
   },
@@ -79,10 +100,31 @@ export const MAPS = {
     layout: null,
     bgm: "field",
   },
+  FROZEN_GYM: {
+    name: "氷峰ジム",
+    width: 14,
+    height: 10,
+    layout: null,
+    bgm: "field",
+  },
+  FROZEN_SHOP: {
+    name: "氷峰補給所",
+    width: 12,
+    height: 10,
+    layout: null,
+    bgm: "field",
+  },
   CELESTIAL_GARDEN: {
     name: "天空の花園",
     width: 28,
     height: 20,
+    layout: null,
+    bgm: "field",
+  },
+  GARDEN_SHOP: {
+    name: "天空ショップ",
+    width: 12,
+    height: 10,
     layout: null,
     bgm: "field",
   },
@@ -98,7 +140,6 @@ export function getMapNpcs(mapKey) {
 
   if (mapKey === "EMOJI_TOWN") {
     const npcs = [
-      { x: 14, y: 5, text: "いらっしゃいませ！", shop: true, texture: "npc-shop" },
       { x: 12, y: 6, text: "スターライトを つれてきてね！", quest: "STARLITE", texture: "npc-quest" },
     ];
     if (!sf.prologueDone) {
@@ -172,6 +213,42 @@ export function getMapNpcs(mapKey) {
     return npcs;
   }
 
+  if (mapKey === "TOWN_SHOP") {
+    return [
+      { x: 6, y: 4, text: "いらっしゃいませ！ 旅に役立つ道具をそろえているよ。", shop: true, texture: "npc-shop" },
+    ];
+  }
+
+  if (mapKey === "FOREST_GYM") {
+    return [
+      { x: 7, y: 3, text: "ようこそ森のジムへ！ 草の試練を受ける覚悟はできた？", gymLeader: true, texture: "npc-quest" },
+    ];
+  }
+
+  if (mapKey === "VOLCANO_SHOP") {
+    return [
+      { x: 6, y: 4, text: "火山遠征の前に補給していきな！", shop: true, texture: "npc-shop" },
+    ];
+  }
+
+  if (mapKey === "FROZEN_GYM") {
+    return [
+      { x: 7, y: 3, text: "ようこそ氷峰ジムへ。凍てつく戦いで実力を示してみせて！", gymLeader: true, texture: "npc-quest" },
+    ];
+  }
+
+  if (mapKey === "FROZEN_SHOP") {
+    return [
+      { x: 6, y: 4, text: "吹雪の山に備えるなら、ここで整えていって。", shop: true, texture: "npc-shop" },
+    ];
+  }
+
+  if (mapKey === "GARDEN_SHOP") {
+    return [
+      { x: 6, y: 4, text: "天空限定の品もあるよ。見ていって！", shop: true, texture: "npc-shop" },
+    ];
+  }
+
   if (mapKey === "FOREST") {
     const npcs = [
       { x: 11, y: 4, text: "この森には 珍しいモンスターがいるらしい… 奥に進むほど強いのが出るぞ。", texture: "npc" },
@@ -220,7 +297,6 @@ export function getMapNpcs(mapKey) {
   if (mapKey === "VOLCANIC_PASS") {
     const npcs = [
       { x: 6, y: 18, text: "ここから先は高レベル地帯だ。ボールを多めに持っていけ！", texture: "npc" },
-      { x: 14, y: 12, text: "補給所だよ。遠征前に買っていきな！", shop: true, texture: "npc-shop" },
       { x: 10, y: 6, text: null, texture: "npc-quest", story: "volcano_memory_1" },
     ];
     if (!sf.volcanicScoutBeaten) {
@@ -279,7 +355,6 @@ export function getMapNpcs(mapKey) {
   if (mapKey === "FROZEN_PEAK") {
     const npcs = [
       { x: 6, y: 16, text: "この山は一年中雪が降っている。氷タイプが多いぞ。", texture: "npc" },
-      { x: 20, y: 15, text: "補給所だよ。氷の山は危険だから準備万端で行きな！", shop: true, texture: "npc-shop" },
       { x: 22, y: 5, text: null, texture: "npc-quest", story: "frozen_memory_1" },
     ];
     if (!sf.frozenSageBeaten) {
@@ -288,7 +363,7 @@ export function getMapNpcs(mapKey) {
       npcs.push({ x: 9, y: 6, text: "判断は鋭い。遺跡の最終局面でも迷うな。", texture: "npc" });
     }
     if (!sf.frozenPeakGymCleared) {
-      npcs.push({ x: 13, y: 3, text: "ようこそ氷峰ジムへ。ICEの達人、ユキハの氷を砕けるか？", texture: "npc-quest", story: "frozen_gym_intro" });
+      npcs.push({ x: 13, y: 3, text: "ジムは建物の中だ。氷峰ジムで挑戦を待っている。", texture: "npc" });
     } else if (!sf.frozenPeakRivalBeaten) {
       npcs.push({ x: 13, y: 3, text: "見事だ。ジムバッジ2つ目…キミの実力は本物だ。", texture: "npc" });
       npcs.push({ x: 18, y: 8, text: "ジムクリアしたって？ でもおれには勝てないぜ！", texture: "npc-quest", rivalBattle: "frozen_rival", trainerName: "ライバル レン", rivalLevel: 34 });
@@ -310,7 +385,6 @@ export function getMapNpcs(mapKey) {
       { x: 14, y: 16, text: "ここは天空の花園…クリスタルの力で生まれた楽園だ。", texture: "npc" },
       { x: 6, y: 6, text: "伝説のモンスターの気配がする…奥に進んでみては？", texture: "npc-quest" },
       { x: 22, y: 12, text: "ここのモンスターは強い。最強を目指す者だけが来る場所だ。", texture: "npc" },
-      { x: 10, y: 4, text: "特別なアイテムがあるよ！", shop: true, texture: "npc-shop" },
       { x: 4, y: 15, text: null, story: "garden_epilogue", texture: "npc-quest" },
     ];
     if (!sf.legendaryDefeated) {
@@ -338,6 +412,58 @@ export function createMapLayout(mapKey) {
   const H = mapDef.height;
   const map = [];
 
+  if (mapKey === "EMOJI_TOWN") {
+    for (let y = 0; y < H; y++) {
+      const row = [];
+      for (let x = 0; x < W; x++) {
+        if (x === 0 || y === 0 || x === W - 1 || y === H - 1) {
+          row.push(T.WALL);
+        } else {
+          row.push(T.GROUND);
+        }
+      }
+      map.push(row);
+    }
+
+    for (let x = 1; x < W - 1; x++) map[7][x] = T.PATH;
+    for (let y = 1; y < H - 1; y++) map[y][10] = T.PATH;
+    for (let y = 11; y <= 17; y++) {
+      for (let x = 2; x <= 8; x++) map[y][x] = T.GRASS;
+    }
+    map[14][15] = T.WATER;
+    map[14][16] = T.WATER;
+    map[15][15] = T.WATER;
+    map[15][16] = T.WATER;
+
+    for (let x = 3; x <= 8; x++) map[2][x] = T.WALL;
+    for (let x = 3; x <= 8; x++) map[3][x] = T.WALL;
+    for (let x = 3; x <= 8; x++) map[4][x] = T.WALL;
+    map[4][6] = T.DOOR;
+
+    for (let x = 12; x <= 17; x++) map[2][x] = T.WALL;
+    for (let x = 12; x <= 17; x++) map[3][x] = T.WALL;
+    for (let x = 12; x <= 17; x++) map[4][x] = T.WALL;
+    map[4][14] = T.DOOR;
+
+    for (let x = 18; x <= 23; x++) map[1][x] = T.WALL;
+    for (let x = 18; x <= 23; x++) map[2][x] = T.WALL;
+    for (let x = 18; x <= 23; x++) map[3][x] = T.WALL;
+    for (let x = 18; x <= 23; x++) map[4][x] = T.WALL;
+    map[4][20] = T.DOOR;
+
+    for (let y = 8; y <= 10; y++) {
+      for (let x = 8; x <= 12; x++) map[y][x] = T.PATH;
+    }
+
+    for (let y = 11; y <= 17; y++) map[y][9] = T.WALL;
+    map[13][9] = T.GROUND;
+
+    map[7][W - 1] = T.DOOR;
+
+    mapDef.layout = map;
+    return map;
+  }
+
   if (mapKey === "HOUSE1") {
     for (let y = 0; y < H; y++) {
       const row = [];
@@ -349,6 +475,44 @@ export function createMapLayout(mapKey) {
     map[H - 2][Math.floor(W / 2)] = T.DOOR;
     map[2][3] = T.WALL;
     map[2][4] = T.WALL;
+    mapDef.layout = map;
+    return map;
+  }
+
+  if (mapKey === "TOWN_SHOP" || mapKey === "VOLCANO_SHOP" || mapKey === "FROZEN_SHOP" || mapKey === "GARDEN_SHOP") {
+    for (let y = 0; y < H; y++) {
+      const row = [];
+      for (let x = 0; x < W; x++) {
+        row.push(y === 0 || y === H - 1 || x === 0 || x === W - 1 ? T.WALL : T.GROUND);
+      }
+      map.push(row);
+    }
+    const centerX = Math.floor(W / 2);
+    map[H - 2][centerX] = T.DOOR;
+    for (let x = 2; x <= W - 3; x++) map[2][x] = T.WALL;
+    map[4][centerX] = T.PATH;
+    map[5][centerX] = T.PATH;
+    for (let x = centerX - 2; x <= centerX + 2; x++) map[6][x] = T.PATH;
+    mapDef.layout = map;
+    return map;
+  }
+
+  if (mapKey === "FOREST_GYM" || mapKey === "FROZEN_GYM") {
+    for (let y = 0; y < H; y++) {
+      const row = [];
+      for (let x = 0; x < W; x++) {
+        row.push(y === 0 || y === H - 1 || x === 0 || x === W - 1 ? T.WALL : T.GROUND);
+      }
+      map.push(row);
+    }
+    const centerX = Math.floor(W / 2);
+    map[H - 2][centerX] = T.DOOR;
+    for (let y = 2; y <= H - 3; y++) map[y][centerX] = T.PATH;
+    for (let x = 3; x <= W - 4; x++) map[2][x] = T.WALL;
+    map[3][centerX - 1] = T.WALL;
+    map[3][centerX + 1] = T.WALL;
+    map[4][centerX - 2] = T.WALL;
+    map[4][centerX + 2] = T.WALL;
     mapDef.layout = map;
     return map;
   }
@@ -400,7 +564,9 @@ export function createMapLayout(mapKey) {
     }
     map[H - 2][1] = T.DOOR;
     map[1][12] = T.DOOR;
-    map[2][20] = T.GYM;
+    for (let x = 18; x <= 22; x++) map[2][x] = T.WALL;
+    for (let x = 18; x <= 22; x++) map[3][x] = T.WALL;
+    map[3][20] = T.DOOR;
 
     mapDef.layout = map;
     return map;
@@ -484,6 +650,10 @@ export function createMapLayout(mapKey) {
 
     for (let x = 11; x <= 16; x++) map[6][x] = T.WALL;
     for (let y = 8; y <= 14; y++) map[y][22] = T.WALL;
+
+    for (let x = 12; x <= 16; x++) map[10][x] = T.WALL;
+    for (let x = 12; x <= 16; x++) map[11][x] = T.WALL;
+    map[11][14] = T.DOOR;
 
     map[H - 2][3] = T.DOOR;
     map[1][24] = T.DOOR;
@@ -614,8 +784,14 @@ export function createMapLayout(mapKey) {
     // 壁の障害物
     for (let x = 6; x <= 10; x++) map[5][x] = T.WALL;
     for (let y = 12; y <= 16; y++) map[y][10] = T.WALL;
-    // ジムタイル
-    map[3][13] = T.GYM;
+    // ジム建物
+    for (let x = 11; x <= 15; x++) map[2][x] = T.WALL;
+    for (let x = 11; x <= 15; x++) map[3][x] = T.WALL;
+    map[3][13] = T.DOOR;
+    // 補給所
+    for (let x = 18; x <= 22; x++) map[13][x] = T.WALL;
+    for (let x = 18; x <= 22; x++) map[14][x] = T.WALL;
+    map[14][20] = T.DOOR;
     // ドア
     map[H - 2][3] = T.DOOR;  // 南：マグマ峠へ
     map[1][22] = T.DOOR;      // 北：そらの遺跡へ
@@ -667,6 +843,10 @@ export function createMapLayout(mapKey) {
       map[y][13] = T.WALL;
       map[y][15] = T.WALL;
     }
+    // 天空ショップ
+    for (let x = 8; x <= 12; x++) map[4][x] = T.WALL;
+    for (let x = 8; x <= 12; x++) map[5][x] = T.WALL;
+    map[5][10] = T.DOOR;
     // 入口（南）
     map[H - 2][14] = T.DOOR;
     mapDef.layout = map;
@@ -727,12 +907,47 @@ export const MAP_FACILITY_MARKERS = {
     { x: 6, y: 3, emoji: "💖", label: "回復" },
     { x: 14, y: 3, emoji: "🛒", label: "ショップ" },
   ],
+  FOREST: [
+    { x: 20, y: 2, emoji: "🏛️", label: "ジム" },
+  ],
+  VOLCANIC_PASS: [
+    { x: 14, y: 10, emoji: "🛒", label: "補給所" },
+  ],
+  FROZEN_PEAK: [
+    { x: 13, y: 2, emoji: "🏛️", label: "ジム" },
+    { x: 20, y: 13, emoji: "🛒", label: "補給所" },
+  ],
+  CELESTIAL_GARDEN: [
+    { x: 10, y: 4, emoji: "🛒", label: "ショップ" },
+  ],
+};
+
+export const MAP_BUILDING_DECOR = {
+  EMOJI_TOWN: [
+    { x: 3, y: 2, w: 6, h: 3, roofColor: 0xb91c1c, wallColor: 0x9ca3af, emoji: "🏠", label: "おうち" },
+    { x: 12, y: 2, w: 6, h: 3, roofColor: 0x0284c7, wallColor: 0x94a3b8, emoji: "🛒", label: "ショップ" },
+    { x: 18, y: 1, w: 6, h: 4, roofColor: 0x7c3aed, wallColor: 0xa1a1aa, emoji: "🧪", label: "研究所" },
+  ],
+  FOREST: [
+    { x: 18, y: 2, w: 5, h: 2, roofColor: 0xb45309, wallColor: 0x78716c, emoji: "🏛️", label: "ジム" },
+  ],
+  VOLCANIC_PASS: [
+    { x: 12, y: 10, w: 5, h: 2, roofColor: 0xdc2626, wallColor: 0x78716c, emoji: "🛒", label: "補給所" },
+  ],
+  FROZEN_PEAK: [
+    { x: 11, y: 2, w: 5, h: 2, roofColor: 0x1d4ed8, wallColor: 0x9ca3af, emoji: "🏛️", label: "ジム" },
+    { x: 18, y: 13, w: 5, h: 2, roofColor: 0x0284c7, wallColor: 0x94a3b8, emoji: "🛒", label: "補給所" },
+  ],
+  CELESTIAL_GARDEN: [
+    { x: 8, y: 4, w: 5, h: 2, roofColor: 0x0ea5e9, wallColor: 0x9ca3af, emoji: "🛒", label: "ショップ" },
+  ],
 };
 
 // ドア遷移先の定義
 export const DOOR_TRANSITIONS = {
   EMOJI_TOWN: [
     { doorCheck: (x, y) => y === 4 && x === 6, target: "HOUSE1", startX: 6, startY: 8 },
+    { doorCheck: (x, y) => y === 4 && x === 14, target: "TOWN_SHOP", startX: 6, startY: 8 },
     { doorCheck: (x, y) => y === 4 && x === 20, target: "LAB", startX: 7, startY: 8 },
     { doorCheck: (x, y) => x === 24, target: "FOREST", startX: 1, startY: 17 },
   ],
@@ -742,9 +957,16 @@ export const DOOR_TRANSITIONS = {
   LAB: [
     { doorCheck: () => true, target: "EMOJI_TOWN", startX: 20, startY: 5 },
   ],
+  TOWN_SHOP: [
+    { doorCheck: () => true, target: "EMOJI_TOWN", startX: 14, startY: 5 },
+  ],
   FOREST: [
     { doorCheck: (x, y) => x === 1 && y === 18, target: "EMOJI_TOWN", startX: 23, startY: 7 },
     { doorCheck: (x, y) => x === 12 && y === 1, target: "CRYSTAL_CAVE", startX: 12, startY: 17 },
+    { doorCheck: (x, y) => x === 20 && y === 3, target: "FOREST_GYM", startX: 7, startY: 8 },
+  ],
+  FOREST_GYM: [
+    { doorCheck: () => true, target: "FOREST", startX: 20, startY: 4 },
   ],
   CRYSTAL_CAVE: [
     { doorCheck: (x, y) => x === 12 && y === 18, target: "FOREST", startX: 12, startY: 2 },
@@ -754,6 +976,10 @@ export const DOOR_TRANSITIONS = {
   VOLCANIC_PASS: [
     { doorCheck: (x, y) => x === 3 && y === 20, target: "CRYSTAL_CAVE", startX: 20, startY: 2 },
     { doorCheck: (x, y) => x === 24 && y === 1, target: "FROZEN_PEAK", startX: 3, startY: 18 },
+    { doorCheck: (x, y) => x === 14 && y === 11, target: "VOLCANO_SHOP", startX: 6, startY: 8 },
+  ],
+  VOLCANO_SHOP: [
+    { doorCheck: () => true, target: "VOLCANIC_PASS", startX: 14, startY: 12 },
   ],
   DARK_TOWER: [
     { doorCheck: (x, y) => x === 11 && y === 16, target: "CRYSTAL_CAVE", startX: 2, startY: 10 },
@@ -761,6 +987,14 @@ export const DOOR_TRANSITIONS = {
   FROZEN_PEAK: [
     { doorCheck: (x, y) => x === 3 && y === 18, target: "VOLCANIC_PASS", startX: 24, startY: 2 },
     { doorCheck: (x, y) => x === 22 && y === 1, target: "SKY_RUINS", startX: 24, startY: 20 },
+    { doorCheck: (x, y) => x === 13 && y === 3, target: "FROZEN_GYM", startX: 7, startY: 8 },
+    { doorCheck: (x, y) => x === 20 && y === 14, target: "FROZEN_SHOP", startX: 6, startY: 8 },
+  ],
+  FROZEN_GYM: [
+    { doorCheck: () => true, target: "FROZEN_PEAK", startX: 13, startY: 4 },
+  ],
+  FROZEN_SHOP: [
+    { doorCheck: () => true, target: "FROZEN_PEAK", startX: 20, startY: 15 },
   ],
   SKY_RUINS: [
     { doorCheck: (x, y) => x === 24 && y === 20, target: "FROZEN_PEAK", startX: 22, startY: 2 },
@@ -768,6 +1002,10 @@ export const DOOR_TRANSITIONS = {
   ],
   CELESTIAL_GARDEN: [
     { doorCheck: (x, y) => x === 14 && y === 18, target: "SKY_RUINS", startX: 14, startY: 2 },
+    { doorCheck: (x, y) => x === 10 && y === 5, target: "GARDEN_SHOP", startX: 6, startY: 8 },
+  ],
+  GARDEN_SHOP: [
+    { doorCheck: () => true, target: "CELESTIAL_GARDEN", startX: 10, startY: 6 },
   ],
 };
 
