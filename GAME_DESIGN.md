@@ -584,8 +584,10 @@ nextLevelExp = 10 + 8 × level
 
 - BGM: Tone.js によるプロシージャル合成（メロディ・ベース・パッドの3レイヤー構成）
 - SE: FM合成・ノイズ合成・メンブレン合成を組み合わせた手続き型効果音
-- エフェクトチェイン: Chorus → FeedbackDelay → Reverb → Volume
+- エフェクトチェイン: BGMは Filter → Chorus → FeedbackDelay → Reverb → Volume、SEは Reverb → Volume、最終段でCompressorを適用
 - エリアごとに固有のBGMを定義（フィールド・バトル・森・洞窟・火山・氷峰・遺跡・ダーク・タイトル）
+- BGM切替時は約0.17秒のフェードアウト後に再生開始し、再生開始時は約0.28秒でフェードインする
+- 短い反復SE（カーソル移動・歩行）は音高/強さを微変化させ、連続操作時の聴感疲労を軽減する
 
 ### 10.2 グラフィックエフェクト
 

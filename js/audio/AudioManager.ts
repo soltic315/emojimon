@@ -16,8 +16,10 @@ export class AudioManager {
   // Tone.js ノード群
   private _initialized: boolean;
   private _masterVol: Tone.Volume | null;
+  private _masterCompressor: Tone.Compressor | null;
   private _bgmVol: Tone.Volume | null;
   private _seVol: Tone.Volume | null;
+  private _bgmFilter: Tone.Filter | null;
   private _reverb: Tone.Reverb | null;
   private _delay: Tone.FeedbackDelay | null;
   private _chorus: Tone.Chorus | null;
@@ -37,6 +39,8 @@ export class AudioManager {
   // BGM再生管理
   private _bgmParts: Tone.Part[];
   private _transportStarted: boolean;
+  private _bgmSwitchTimer: number | null;
+  private _bgmSwitchToken: number;
 
   // レガシー互換プロパティ（外部から参照される可能性を考慮）
   ctx: unknown;
@@ -53,8 +57,10 @@ export class AudioManager {
     this._currentBgm = null;
     this._initialized = false;
     this._masterVol = null;
+    this._masterCompressor = null;
     this._bgmVol = null;
     this._seVol = null;
+    this._bgmFilter = null;
     this._reverb = null;
     this._delay = null;
     this._chorus = null;
@@ -68,6 +74,8 @@ export class AudioManager {
     this._membraneSynth = null;
     this._bgmParts = [];
     this._transportStarted = false;
+    this._bgmSwitchTimer = null;
+    this._bgmSwitchToken = 0;
 
     // レガシー互換
     this.ctx = null;
@@ -98,14 +106,28 @@ export class AudioManager {
   /** 内部: シンセとエフェクトチェーンを構築 */
   private _setupSynths() {
     // ── マスターボリューム ──
-    this._masterVol = new Tone.Volume(0).toDestination();
+    this._masterVol = new Tone.Volume(0);
+    this._masterCompressor = new Tone.Compressor({
+      threshold: -18,
+      ratio: 2.2,
+      attack: 0.01,
+      release: 0.25,
+    }).toDestination();
+    this._masterVol.connect(this._masterCompressor);
 
     // ── BGM エフェクトチェーン: コーラス → ディレイ → リバーブ → BGMVol → Master ──
     this._reverb = new Tone.Reverb({ decay: 2.5, wet: 0.22 });
     this._delay = new Tone.FeedbackDelay({ delayTime: "8n.", feedback: 0.12, wet: 0.1 });
     this._chorus = new Tone.Chorus({ frequency: 0.5, depth: 0.3, wet: 0.15 }).start();
+    this._bgmFilter = new Tone.Filter({
+      type: "lowpass",
+      frequency: 15000,
+      Q: 0.6,
+      rolloff: -12,
+    });
     this._bgmVol = new Tone.Volume(this._dbFromLinear(this.bgmVolume));
 
+    this._bgmFilter.connect(this._chorus);
     this._chorus.connect(this._delay);
     this._delay.connect(this._reverb);
     this._reverb.connect(this._bgmVol);
@@ -122,7 +144,7 @@ export class AudioManager {
       oscillator: { type: "triangle8" as Tone.ToneOscillatorType },
       envelope: { attack: 0.02, decay: 0.3, sustain: 0.4, release: 0.8 },
       volume: -6,
-    }).connect(this._chorus);
+    }).connect(this._bgmFilter);
 
     this._bassSynth = new Tone.MonoSynth({
       oscillator: { type: "square4" as Tone.ToneOscillatorType },
@@ -132,13 +154,13 @@ export class AudioManager {
         baseFrequency: 120, octaves: 2,
       },
       volume: -12,
-    }).connect(this._chorus);
+    }).connect(this._bgmFilter);
 
     this._padSynth = new Tone.PolySynth(Tone.Synth, {
       oscillator: { type: "sine4" as Tone.ToneOscillatorType },
       envelope: { attack: 0.5, decay: 0.8, sustain: 0.6, release: 1.5 },
       volume: -18,
-    }).connect(this._chorus);
+    }).connect(this._bgmFilter);
 
     // ── SE シンセ ──
     this._seSynth = new Tone.Synth({
@@ -241,11 +263,17 @@ export class AudioManager {
     try { this._membraneSynth.triggerAttackRelease(note, dur, time, velocity); } catch { /* 無視 */ }
   }
 
+  private _variedVelocity(base: number, jitter = 0.08): number {
+    const spread = (Math.random() * 2 - 1) * jitter;
+    return Math.max(0.05, Math.min(1, base + spread));
+  }
+
   // ─── 効果音 ───
 
   /** メニュー選択音 - クリアなピンッ */
   playCursor() {
-    this._safeTone(this._seSynth, "A5", "32n", undefined, 0.4);
+    const note = Math.random() < 0.5 ? "A5" : "B5";
+    this._safeTone(this._seSynth, note, "32n", undefined, this._variedVelocity(0.4, 0.06));
   }
 
   /** 決定音 - 2音上昇 */
@@ -384,7 +412,11 @@ export class AudioManager {
 
   /** 歩行音 - 軽いノイズ */
   playStep() {
-    this._safeNoise("64n", undefined, 0.15);
+    const now = Tone.now();
+    this._safeNoise("64n", now, this._variedVelocity(0.15, 0.05));
+    if (Math.random() < 0.14) {
+      this._safeMembrane("C2", "128n", now, this._variedVelocity(0.12, 0.03));
+    }
   }
 
   /** ドア通過音 */
@@ -424,7 +456,7 @@ export class AudioManager {
   // ─── BGM ───
 
   /** 全BGM停止 */
-  stopBgm() {
+  private _stopBgmNow() {
     this._bgmParts.forEach((part) => {
       try { part.stop(); part.dispose(); } catch { /* 無視 */ }
     });
@@ -440,70 +472,128 @@ export class AudioManager {
     }
   }
 
+  /** 全BGM停止 */
+  stopBgm() {
+    if (this._bgmSwitchTimer !== null) {
+      window.clearTimeout(this._bgmSwitchTimer);
+      this._bgmSwitchTimer = null;
+    }
+    this._bgmSwitchToken += 1;
+    this._stopBgmNow();
+  }
+
+  private _applyBgmTonePreset(key: string) {
+    if (!this._bgmFilter) return;
+    const now = Tone.now();
+    const presets: Record<string, { freq: number; q: number }> = {
+      cave: { freq: 5200, q: 1.3 },
+      dark: { freq: 4400, q: 1.5 },
+      battle: { freq: 11800, q: 0.9 },
+      volcano: { freq: 9800, q: 1.1 },
+      ice: { freq: 13200, q: 0.7 },
+      ruins: { freq: 9000, q: 1.0 },
+      forest: { freq: 11500, q: 0.8 },
+      field: { freq: 12800, q: 0.75 },
+      title: { freq: 12600, q: 0.7 },
+    };
+    const preset = presets[key] || presets.field;
+    this._bgmFilter.frequency.cancelScheduledValues(now);
+    this._bgmFilter.Q.cancelScheduledValues(now);
+    this._bgmFilter.frequency.rampTo(preset.freq, 0.25);
+    this._bgmFilter.Q.rampTo(preset.q, 0.25);
+  }
+
+  private _fadeInBgmVolume() {
+    if (!this._bgmVol) return;
+    const now = Tone.now();
+    const targetDb = this._dbFromLinear(this.bgmVolume);
+    this._bgmVol.volume.cancelScheduledValues(now);
+    this._bgmVol.volume.value = -34;
+    this._bgmVol.volume.rampTo(targetDb, 0.28);
+  }
+
   /** BGMデータからマルチレイヤーBGMを再生する（メロディ+ベース+パッド） */
   private _playBgm(key: string, data: BgmEntry) {
     if (this._currentBgm === key) return;
     if (!this._initialized || !this._masterVol) return;
 
-    this.stopBgm();
-    this._currentBgm = key;
-
-    const transport = Tone.getTransport();
-    transport.bpm.value = data.bpm;
-
-    // メロディパート
-    if (this._melodySynth) {
-      const events: Array<[number, { note: string; dur: string }]> = [];
-      let t = 0;
-      for (const n of data.melody) {
-        events.push([t, { note: n.note, dur: n.dur }]);
-        t += Tone.Time(n.dur).toSeconds();
-      }
-      const part = new Tone.Part((time, value) => {
-        try { this._melodySynth?.triggerAttackRelease(value.note, value.dur, time, 0.7); } catch { /* 無視 */ }
-      }, events);
-      part.loop = true;
-      part.loopEnd = t;
-      part.start(0);
-      this._bgmParts.push(part);
+    const runToken = ++this._bgmSwitchToken;
+    const switchDelayMs = this._currentBgm ? 170 : 0;
+    if (this._bgmVol && this._currentBgm) {
+      const now = Tone.now();
+      this._bgmVol.volume.cancelScheduledValues(now);
+      this._bgmVol.volume.rampTo(-34, switchDelayMs / 1000);
     }
 
-    // ベースパート
-    if (this._bassSynth) {
-      const events: Array<[number, { note: string; dur: string }]> = [];
-      let t = 0;
-      for (const n of data.bass) {
-        events.push([t, { note: n.note, dur: n.dur }]);
-        t += Tone.Time(n.dur).toSeconds();
-      }
-      const part = new Tone.Part((time, value) => {
-        try { this._bassSynth?.triggerAttackRelease(value.note, value.dur, time, 0.5); } catch { /* 無視 */ }
-      }, events);
-      part.loop = true;
-      part.loopEnd = t;
-      part.start(0);
-      this._bgmParts.push(part);
+    if (this._bgmSwitchTimer !== null) {
+      window.clearTimeout(this._bgmSwitchTimer);
+      this._bgmSwitchTimer = null;
     }
 
-    // パッド（コード）パート
-    if (this._padSynth) {
-      const events: Array<[number, { notes: string[]; dur: string }]> = [];
-      let t = 0;
-      for (const c of data.chords) {
-        events.push([t, { notes: c.notes, dur: c.dur }]);
-        t += Tone.Time(c.dur).toSeconds();
-      }
-      const part = new Tone.Part((time, value) => {
-        try { this._padSynth?.triggerAttackRelease(value.notes, value.dur, time, 0.3); } catch { /* 無視 */ }
-      }, events);
-      part.loop = true;
-      part.loopEnd = t;
-      part.start(0);
-      this._bgmParts.push(part);
-    }
+    this._bgmSwitchTimer = window.setTimeout(() => {
+      if (runToken !== this._bgmSwitchToken) return;
+      this._stopBgmNow();
+      this._currentBgm = key;
+      this._applyBgmTonePreset(key);
 
-    transport.start();
-    this._transportStarted = true;
+      const transport = Tone.getTransport();
+      transport.bpm.value = data.bpm;
+
+      // メロディパート
+      if (this._melodySynth) {
+        const events: Array<[number, { note: string; dur: string }]> = [];
+        let t = 0;
+        for (const n of data.melody) {
+          events.push([t, { note: n.note, dur: n.dur }]);
+          t += Tone.Time(n.dur).toSeconds();
+        }
+        const part = new Tone.Part((time, value) => {
+          try { this._melodySynth?.triggerAttackRelease(value.note, value.dur, time, 0.7); } catch { /* 無視 */ }
+        }, events);
+        part.loop = true;
+        part.loopEnd = t;
+        part.start(0);
+        this._bgmParts.push(part);
+      }
+
+      // ベースパート
+      if (this._bassSynth) {
+        const events: Array<[number, { note: string; dur: string }]> = [];
+        let t = 0;
+        for (const n of data.bass) {
+          events.push([t, { note: n.note, dur: n.dur }]);
+          t += Tone.Time(n.dur).toSeconds();
+        }
+        const part = new Tone.Part((time, value) => {
+          try { this._bassSynth?.triggerAttackRelease(value.note, value.dur, time, 0.5); } catch { /* 無視 */ }
+        }, events);
+        part.loop = true;
+        part.loopEnd = t;
+        part.start(0);
+        this._bgmParts.push(part);
+      }
+
+      // パッド（コード）パート
+      if (this._padSynth) {
+        const events: Array<[number, { notes: string[]; dur: string }]> = [];
+        let t = 0;
+        for (const c of data.chords) {
+          events.push([t, { notes: c.notes, dur: c.dur }]);
+          t += Tone.Time(c.dur).toSeconds();
+        }
+        const part = new Tone.Part((time, value) => {
+          try { this._padSynth?.triggerAttackRelease(value.notes, value.dur, time, 0.3); } catch { /* 無視 */ }
+        }, events);
+        part.loop = true;
+        part.loopEnd = t;
+        part.start(0);
+        this._bgmParts.push(part);
+      }
+
+      transport.start();
+      this._transportStarted = true;
+      this._fadeInBgmVolume();
+    }, switchDelayMs);
   }
 
   /** タイトルBGM */
