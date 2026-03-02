@@ -11,6 +11,15 @@ function formatQuestLineWithLock(label, done, unlocked) {
   return formatQuestLine(label, done);
 }
 
+function isEliteFourCleared(storyFlags) {
+  return !!(
+    storyFlags?.eliteFourWind
+    && storyFlags?.eliteFourFlame
+    && storyFlags?.eliteFourTide
+    && storyFlags?.eliteFourFrost
+  );
+}
+
 export function renderQuestView(scene) {
   const { width, height } = scene.scale;
   const panelW = width - SUB_PANEL_WIDTH_OFFSET;
@@ -64,6 +73,25 @@ export function renderQuestView(scene) {
     },
   ];
 
+  const eliteFourCleared = isEliteFourCleared(gameState.storyFlags);
+  const postgameGoals = [
+    {
+      label: "天空の花園の伝説を制覇",
+      done: !!gameState.storyFlags.legendaryDefeated,
+      unlocked: !!gameState.storyFlags.ruinsFinalDone,
+    },
+    {
+      label: "星降り盆地で四天王を制覇",
+      done: eliteFourCleared,
+      unlocked: !!gameState.storyFlags.legendaryDefeated,
+    },
+    {
+      label: "星降り盆地 最終ライバルに勝利",
+      done: !!gameState.storyFlags.basinFinalRival,
+      unlocked: eliteFourCleared,
+    },
+  ];
+
   const storyDone = storyQuests.filter((entry) => entry.done).length;
   const sideDone = sideQuests.filter((entry) => entry.done).length;
   const totalDone = storyDone + sideDone;
@@ -85,6 +113,9 @@ export function renderQuestView(scene) {
     "",
     "── サブクエスト ──",
     ...sideQuests.map((entry) => formatQuestLineWithLock(entry.label, entry.done, entry.unlocked ?? true)),
+    "",
+    "── ポストゲーム目標 ──",
+    ...postgameGoals.map((entry) => formatQuestLineWithLock(entry.label, entry.done, entry.unlocked)),
   ];
 
   const lineH = 22;
