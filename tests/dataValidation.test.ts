@@ -117,4 +117,49 @@ describe("data validation", () => {
 
     expect(() => validateGameData(raw)).not.toThrow();
   });
+
+  it("inflictStatusが未対応IDの場合はエラーを投げる", () => {
+    const raw = createValidData();
+    raw.moves.moves[0].inflictStatus = "CURSE";
+    raw.moves.moves[0].statusChance = 0.4;
+
+    expect(() => validateGameData(raw)).toThrowError(/inflictStatus/);
+  });
+
+  it("inflictStatusのみ指定でstatusChanceが未指定の場合はエラーを投げる", () => {
+    const raw = createValidData();
+    raw.moves.moves[0].inflictStatus = "BURN";
+    delete raw.moves.moves[0].statusChance;
+
+    expect(() => validateGameData(raw)).toThrowError(/statusChance/);
+  });
+
+  it("statusChanceのみ指定でinflictStatusが未指定の場合はエラーを投げる", () => {
+    const raw = createValidData();
+    raw.moves.moves[0].statusChance = 0.4;
+    raw.moves.moves[0].inflictStatus = null;
+
+    expect(() => validateGameData(raw)).toThrowError(/inflictStatus/);
+  });
+
+  it("staminaCostが許容範囲外の場合はエラーを投げる", () => {
+    const raw = createValidData();
+    raw.moves.moves[0].staminaCost = 10;
+
+    expect(() => validateGameData(raw)).toThrowError(/staminaCost/);
+  });
+
+  it("basinPoolIdsが存在しないモンスターIDを参照した場合はエラーを投げる", () => {
+    const raw = createValidData();
+    raw.monsters.basinPoolIds = ["UNKNOWN_MONSTER"];
+
+    expect(() => validateGameData(raw)).toThrowError(/basinPoolIds/);
+  });
+
+  it("gymBoss2が存在しないモンスターIDを参照した場合はエラーを投げる", () => {
+    const raw = createValidData();
+    raw.monsters.gymBoss2 = { id: "UNKNOWN_MONSTER", level: 30 };
+
+    expect(() => validateGameData(raw)).toThrowError(/gymBoss2/);
+  });
 });

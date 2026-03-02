@@ -28,6 +28,19 @@ export function renderTrainerView(scene) {
 
   const allMons = getAllMonsters();
   const gymStatus = gameState.gymCleared ? "✅ クリア済み" : "❌ 未クリア";
+  const gym2Status = gameState.storyFlags?.frozenPeakGymCleared ? "✅ クリア済み" : "❌ 未クリア";
+  const eliteDefeated = [
+    gameState.storyFlags?.eliteFourWind,
+    gameState.storyFlags?.eliteFourFlame,
+    gameState.storyFlags?.eliteFourTide,
+    gameState.storyFlags?.eliteFourFrost,
+  ].filter(Boolean).length;
+  const eliteStatus = eliteDefeated >= 4 ? "✅ 制覇" : `${eliteDefeated}/4 人撃破`;
+  const postGameStatus = gameState.storyFlags?.legendaryDefeated
+    ? "✅ 伝説制覇"
+    : gameState.storyFlags?.ruinsFinalDone
+      ? "⏳ 伝説挑戦中"
+      : "❌ 未到達";
 
   const info = [
     `名前　 : ${gameState.playerName}`,
@@ -44,6 +57,13 @@ export function renderTrainerView(scene) {
     "",
     `── ジムバッジ ──`,
     `エモの森ジム : ${gymStatus}`,
+    `氷峰ジム　　 : ${gym2Status}`,
+    "",
+    `── 四天王進捗 ──`,
+    `四天王　　　 : ${eliteStatus}`,
+    "",
+    `── ポストゲーム ──`,
+    `伝説イベント : ${postGameStatus}`,
     "",
     `── 闘技場 ──`,
     `最高記録　 : ${gameState.arenaHighScore || 0}連勝`,

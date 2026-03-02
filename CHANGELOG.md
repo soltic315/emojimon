@@ -1,5 +1,41 @@
 # CHANGELOG
 
+## [2.1.9] - 2026-03-03
+
+### Note
+- 優先度と対応工数のバランスを重視し、A〜I の TODO から15件（`A-16` / `B-13` / `B-16` / `B-18` / `C-21` / `D-27` / `E-04` / `E-05` / `E-10` / `E-11` / `E-17` / `E-29` / `E-31` / `F-14` / `I-01`）を完了した。
+- ユーザー指定に従い、TODO完了後に `lint -> typecheck -> test -> build` の順で検証を実施した。
+
+### Added
+- `tests/achievements.test.ts` を追加し、実績判定の条件整合・ヒント解決・ID重複防止の回帰テストを追加。
+- `tests/wildEncounters.test.ts` を追加し、全エリア出現プールと第2ジムボス参照のテストを追加。
+- `tests/audioManager.test.ts` を追加し、マップキー解決と同一BGM重複再生抑止のテストを追加。
+- `tests/battleTurnFlow.test.ts` を追加し、行動順計算（優先度/補正/同速）のテストを追加。
+- `tests/battleVisuals.test.ts` を追加し、天候遷移純粋関数の遷移分岐テストを追加。
+
+### Changed
+- `js/data/moves.ts` に `MOVE_STAMINA_COST_MIN/MAX` を追加し、スタミナコスト範囲の共通定数化を実施。
+- `js/data/dataValidation.ts` で相互参照整合チェックを強化し、`inflictStatus/statusChance` 整合と状態異常ID検証を追加。
+- `js/scenes/menu/views/trainerView.ts` で氷峰ジム・四天王・ポストゲーム進捗を表示するよう拡張。
+- `js/scenes/battle/battleHudUpdate.ts` でプレイヤー/相手HUD共通処理をヘルパー化し重複ロジックを削減。
+- `js/scenes/battle/battleVisuals.ts` で `resolveWeatherTickTransition` を新設し、`tickWeather` の遷移判定を純粋関数へ分離。
+- `js/scenes/title/titleHelp.ts` / `js/scenes/menu/menuConstants.ts` でガイド文言の操作用語を「決定/キャンセル」基準へ統一。
+- `tests/dataValidation.test.ts` / `tests/gameState.test.ts` を拡張し、新規検証ケース（プール検証・ボックス操作）を追加。
+- `README.md` にデータJSON編集ガイド（検証手順）を追記。
+- `GAME_DESIGN.md` に起動時検証要件、データ編集運用、タイプ分布分析、トレーナー表示仕様の更新を反映。
+- `TODO.md` から完了済み15件を削除し、統計サマリーを更新。
+- `package.json` / `package-lock.json` のバージョンを `2.1.8` から `2.1.9` に更新。
+
+### Fixed
+- データ定義で `inflictStatus` と `statusChance` の片側指定が通ってしまう不整合を修正。
+- メニューのトレーナー画面で氷峰ジム・四天王・ポストゲーム進捗が未表示だった問題を修正。
+- 天候遷移ロジックのテスト困難だった分岐を純粋関数化し、回帰検知を可能化。
+- シーン復帰時の同一BGM重複再生抑止をテストで保証。
+
+### Prompt
+- User: `優先度と対応工数のバランスを考えてA~IのTODOを15完了してください。lint/typecheck/test/buildは全てのTODOを完了した後に実施してください。`
+- Assistant（対応方針）: A〜I から高優先かつ小〜中工数の15件を最小差分で実装し、TODO/仕様書/版数/変更履歴を同期した後に `lint/typecheck/test/build` を順次実施する。
+
 ## [2.1.8] - 2026-03-02
 
 ### Note

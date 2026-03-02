@@ -4,11 +4,14 @@ export const MOVE_CATEGORY = {
   STATUS: "status",
 };
 
+export const MOVE_STAMINA_COST_MIN = 1;
+export const MOVE_STAMINA_COST_MAX = 9;
+
 export const MOVES = {};
 
 function normalizeMoveStaminaCost(value, fallback = 1) {
   if (!Number.isFinite(value)) return fallback;
-  return Math.min(9, Math.max(1, Math.floor(value)));
+  return Math.min(MOVE_STAMINA_COST_MAX, Math.max(MOVE_STAMINA_COST_MIN, Math.floor(value)));
 }
 
 export function getMoveStaminaCost(move) {

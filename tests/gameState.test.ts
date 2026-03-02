@@ -217,4 +217,30 @@ describe("gameState map weather", () => {
     expect(gameState.removeItem("POTION", 1)).toBe(true);
     expect(gameState.inventory).toEqual([]);
   });
+
+  it("moveBoxToPartyは上限未満なら成功し、上限到達時は失敗する", () => {
+    const boxMon = { species: { id: "BOXMON" }, currentHp: 20 };
+    gameState.party = [{ species: { id: "P1" } }, { species: { id: "P2" } }];
+    gameState.box = [boxMon as any];
+
+    expect(gameState.moveBoxToParty(0)).toBe(true);
+    expect(gameState.party.length).toBe(3);
+    expect(gameState.box.length).toBe(0);
+
+    gameState.box = [{ species: { id: "BOX2" } } as any];
+    expect(gameState.moveBoxToParty(0)).toBe(false);
+    expect(gameState.box.length).toBe(1);
+  });
+
+  it("swapBoxWithPartyは境界条件と通常交換を正しく扱う", () => {
+    gameState.party = [{ species: { id: "ONLY" } } as any];
+    gameState.box = [{ species: { id: "BOX" } } as any];
+    expect(gameState.swapBoxWithParty(0, 0)).toBe(false);
+
+    gameState.party = [{ species: { id: "P1" } } as any, { species: { id: "P2" } } as any];
+    gameState.box = [{ species: { id: "B1" } } as any];
+    expect(gameState.swapBoxWithParty(0, 1)).toBe(true);
+    expect(gameState.party[1].species.id).toBe("B1");
+    expect(gameState.box[0].species.id).toBe("P2");
+  });
 });

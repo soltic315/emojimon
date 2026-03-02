@@ -296,30 +296,106 @@ export function updateWeatherDisplay(scene: any) {
   createWeatherDisplay(scene);
 }
 
+export function resolveWeatherTickTransition({
+  weather,
+  weatherTurnCounter,
+  weatherDuration,
+  randomValue,
+  firstRolledWeather,
+  secondRolledWeather,
+  rolledDuration,
+}: {
+  weather: string;
+  weatherTurnCounter: number;
+  weatherDuration: number;
+  randomValue: number;
+  firstRolledWeather?: string;
+  secondRolledWeather?: string;
+  rolledDuration?: number;
+}) {
+  const nextCounter = weatherTurnCounter + 1;
+  if (weather !== WEATHER.NONE && nextCounter >= weatherDuration) {
+    return {
+      changed: true,
+      weather: WEATHER.NONE,
+      weatherTurnCounter: 0,
+      weatherDuration,
+      messageKey: "END",
+      endedWeather: weather,
+    };
+  }
+
+  if (weather === WEATHER.NONE && randomValue < 0.08) {
+    const pickedWeather = firstRolledWeather === WEATHER.NONE ? secondRolledWeather : firstRolledWeather;
+    if (!pickedWeather || pickedWeather === WEATHER.NONE) {
+      return {
+        changed: false,
+        weather,
+        weatherTurnCounter: nextCounter,
+        weatherDuration,
+        messageKey: null,
+        endedWeather: null,
+      };
+    }
+    return {
+      changed: true,
+      weather: pickedWeather,
+      weatherTurnCounter: 0,
+      weatherDuration: rolledDuration ?? weatherDuration,
+      messageKey: "START",
+      endedWeather: null,
+    };
+  }
+
+  return {
+    changed: false,
+    weather,
+    weatherTurnCounter: nextCounter,
+    weatherDuration,
+    messageKey: null,
+    endedWeather: null,
+  };
+}
+
 /** ターン経過で天候が変化するか判定 */
 export function tickWeather(scene: any) {
-  scene.weatherTurnCounter++;
-  if (scene.weather !== WEATHER.NONE && scene.weatherTurnCounter >= scene.weatherDuration) {
-    const oldWeather = WEATHER_INFO[scene.weather];
-    scene.weather = WEATHER.NONE;
-    scene.weatherTurnCounter = 0;
-    gameState.setMapWeather(gameState.currentMap, scene.weather);
-    updateWeatherDisplay(scene);
+  const randomValue = Math.random();
+  const firstRolledWeather = scene.weather === WEATHER.NONE && randomValue < 0.08
+    ? rollWeatherForMap(gameState.currentMap)
+    : undefined;
+  const secondRolledWeather = firstRolledWeather === WEATHER.NONE
+    ? rollWeatherForMap(gameState.currentMap)
+    : undefined;
+  const hasNextWeather = (firstRolledWeather && firstRolledWeather !== WEATHER.NONE)
+    || (secondRolledWeather && secondRolledWeather !== WEATHER.NONE);
+  const rolledDuration = hasNextWeather ? 3 + Math.floor(Math.random() * 3) : undefined;
+
+  const transition = resolveWeatherTickTransition({
+    weather: scene.weather,
+    weatherTurnCounter: scene.weatherTurnCounter,
+    weatherDuration: scene.weatherDuration,
+    randomValue,
+    firstRolledWeather,
+    secondRolledWeather,
+    rolledDuration,
+  });
+
+  scene.weather = transition.weather;
+  scene.weatherTurnCounter = transition.weatherTurnCounter;
+  scene.weatherDuration = transition.weatherDuration;
+
+  if (!transition.changed) return;
+
+  gameState.setMapWeather(gameState.currentMap, scene.weather);
+  updateWeatherDisplay(scene);
+
+  if (transition.messageKey === "END") {
+    const oldWeather = WEATHER_INFO[transition.endedWeather || WEATHER.NONE] || WEATHER_INFO.NONE;
     scene.enqueueMessage(`${oldWeather.emoji} ${oldWeather.label}が おさまった！`);
-  } else if (scene.weather === WEATHER.NONE && Math.random() < 0.08) {
-    let nextWeather = rollWeatherForMap(gameState.currentMap);
-    if (nextWeather === WEATHER.NONE) {
-      nextWeather = rollWeatherForMap(gameState.currentMap);
-    }
-    if (nextWeather === WEATHER.NONE) {
-      return;
-    }
-    scene.weather = nextWeather;
-    scene.weatherTurnCounter = 0;
-    scene.weatherDuration = 3 + Math.floor(Math.random() * 3);
-    gameState.setMapWeather(gameState.currentMap, scene.weather);
-    const newWeather = WEATHER_INFO[scene.weather];
-    updateWeatherDisplay(scene);
+    return;
+  }
+  if (transition.messageKey === "START") {
+    const newWeather = WEATHER_INFO[scene.weather] || WEATHER_INFO.NONE;
     scene.enqueueMessage(`${newWeather.emoji} てんきが ${newWeather.label}に かわった！`);
   }
 }

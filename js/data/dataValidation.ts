@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MOVE_STAMINA_COST_MIN, MOVE_STAMINA_COST_MAX } from "./moves.ts";
 
 const moveCategorySchema = z.enum(["physical", "special", "status"]);
 
@@ -9,7 +10,7 @@ const moveSchema = z.object({
   power: z.number().min(0).optional(),
   accuracy: z.number().min(0).max(1).optional(),
   category: moveCategorySchema.optional(),
-  staminaCost: z.number().int().min(1).max(9).optional(),
+  staminaCost: z.number().int().min(MOVE_STAMINA_COST_MIN).max(MOVE_STAMINA_COST_MAX).optional(),
   pp: z.number().int().min(0).optional(),
   description: z.string().optional(),
   priority: z.number().int().optional(),
@@ -145,6 +146,8 @@ const abilitiesDataSchema = z.object({
   })),
 });
 
+const STATUS_CONDITION_IDS = new Set(["BURN", "POISON", "PARALYSIS", "FREEZE", "SLEEP"]);
+
 function formatIssues(label, issues) {
   const headline = `・${label}: ${issues.length}件の不整合`;
   const details = issues.slice(0, 4).map((issue) => {
@@ -224,6 +227,18 @@ function collectReferenceIntegrityErrors(validated) {
       if (!itemIdSet.has(evolutionItemId)) {
         errors.push(`・monsters.json: monsters[${monsterIndex}].evolution.condition.value "${evolutionItemId}" が items.json に存在しません`);
       }
+    }
+  });
+
+  moves.forEach((move, moveIndex) => {
+    if (move.inflictStatus && !STATUS_CONDITION_IDS.has(move.inflictStatus)) {
+      errors.push(`・moves.json: moves[${moveIndex}].inflictStatus "${move.inflictStatus}" は未対応の状態異常IDです`);
+    }
+    if (move.inflictStatus && (move.statusChance === undefined || move.statusChance <= 0)) {
+      errors.push(`・moves.json: moves[${moveIndex}] inflictStatus がある場合は statusChance を 0 より大きい値で指定してください`);
+    }
+    if (!move.inflictStatus && move.statusChance && move.statusChance > 0) {
+      errors.push(`・moves.json: moves[${moveIndex}] statusChance がある場合は inflictStatus も指定してください`);
     }
   });
 

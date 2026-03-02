@@ -75,6 +75,22 @@ npm run preview
 4. 仕様変更がある場合は `GAME_DESIGN.md` を更新
 5. 運用手順の変更がある場合は `README.md` を更新
 
+### データJSON編集ガイド（標準手順）
+
+1. `assets/data/*.json` を編集する（既存キー名は変更しない）
+2. 相互参照キーを確認する（`moves` / `monsters` / `items` / `abilities`）
+3. 次を順に実行して検証する
+
+```bash
+npm run lint
+npm run typecheck
+npm run test
+npm run build
+```
+
+- `test` では `dataValidation` のスキーマ検証・参照整合テストが通ることを必須とする
+- 代表的な不整合（未定義ID参照、状態異常ID不正、範囲外パラメータ）は起動前に修正する
+
 ---
 
 ## GitHub Pages デプロイ運用
