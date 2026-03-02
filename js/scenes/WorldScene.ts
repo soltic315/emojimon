@@ -64,6 +64,7 @@ import {
   checkArenaProgress as runCheckArenaProgress,
 } from "./world/worldTrainerArena.ts";
 import { canInteractInWorld, canOpenWorldMenu } from "./world/worldInputGuards.ts";
+import { enhanceMapNpcs, pickNpcDialogLine, resolveNpcSpeakerLabel } from "./world/worldNpcFlavor.ts";
 import { getAchievementRewardText } from "../data/achievements.ts";
 
 export class WorldScene extends Phaser.Scene {
@@ -116,6 +117,8 @@ export class WorldScene extends Phaser.Scene {
     this._darkOverlayShown = false;
     this._darkOverlay = null;
     this._poisonStepCount = 0;
+    this._npcRuntime = new Map();
+    this._npcReservedTiles = new Set();
 
     this.createTilemap();
     this.createFieldAtmosphere();
@@ -486,6 +489,8 @@ export class WorldScene extends Phaser.Scene {
     this.timeWeatherText?.destroy();
     this._clearFieldMarkers();
     this._clearStarterLabels();
+    if (this._npcRuntime) this._npcRuntime.clear();
+    if (this._npcReservedTiles) this._npcReservedTiles.clear();
   }
 
   _getFieldPeriodByHour(hour) {
@@ -1135,10 +1140,12 @@ export class WorldScene extends Phaser.Scene {
   createNpcSprites() {
     this._clearStarterLabels();
 
-    this.npcs = getMapNpcs(this.mapKey);
+    this.npcs = enhanceMapNpcs(this.mapKey, getMapNpcs(this.mapKey));
     if (this.npcSprites) {
       this.npcSprites.forEach((s) => s.destroy());
     }
+    if (this._npcRuntime) this._npcRuntime.clear();
+    if (this._npcReservedTiles) this._npcReservedTiles.clear();
     this.npcSprites = [];
     this.npcs.forEach((npc) => {
       const isStarterPedestal = this.mapKey === "LAB"
@@ -1153,6 +1160,15 @@ export class WorldScene extends Phaser.Scene {
       const wy = npc.y * TILE_SIZE + TILE_SIZE / 2;
       const texture = npc.texture || "npc";
       const sprite = this.add.sprite(wx, wy, texture).setOrigin(0.5);
+      const faceLabel = npc.face
+        ? this.add.text(wx, wy - 2, npc.face, {
+          fontFamily: FONT.UI,
+          fontSize: 9,
+          color: "#0f172a",
+          stroke: "#e2e8f0",
+          strokeThickness: 2,
+        }).setOrigin(0.5)
+        : null;
       // NPC の呼吸
       this.tweens.add({
         targets: sprite,
@@ -1163,9 +1179,12 @@ export class WorldScene extends Phaser.Scene {
         ease: "sine.inOut",
       });
       this.npcSprites.push(sprite);
+      if (faceLabel) this.npcSprites.push(faceLabel);
+
+      let healBadge = null;
 
       if (npc.heal) {
-        const healBadge = this.add.text(wx, wy - 20, "💖", {
+        healBadge = this.add.text(wx, wy - 20, "💖", {
           fontSize: 16,
         }).setOrigin(0.5);
         this.tweens.add({
@@ -1178,6 +1197,14 @@ export class WorldScene extends Phaser.Scene {
         });
         this.npcSprites.push(healBadge);
       }
+
+      this._npcRuntime.set(npc, {
+        sprite,
+        faceLabel,
+        healBadge,
+        isMoving: false,
+        moveCooldownMs: this._nextNpcMoveCooldown(npc),
+      });
     });
 
     // 研究所マップのスターター絵文字表示（LABのみ）
@@ -1190,6 +1217,127 @@ export class WorldScene extends Phaser.Scene {
     if (!this.starterLabelSprites) return;
     this.starterLabelSprites.forEach((sprite) => sprite?.destroy());
     this.starterLabelSprites = [];
+  }
+
+  _nextNpcMoveCooldown(npc) {
+    const minMs = Math.max(400, Number(npc.wanderCooldownMinMs) || 1500);
+    const maxMs = Math.max(minMs, Number(npc.wanderCooldownMaxMs) || 3200);
+    return Phaser.Math.Between(minMs, maxMs);
+  }
+
+  _canNpcEnterTile(npc, tileX, tileY) {
+    if (tileX < 0 || tileX >= this.mapWidth || tileY < 0 || tileY >= this.mapHeight) return false;
+
+    const t = this.mapLayout[tileY]?.[tileX];
+    if (t === undefined || t === T.WALL || t === T.WATER || t === T.DOOR || t === T.GYM) return false;
+    if (this._isIceBlockAt(tileX, tileY)) return false;
+
+    const playerX = gameState.playerPosition.x;
+    const playerY = gameState.playerPosition.y;
+    if (tileX === playerX && tileY === playerY) return false;
+
+    const reservedKey = this._coordKey(tileX, tileY);
+    if (this._npcReservedTiles?.has(reservedKey)) return false;
+
+    const npcHere = (this.npcs || []).some((otherNpc) => otherNpc !== npc && otherNpc.x === tileX && otherNpc.y === tileY);
+    if (npcHere) return false;
+
+    const homeX = Number.isFinite(npc.homeX) ? npc.homeX : npc.x;
+    const homeY = Number.isFinite(npc.homeY) ? npc.homeY : npc.y;
+    const radius = Math.max(0, Number(npc.wanderRadius) || 0);
+    const fromHome = Math.abs(tileX - homeX) + Math.abs(tileY - homeY);
+    return fromHome <= radius;
+  }
+
+  _pickNpcMoveTarget(npc) {
+    if (!npc.canWander || (npc.wanderRadius || 0) <= 0) return null;
+    if (Math.random() < 0.4) return null;
+
+    const directions = Phaser.Utils.Array.Shuffle([
+      { dx: -1, dy: 0 },
+      { dx: 1, dy: 0 },
+      { dx: 0, dy: -1 },
+      { dx: 0, dy: 1 },
+    ]);
+
+    for (const dir of directions) {
+      const nx = npc.x + dir.dx;
+      const ny = npc.y + dir.dy;
+      if (!this._canNpcEnterTile(npc, nx, ny)) continue;
+      return { x: nx, y: ny };
+    }
+    return null;
+  }
+
+  _moveNpcTo(npc, runtime, target) {
+    if (!runtime?.sprite || !target) return;
+
+    const targetKey = this._coordKey(target.x, target.y);
+    this._npcReservedTiles.add(targetKey);
+    runtime.isMoving = true;
+
+    const tx = target.x * TILE_SIZE + TILE_SIZE / 2;
+    const ty = target.y * TILE_SIZE + TILE_SIZE / 2;
+    const duration = 210;
+
+    if (runtime.faceLabel) {
+      this.tweens.add({
+        targets: runtime.faceLabel,
+        x: tx,
+        y: ty - 2,
+        duration,
+        ease: "sine.inOut",
+      });
+    }
+
+    this.tweens.add({
+      targets: runtime.sprite,
+      x: tx,
+      y: ty,
+      duration,
+      ease: "sine.inOut",
+      onComplete: () => {
+        npc.x = target.x;
+        npc.y = target.y;
+        runtime.isMoving = false;
+        runtime.moveCooldownMs = this._nextNpcMoveCooldown(npc);
+        this._npcReservedTiles.delete(targetKey);
+      },
+    });
+  }
+
+  _updateNpcMovement(delta) {
+    if (!Array.isArray(this.npcs) || this.npcs.length === 0) return;
+    if (this._dialogActive || this._starterChoiceActive || this._trainerBattlePending) return;
+    if (this.shopActive || this.isMoving || this.isEncounterTransitioning) return;
+
+    for (const npc of this.npcs) {
+      const runtime = this._npcRuntime?.get(npc);
+      if (!runtime || runtime.isMoving) continue;
+      if (!npc.canWander || (npc.wanderRadius || 0) <= 0) continue;
+
+      runtime.moveCooldownMs -= delta;
+      if (runtime.moveCooldownMs > 0) continue;
+
+      const target = this._pickNpcMoveTarget(npc);
+      if (!target) {
+        runtime.moveCooldownMs = this._nextNpcMoveCooldown(npc);
+        continue;
+      }
+      this._moveNpcTo(npc, runtime, target);
+    }
+  }
+
+  _showNpcTalk(npc, fallback = "こんにちは！") {
+    const line = pickNpcDialogLine(npc);
+    const speaker = resolveNpcSpeakerLabel(npc);
+    const text = String(line || "").trim() || fallback;
+
+    if (speaker) {
+      this.showDialogSequence([`${speaker}: ${text}`]);
+      return;
+    }
+    this.showMessage(text);
   }
 
   _playHealNpcEffect(npc) {
@@ -1572,6 +1720,8 @@ export class WorldScene extends Phaser.Scene {
       }
     }
 
+    this._updateNpcMovement(delta);
+
     if (this.encounterCooldown > 0) this.encounterCooldown -= delta;
   }
 
@@ -1596,6 +1746,8 @@ export class WorldScene extends Phaser.Scene {
       if (!canSwim) return true;
     }
     if (this._isIceBlockAt(tileX, tileY)) return true;
+
+    if (this._npcReservedTiles?.has(this._coordKey(tileX, tileY))) return true;
 
     const npcHere = (this.npcs || []).some((npc) => npc.x === tileX && npc.y === tileY);
     return npcHere;
@@ -1642,10 +1794,11 @@ export class WorldScene extends Phaser.Scene {
           this.autoSave();
         };
 
-        const nurseLine = npc.text || "おかえり！ 今日はぐっすり休んでいこうね。";
+        const nurseLine = pickNpcDialogLine(npc);
+        const nurseSpeaker = resolveNpcSpeakerLabel(npc) || "かいふく係";
         this.showDialogSequence([
-          `かいふく係: ${nurseLine}`,
-          "かいふく係: はい、みんな元気いっぱい！ いってらっしゃい！",
+          `${nurseSpeaker}: ${nurseLine || "おかえり！ 今日はぐっすり休んでいこうね。"}`,
+          `${nurseSpeaker}: はい、みんな元気いっぱい！ いってらっしゃい！`,
         ], () => {
           restoreParty();
         });
@@ -1661,7 +1814,7 @@ export class WorldScene extends Phaser.Scene {
             gameState.starQuestDone = true;
             this.showMessage("ありがとう！ 100Gの報酬だよ！");
           } else {
-            this.showMessage(npc.text);
+            this._showNpcTalk(npc, "スターライトを見かけたら教えてね！");
           }
         } else {
           this.showMessage("もうお礼は渡したよ。またね！");
@@ -1684,7 +1837,7 @@ export class WorldScene extends Phaser.Scene {
               "★ ハイパーボール ×3 と 500G をもらった！",
             ]);
           } else {
-            this.showMessage(npc.text);
+            this._showNpcTalk(npc, "こおりタイプを連れてきたら見せてね。");
           }
         } else {
           this.showMessage("あのこおりモンスター、大切にしてあげてね！");
@@ -1745,7 +1898,7 @@ export class WorldScene extends Phaser.Scene {
       }
 
       // 通常会話
-      this.showMessage(npc.text);
+      this._showNpcTalk(npc);
       return true;
     }
 
