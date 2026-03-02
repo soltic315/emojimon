@@ -1158,17 +1158,11 @@ export class WorldScene extends Phaser.Scene {
 
       const wx = npc.x * TILE_SIZE + TILE_SIZE / 2;
       const wy = npc.y * TILE_SIZE + TILE_SIZE / 2;
-      const texture = npc.texture || "npc";
-      const sprite = this.add.sprite(wx, wy, texture).setOrigin(0.5);
-      const faceLabel = npc.face
-        ? this.add.text(wx, wy - 2, npc.face, {
-          fontFamily: FONT.UI,
-          fontSize: 9,
-          color: "#0f172a",
-          stroke: "#e2e8f0",
-          strokeThickness: 2,
-        }).setOrigin(0.5)
-        : null;
+      const faceEmoji = String(npc.face || "🙂").trim() || "🙂";
+      const sprite = this.add.text(wx, wy, faceEmoji, {
+        fontFamily: FONT.EMOJI,
+        fontSize: 20,
+      }).setOrigin(0.5);
       // NPC の呼吸
       this.tweens.add({
         targets: sprite,
@@ -1179,7 +1173,6 @@ export class WorldScene extends Phaser.Scene {
         ease: "sine.inOut",
       });
       this.npcSprites.push(sprite);
-      if (faceLabel) this.npcSprites.push(faceLabel);
 
       let healBadge = null;
 
@@ -1200,7 +1193,6 @@ export class WorldScene extends Phaser.Scene {
 
       this._npcRuntime.set(npc, {
         sprite,
-        faceLabel,
         healBadge,
         isMoving: false,
         moveCooldownMs: this._nextNpcMoveCooldown(npc),
@@ -1279,16 +1271,6 @@ export class WorldScene extends Phaser.Scene {
     const tx = target.x * TILE_SIZE + TILE_SIZE / 2;
     const ty = target.y * TILE_SIZE + TILE_SIZE / 2;
     const duration = 210;
-
-    if (runtime.faceLabel) {
-      this.tweens.add({
-        targets: runtime.faceLabel,
-        x: tx,
-        y: ty - 2,
-        duration,
-        ease: "sine.inOut",
-      });
-    }
 
     this.tweens.add({
       targets: runtime.sprite,

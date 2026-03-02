@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { enhanceMapNpcs, pickNpcDialogLine, resolveNpcSpeakerLabel } from "../js/scenes/world/worldNpcFlavor.ts";
 
 describe("worldNpcFlavor", () => {
-  it("通常NPCに顔文字と会話プールと移動設定を付与する", () => {
+  it("通常NPCに顔絵文字と会話プールと移動設定を付与する", () => {
     const [npc] = enhanceMapNpcs("EMOJI_TOWN", [
       { x: 6, y: 7, text: "こんにちは！" },
     ]);
@@ -36,8 +36,8 @@ describe("worldNpcFlavor", () => {
     expect(pickNpcDialogLine(npc, () => 0.99)).toBe("C");
   });
 
-  it("話者ラベルは顔文字付きで解決される", () => {
-    const label = resolveNpcSpeakerLabel({ speakerName: "町のひと", face: "(＾▽＾)" });
-    expect(label).toBe("町のひと (＾▽＾)");
+  it("話者ラベルは顔絵文字付きで解決される", () => {
+    const label = resolveNpcSpeakerLabel({ speakerName: "町のひと", face: "🙂" });
+    expect(label).toBe("町のひと 🙂");
   });
 });
