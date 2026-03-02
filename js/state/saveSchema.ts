@@ -47,7 +47,6 @@ const serializedMonsterSchema = z.object({
   nickname: z.string().nullable().optional(),
   moveIds: z.array(z.string()).optional(),
   stamina: z.number().finite().optional(),
-  pp: z.array(z.number().finite()).optional(),
 }).passthrough();
 
 const inventoryEntrySchema = z.object({

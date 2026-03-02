@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { gameState } from "../js/state/gameState.ts";
+import { MONSTERS } from "../js/data/monsters.ts";
 
 const SAVE_KEY = "emojimon_save_v2";
 const SAVE_BACKUP_KEY = "emojimon_save_v2_backup";
@@ -129,6 +130,34 @@ describe("gameState map weather", () => {
     expect(gameState.storyFlags.libraryPuzzleSolved).toBe(true);
     expect(gameState.storyFlags.eliteFourFrost).toBe(true);
     expect(gameState.storyFlags.starterSpeciesId).toBe("MON_TEST");
+  });
+
+  it("partyが存在してもstoryFlagsの自動補完は行わない", () => {
+    const speciesId = "TEST_COMPAT_MON";
+    MONSTERS[speciesId] = {
+      id: speciesId,
+      name: "テストモン",
+      primaryType: "NORMAL",
+      baseStats: { maxHp: 20, attack: 10, defense: 10, speed: 10 },
+      learnset: [],
+      learnsetLevels: [],
+    };
+
+    globalThis.localStorage.setItem(SAVE_KEY, JSON.stringify({
+      playerName: "互換なしロード",
+      party: [{ speciesId, level: 5, currentHp: 10, moveIds: [], stamina: 5 }],
+      storyFlags: {},
+    }));
+
+    const loaded = gameState.load();
+
+    expect(loaded).toBe(true);
+    expect(gameState.party.length).toBe(1);
+    expect(gameState.storyFlags.starterChosen).toBe(false);
+    expect(gameState.storyFlags.prologueDone).toBe(false);
+    expect(gameState.storyFlags.introNarrationDone).toBe(false);
+
+    delete MONSTERS[speciesId];
   });
 
   it("闘技場ラウンド状態をセーブ/ロードで復元できる", () => {

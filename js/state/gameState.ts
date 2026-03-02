@@ -886,20 +886,8 @@ class GameState {
       };
       this.gameplaySettings = sanitizeGameplaySettings(data.gameplaySettings);
       this.saveAudioSettings();
-      // ストーリーフラグのロード（古いセーブデータには存在しない可能性）
+      // ストーリーフラグのロード
       this.storyFlags = sanitizeStoryFlags(data.storyFlags);
-      // 古いセーブ互換: パーティがある場合はstarterChosenをtrueに
-      if (this.party.length > 0 && !this.storyFlags.starterChosen) {
-        this.storyFlags.starterChosen = true;
-        this.storyFlags.prologueDone = true;
-        // 古いセーブではチュートリアルも完了扱い
-        this.storyFlags.introNarrationDone = true;
-        this.storyFlags.tutorialMoveDone = true;
-        this.storyFlags.tutorialBattleDone = true;
-        this.storyFlags.tutorialCatchDone = true;
-        this.storyFlags.tutorialMenuDone = true;
-        this.storyFlags.momFarewellDone = true;
-      }
       return true;
     };
 
