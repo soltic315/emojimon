@@ -4,6 +4,8 @@ import { FONT, drawPanel, drawSelection } from "../../../ui/UIHelper.ts";
 import {
   getAchievementsByCategory,
   getAchievementProgress,
+  getAchievementHint,
+  getAchievementRewardText,
   ACHIEVEMENT_CATEGORY_LABELS,
 } from "../../../data/achievements.ts";
 import { SUB_PANEL_WIDTH_OFFSET, fitLabelToWidth } from "../menuViewsShared.ts";
@@ -121,14 +123,17 @@ export function renderAchievementsView(scene) {
     });
     scene.subPanel.add(lineText);
 
-    // 選択中の場合、説明文を表示
-    if (isSelected && unlocked) {
-      const descText = scene.add.text(panelX + panelW - 12, drawY + 4, def.description, {
+    // 選択中の場合、説明/ヒントと報酬を表示
+    if (isSelected) {
+      const leftText = unlocked ? def.description : getAchievementHint(def);
+      const rewardText = getAchievementRewardText(def);
+      const infoText = `${leftText} / 報酬: ${rewardText}`;
+      const descText = scene.add.text(panelX + panelW - 12, drawY + 4, infoText, {
         fontFamily: FONT.UI,
         fontSize: 10,
-        color: "#94a3b8",
+        color: unlocked ? "#94a3b8" : "#fcd34d",
       }).setOrigin(1, 0);
-      fitLabelToWidth(descText, def.description, panelW * 0.45);
+      fitLabelToWidth(descText, infoText, panelW * 0.45);
       scene.subPanel.add(descText);
     }
 

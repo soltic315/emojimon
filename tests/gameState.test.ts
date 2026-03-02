@@ -177,4 +177,23 @@ describe("gameState map weather", () => {
     expect(gameState.updateBattleWinStreak(false)).toBe(0);
     expect(gameState.battleWinStreak).toBe(0);
   });
+
+  it("実績達成時に報酬が付与され、再チェックで重複付与されない", () => {
+    gameState.totalBattles = 1;
+    const beforeMoney = gameState.money;
+    const beforeEmoBall = gameState.inventory.find((entry) => entry.itemId === "EMO_BALL")?.quantity || 0;
+
+    const firstUnlock = gameState.checkAchievements();
+    const afterFirstMoney = gameState.money;
+    const afterFirstEmoBall = gameState.inventory.find((entry) => entry.itemId === "EMO_BALL")?.quantity || 0;
+
+    expect(firstUnlock).toContain("FIRST_VICTORY");
+    expect(afterFirstMoney).toBeGreaterThan(beforeMoney);
+    expect(afterFirstEmoBall).toBeGreaterThan(beforeEmoBall);
+
+    const secondUnlock = gameState.checkAchievements();
+    expect(secondUnlock).toHaveLength(0);
+    expect(gameState.money).toBe(afterFirstMoney);
+    expect(gameState.inventory.find((entry) => entry.itemId === "EMO_BALL")?.quantity || 0).toBe(afterFirstEmoBall);
+  });
 });

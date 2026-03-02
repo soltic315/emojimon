@@ -8,7 +8,7 @@ import {
   rollMonsterAbilityId,
   syncMonsterMoves,
 } from "../data/monsters.ts";
-import { checkNewAchievements, getAchievementById } from "../data/achievements.ts";
+import { checkNewAchievements, getAchievementById, getAchievementReward } from "../data/achievements.ts";
 import {
   SAVE_KEY,
   SAVE_BACKUP_KEY,
@@ -395,11 +395,28 @@ class GameState {
       newIds.forEach((id) => {
         const def = getAchievementById(id);
         if (def) {
+          this._grantAchievementReward(def);
           this._pendingAchievementNotifications.push(def);
         }
       });
     }
     return newIds;
+  }
+
+  /** 実績報酬を付与する */
+  _grantAchievementReward(achievementDef) {
+    if (!achievementDef) return;
+    const reward = getAchievementReward(achievementDef);
+    const money = Math.max(0, Math.floor(reward?.money || 0));
+    if (money > 0) {
+      this.addMoney(money);
+    }
+
+    const itemId = reward?.itemId;
+    const itemQty = Math.max(1, Math.floor(reward?.itemQty || 1));
+    if (itemId && itemQty > 0) {
+      this.addItem(itemId, itemQty);
+    }
   }
 
   /** 未表示の実績通知を取得して消費する */

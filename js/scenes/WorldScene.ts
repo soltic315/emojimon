@@ -64,6 +64,7 @@ import {
   checkArenaProgress as runCheckArenaProgress,
 } from "./world/worldTrainerArena.ts";
 import { canInteractInWorld, canOpenWorldMenu } from "./world/worldInputGuards.ts";
+import { getAchievementRewardText } from "../data/achievements.ts";
 
 export class WorldScene extends Phaser.Scene {
   constructor() {
@@ -298,9 +299,10 @@ export class WorldScene extends Phaser.Scene {
   _showAchievementToast(achievementDef) {
     const { width } = this.scale;
     const toastW = 260;
-    const toastH = 44;
+    const toastH = 58;
     const toastX = width / 2 - toastW / 2;
     const toastY = -toastH;
+    const rewardText = getAchievementRewardText(achievementDef);
 
     const container = this.add.container(toastX, toastY).setScrollFactor(0).setDepth(200);
 
@@ -336,6 +338,13 @@ export class WorldScene extends Phaser.Scene {
       color: "#e5e7eb",
     });
     container.add(name);
+
+    const reward = this.add.text(36, 40, `🎁 ${rewardText}`, {
+      fontFamily: FONT.UI,
+      fontSize: 9,
+      color: "#86efac",
+    });
+    container.add(reward);
 
     // スライドインアニメーション
     this.tweens.add({

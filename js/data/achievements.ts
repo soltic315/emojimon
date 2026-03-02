@@ -3,6 +3,7 @@
  * ゲーム内の行動を追跡し、条件達成時にアンロックする
  */
 import { gameState, PARTY_CAPACITY } from "../state/gameState.ts";
+import { getItemById } from "./items.ts";
 
 // ── 実績カテゴリ ──
 export type AchievementCategory = "BATTLE" | "COLLECTION" | "EXPLORATION" | "MASTERY";
@@ -12,6 +13,8 @@ export interface AchievementDef {
   id: string;
   name: string;
   description: string;
+  hint?: string;
+  reward?: AchievementReward;
   icon: string;
   category: AchievementCategory;
   /** 達成判定関数 */
@@ -19,6 +22,29 @@ export interface AchievementDef {
   /** 表示用のソート順 */
   order: number;
 }
+
+export interface AchievementReward {
+  money?: number;
+  itemId?: string;
+  itemQty?: number;
+}
+
+const CATEGORY_HINT_PREFIX: Record<AchievementCategory, string> = {
+  BATTLE: "ヒント: バトルに挑戦して戦績を伸ばそう",
+  COLLECTION: "ヒント: 捕獲・図鑑登録・合成を進めよう",
+  EXPLORATION: "ヒント: 各地を巡って会話とイベントを進めよう",
+  MASTERY: "ヒント: やりこみ要素を継続して達成しよう",
+};
+
+const ACHIEVEMENT_HINT_OVERRIDES: Record<string, string> = {
+  RIVAL_TOWN: "ヒント: エモじタウンでライバルとの再戦イベントを進める",
+  DARK_TOWER_CLEAR: "ヒント: 闇の塔の最深部イベントをクリアする",
+  VOLCANO_BOSS: "ヒント: 火山エリアのダーク団ボス戦に勝利する",
+  LEGENDARY_BEATEN: "ヒント: 天空の花園で伝説イベントを勝利で終える",
+  ELITE_FOUR_ONE: "ヒント: 四天王のいずれか1人に勝利する",
+  ELITE_FOUR_ALL: "ヒント: 四天王4人すべてに勝利する",
+  FINAL_RIVAL: "ヒント: 星降りの盆地の最終ライバル戦を突破する",
+};
 
 // ── カテゴリ表示ラベル ──
 export const ACHIEVEMENT_CATEGORY_LABELS: Record<AchievementCategory, { label: string; icon: string }> = {
@@ -408,4 +434,53 @@ export function getAchievementProgress(unlockedIds: string[]): { unlocked: numbe
   const total = ACHIEVEMENTS.length;
   const percent = total > 0 ? Math.round((unlocked / total) * 100) : 0;
   return { unlocked, total, percent };
+}
+
+/** 実績ヒントを返す（未設定時はカテゴリ別の既定ヒント） */
+export function getAchievementHint(def: AchievementDef): string {
+  if (!def) return "ヒント: いろいろな遊び方を試してみよう";
+  if (typeof def.hint === "string" && def.hint.trim().length > 0) return def.hint;
+  const override = ACHIEVEMENT_HINT_OVERRIDES[def.id];
+  if (override) return override;
+  return CATEGORY_HINT_PREFIX[def.category] || "ヒント: 条件を満たす行動を進めよう";
+}
+
+/** 実績報酬を返す（未設定時はカテゴリ/段階ベースの既定値） */
+export function getAchievementReward(def: AchievementDef): AchievementReward {
+  if (!def) return {};
+  if (def.reward) {
+    return {
+      money: Math.max(0, Math.floor(def.reward.money || 0)),
+      itemId: def.reward.itemId,
+      itemQty: Math.max(1, Math.floor(def.reward.itemQty || 1)),
+    };
+  }
+
+  const step = Math.max(1, Math.floor((def.order % 100) / 10) + 1);
+  if (def.category === "BATTLE") {
+    return { money: 80 + step * 30, itemId: "EMO_BALL", itemQty: step >= 6 ? 2 : 1 };
+  }
+  if (def.category === "COLLECTION") {
+    return { money: 90 + step * 35, itemId: "POTION", itemQty: step >= 6 ? 2 : 1 };
+  }
+  if (def.category === "EXPLORATION") {
+    return { money: 100 + step * 40, itemId: "GREAT_BALL", itemQty: step >= 5 ? 2 : 1 };
+  }
+  return { money: 120 + step * 50, itemId: "SUPER_POTION", itemQty: step >= 5 ? 2 : 1 };
+}
+
+/** 実績報酬を表示用文字列に整形 */
+export function getAchievementRewardText(def: AchievementDef): string {
+  const reward = getAchievementReward(def);
+  const parts: string[] = [];
+  if ((reward.money || 0) > 0) {
+    parts.push(`${reward.money}G`);
+  }
+  if (reward.itemId) {
+    const item = getItemById(reward.itemId);
+    const itemName = item?.name || reward.itemId;
+    const itemQty = Math.max(1, Math.floor(reward.itemQty || 1));
+    parts.push(`${itemName}×${itemQty}`);
+  }
+  return parts.length > 0 ? parts.join(" / ") : "なし";
 }
