@@ -119,6 +119,11 @@ function getSellPrice(itemId) {
   return Math.max(1, Math.floor(basePrice * SELL_PRICE_RATE));
 }
 
+function getInventoryQuantity(itemId) {
+  const inv = (gameState.inventory || []).find((it) => it.itemId === itemId);
+  return inv?.quantity || 0;
+}
+
 function getRootEntries() {
   return [
     { kind: "ROOT_BUY", label: "かう" },
@@ -239,7 +244,9 @@ export function renderShopMenu(scene) {
   const panelX = Math.floor((width - panelW) / 2);
   const rowH = 30;
   const listTopOffset = 48;
-  const footerH = totalEntries > visibleEntries ? 26 : 12;
+  const showSellDetail = scene.shopMode === SHOP_MODE.SELL;
+  const detailH = showSellDetail ? 56 : 0;
+  const footerH = (totalEntries > visibleEntries ? 26 : 12) + detailH;
   const panelH = listTopOffset + visibleEntries * rowH + footerH;
   const messageTop = height - UI_LAYOUT.SAFE_MARGIN - UI_LAYOUT.MESSAGE_PANEL_HEIGHT;
   const panelY = Math.max(UI_LAYOUT.SAFE_MARGIN, messageTop - UI_LAYOUT.PANEL_GAP - panelH);
@@ -307,6 +314,37 @@ export function renderShopMenu(scene) {
       color: "#94a3b8",
     }).setOrigin(0.5, 0);
     scene.shopContainer.add(scrollHint);
+  }
+
+  if (showSellDetail) {
+    const selected = entries[scene.shopSelectedIndex];
+    const isSellItem = selected?.kind === "SELL_ITEM";
+    const item = isSellItem ? getItemById(selected.itemId) : null;
+    const currentQuantity = isSellItem ? getInventoryQuantity(selected.itemId) : 0;
+    const afterSellQuantity = Math.max(0, currentQuantity - 1);
+    const detailTop = panelY + panelH - detailH + 6;
+    const detailText = isSellItem
+      ? `説明: ${item?.description || "説明なし"}`
+      : "説明: 売却するアイテムを選んでください。";
+    const quantityText = isSellItem
+      ? `売却後所持数: ${afterSellQuantity}個`
+      : "売却後所持数: -";
+
+    const detail = scene.add.text(panelX + 18, detailTop, detailText, {
+      fontFamily: FONT.UI,
+      fontSize: UI_FONT_SIZE.MICRO,
+      color: "#d1d5db",
+      wordWrap: { width: panelW - 36 },
+    }).setOrigin(0, 0);
+    scene.shopContainer.add(detail);
+
+    const quantity = scene.add.text(panelX + 18, detailTop + 26, quantityText, {
+      fontFamily: FONT.UI,
+      fontSize: UI_FONT_SIZE.MICRO,
+      color: "#fbbf24",
+      fontStyle: "700",
+    }).setOrigin(0, 0);
+    scene.shopContainer.add(quantity);
   }
 }
 
@@ -445,7 +483,8 @@ export function handleShopInput(scene) {
       gameState.addMoney(selected.price);
       audioManager.playBuy();
       const item = getItemById(selected.itemId);
-      setShopInfoText(scene, `${item ? item.name : selected.itemId}を うった！ +${selected.price}G`);
+      const remainQuantity = getInventoryQuantity(selected.itemId);
+      setShopInfoText(scene, `${item ? item.name : selected.itemId}を うった！ +${selected.price}G（のこり${remainQuantity}個）`);
       renderShopMenu(scene);
       scene.createUi();
       return;
