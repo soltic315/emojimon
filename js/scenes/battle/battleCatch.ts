@@ -5,7 +5,7 @@ import { getItemById } from "../../data/items.ts";
 import { MOVES } from "../../data/moves.ts";
 import { audioManager } from "../../audio/AudioManager.ts";
 import { FONT } from "../../ui/UIHelper.ts";
-import { BattleState, PARTY_MAX } from "./battleConstants.ts";
+import { BattleState, PARTY_MAX, StatusCondition } from "./battleConstants.ts";
 import { gsap } from "gsap";
 
 /** インベントリにボールがあるかチェック */
@@ -44,6 +44,37 @@ export function consumeBall(ball) {
   }
 }
 
+function getCatchStatusBonus(statusCondition) {
+  if (statusCondition === StatusCondition.SLEEP || statusCondition === StatusCondition.FREEZE) return 1.25;
+  if (
+    statusCondition === StatusCondition.PARALYSIS
+    || statusCondition === StatusCondition.BURN
+    || statusCondition === StatusCondition.POISON
+  ) {
+    return 1.15;
+  }
+  return 1;
+}
+
+export function calculateCatchRate(opponent, ballBonus) {
+  if (!opponent?.species) return 0;
+
+  const baseRate = opponent.species.catchRate || 0.4;
+  const maxHp = calcStats(opponent.species, opponent.level).maxHp || 1;
+  const hpRatio = Math.max(0, Math.min(1, opponent.currentHp / maxHp));
+
+  let hpModifier = 0.8;
+  if (hpRatio < 0.25) hpModifier = 1.6;
+  else if (hpRatio < 0.5) hpModifier = 1.2;
+
+  const encounterBonus = opponent.catchRateMultiplier || 1;
+  const statusBonus = getCatchStatusBonus(opponent.statusCondition);
+  const isMasterBall = ballBonus >= 100;
+  if (isMasterBall) return 1;
+
+  return Math.min(0.96, baseRate * hpModifier * ballBonus * statusBonus * encounterBonus);
+}
+
 /** 捕獲試行 */
 export function attemptCatch(scene, selectedBall = null) {
   const ball = selectedBall || getBestBall();
@@ -54,15 +85,7 @@ export function attemptCatch(scene, selectedBall = null) {
   consumeBall(ball);
 
   const opponent = scene.battle.opponent;
-  const baseRate = opponent.species.catchRate || 0.4;
-  const hpRatio = opponent.currentHp / (calcStats(opponent.species, opponent.level).maxHp || 1);
-  let modifier = 0.8;
-  if (hpRatio < 0.25) modifier = 1.6;
-  else if (hpRatio < 0.5) modifier = 1.2;
-  const encounterBonus = opponent.catchRateMultiplier || 1;
-  // インフィニティボール（catchBonus >= 100）は確定捕獲
-  const isMasterBall = ball.bonus >= 100;
-  const finalRate = isMasterBall ? 1.0 : Math.min(0.96, baseRate * modifier * ball.bonus * encounterBonus);
+  const finalRate = calculateCatchRate(opponent, ball.bonus);
   const success = Math.random() < finalRate;
 
   scene.clearMenuTexts();

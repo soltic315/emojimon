@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## [1.16.4] - 2026-03-02
+
+### Note
+- テスト強化タスク（Eカテゴリ）のうち、ダメージ計算・捕獲率計算・進化判定の単体テストを追加し、捕獲率仕様を実装と設計書で同期。
+
+### Added
+- `tests/battleCalcStatus.test.ts` を追加し、ダメージ計算の `クリティカル / 天候 / STAB / 状態異常（やけど減衰）` を検証する単体テストを実装。
+- `tests/battleCatch.test.ts` を追加し、捕獲率計算の `HP補正 / ボール補正 / 状態異常補正 / 確定捕獲` を検証する単体テストを実装。
+- `tests/evolution.test.ts` を追加し、進化判定の `LEVEL / ITEM` 条件を検証する単体テストを実装。
+
+### Changed
+- `js/scenes/battle/battleCatch.ts` に `calculateCatchRate()` を追加し、捕獲率計算を純粋関数化。
+- `js/scenes/battle/battleCatch.ts` の捕獲計算へ状態異常補正（`SLEEP/FREEZE`, `PARALYSIS/BURN/POISON`）を追加。
+- `GAME_DESIGN.md` に「6.7 捕獲率補正」を追記し、捕獲率の乗算要素と上限/確定捕獲条件を明文化。
+- `TODO.md` から E-01 / E-02 / E-03 を削除し、Eカテゴリ件数と総件数を更新。
+- `package.json` と `package-lock.json` のバージョンを `1.16.3` から `1.16.4` に更新。
+
+### Fixed
+- 捕獲率計算で状態異常補正が反映されない不一致を修正。
+- ダメージ計算・捕獲率計算・進化判定の回帰テスト不足を解消。
+
+### Prompt
+- User: `テスト強化の課題を解消して`
+- Assistant（対応方針）: E-01〜E-03を最小差分で実装し、必要な実装修正（捕獲率の状態異常補正）と設計書/TODO/版数/履歴を同期する。
+
 ## [1.16.3] - 2026-03-02
 
 ### Note
