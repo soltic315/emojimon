@@ -376,7 +376,7 @@ nextLevelExp = 10 + 8 × level
 - `assets/data/items.json`
 - `assets/data/abilities.json`
 
-### 8.4 monsters.json 追加キー
+### 8.3 monsters.json 主要キー
 
 - `secondaryType: string | null`
   - 副タイプ。単タイプの場合は `null`。
@@ -403,55 +403,28 @@ nextLevelExp = 10 + 8 × level
   - `type: "LEVEL"` の場合: `value` は進化レベル（整数）。
   - `type: "ITEM"` の場合: `value` は進化に必要なアイテムID（文字列）。
 
-### 8.3 コンテンツ拡張（2026-03-01）
+### 8.4 現行コンテンツ構成
 
-- 追加モンスター: `CINDLO` / `CINDRAKE` / `RILLY` / `RILLARGO` / `BRAMBIT` / `ARCWOLF` / `ICELARK`
-- 追加技: `EMBER_SWEEP` / `RIVER_SONG` / `BRAMBLE_EDGE` / `ARC_SPIN` / `POLAR_PULSE` / `ICY_WIND`
-- 追加アイテム: `MEGA_ETHER` / `RESCUE_GEL` / `DUSK_BALL`
-- 出現プール（町・森・洞窟・火山・遺跡・ダークタワー・氷峰・天空の花園）とショップ在庫へ反映
-- 追加モンスター（追補）: `LUMIPUP` / `SOLMANTIS` / `MISTOTTER` / `ABYSSMART` / `FERNBIT` / `GROVYRA` / `BOLTRON` / `TEMPESTEL` / `SNOWLING` / `GLAZELK`
-- 追加技（追補）: `EMBER_RAIN` / `TIDE_LANCE` / `MOSS_BARRIER` / `VERDANT_BLADE` / `THUNDER_STEP` / `CRYO_LANCE` / `METEOR_BARK` / `STAR_PRAYER`
-- ストーリー拡張（追補）: マップ探索中に石板・碑文イベント（`forest_tablet_1` / `cave_memory_1` / `volcano_memory_1` / `frozen_memory_1` / `ruins_memory_2` / `garden_epilogue`）を追加
+- モンスターID（例）: `CINDLO` / `CINDRAKE` / `RILLY` / `RILLARGO` / `BRAMBIT` / `ARCWOLF` / `ICELARK` / `LUMIPUP` / `SOLMANTIS` / `MISTOTTER` / `ABYSSMART` / `FERNBIT` / `GROVYRA` / `BOLTRON` / `TEMPESTEL` / `SNOWLING` / `GLAZELK`
+- 技ID（例）: `EMBER_SWEEP` / `RIVER_SONG` / `BRAMBLE_EDGE` / `ARC_SPIN` / `POLAR_PULSE` / `ICY_WIND` / `EMBER_RAIN` / `TIDE_LANCE` / `MOSS_BARRIER` / `VERDANT_BLADE` / `THUNDER_STEP` / `CRYO_LANCE` / `METEOR_BARK` / `STAR_PRAYER`
+- アイテムID（例）: `MEGA_ETHER` / `RESCUE_GEL` / `DUSK_BALL`
+- ストーリーイベントID（例）: `forest_tablet_1` / `cave_memory_1` / `volcano_memory_1` / `frozen_memory_1` / `ruins_memory_2` / `garden_epilogue`
+- マップ構成: `MISTY_SWAMP` / `CORAL_REEF` / `SAND_VALLEY` / `SHADOW_GROVE` / `ANCIENT_LIBRARY` / `STARFALL_BASIN` を含む全体マップ構成を採用
+- タイル種別: `POISON(8)` / `TELEPORT(9)` / `ICE_FLOOR(10)` / `DARK(11)` / `SAND(12)` を含む定義を使用
+- 出現プール: `swamp` / `coral` / `sandValley` / `shadowGrove` / `library` / `basin` を含む
+- 四天王進行: ハヤテ（Lv42）→ カグラ（Lv44）→ ミナモ（Lv46）→ ヒョウガ（Lv48）の4連戦後、最終ライバル・レン（Lv50）へ進行
 
-### 8.4 大規模マップ・ギミック拡張（2026-03-01）
+### 8.5 現行バランス仕様
 
-- **新マップ6エリア追加**:
-  - MISTY_SWAMP（霧の湿地, 40×30）: 毒沼ギミック、泳ぎ探索
-  - CORAL_REEF（珊瑚の浜, 38×28）: 水中探索、隠し真珠
-  - SAND_VALLEY（砂塵の谷, 42×30）: 砂地低確率エンカウント、ライバル戦
-  - SHADOW_GROVE（影の森, 36×28）: 暗闇エリア、氷ブロック、研究所跡
-  - ANCIENT_LIBRARY（古代図書館, 34×26）: テレポートパッドパズル
-  - STARFALL_BASIN（星降り盆地, 44×34）: 四天王4連戦、最終ライバル戦
+- ICEタイプ相性は `ICE→WATER = 1.0`、`ICE→NORMAL = 1.5` とする
+- 天候 `SNOWY` は `ICE +30%`、`FIRE -30%`、`GRASS -30%` の補正を持つ
+- 逃走確率は速度差に応じた可変式（35%〜85%）を用いる
+- `げきりんキャンディ` は「攻撃+1 & 速度+1」、`ガードチャーム` は「防御+1 & HP15%回復」とする
+- ICE系モンスターの習得技候補に `ICY_WIND` を含める
 
-- **新タイルタイプ5種追加**: POISON(8), TELEPORT(9), ICE_FLOOR(10), DARK(11), SAND(12)
+### 8.6 モンスターパラメータ基準
 
-- **新ストーリーフラグ20種追加**: 湿地・珊瑚・砂漠・影の森・図書館・四天王・最終ライバル関連
-
-- **四天王システム**:
-  - ハヤテ（Lv42）、カグラ（Lv44）、ミナモ（Lv46）、ヒョウガ（Lv48）の4連戦
-  - 全員撃破で星降り盆地最奥への道が開く
-  - 最奥にはライバル・レンとの最終バトル（Lv50）
-
-- **マップルート再構成**:
-  - 森→霧の湿地→洞窟（旧: 森→洞窟）
-  - 火山→砂塵の谷→氷峰（旧: 火山→氷峰）
-  - ダークタワー→影の森（新規分岐）
-  - 氷峰→古代図書館→遺跡（旧: 氷峰→遺跡）
-  - 天空の花園→星降り盆地（新規ポストゲーム）
-
-- **新出現プール6種**: swamp/coral/sandValley/shadowGrove/library/basin
-
-### 8.5 バランス調整（2026-03-01）
-
-- ICEタイプ相性: ICE→WATER を 0.5→1.0（半減→等倍）、ICE→NORMAL を 1.0→1.5（等倍→効果抜群）に変更
-- 天候SNOWY追加: ICE+30%、FIRE-30%、GRASS-30%。氷峰マップで45%の確率で発生
-- 逃走確率: 固定60%→速度差による可変（35%〜85%）
-- アイテム差別化: げきりんキャンディ→攻撃+1&速度+1、ガードチャーム→防御+1&HP15%回復
-- ICE型モンスター4種に新技`ICY_WIND`を習得追加
-
-### 8.6 全モンスターパラメータバランス調整（2026-03-01）
-
-全74体のbaseStats・baseExpYieldをティア基準に統一調整。
+全74体の `baseStats`・`baseExpYield` はティア基準に沿って調整する。
 
 - **ティアBST目標**:
   - 進化前（スターター）: ~200
@@ -479,9 +452,9 @@ nextLevelExp = 10 + 8 × level
 - **タイプ別BST平均（調整後）**: FIRE=245, WATER=244, GRASS=239, ELECTRIC=244, ICE=243, NORMAL=254
 - **baseExpYield**: BSTに比例するよう全体を再調整。伝説ETERNIA: 61→65
 
-### 8.7 全フィールド総合調整（2026-03-01）
+### 8.7 総合データ方針
 
-全77体のsecondaryType / learnset / catchRate / ability / spawnRate / heldItems / sizeScale / recipe を一括調整。進化用アイテム3種を追加。
+全77体の `secondaryType` / `learnset` / `catchRate` / `ability` / `spawnRate` / `heldItems` / `sizeScale` / `recipe` を対象に、整合したデータ設計を維持する。
 
 #### 複合タイプ（secondaryType）
 - 31体に副タイプを付与（約40%）。進化後・レア系を中心に戦略的多様性を追加。
@@ -521,25 +494,25 @@ nextLevelExp = 10 + 8 × level
 
 #### 合成レシピ（recipe）
 - 全77体にrecipeフィールドを定義（未設定は空配列）
-- 新規レシピ5件追加:
+- 代表レシピ:
   - SOLFLARE = PYREBEAR + BLAZEBIRD
   - WHALORD = TIDALON + AQUASHELL
   - COSMOWL = MOONMITE + SKYPIP
   - SPIRALHORN = MOSSHORN + CRYSTALINE
   - GLACIDRAKE = BLIZZCAT + TUNDRABEAR
-- 既存5件は維持（BRAMBLEON, GLACIERA, MISTRAY, AURORO, RUNEFOX）
+- このほか BRAMBLEON / GLACIERA / MISTRAY / AURORO / RUNEFOX などのレシピを含む
 
-#### 進化用アイテム追加
-- items.jsonに3種追加:
+#### 進化用アイテム
+- `items.json` で次の進化用アイテムを定義する:
   - FIRE_CRYSTAL（ほのおの結晶）: 1500G
   - THUNDER_CRYSTAL（いかずちの結晶）: 1500G
   - ICE_CRYSTAL（こおりの結晶）: 1500G
-- 3体の進化条件をLEVEL→ITEMに変更:
+- 次の進化条件は `LEVEL` ではなく `ITEM` を使用する:
   - CHARCOIL → SERPYRO（FIRE_CRYSTAL）
   - LIGHTNIX → THUNDAGLE（THUNDER_CRYSTAL）
   - SNOWFAWN → FROSTVEIL（ICE_CRYSTAL）
 
-### 8.4 起動時検証
+### 8.8 起動時検証
 
 - `js/data/dataValidation.ts` のスキーマ検証を通過すること
 - 相互参照整合チェックを通過すること（`moves/items/abilities/monsters`）
@@ -547,7 +520,7 @@ nextLevelExp = 10 + 8 × level
 - `inflictStatus` と `statusChance` は片側のみ指定を不可とすること
 - `staminaCost` は共通範囲定数（最小1 / 最大9）を超えないこと
 
-### 8.8 データ編集ガイド（運用）
+### 8.9 データ編集ガイド（運用）
 
 - 変更単位は「1ファイル1目的」を基本とし、同時に複数カテゴリを混在させない
 - 既存キー名は互換維持のため変更しない（追加は可、削除/改名は仕様更新時のみ）
@@ -555,7 +528,7 @@ nextLevelExp = 10 + 8 × level
 - 編集後は `lint -> typecheck -> test -> build` を順に実行し、`dataValidation` が通ることを確認する
 - 失敗時はエラーの参照パス（例: `monsters[3].learnset[1]`）を起点に修正する
 
-### 8.9 タイプ分布分析（2026-03-03）
+### 8.10 タイプ分布の現状
 
 - 対象: `assets/data/monsters.json` / `assets/data/moves.json`
 - 集計結果（主タイプ+副タイプ合算）
@@ -747,36 +720,19 @@ nextLevelExp = 10 + 8 × level
 
 ---
 
-## 15. 変更履歴（運用ルール）
-
-- 仕様に影響する変更を行ったら、PRまたは作業ログ内で以下を明記する。
-  - 対象章
-  - 変更理由
-  - 互換性影響の有無
-
-例:
-
-```
-[仕様更新] 6.4 状態異常: まひの行動不能率を 20% → 25% に変更
-理由: バトルテンポと危険度のバランス調整
-互換性: セーブ互換あり
-```
-
----
-
-## 16. UIガイドライン（全画面共通）
+## 15. UIガイドライン（全画面共通）
 
 本章は、タイトル / ワールド / メニュー / バトル / ショップを横断して、見た目と操作の統一感を維持するための基準である。  
 UIの新規追加・改修時は本章を優先し、差異が必要な場合は理由を仕様変更として明記する。
 
-### 16.1 デザイン原則
+### 15.1 デザイン原則
 
 - 原則は「暗色ベース + 暖色アクセント + 低彩度補助色」。
 - 主要UIは「可読性 > 装飾」を優先し、情報の優先順位を明確にする。
 - 1画面内で主役のアクセント色は1系統に限定し、競合する強色を同時使用しない。
 - すべての画面で「情報パネル」「選択中」「補助情報」の見分けが一目で付くことを必須とする。
 
-### 16.2 タイポグラフィ
+### 15.2 タイポグラフィ
 
 - 共通フォントトークンを使用する（直書き禁止）。
   - `FONT.TITLE`: タイトルロゴ・章見出し
@@ -786,7 +742,7 @@ UIの新規追加・改修時は本章を優先し、差異が必要な場合は
 - 本文最小サイズは 11px、通常本文は 12〜14px、見出しは 18px 以上を基準とする。
 - 重要情報（現在選択・警告・報酬）は太字化で差を付け、過剰な文字サイズ差は使わない。
 
-### 16.3 カラー/トークン運用
+### 15.3 カラー/トークン運用
 
 - 色は `COLORS` / `TEXT_COLORS` を一次情報とし、Scene側での生値（hex直書き）は原則禁止。
 - 役割別の基本配色:
@@ -797,7 +753,7 @@ UIの新規追加・改修時は本章を優先し、差異が必要な場合は
   - 補助情報: `TEXT_COLORS.SECONDARY`
 - 成否・危険など意味を持つ色は、情報の意味を変更しない限り固定する（成功=緑、危険=赤）。
 
-### 16.4 レイアウト/パネル
+### 15.4 レイアウト/パネル
 
 - パネルは `drawPanel()` を標準とし、独自描画は特殊演出時のみ許可。
 - 選択ハイライトは `drawSelection()` を標準とし、選択状態の視覚差を統一する。
@@ -807,7 +763,7 @@ UIの新規追加・改修時は本章を優先し、差異が必要な場合は
   - セクション間: 12px以上
 - 1画面内で角丸半径・枠線太さを乱立させない（同系統パネルは同値を使う）。
 
-### 16.5 画面別適用ルール
+### 15.5 画面別適用ルール
 
 - タイトル:
   - ロゴ（`FONT.TITLE`）とメニュー（`FONT.UI`）の階層差を明確化。
@@ -822,19 +778,19 @@ UIの新規追加・改修時は本章を優先し、差異が必要な場合は
   - コマンド行、技一覧、詳細欄の強調色競合を避ける。
   - 絵文字表示・捕獲演出は `FONT.EMOJI` を使用し、環境差分を最小化する。
 
-### 16.6 操作フィードバック
+### 15.6 操作フィードバック
 
 - すべての選択操作は「視覚（ハイライト）+ 音（SE）」の両方で反応を返す。
 - キャンセル不可状態（演出中、選択確定待ちなど）は、見た目で操作不可を判別できるようにする。
 - 入力競合を防ぐため、`dialog` / `choice` / `battlePending` 中は不要なUI遷移を発生させない。
 
-### 16.7 アクセシビリティ基準
+### 15.7 アクセシビリティ基準
 
 - 文字色と背景色は、暗背景で判読不能にならないコントラストを維持する。
 - 情報伝達を色のみに依存しない（記号、ラベル、位置でも区別できること）。
 - 点滅・フラッシュ演出は短時間に限定し、常時点滅UIは使用しない。
 
-### 16.8 運用ルール
+### 15.8 運用ルール
 
 - UI変更時は、対象画面で以下を最低確認する。
   - 文字可読性（通常時/選択時）
