@@ -34,7 +34,6 @@ export class PrologueScene extends Phaser.Scene {
       "── すべての結晶が揃うと、天空の花園に古い門が開くと伝えられている。",
       `── そんな中、${gameState.playerName}は ハカセからの手紙を受け取り、`,
       "── エモじタウンの研究所を訪れることになった。",
-      "▶ Z/Enter/Space で次へ ・ X/ESC でスキップ",
     ];
     this.lineIndex = 0;
 

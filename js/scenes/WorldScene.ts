@@ -2487,7 +2487,6 @@ export class WorldScene extends Phaser.Scene {
       `博士: ${gameState.playerName}、世界の運命は きみにかかっておる！`,
       "博士: まずは タウンを探索してみよう。ライバルの『レン』も会いたがっておるよ。",
       "博士: 準備ができたら 東の出口から 森へ向かうんじゃ！",
-      "※ プロローグ完了！ まずは町を探索してみよう。",
     ], () => {
       gameState.storyFlags.prologueDone = true;
       gameState.storyFlags.tutorialMoveDone = true;

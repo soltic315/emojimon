@@ -19,31 +19,90 @@ const GLOBAL_MAP_HIDDEN_KEYS = new Set([
   "BASIN_SHOP",
 ]);
 
-const GLOBAL_MAP_KEYS = Object.keys(MAPS).filter((mapKey) => !GLOBAL_MAP_HIDDEN_KEYS.has(mapKey));
+export const GLOBAL_MAP_KEYS = Object.keys(MAPS).filter((mapKey) => !GLOBAL_MAP_HIDDEN_KEYS.has(mapKey));
 
-function buildGlobalMapConnections() {
+const GLOBAL_MAP_GRID_TEMPLATE = [
+  [null, null, "CELESTIAL_GARDEN", "STARFALL_BASIN", null],
+  [null, null, "SKY_RUINS", "ANCIENT_LIBRARY", "FROZEN_PEAK"],
+  ["SHADOW_GROVE", "DARK_TOWER", "CRYSTAL_CAVE", "VOLCANIC_PASS", "SAND_VALLEY"],
+  ["EMOJI_TOWN", "FOREST", "MISTY_SWAMP", "CORAL_REEF", null],
+];
+
+function toPositionMap(grid) {
+  const positions = {};
+  grid.forEach((row, rowIndex) => {
+    row.forEach((mapKey, colIndex) => {
+      if (!mapKey) return;
+      positions[mapKey] = { row: rowIndex, col: colIndex };
+    });
+  });
+  return positions;
+}
+
+export function buildGlobalMapLayout(mapKeys = GLOBAL_MAP_KEYS) {
+  const visibleKeySet = new Set(mapKeys);
+  const grid = GLOBAL_MAP_GRID_TEMPLATE.map((row) =>
+    row.map((mapKey) => ((mapKey && visibleKeySet.has(mapKey)) ? mapKey : null)),
+  );
+
+  const placedKeySet = new Set(Object.keys(toPositionMap(grid)));
+  const unplacedKeys = mapKeys.filter((mapKey) => !placedKeySet.has(mapKey));
+
+  if (unplacedKeys.length > 0) {
+    const columnCount = Math.max(1, grid[0]?.length || 0);
+    for (let offset = 0; offset < unplacedKeys.length; offset += columnCount) {
+      const row = Array(columnCount).fill(null);
+      const chunk = unplacedKeys.slice(offset, offset + columnCount);
+      chunk.forEach((mapKey, index) => {
+        row[index] = mapKey;
+      });
+      grid.push(row);
+    }
+  }
+
+  const positions = toPositionMap(grid);
+  return {
+    grid,
+    positions,
+    rows: grid.length,
+    cols: Math.max(1, ...grid.map((row) => row.length)),
+  };
+}
+
+export function buildGlobalMapConnections(mapKeys = GLOBAL_MAP_KEYS) {
+  const keySet = new Set(mapKeys);
   const targetsBySource = {};
-  GLOBAL_MAP_KEYS.forEach((source) => {
+  const undirectedEdges = [];
+  const edgeSet = new Set();
+
+  mapKeys.forEach((source) => {
     const transitions = DOOR_TRANSITIONS[source] || [];
     const uniqueTargets = [];
     const uniqueTargetSet = new Set();
 
     transitions.forEach((transition) => {
       const target = transition.target;
-      if (!GLOBAL_MAP_KEYS.includes(target)) return;
+      if (!keySet.has(target)) return;
 
       if (!uniqueTargetSet.has(target)) {
         uniqueTargetSet.add(target);
         uniqueTargets.push(target);
+
+        const edgeId = source < target ? `${source}::${target}` : `${target}::${source}`;
+        if (!edgeSet.has(edgeId)) {
+          edgeSet.add(edgeId);
+          undirectedEdges.push([source, target]);
+        }
       }
     });
 
     targetsBySource[source] = uniqueTargets;
   });
-  return { targetsBySource };
+  return { targetsBySource, undirectedEdges };
 }
 
 const GLOBAL_MAP_CONNECTIONS = buildGlobalMapConnections();
+const GLOBAL_MAP_LAYOUT = buildGlobalMapLayout();
 
 export function renderGlobalMapView(scene) {
   const { width, height } = scene.scale;
@@ -106,55 +165,84 @@ export function renderGlobalMapView(scene) {
   });
   scene.subPanel.add(mapLegend);
 
-  const columns = Math.max(3, Math.min(6, Math.ceil(Math.sqrt(mapKeys.length))));
-  const rows = Math.max(1, Math.ceil(mapKeys.length / columns));
+  const { grid, positions, rows, cols } = GLOBAL_MAP_LAYOUT;
   const gridGap = 8;
   const innerPaddingX = 14;
   const innerPaddingTop = 28;
   const innerPaddingBottom = 14;
   const cellW = Math.max(
-    96,
-    Math.floor((mapAreaW - innerPaddingX * 2 - (columns - 1) * gridGap) / columns),
+    72,
+    Math.floor((mapAreaW - innerPaddingX * 2 - (cols - 1) * gridGap) / cols),
   );
   const cellH = Math.max(
-    52,
+    44,
     Math.floor((mapAreaH - innerPaddingTop - innerPaddingBottom - (rows - 1) * gridGap) / rows),
   );
 
-  mapKeys.forEach((mapKey, index) => {
-    const col = index % columns;
-    const row = Math.floor(index / columns);
-    const x = mapAreaX + innerPaddingX + col * (cellW + gridGap);
-    const y = mapAreaY + innerPaddingTop + row * (cellH + gridGap);
-    const isCurrent = mapKey === effectiveCurrentMapKey;
-    const isSelected = mapKey === selectedMapKey;
-    const isVisited = visitedSet.has(mapKey);
+  const lineLayer = scene.add.graphics();
+  lineLayer.lineStyle(2, 0x38bdf8, 0.45);
+  GLOBAL_MAP_CONNECTIONS.undirectedEdges.forEach(([source, target]) => {
+    const sourcePos = positions[source];
+    const targetPos = positions[target];
+    if (!sourcePos || !targetPos) return;
 
-    const cell = scene.add.graphics();
-    const fillColor = isCurrent ? 0x422006 : isVisited ? 0x0f172a : 0x111827;
-    const fillAlpha = isSelected ? 0.85 : 0.65;
-    const strokeColor = isSelected ? 0xfbbf24 : isCurrent ? 0xf59e0b : isVisited ? 0x475569 : 0x374151;
-    const strokeWidth = isSelected ? 2 : 1;
-    cell.fillStyle(fillColor, fillAlpha);
-    cell.fillRoundedRect(x, y, cellW, cellH, 8);
-    cell.lineStyle(strokeWidth, strokeColor, 0.95);
-    cell.strokeRoundedRect(x, y, cellW, cellH, 8);
-    scene.subPanel.add(cell);
+    const manhattan = Math.abs(sourcePos.row - targetPos.row) + Math.abs(sourcePos.col - targetPos.col);
+    if (manhattan !== 1) return;
 
-    const mapName = isVisited ? (MAPS[mapKey]?.name || mapKey) : "？？？";
-    const label = scene.add.text(
-      x + 8,
-      y + (cellH > 56 ? 11 : 8),
-      `${isCurrent ? "📍 " : ""}${mapName}`,
-      {
-        fontFamily: FONT.UI,
-        fontSize: cellH > 60 ? 11 : 10,
-        color: isCurrent ? "#fde68a" : (isSelected ? "#fbbf24" : (isVisited ? "#e2e8f0" : "#6b7280")),
-        wordWrap: { width: cellW - 16 },
-      },
-    );
-    scene.subPanel.add(label);
+    const sourceCenterX = mapAreaX + innerPaddingX + sourcePos.col * (cellW + gridGap) + cellW / 2;
+    const sourceCenterY = mapAreaY + innerPaddingTop + sourcePos.row * (cellH + gridGap) + cellH / 2;
+    const targetCenterX = mapAreaX + innerPaddingX + targetPos.col * (cellW + gridGap) + cellW / 2;
+    const targetCenterY = mapAreaY + innerPaddingTop + targetPos.row * (cellH + gridGap) + cellH / 2;
+    lineLayer.lineBetween(sourceCenterX, sourceCenterY, targetCenterX, targetCenterY);
   });
+  scene.subPanel.add(lineLayer);
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const mapKey = grid[row]?.[col] || null;
+      const x = mapAreaX + innerPaddingX + col * (cellW + gridGap);
+      const y = mapAreaY + innerPaddingTop + row * (cellH + gridGap);
+
+      if (!mapKey) {
+        const emptyCell = scene.add.graphics();
+        emptyCell.fillStyle(0x0b1220, 0.12);
+        emptyCell.fillRoundedRect(x, y, cellW, cellH, 6);
+        emptyCell.lineStyle(1, 0x334155, 0.25);
+        emptyCell.strokeRoundedRect(x, y, cellW, cellH, 6);
+        scene.subPanel.add(emptyCell);
+        continue;
+      }
+
+      const isCurrent = mapKey === effectiveCurrentMapKey;
+      const isSelected = mapKey === selectedMapKey;
+      const isVisited = visitedSet.has(mapKey);
+
+      const cell = scene.add.graphics();
+      const fillColor = isCurrent ? 0x422006 : isVisited ? 0x0f172a : 0x111827;
+      const fillAlpha = isSelected ? 0.85 : 0.65;
+      const strokeColor = isSelected ? 0xfbbf24 : isCurrent ? 0xf59e0b : isVisited ? 0x475569 : 0x374151;
+      const strokeWidth = isSelected ? 2 : 1;
+      cell.fillStyle(fillColor, fillAlpha);
+      cell.fillRoundedRect(x, y, cellW, cellH, 8);
+      cell.lineStyle(strokeWidth, strokeColor, 0.95);
+      cell.strokeRoundedRect(x, y, cellW, cellH, 8);
+      scene.subPanel.add(cell);
+
+      const mapName = isVisited ? (MAPS[mapKey]?.name || mapKey) : "？？？";
+      const label = scene.add.text(
+        x + 6,
+        y + (cellH > 52 ? 10 : 7),
+        `${isCurrent ? "📍 " : ""}${mapName}`,
+        {
+          fontFamily: FONT.UI,
+          fontSize: cellH > 52 ? 10 : 9,
+          color: isCurrent ? "#fde68a" : (isSelected ? "#fbbf24" : (isVisited ? "#e2e8f0" : "#6b7280")),
+          wordWrap: { width: cellW - 12 },
+        },
+      );
+      scene.subPanel.add(label);
+    }
+  }
 
   for (let vi = 0; vi < visibleCount; vi++) {
     const index = scrollStart + vi;
