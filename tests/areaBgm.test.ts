@@ -4,8 +4,11 @@ import { resolveAreaBgmKey } from "../js/audio/areaBgm.ts";
 describe("resolveAreaBgmKey", () => {
   it("現行マップキーを正しいBGM種別へ解決する", () => {
     expect(resolveAreaBgmKey("FOREST")).toBe("forest");
+    expect(resolveAreaBgmKey("MISTY_SWAMP")).toBe("forest");
     expect(resolveAreaBgmKey("CRYSTAL_CAVE")).toBe("cave");
+    expect(resolveAreaBgmKey("SHADOW_GROVE")).toBe("cave");
     expect(resolveAreaBgmKey("VOLCANIC_PASS")).toBe("volcano");
+    expect(resolveAreaBgmKey("SAND_VALLEY")).toBe("volcano");
     expect(resolveAreaBgmKey("FROZEN_PEAK")).toBe("ice");
     expect(resolveAreaBgmKey("CELESTIAL_GARDEN")).toBe("ruins");
     expect(resolveAreaBgmKey("EMOJI_TOWN")).toBe("field");
@@ -16,5 +19,7 @@ describe("resolveAreaBgmKey", () => {
     expect(resolveAreaBgmKey("MAGMA_PASS")).toBe("volcano");
     expect(resolveAreaBgmKey("RUINS")).toBe("ruins");
     expect(resolveAreaBgmKey("GARDEN")).toBe("ruins");
+    expect(resolveAreaBgmKey("DARK_TOWER")).toBe("dark");
+    expect(resolveAreaBgmKey("DARK_TOWER_INNER")).toBe("dark");
   });
 });

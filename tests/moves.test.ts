@@ -38,4 +38,20 @@ describe("moves data", () => {
 
     expect(getMoveById("BROKEN_CAT")?.category).toBe(MOVE_CATEGORY.PHYSICAL);
   });
+
+  it("targetDefenseStageがJSONから正しく取り込まれる", () => {
+    initMovesFromJson({
+      moves: [
+        {
+          id: "SHELL_BREAK",
+          name: "シェルブレイク",
+          type: "NORMAL",
+          category: MOVE_CATEGORY.STATUS,
+          targetDefenseStage: -1,
+        },
+      ],
+    });
+
+    expect(getMoveById("SHELL_BREAK")?.targetDefenseStage).toBe(-1);
+  });
 });

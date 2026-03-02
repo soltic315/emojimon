@@ -12,7 +12,7 @@ import { gsap } from "gsap";
 
 /** ラベルテキストの切り詰め */
 export function truncateLabel(text, maxChars = 16) {
-  const str = String(text || "");
+  const str = text == null ? "" : String(text);
   return str.length > maxChars ? `${str.slice(0, maxChars - 1)}…` : str;
 }
 

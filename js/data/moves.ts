@@ -51,6 +51,7 @@ export function initMovesFromJson(json) {
       selfAttackStage: raw.selfAttackStage ?? 0,
       selfDefenseStage: raw.selfDefenseStage ?? 0,
       targetAttackStage: raw.targetAttackStage ?? 0,
+      targetDefenseStage: raw.targetDefenseStage ?? 0,
       selfHealPercent: raw.selfHealPercent ?? 0,
       inflictStatus: raw.inflictStatus ?? null,
       statusChance: raw.statusChance ?? 0,

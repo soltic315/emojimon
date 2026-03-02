@@ -1,5 +1,36 @@
 # CHANGELOG
 
+## [2.1.2] - 2026-03-02
+
+### Note
+- 優先度と工数のバランスを重視し、進行リスク系4件・データ乖離2件・機能不足1件・テスト系3件の計8件を完了した。
+
+### Added
+- `tests/battleHudUpdate.test.ts` に `truncateLabel` の回帰テスト（`0`入力保持・省略記号付与）を追加。
+- `tests/battleResultRewards.test.ts` に `grantHeldItemDrops` の回帰テスト（`dropRate` 未定義時非ドロップ・有効値時ドロップ）を追加。
+
+### Changed
+- `js/data/moves.ts` の `initMovesFromJson` で `targetDefenseStage` をマッピング対象に追加。
+- `js/data/dataValidation.ts` の `moveSchema` に `targetDefenseStage` を追加。
+- `js/scenes/battle/battleResultRewards.ts` のドロップ判定を `dropRate` 有限値チェック + `0..1` クランプへ変更。
+- `js/scenes/battle/battleHudUpdate.ts` の `truncateLabel` で `0` を空文字化しないように変更。
+- `js/audio/areaBgm.ts` に `DARK_TOWER` の `dark` マッピングを追加。
+- `tests/moves.test.ts` に `targetDefenseStage` 取り込みテストを追加。
+- `tests/dataValidation.test.ts` に `targetDefenseStage` を許容する検証テストを追加。
+- `tests/areaBgm.test.ts` に `DARK_TOWER` / `MISTY_SWAMP` / `SAND_VALLEY` / `SHADOW_GROVE` の検証ケースを追加。
+- `TODO.md` から完了済みの `A-19` / `A-20` / `B-21` / `B-24` / `C-25` / `E-21` / `E-25` / `E-26` を削除し、統計サマリーを更新。
+- `package.json` と `package-lock.json` のバージョンを `2.1.1` から `2.1.2` に更新。
+
+### Fixed
+- 防御ダウン技で `targetDefenseStage` が取り込まれず効果が失われる問題を修正。
+- `dropRate` 未定義時の意図しない持ち物ドロップを修正。
+- `truncateLabel(0, ...)` が空文字になる不具合を修正。
+- `DARK_TOWER` で専用BGMキーが解決されない問題を修正。
+
+### Prompt
+- User: `優先度と対応工数のバランスを考えてTODOを5~10個を完了してください。lint/typecheck/test/buildは全てのTODOを完了した後に実施してください。`
+- Assistant（対応方針）: 高優先度かつ小〜中工数のTODOを8件選定して最小差分で実装・テスト追加を行い、最後に `lint/typecheck/test/build` を一括実行して検証する。
+
 ## [2.1.1] - 2026-03-02
 
 ### Note

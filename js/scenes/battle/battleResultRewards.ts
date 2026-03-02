@@ -145,8 +145,12 @@ export function processVictoryRewards(scene, opponent, leader) {
 export function grantHeldItemDrops(scene, opponent) {
   const heldItems = Array.isArray(opponent?.species?.heldItems) ? opponent.species.heldItems : [];
   heldItems.forEach((entry) => {
-    if (!entry || !entry.itemId || entry.dropRate <= 0) return;
-    if (Math.random() > entry.dropRate) return;
+    if (!entry || !entry.itemId) return;
+    const dropRate = Number.isFinite(entry.dropRate)
+      ? Math.max(0, Math.min(1, entry.dropRate))
+      : 0;
+    if (dropRate <= 0) return;
+    if (Math.random() > dropRate) return;
     gameState.addItem(entry.itemId, 1);
     const itemDef = getItemById(entry.itemId);
     const itemName = itemDef?.name || entry.itemId;

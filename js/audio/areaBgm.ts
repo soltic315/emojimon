@@ -19,6 +19,7 @@ export function resolveAreaBgmKey(mapKey: string): AreaBgmKey {
     case "RUINS":
     case "GARDEN":
       return "ruins";
+    case "DARK_TOWER":
     case "DARK_TOWER_INNER":
       return "dark";
   }

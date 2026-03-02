@@ -16,6 +16,7 @@ const moveSchema = z.object({
   selfAttackStage: z.number().int().optional(),
   selfDefenseStage: z.number().int().optional(),
   targetAttackStage: z.number().int().optional(),
+  targetDefenseStage: z.number().int().optional(),
   selfHealPercent: z.number().min(0).max(1).optional(),
   inflictStatus: z.string().nullable().optional(),
   statusChance: z.number().min(0).max(1).optional(),

@@ -110,4 +110,11 @@ describe("data validation", () => {
 
     expect(() => validateGameData(raw)).toThrowError(/swampPoolIds/);
   });
+
+  it("targetDefenseStageを含む技定義を許容する", () => {
+    const raw = createValidData();
+    raw.moves.moves[0].targetDefenseStage = -1;
+
+    expect(() => validateGameData(raw)).not.toThrow();
+  });
 });
