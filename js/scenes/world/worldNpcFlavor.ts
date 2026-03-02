@@ -97,6 +97,74 @@ const INDOOR_MAPS = new Set([
   "FOREST_GYM",
 ]);
 
+const UNIQUE_NPC_FACE_POOL = [
+  "🧑‍🔬",
+  "👩‍🔬",
+  "🧑‍🏫",
+  "🧙",
+  "🧝",
+  "🧛",
+  "🧞",
+  "🧜",
+  "🧚",
+  "🥷",
+  "🧑‍🚀",
+  "🧑‍✈️",
+  "🧑‍🚒",
+  "🧑‍🌾",
+  "🧑‍🍳",
+  "🧑‍🎨",
+  "🧑‍🎤",
+  "🧑‍⚖️",
+  "🧑‍🏭",
+  "🧑‍💻",
+  "🧑‍🔧",
+  "🧑‍🔬",
+  "🧑‍⚕️",
+  "🧑‍💼",
+  "🧑‍🎓",
+  "👨",
+  "👩",
+  "🧔",
+  "👵",
+  "👴",
+  "🦸",
+  "🦹",
+  "🤴",
+  "👸",
+  "🫅",
+  "🫃",
+  "🫄",
+  "🧑",
+  "👱",
+  "🧑‍🦰",
+  "🧑‍🦱",
+  "🧑‍🦳",
+  "🧑‍🦲",
+  "🧑‍🦯",
+  "🧑‍🦼",
+  "🧑‍🦽",
+  "🤵",
+  "👰",
+  "🥸",
+  "🤠",
+  "😎",
+  "🤓",
+  "🧐",
+  "🙂",
+  "😊",
+  "😄",
+  "😌",
+  "😼",
+  "😺",
+];
+
+const UNIQUE_NPC_FACE_OVERRIDES = {
+  "special:lab_professor": "🧑‍🔬",
+  "story:professor_prologue": "🧑‍🔬",
+  "story:professor_town_hint": "🧑‍🔬",
+};
+
 function hashSeed(seed) {
   let hash = 2166136261;
   for (let i = 0; i < seed.length; i += 1) {
@@ -140,12 +208,50 @@ function shouldWanderByDefault(npc) {
   return true;
 }
 
+function resolveUniqueNpcKey(mapKey, npc) {
+  if (mapKey === "LAB" && npc.x === 7 && npc.y === 2) {
+    return "special:lab_professor";
+  }
+  if (typeof npc.story === "string" && npc.story.length > 0) {
+    return `story:${npc.story}`;
+  }
+  if (typeof npc.rivalBattle === "string" && npc.rivalBattle.length > 0) {
+    return `battle:${npc.rivalBattle}`;
+  }
+  if (typeof npc.trainerName === "string" && npc.trainerName.length > 0) {
+    return `trainer:${npc.trainerName}`;
+  }
+  if (npc.gymLeader) {
+    return `gymLeader:${mapKey}:${npc.x}:${npc.y}`;
+  }
+  if (npc.arena) {
+    return `arena:${mapKey}:${npc.x}:${npc.y}`;
+  }
+  if (npc.shop) {
+    return `shop:${mapKey}:${npc.x}:${npc.y}`;
+  }
+  if (npc.heal) {
+    return `healer:${mapKey}:${npc.x}:${npc.y}`;
+  }
+  return null;
+}
+
+function resolveUniqueNpcFace(mapKey, npc) {
+  const uniqueKey = resolveUniqueNpcKey(mapKey, npc);
+  if (!uniqueKey) return "";
+  if (UNIQUE_NPC_FACE_OVERRIDES[uniqueKey]) {
+    return UNIQUE_NPC_FACE_OVERRIDES[uniqueKey];
+  }
+  return pickStable(UNIQUE_NPC_FACE_POOL, uniqueKey);
+}
+
 export function enhanceMapNpcs(mapKey, npcs) {
   return (npcs || []).map((npc) => {
     const role = inferRole(npc);
     const seed = `${mapKey}:${npc.x}:${npc.y}:${role}:${npc.story || ""}:${npc.trainerName || ""}`;
     const roleFaces = ROLE_FACE_POOL[role] || ROLE_FACE_POOL.villager;
-    const face = npc.face || pickStable(roleFaces, seed);
+    const uniqueFace = resolveUniqueNpcFace(mapKey, npc);
+    const face = npc.face || uniqueFace || pickStable(roleFaces, seed);
     const speakerName = npc.speakerName || ROLE_SPEAKERS[role] || ROLE_SPEAKERS.villager;
 
     const baseLines = [];

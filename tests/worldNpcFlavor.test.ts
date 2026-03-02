@@ -40,4 +40,27 @@ describe("worldNpcFlavor", () => {
     const label = resolveNpcSpeakerLabel({ speakerName: "町のひと", face: "🙂" });
     expect(label).toBe("町のひと 🙂");
   });
+
+  it("博士はシナリオ状態に関係なく同じ絵文字で表示される", () => {
+    const [professorWithStory] = enhanceMapNpcs("LAB", [
+      { x: 7, y: 2, story: "professor_prologue" },
+    ]);
+    const [professorAfterPrologue] = enhanceMapNpcs("LAB", [
+      { x: 7, y: 2, text: "旅の調子はどうだい？" },
+    ]);
+
+    expect(professorWithStory.face).toBe("🧑‍🔬");
+    expect(professorAfterPrologue.face).toBe("🧑‍🔬");
+  });
+
+  it("ユニークNPCは同一識別子で安定した絵文字になる", () => {
+    const [first] = enhanceMapNpcs("FOREST", [
+      { x: 9, y: 8, rivalBattle: "forest_scout", trainerName: "レンジャー ミナト" },
+    ]);
+    const [second] = enhanceMapNpcs("FOREST", [
+      { x: 9, y: 8, rivalBattle: "forest_scout", trainerName: "レンジャー ミナト", text: "再戦だ！" },
+    ]);
+
+    expect(first.face).toBe(second.face);
+  });
 });

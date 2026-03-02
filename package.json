@@ -1,6 +1,6 @@
 {
   "name": "emojimon",
-  "version": "2.1.14",
+  "version": "2.1.15",
   "description": "ブラウザで遊べる某モンスター風ターン制バトルゲーム",
   "private": true,
   "type": "module",
