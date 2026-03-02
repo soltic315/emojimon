@@ -11,9 +11,8 @@ export const MAIN_MENU_TOP_MARGIN = 14;
 export const SUB_PANEL_LEFT_MARGIN = 14;
 /** メイン–サブパネル間ギャップ */
 export const MAIN_SUB_PANEL_GAP = 12;
-/** サブパネル左端オフセット（＝メイン幅+各マージン合計） */
-export const SUB_PANEL_WIDTH_OFFSET =
-  MAIN_MENU_PANEL_WIDTH + MAIN_MENU_RIGHT_MARGIN + SUB_PANEL_LEFT_MARGIN + MAIN_SUB_PANEL_GAP;
+/** サブパネルを全画面表示するための左右オフセット（10px + 10px） */
+export const SUB_PANEL_WIDTH_OFFSET = 20;
 
 /**
  * テキストオブジェクトを maxWidth に収まるよう末尾を「…」で切り詰める。

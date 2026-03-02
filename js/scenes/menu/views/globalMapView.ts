@@ -22,9 +22,7 @@ const GLOBAL_MAP_HIDDEN_KEYS = new Set([
 const GLOBAL_MAP_KEYS = Object.keys(MAPS).filter((mapKey) => !GLOBAL_MAP_HIDDEN_KEYS.has(mapKey));
 
 function buildGlobalMapConnections() {
-  const edges = [];
   const targetsBySource = {};
-  const edgeKeys = new Set();
   GLOBAL_MAP_KEYS.forEach((source) => {
     const transitions = DOOR_TRANSITIONS[source] || [];
     const uniqueTargets = [];
@@ -38,16 +36,11 @@ function buildGlobalMapConnections() {
         uniqueTargetSet.add(target);
         uniqueTargets.push(target);
       }
-
-      const edgeKey = [source, target].sort().join("__");
-      if (edgeKeys.has(edgeKey)) return;
-      edgeKeys.add(edgeKey);
-      edges.push({ source, target });
     });
 
     targetsBySource[source] = uniqueTargets;
   });
-  return { edges, targetsBySource };
+  return { targetsBySource };
 }
 
 const GLOBAL_MAP_CONNECTIONS = buildGlobalMapConnections();
@@ -57,11 +50,11 @@ export function renderGlobalMapView(scene) {
   const panelW = width - SUB_PANEL_WIDTH_OFFSET;
   const panelX = 10;
   const panelY = 10;
-  const listAreaW = Math.min(250, Math.max(200, Math.floor(panelW * 0.35)));
+  const listAreaW = Math.min(320, Math.max(230, Math.floor(panelW * 0.32)));
   const mapAreaX = panelX + listAreaW + 18;
   const mapAreaY = panelY + 44;
-  const mapAreaW = Math.max(220, panelW - listAreaW - 30);
-  const mapAreaH = 240;
+  const mapAreaW = Math.max(260, panelW - listAreaW - 30);
+  const mapAreaH = Math.max(220, height - 210);
 
   const bg = scene.add.graphics();
   drawPanel(bg, panelX, panelY, panelW, height - 20, { radius: 12, headerHeight: 24 });
@@ -86,38 +79,6 @@ export function renderGlobalMapView(scene) {
   scene.subMenuIndex = Phaser.Math.Clamp(scene.subMenuIndex, 0, Math.max(0, mapKeys.length - 1));
   const selectedMapKey = mapKeys[scene.subMenuIndex] || effectiveCurrentMapKey;
 
-  const nodeLayout = {
-    EMOJI_TOWN: { x: 0.08, y: 0.56 },
-    FOREST: { x: 0.2, y: 0.56 },
-    MISTY_SWAMP: { x: 0.33, y: 0.44 },
-    CORAL_REEF: { x: 0.47, y: 0.44 },
-    CRYSTAL_CAVE: { x: 0.33, y: 0.64 },
-    DARK_TOWER: { x: 0.46, y: 0.76 },
-    SHADOW_GROVE: { x: 0.58, y: 0.76 },
-    VOLCANIC_PASS: { x: 0.47, y: 0.64 },
-    SAND_VALLEY: { x: 0.62, y: 0.64 },
-    FROZEN_PEAK: { x: 0.76, y: 0.64 },
-    ANCIENT_LIBRARY: { x: 0.86, y: 0.52 },
-    SKY_RUINS: { x: 0.94, y: 0.4 },
-    CELESTIAL_GARDEN: { x: 0.94, y: 0.68 },
-    STARFALL_BASIN: { x: 0.98, y: 0.82 },
-  };
-
-  const nodeCenters = {};
-  mapKeys.forEach((mapKey, index) => {
-    const fixed = nodeLayout[mapKey];
-    const fallbackCol = index % 4;
-    const fallbackRow = Math.floor(index / 4);
-    const fx = 0.08 + fallbackCol * 0.24;
-    const fy = 0.2 + fallbackRow * 0.2;
-    const nx = fixed ? fixed.x : fx;
-    const ny = fixed ? fixed.y : Math.min(0.92, fy);
-    nodeCenters[mapKey] = {
-      x: mapAreaX + Math.round(mapAreaW * nx),
-      y: mapAreaY + Math.round(mapAreaH * ny),
-    };
-  });
-
   const currentLine = scene.add.text(panelX + listAreaW + 24, panelY + 12, `現在地: ${currentMapName}`, {
     fontFamily: FONT.UI,
     fontSize: 12,
@@ -138,58 +99,61 @@ export function renderGlobalMapView(scene) {
   mapBg.strokeRoundedRect(mapAreaX, mapAreaY, mapAreaW, mapAreaH, 10);
   scene.subPanel.add(mapBg);
 
-  const mapLegend = scene.add.text(mapAreaX + 10, mapAreaY + 8, "ワールド接続図", {
+  const mapLegend = scene.add.text(mapAreaX + 10, mapAreaY + 8, "ワールド格子マップ", {
     fontFamily: FONT.UI,
     fontSize: 12,
     color: "#93c5fd",
   });
   scene.subPanel.add(mapLegend);
 
-  GLOBAL_MAP_CONNECTIONS.edges.forEach(({ source, target }) => {
-      if (!nodeCenters[source] || !nodeCenters[target]) return;
-      const from = nodeCenters[source];
-      const to = nodeCenters[target];
-      const isFocused = source === selectedMapKey || target === selectedMapKey;
+  const columns = Math.max(3, Math.min(6, Math.ceil(Math.sqrt(mapKeys.length))));
+  const rows = Math.max(1, Math.ceil(mapKeys.length / columns));
+  const gridGap = 8;
+  const innerPaddingX = 14;
+  const innerPaddingTop = 28;
+  const innerPaddingBottom = 14;
+  const cellW = Math.max(
+    96,
+    Math.floor((mapAreaW - innerPaddingX * 2 - (columns - 1) * gridGap) / columns),
+  );
+  const cellH = Math.max(
+    52,
+    Math.floor((mapAreaH - innerPaddingTop - innerPaddingBottom - (rows - 1) * gridGap) / rows),
+  );
 
-      const edge = scene.add.graphics();
-      edge.lineStyle(isFocused ? 2 : 1, isFocused ? 0x93c5fd : 0x475569, isFocused ? 0.95 : 0.7);
-      edge.beginPath();
-      edge.moveTo(from.x, from.y);
-      edge.lineTo(to.x, to.y);
-      edge.strokePath();
-      scene.subPanel.add(edge);
-  });
-
-  mapKeys.forEach((mapKey) => {
-    const center = nodeCenters[mapKey];
+  mapKeys.forEach((mapKey, index) => {
+    const col = index % columns;
+    const row = Math.floor(index / columns);
+    const x = mapAreaX + innerPaddingX + col * (cellW + gridGap);
+    const y = mapAreaY + innerPaddingTop + row * (cellH + gridGap);
     const isCurrent = mapKey === effectiveCurrentMapKey;
     const isSelected = mapKey === selectedMapKey;
     const isVisited = visitedSet.has(mapKey);
 
-    const nodeColor = isCurrent ? 0xfacc15 : (isVisited ? 0x94a3b8 : 0x475569);
-    const node = scene.add.circle(center.x, center.y, isSelected ? 7 : 5, nodeColor, 0.95);
-    scene.subPanel.add(node);
+    const cell = scene.add.graphics();
+    const fillColor = isCurrent ? 0x422006 : isVisited ? 0x0f172a : 0x111827;
+    const fillAlpha = isSelected ? 0.85 : 0.65;
+    const strokeColor = isSelected ? 0xfbbf24 : isCurrent ? 0xf59e0b : isVisited ? 0x475569 : 0x374151;
+    const strokeWidth = isSelected ? 2 : 1;
+    cell.fillStyle(fillColor, fillAlpha);
+    cell.fillRoundedRect(x, y, cellW, cellH, 8);
+    cell.lineStyle(strokeWidth, strokeColor, 0.95);
+    cell.strokeRoundedRect(x, y, cellW, cellH, 8);
+    scene.subPanel.add(cell);
 
-    if (isSelected) {
-      const ring = scene.add.circle(center.x, center.y, 11, 0x000000, 0).setStrokeStyle(2, 0xfbbf24, 0.95);
-      scene.subPanel.add(ring);
-    }
-
-    const mapLabel = isVisited ? (MAPS[mapKey]?.name || mapKey) : "？？？";
-    const label = scene.add.text(center.x + 8, center.y - 8, mapLabel, {
-      fontFamily: FONT.UI,
-      fontSize: 10,
-      color: isCurrent ? "#fde68a" : (isSelected ? "#fbbf24" : (isVisited ? "#cbd5e1" : "#64748b")),
-    });
-    scene.subPanel.add(label);
-
-    if (isCurrent) {
-      const pin = scene.add.text(center.x - 4, center.y - 20, "📍", {
+    const mapName = isVisited ? (MAPS[mapKey]?.name || mapKey) : "？？？";
+    const label = scene.add.text(
+      x + 8,
+      y + (cellH > 56 ? 11 : 8),
+      `${isCurrent ? "📍 " : ""}${mapName}`,
+      {
         fontFamily: FONT.UI,
-        fontSize: 11,
-      });
-      scene.subPanel.add(pin);
-    }
+        fontSize: cellH > 60 ? 11 : 10,
+        color: isCurrent ? "#fde68a" : (isSelected ? "#fbbf24" : (isVisited ? "#e2e8f0" : "#6b7280")),
+        wordWrap: { width: cellW - 16 },
+      },
+    );
+    scene.subPanel.add(label);
   });
 
   for (let vi = 0; vi < visibleCount; vi++) {
@@ -236,12 +200,13 @@ export function renderGlobalMapView(scene) {
 
   const divider = scene.add.graphics();
   divider.fillStyle(0x334155, 0.65);
-  divider.fillRoundedRect(panelX + 12, panelY + 286, panelW - 24, 2, 1);
+  const connectionTop = mapAreaY + mapAreaH + 12;
+  divider.fillRoundedRect(panelX + 12, connectionTop, panelW - 24, 2, 1);
   scene.subPanel.add(divider);
 
   const selectedVisited = visitedSet.has(selectedMapKey);
   const selectedName = selectedVisited ? (MAPS[selectedMapKey]?.name || selectedMapKey) : "？？？";
-  const connectionTitle = scene.add.text(panelX + 20, panelY + 300, `接続先: ${selectedName}`, {
+  const connectionTitle = scene.add.text(panelX + 20, connectionTop + 12, `接続先: ${selectedName}`, {
     fontFamily: FONT.UI,
     fontSize: 13,
     color: "#93c5fd",
@@ -257,11 +222,12 @@ export function renderGlobalMapView(scene) {
   const connectionLines = targets.length > 0
     ? targets.map((name) => `・${name}`)
     : ["・接続先なし"];
-  const connectionBody = scene.add.text(panelX + 24, panelY + 326, connectionLines.join("\n"), {
+  const connectionBody = scene.add.text(panelX + 24, connectionTop + 38, connectionLines.join("\n"), {
     fontFamily: FONT.UI,
     fontSize: 13,
     color: "#cbd5e1",
     lineSpacing: 6,
+    wordWrap: { width: panelW - 48 },
   });
   scene.subPanel.add(connectionBody);
 
