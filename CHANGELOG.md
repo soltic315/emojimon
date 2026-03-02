@@ -1,5 +1,28 @@
 # CHANGELOG
 
+## [1.17.1] - 2026-03-02
+
+### Note
+- コード構造・保守性（Dカテゴリ）から、重み抽選ロジックの重複を解消し、抽選仕様の一貫性を高めた。
+
+### Added
+- `js/data/weightedRandom.ts` を追加し、汎用の重み抽選ユーティリティ `pickByWeight()` を実装。
+- `tests/weightedRandom.test.ts` を追加し、重み比率・ゼロ重み・不正乱数入力の挙動を検証する単体テストを実装。
+
+### Changed
+- `js/data/monsters.ts` の特性抽選を共通 `pickByWeight()` 利用へ変更し、ローカル重み抽選実装を削除。
+- `js/data/wildEncounters.ts` の野生出現抽選を共通 `pickByWeight()` 利用へ変更し、ローカル重み抽選実装を削除。
+- `js/data/mapRules.ts` の天候抽選を共通 `pickByWeight()` 利用へ変更。
+- `TODO.md` から D-07 を削除し、Dカテゴリ/総件数サマリーを更新。
+- `package.json` と `package-lock.json` のバージョンを `1.17.0` から `1.17.1` に更新。
+
+### Fixed
+- データ抽選ロジックが複数ファイルで重複管理され、将来的な仕様差分が発生しやすい状態を改善。
+
+### Prompt
+- User: `簡単にやれるものから順次作業していってください`
+- Assistant（対応方針）: TODOのDカテゴリから D-07 を最小差分で先行対応し、共通化・テスト・検証・TODO/版数/履歴を同期する。
+
 ## [1.17.0] - 2026-03-02
 
 ### Note

@@ -14,6 +14,7 @@ import {
   getLibraryWildMonster,
   getBasinWildMonster,
 } from "./monsters.ts";
+import { pickByWeight } from "./weightedRandom.ts";
 
 export const MAP_KEYS = {
   EMOJI_TOWN: "EMOJI_TOWN",
@@ -265,17 +266,8 @@ export function rollWeatherForMapByHour(mapKey, hour, randomValue = Math.random(
     };
   });
 
-  const totalWeight = weightedTable.reduce((sum, entry) => sum + entry.weight, 0);
-  if (totalWeight <= 0) return WEATHER.NONE;
-
-  const safeRandom = Math.min(0.999999, Math.max(0, Number.isFinite(randomValue) ? randomValue : 0));
-  let cursor = safeRandom * totalWeight;
-  for (const entry of weightedTable) {
-    cursor -= entry.weight;
-    if (cursor < 0) return entry.weather;
-  }
-
-  return weightedTable[weightedTable.length - 1]?.weather || WEATHER.NONE;
+  const picked = pickByWeight(weightedTable, (entry) => entry.weight, randomValue);
+  return picked?.weather || WEATHER.NONE;
 }
 
 export function createWildMonsterForEncounter(mapKey, isForest = false) {

@@ -1,5 +1,6 @@
 import { MOVES } from "./moves.ts";
 import { initWildPools } from "./wildEncounters.ts";
+import { pickByWeight } from "./weightedRandom.ts";
 
 // 既存インポートとの互換性のため再エクスポート
 export {
@@ -172,23 +173,6 @@ function normalizeAbilityRates(raw, fallbackAbilityId) {
   return normalized;
 }
 
-function pickByWeight(entries, randomValue = Math.random()) {
-  if (!Array.isArray(entries) || entries.length === 0) return null;
-  const totalWeight = entries.reduce((sum, entry) => sum + Math.max(0, entry.weight || 0), 0);
-  if (totalWeight <= 0) return entries[0];
-
-  const safeRandom = Math.max(0, Math.min(0.999999, Number.isFinite(randomValue) ? randomValue : 0));
-  let cursor = safeRandom * totalWeight;
-  for (const entry of entries) {
-    cursor -= Math.max(0, entry.weight || 0);
-    if (cursor < 0) return entry;
-  }
-
-  return entries[entries.length - 1];
-}
-
-
-
 export function rollMonsterAbilityId(species) {
   if (!species) return "STURDY";
   const rates = Array.isArray(species.abilityRates) && species.abilityRates.length > 0
@@ -197,12 +181,11 @@ export function rollMonsterAbilityId(species) {
       abilityId: species.abilityId || DEFAULT_ABILITY_BY_TYPE[species.primaryType] || "STURDY",
       acquisitionRate: 1,
     }];
-  const weighted = rates.map((entry) => ({
-    value: entry.abilityId,
-    weight: Number.isFinite(entry.acquisitionRate) ? Math.max(0, entry.acquisitionRate) : 0,
-  }));
-  const picked = pickByWeight(weighted);
-  return picked?.value || rates[0].abilityId;
+  const picked = pickByWeight(
+    rates,
+    (entry) => (Number.isFinite(entry.acquisitionRate) ? entry.acquisitionRate : 0),
+  );
+  return picked?.abilityId || rates[0].abilityId;
 }
 
 

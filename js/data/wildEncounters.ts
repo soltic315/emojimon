@@ -3,32 +3,17 @@
  * エリア別出現テーブル・ジムボス・闘技場対戦相手の生成
  */
 import { calcStats, rollMonsterAbilityId, MONSTERS } from "./monsters.ts";
+import { pickByWeight } from "./weightedRandom.ts";
 
 // ── 内部ユーティリティ ──
 
-function pickByWeight(entries, randomValue = Math.random()) {
-  if (!Array.isArray(entries) || entries.length === 0) return null;
-  const totalWeight = entries.reduce((sum, entry) => sum + Math.max(0, entry.weight || 0), 0);
-  if (totalWeight <= 0) return entries[0];
-
-  const safeRandom = Math.max(0, Math.min(0.999999, Number.isFinite(randomValue) ? randomValue : 0));
-  let cursor = safeRandom * totalWeight;
-  for (const entry of entries) {
-    cursor -= Math.max(0, entry.weight || 0);
-    if (cursor < 0) return entry;
-  }
-
-  return entries[entries.length - 1];
-}
-
 function pickWeightedMonster(pool) {
   if (!Array.isArray(pool) || pool.length === 0) return null;
-  const weightedPool = pool.map((species) => ({
-    value: species,
-    weight: Number.isFinite(species?.spawnRate) ? Math.max(0, species.spawnRate) : 1,
-  }));
-  const picked = pickByWeight(weightedPool);
-  return picked?.value || pool[0];
+  const picked = pickByWeight(
+    pool,
+    (species) => (Number.isFinite(species?.spawnRate) ? species.spawnRate : 1),
+  );
+  return picked || pool[0];
 }
 
 function createMonsterEntry(base, level, extra = {}) {
