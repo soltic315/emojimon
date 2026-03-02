@@ -31,6 +31,7 @@ import { createDefaultStoryFlags, sanitizeStoryFlags } from "./storyFlags.ts";
 import { getLocalDateKey, buildDailyChallenge } from "./dailyChallenge.ts";
 
 export const PARTY_CAPACITY = 3;
+const SAVE_TEMP_KEY = `${SAVE_KEY}_tmp`;
 
 /** モンスターの表示名を取得（ニックネーム優先） */
 export function getMonsterDisplayName(monster) {
@@ -82,6 +83,9 @@ class GameState {
     };
     this.gameplaySettings = { ...DEFAULT_GAMEPLAY_SETTINGS };
     this.storyFlags = createDefaultStoryFlags();
+    this.menuLastIndex = 0;
+    this.lastSaveErrorCode = null;
+    this.lastSaveErrorMessage = "";
     this.refreshDailyChallenge();
     this.loadAudioSettings();
   }
@@ -130,6 +134,27 @@ class GameState {
     this.audioSettings = prevAudioSettings;
     this.gameplaySettings = sanitizeGameplaySettings(prevGameplaySettings);
     this.storyFlags = createDefaultStoryFlags();
+    this.menuLastIndex = 0;
+    this.lastSaveErrorCode = null;
+    this.lastSaveErrorMessage = "";
+  }
+
+  getLastSaveErrorCode() {
+    return this.lastSaveErrorCode;
+  }
+
+  getLastSaveErrorMessage() {
+    return this.lastSaveErrorMessage;
+  }
+
+  _setSaveError(error) {
+    const name = error?.name || "";
+    const message = String(error?.message || "");
+    const isQuota = name === "QuotaExceededError"
+      || message.includes("QuotaExceededError")
+      || message.includes("quota");
+    this.lastSaveErrorCode = isQuota ? "QUOTA_EXCEEDED" : "UNKNOWN";
+    this.lastSaveErrorMessage = message;
   }
 
   refreshDailyChallenge() {
@@ -715,8 +740,9 @@ class GameState {
   /** セーブデータがあるか */
   hasSaveData() {
     try {
-      return !!localStorage.getItem(SAVE_KEY);
-    } catch {
+      return !!(localStorage.getItem(SAVE_KEY) || localStorage.getItem(SAVE_TEMP_KEY));
+    } catch (error) {
+      console.warn("gameState: セーブ有無確認に失敗", error);
       return false;
     }
   }
@@ -732,7 +758,8 @@ class GameState {
         seVolume: typeof parsed?.seVolume === "number" ? parsed.seVolume : 0.5,
       };
       this.gameplaySettings = sanitizeGameplaySettings(parsed?.gameplaySettings);
-    } catch {
+    } catch (error) {
+      console.warn("gameState: オーディオ設定ロードに失敗", error);
       this.audioSettings = {
         muted: false,
         bgmVolume: 0.3,
@@ -749,13 +776,16 @@ class GameState {
         gameplaySettings: sanitizeGameplaySettings(this.gameplaySettings),
       }));
       return true;
-    } catch {
+    } catch (error) {
+      console.warn("gameState: オーディオ設定保存に失敗", error);
       return false;
     }
   }
 
   /** ゲーム状態をセーブ */
   save() {
+    this.lastSaveErrorCode = null;
+    this.lastSaveErrorMessage = "";
     try {
       const data = {
         playerName: this.playerName,
@@ -821,12 +851,21 @@ class GameState {
       };
       const serialized = JSON.stringify(data);
       const previous = localStorage.getItem(SAVE_KEY);
+
+      localStorage.setItem(SAVE_TEMP_KEY, serialized);
       if (previous) {
         localStorage.setItem(SAVE_BACKUP_KEY, previous);
       }
       localStorage.setItem(SAVE_KEY, serialized);
+      localStorage.removeItem(SAVE_TEMP_KEY);
       return true;
     } catch (e) {
+      this._setSaveError(e);
+      try {
+        localStorage.removeItem(SAVE_TEMP_KEY);
+      } catch (cleanupError) {
+        console.warn("gameState: 一時セーブ削除に失敗", cleanupError);
+      }
       console.warn("セーブに失敗:", e);
       return false;
     }
@@ -920,31 +959,32 @@ class GameState {
       return true;
     };
 
-    const rawPrimary = localStorage.getItem(SAVE_KEY);
-    if (!rawPrimary) return false;
+    const saveCandidates = [
+      { key: SAVE_KEY, label: "メインセーブ" },
+      { key: SAVE_TEMP_KEY, label: "一時セーブ" },
+      { key: SAVE_BACKUP_KEY, label: "バックアップセーブ" },
+    ];
 
-    try {
-      const parsed = JSON.parse(rawPrimary);
-      const data = parseAndValidateSaveData(parsed, "メインセーブ");
-      return applyLoadedData(data);
-    } catch (e) {
-      console.warn("メインセーブのロードに失敗:", e);
-    }
-
-    try {
-      const rawBackup = localStorage.getItem(SAVE_BACKUP_KEY);
-      if (!rawBackup) return false;
-      const backupParsed = JSON.parse(rawBackup);
-      const backupData = parseAndValidateSaveData(backupParsed, "バックアップセーブ");
-      const loaded = applyLoadedData(backupData);
-      if (loaded) {
-        console.warn("バックアップセーブから復旧しました。");
+    let hasAnyCandidate = false;
+    for (const candidate of saveCandidates) {
+      const raw = localStorage.getItem(candidate.key);
+      if (!raw) continue;
+      hasAnyCandidate = true;
+      try {
+        const parsed = JSON.parse(raw);
+        const data = parseAndValidateSaveData(parsed, candidate.label);
+        const loaded = applyLoadedData(data);
+        if (loaded && candidate.key !== SAVE_KEY) {
+          console.warn(`${candidate.label}から復旧しました。`);
+        }
+        if (loaded) return true;
+      } catch (e) {
+        console.warn(`${candidate.label}のロードに失敗:`, e);
       }
-      return loaded;
-    } catch (e) {
-      console.warn("バックアップセーブのロードに失敗:", e);
-      return false;
     }
+
+    if (!hasAnyCandidate) return false;
+    return false;
   }
 
   /** セーブデータを削除 */
@@ -952,8 +992,9 @@ class GameState {
     try {
       localStorage.removeItem(SAVE_KEY);
       localStorage.removeItem(SAVE_BACKUP_KEY);
-    } catch {
-      // 無視
+      localStorage.removeItem(SAVE_TEMP_KEY);
+    } catch (error) {
+      console.warn("gameState: セーブ削除に失敗", error);
     }
   }
 }

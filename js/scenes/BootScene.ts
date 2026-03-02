@@ -80,6 +80,12 @@ export class BootScene extends Phaser.Scene {
     const monstersJsonUrl = new URL("../../assets/data/monsters.json", import.meta.url).href;
     const itemsJsonUrl = new URL("../../assets/data/items.json", import.meta.url).href;
     const abilitiesJsonUrl = new URL("../../assets/data/abilities.json", import.meta.url).href;
+    this._dataJsonUrls = {
+      moves: movesJsonUrl,
+      monsters: monstersJsonUrl,
+      items: itemsJsonUrl,
+      abilities: abilitiesJsonUrl,
+    };
 
     this.load.json("moves", movesJsonUrl);
     this.load.json("monsters", monstersJsonUrl);
@@ -87,20 +93,13 @@ export class BootScene extends Phaser.Scene {
     this.load.json("abilities", abilitiesJsonUrl);
   }
 
-  create() {
+  async create() {
     // テクスチャ生成
     this.createTextures();
 
     // JSON から技・モンスター・アイテム定義を初期化
-    const rawData = {
-      moves: this.cache.json.get("moves"),
-      monsters: this.cache.json.get("monsters"),
-      items: this.cache.json.get("items"),
-      abilities: this.cache.json.get("abilities"),
-    };
-
     try {
-      const validatedData = validateGameData(rawData);
+      const validatedData = await this._loadValidatedDataWithRetry();
       initMovesFromJson(validatedData.moves);
       initAbilitiesFromJson(validatedData.abilities);
       initMonstersFromJson(validatedData.monsters);
@@ -113,6 +112,45 @@ export class BootScene extends Phaser.Scene {
 
     // Audio 初期化をユーザー操作まで遅延
     this.scene.start("TitleScene");
+  }
+
+  _getRawDataFromCache() {
+    return {
+      moves: this.cache.json.get("moves"),
+      monsters: this.cache.json.get("monsters"),
+      items: this.cache.json.get("items"),
+      abilities: this.cache.json.get("abilities"),
+    };
+  }
+
+  async _reloadGameDataJson() {
+    if (!this._dataJsonUrls) return;
+
+    const [moves, monsters, items, abilities] = await Promise.all([
+      fetch(this._dataJsonUrls.moves).then((response) => response.json()),
+      fetch(this._dataJsonUrls.monsters).then((response) => response.json()),
+      fetch(this._dataJsonUrls.items).then((response) => response.json()),
+      fetch(this._dataJsonUrls.abilities).then((response) => response.json()),
+    ]);
+
+    this.cache.json.remove("moves");
+    this.cache.json.remove("monsters");
+    this.cache.json.remove("items");
+    this.cache.json.remove("abilities");
+    this.cache.json.add("moves", moves);
+    this.cache.json.add("monsters", monsters);
+    this.cache.json.add("items", items);
+    this.cache.json.add("abilities", abilities);
+  }
+
+  async _loadValidatedDataWithRetry() {
+    try {
+      return validateGameData(this._getRawDataFromCache());
+    } catch (firstError) {
+      console.warn("BootScene: 初回データ検証に失敗。再読込を試行します。", firstError);
+      await this._reloadGameDataJson();
+      return validateGameData(this._getRawDataFromCache());
+    }
   }
 
   showDataValidationError(error) {

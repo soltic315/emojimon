@@ -162,4 +162,18 @@ describe("data validation", () => {
 
     expect(() => validateGameData(raw)).toThrowError(/gymBoss2/);
   });
+
+  it("ランダム化した有効パラメータ群でも検証を通過する", () => {
+    for (let i = 0; i < 40; i += 1) {
+      const raw = createValidData();
+      raw.moves.moves[0].power = Math.floor(Math.random() * 150);
+      raw.moves.moves[0].accuracy = Math.random();
+      raw.moves.moves[0].staminaCost = 1 + Math.floor(Math.random() * 9);
+      raw.monsters.monsters[0].catchRate = Math.random();
+      raw.monsters.monsters[0].baseStats.maxHp = 10 + Math.floor(Math.random() * 200);
+      raw.items.items[0].price = Math.floor(Math.random() * 3000);
+
+      expect(() => validateGameData(raw)).not.toThrow();
+    }
+  });
 });

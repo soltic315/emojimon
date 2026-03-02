@@ -113,7 +113,8 @@ function repairMojibakeText(value) {
     const repaired = new TextDecoder("utf-8", { fatal: false }).decode(bytes);
     if (!repaired || repaired.includes("�")) return value;
     return repaired;
-  } catch {
+  } catch (error) {
+    console.warn("monsters: 文字化け補修に失敗", error);
     return value;
   }
 }

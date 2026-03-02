@@ -259,6 +259,10 @@ export class AudioManager {
     };
   }
 
+  private _logAudioWarning(context: string, error: unknown) {
+    console.warn(`AudioManager: ${context}`, error);
+  }
+
   // ─── SE ヘルパー（安全な発音ラッパー） ───
 
   private _safeTone(
@@ -266,17 +270,29 @@ export class AudioManager {
     note: string, dur: string, time?: number, velocity = 0.8,
   ) {
     if (!this._initialized || !synth) return;
-    try { synth.triggerAttackRelease(note, dur, time, velocity); } catch { /* 無視 */ }
+    try {
+      synth.triggerAttackRelease(note, dur, time, velocity);
+    } catch (error) {
+      this._logAudioWarning("SE発音に失敗", error);
+    }
   }
 
   private _safeNoise(dur: string, time?: number, velocity = 0.5) {
     if (!this._initialized || !this._noiseSynth) return;
-    try { this._noiseSynth.triggerAttackRelease(dur, time, velocity); } catch { /* 無視 */ }
+    try {
+      this._noiseSynth.triggerAttackRelease(dur, time, velocity);
+    } catch (error) {
+      this._logAudioWarning("ノイズSE発音に失敗", error);
+    }
   }
 
   private _safeMembrane(note: string, dur: string, time?: number, velocity = 0.6) {
     if (!this._initialized || !this._membraneSynth) return;
-    try { this._membraneSynth.triggerAttackRelease(note, dur, time, velocity); } catch { /* 無視 */ }
+    try {
+      this._membraneSynth.triggerAttackRelease(note, dur, time, velocity);
+    } catch (error) {
+      this._logAudioWarning("メンブレンSE発音に失敗", error);
+    }
   }
 
   private _variedVelocity(base: number, jitter = 0.08): number {
@@ -477,7 +493,12 @@ export class AudioManager {
   /** 全BGM停止 */
   private _stopBgmNow() {
     this._bgmParts.forEach((part) => {
-      try { part.stop(); part.dispose(); } catch { /* 無視 */ }
+      try {
+        part.stop();
+        part.dispose();
+      } catch (error) {
+        this._logAudioWarning("BGMパート停止に失敗", error);
+      }
     });
     this._bgmParts = [];
     this._currentBgm = null;
@@ -486,7 +507,9 @@ export class AudioManager {
       try {
         Tone.getTransport().stop();
         Tone.getTransport().cancel();
-      } catch { /* 無視 */ }
+      } catch (error) {
+        this._logAudioWarning("Transport停止に失敗", error);
+      }
       this._transportStarted = false;
     }
   }
@@ -570,7 +593,11 @@ export class AudioManager {
           t += Tone.Time(n.dur).toSeconds();
         }
         const part = new Tone.Part((time, value) => {
-          try { this._melodySynth?.triggerAttackRelease(value.note, value.dur, time, 0.7); } catch { /* 無視 */ }
+          try {
+            this._melodySynth?.triggerAttackRelease(value.note, value.dur, time, 0.7);
+          } catch (error) {
+            this._logAudioWarning("メロディ再生に失敗", error);
+          }
         }, events);
         part.loop = true;
         part.loopEnd = t;
@@ -587,7 +614,11 @@ export class AudioManager {
           t += Tone.Time(n.dur).toSeconds();
         }
         const part = new Tone.Part((time, value) => {
-          try { this._bassSynth?.triggerAttackRelease(value.note, value.dur, time, 0.5); } catch { /* 無視 */ }
+          try {
+            this._bassSynth?.triggerAttackRelease(value.note, value.dur, time, 0.5);
+          } catch (error) {
+            this._logAudioWarning("ベース再生に失敗", error);
+          }
         }, events);
         part.loop = true;
         part.loopEnd = t;
@@ -604,7 +635,11 @@ export class AudioManager {
           t += Tone.Time(c.dur).toSeconds();
         }
         const part = new Tone.Part((time, value) => {
-          try { this._padSynth?.triggerAttackRelease(value.notes, value.dur, time, 0.3); } catch { /* 無視 */ }
+          try {
+            this._padSynth?.triggerAttackRelease(value.notes, value.dur, time, 0.3);
+          } catch (error) {
+            this._logAudioWarning("パッド再生に失敗", error);
+          }
         }, events);
         part.loop = true;
         part.loopEnd = t;

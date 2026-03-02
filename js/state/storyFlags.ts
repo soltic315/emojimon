@@ -74,6 +74,12 @@ export const DEFAULT_STORY_FLAGS = Object.freeze({
   basinMeteorShardFound: false,
 });
 
+export const STORY_FLAG_KEYS = Object.freeze(Object.keys(DEFAULT_STORY_FLAGS));
+
+export function isStoryFlagKey(key) {
+  return STORY_FLAG_KEYS.includes(key);
+}
+
 export function createDefaultStoryFlags() {
   return { ...DEFAULT_STORY_FLAGS };
 }
@@ -82,7 +88,7 @@ export function sanitizeStoryFlags(raw) {
   const sanitized = createDefaultStoryFlags();
   if (!raw || typeof raw !== "object") return sanitized;
 
-  Object.keys(sanitized).forEach((key) => {
+  STORY_FLAG_KEYS.forEach((key) => {
     if (key === "starterSpeciesId") {
       const starterSpeciesId = raw[key];
       sanitized.starterSpeciesId = typeof starterSpeciesId === "string" && starterSpeciesId.length > 0

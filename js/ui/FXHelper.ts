@@ -13,7 +13,9 @@ export function addCameraVignette(camera: Phaser.Cameras.Scene2D.Camera, opts: {
   const { radius = 0.5, strength = 0.24 } = opts;
   try {
     camera.postFX.addVignette(0.5, 0.5, radius, strength);
-  } catch { /* WebGL未対応環境では無視 */ }
+  } catch (error) {
+    console.warn("FXHelper: ビネット適用に失敗", error);
+  }
 }
 
 /**
@@ -37,7 +39,9 @@ export function addCameraBloom(camera: Phaser.Cameras.Scene2D.Camera, opts: {
   } = opts;
   try {
     return camera.postFX.addBloom(color, offsetX, offsetY, blurStrength, strength, steps);
-  } catch { /* WebGL未対応環境では無視 */ }
+  } catch (error) {
+    console.warn("FXHelper: Bloom適用に失敗", error);
+  }
   return null;
 }
 
@@ -58,7 +62,9 @@ export function addGlow(
     if (gameObject.postFX) {
       return gameObject.postFX.addGlow(color, outerStrength, innerStrength, knockout);
     }
-  } catch { /* 無視 */ }
+  } catch (error) {
+    console.warn("FXHelper: Glow適用に失敗", error);
+  }
   return null;
 }
 
@@ -78,7 +84,9 @@ export function addShine(
     if (gameObject.postFX) {
       return gameObject.postFX.addShine(speed, lineWidth, gradient);
     }
-  } catch { /* 無視 */ }
+  } catch (error) {
+    console.warn("FXHelper: Shine適用に失敗", error);
+  }
   return null;
 }
 
@@ -97,7 +105,9 @@ export function flashDamage(camera: Phaser.Cameras.Scene2D.Camera, opts: {
     });
     // カメラシェイク
     camera.shake(duration * 1.5, intensity * 0.01);
-  } catch { /* 無視 */ }
+  } catch (error) {
+    console.warn("FXHelper: ダメージフラッシュに失敗", error);
+  }
 }
 
 /**
@@ -108,7 +118,9 @@ export function flashSuperHit(camera: Phaser.Cameras.Scene2D.Camera) {
   try {
     camera.flash(200, 255, 200, 50, false);
     camera.shake(300, 0.02);
-  } catch { /* 無視 */ }
+  } catch (error) {
+    console.warn("FXHelper: 強ヒットフラッシュに失敗", error);
+  }
 }
 
 /**
@@ -117,7 +129,9 @@ export function flashSuperHit(camera: Phaser.Cameras.Scene2D.Camera) {
 export function flashLevelUp(camera: Phaser.Cameras.Scene2D.Camera) {
   try {
     camera.flash(300, 255, 255, 200, false);
-  } catch { /* 無視 */ }
+  } catch (error) {
+    console.warn("FXHelper: レベルアップフラッシュに失敗", error);
+  }
 }
 
 /**
@@ -126,7 +140,9 @@ export function flashLevelUp(camera: Phaser.Cameras.Scene2D.Camera) {
 export function flashVictory(camera: Phaser.Cameras.Scene2D.Camera) {
   try {
     camera.flash(500, 255, 220, 100, false);
-  } catch { /* 無視 */ }
+  } catch (error) {
+    console.warn("FXHelper: 勝利フラッシュに失敗", error);
+  }
 }
 
 /**
@@ -179,7 +195,8 @@ export function createParticleBurst(
     });
 
     return emitter;
-  } catch {
+  } catch (error) {
+    console.warn("FXHelper: パーティクル生成に失敗", error);
     return null;
   }
 }
@@ -288,7 +305,9 @@ export function createWeatherParticles(
         tint: 0x4ade80,
       });
     }
-  } catch { /* 無視 */ }
+  } catch (error) {
+    console.warn("FXHelper: 天候パーティクル生成に失敗", error);
+  }
 
   return null;
 }

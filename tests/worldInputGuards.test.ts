@@ -32,4 +32,15 @@ describe("worldInputGuards", () => {
     expect(canInteractInWorld(normal)).toBe(true);
     expect(canOpenWorldMenu(normal)).toBe(true);
   });
+
+  it("遷移中・移動中・ショップ中はメニュー/会話を禁止する", () => {
+    expect(canInteractInWorld({ isMoving: true })).toBe(false);
+    expect(canOpenWorldMenu({ isMoving: true })).toBe(false);
+
+    expect(canInteractInWorld({ shopActive: true })).toBe(false);
+    expect(canOpenWorldMenu({ shopActive: true })).toBe(false);
+
+    expect(canInteractInWorld({ isEncounterTransitioning: true })).toBe(false);
+    expect(canOpenWorldMenu({ isEncounterTransitioning: true })).toBe(false);
+  });
 });

@@ -54,4 +54,21 @@ describe("moves data", () => {
 
     expect(getMoveById("SHELL_BREAK")?.targetDefenseStage).toBe(-1);
   });
+
+  it("既知フィールド以外の追加プロパティも保持する", () => {
+    initMovesFromJson({
+      moves: [
+        {
+          id: "FUTURE_MOVE",
+          name: "みらいテスト",
+          type: "NORMAL",
+          category: MOVE_CATEGORY.STATUS,
+          customTag: "future",
+        },
+      ],
+    });
+
+    const move = getMoveById("FUTURE_MOVE") as Record<string, unknown>;
+    expect(move.customTag).toBe("future");
+  });
 });

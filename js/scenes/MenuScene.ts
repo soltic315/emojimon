@@ -55,7 +55,10 @@ export class MenuScene extends Phaser.Scene {
 
   create() {
     const { width, height } = this.scale;
-    this.menuIndex = 0;
+    const rememberedMenuIndex = Number.isFinite(gameState.menuLastIndex)
+      ? Math.floor(gameState.menuLastIndex)
+      : 0;
+    this.menuIndex = Phaser.Math.Clamp(rememberedMenuIndex, 0, MENU_ITEMS.length - 1);
     this.subMenuActive = false;
     this.subMenuType = null;
     this.subMenuIndex = 0;
@@ -136,10 +139,12 @@ export class MenuScene extends Phaser.Scene {
       nextRepeatAtKey: "mainNavNextRepeatAt",
       onUp: () => {
         this.menuIndex = (this.menuIndex - 1 + MENU_ITEMS.length) % MENU_ITEMS.length;
+        gameState.menuLastIndex = this.menuIndex;
         this._renderMainMenu();
       },
       onDown: () => {
         this.menuIndex = (this.menuIndex + 1) % MENU_ITEMS.length;
+        gameState.menuLastIndex = this.menuIndex;
         this._renderMainMenu();
       },
     });
@@ -194,7 +199,11 @@ export class MenuScene extends Phaser.Scene {
           this._showCenterMessage("セーブしました！", "#86efac");
         } else {
           audioManager.playCancel();
-          this._showCenterMessage("セーブに失敗しました…", "#fca5a5");
+          const saveErrorCode = gameState.getLastSaveErrorCode?.();
+          this._showCenterMessage(
+            saveErrorCode === "QUOTA_EXCEEDED" ? "保存容量がいっぱいです…" : "セーブに失敗しました…",
+            "#fca5a5"
+          );
         }
         break;
       }
@@ -266,6 +275,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   closeMenu() {
+    gameState.menuLastIndex = this.menuIndex;
     detachSettingsKeyHandlers(this);
     this.scene.stop();
     this.scene.resume(this.fromScene);

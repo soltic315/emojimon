@@ -9,6 +9,20 @@ export const MOVE_STAMINA_COST_MAX = 9;
 
 export const MOVES = {};
 
+const MOVE_DEFAULTS = Object.freeze({
+  power: 0,
+  accuracy: 1,
+  description: "",
+  priority: 0,
+  selfAttackStage: 0,
+  selfDefenseStage: 0,
+  targetAttackStage: 0,
+  targetDefenseStage: 0,
+  selfHealPercent: 0,
+  inflictStatus: null,
+  statusChance: 0,
+});
+
 function normalizeMoveStaminaCost(value, fallback = 1) {
   if (!Number.isFinite(value)) return fallback;
   return Math.min(MOVE_STAMINA_COST_MAX, Math.max(MOVE_STAMINA_COST_MIN, Math.floor(value)));
@@ -42,6 +56,8 @@ export function initMovesFromJson(json) {
       : MOVE_CATEGORY.PHYSICAL;
 
     MOVES[raw.id] = {
+      ...MOVE_DEFAULTS,
+      ...raw,
       id: raw.id,
       name: raw.name,
       type: raw.type,
@@ -50,14 +66,6 @@ export function initMovesFromJson(json) {
       category,
       staminaCost: getMoveStaminaCost(raw),
       description: raw.description || "",
-      priority: raw.priority ?? 0,
-      selfAttackStage: raw.selfAttackStage ?? 0,
-      selfDefenseStage: raw.selfDefenseStage ?? 0,
-      targetAttackStage: raw.targetAttackStage ?? 0,
-      targetDefenseStage: raw.targetDefenseStage ?? 0,
-      selfHealPercent: raw.selfHealPercent ?? 0,
-      inflictStatus: raw.inflictStatus ?? null,
-      statusChance: raw.statusChance ?? 0,
     };
   });
 }

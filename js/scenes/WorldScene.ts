@@ -148,10 +148,14 @@ export class WorldScene extends Phaser.Scene {
     // セーブキー
     this._onWorldSaveDown = () => {
       if (this.shopActive) return;
-      // オートセーブ通知
       const ok = gameState.save();
-      audioManager.playSave();
-      this.showMessage(ok ? "セーブしました！" : "セーブに失敗しました…", 2000);
+      if (ok) {
+        audioManager.playSave();
+        this.showMessage("セーブしました！", 2000);
+      } else {
+        audioManager.playCancel();
+        this.showMessage(this._getSaveFailureMessage(), 2200);
+      }
     };
     this.keys.P.on("down", this._onWorldSaveDown);
 
@@ -274,8 +278,24 @@ export class WorldScene extends Phaser.Scene {
   autoSave() {
     if (!gameState.isAutoSaveEnabled()) return false;
     const ok = gameState.save();
-    if (ok) this._showAutoSaveIndicator();
+    if (ok) {
+      this._showAutoSaveIndicator();
+      return true;
+    }
+    const now = this.time?.now || 0;
+    if (!this._autoSaveFailureNoticeUntil || now >= this._autoSaveFailureNoticeUntil) {
+      this._autoSaveFailureNoticeUntil = now + 3500;
+      this.showMessage(`オートセーブ失敗: ${this._getSaveFailureMessage()}`, 2400);
+    }
     return ok;
+  }
+
+  _getSaveFailureMessage() {
+    const errorCode = gameState.getLastSaveErrorCode?.();
+    if (errorCode === "QUOTA_EXCEEDED") {
+      return "保存容量がいっぱいです…";
+    }
+    return "セーブに失敗しました…";
   }
 
   /** 実績をチェックし、新たに達成されたものをトースト表示する */

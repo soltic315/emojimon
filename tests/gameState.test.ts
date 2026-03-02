@@ -4,6 +4,7 @@ import { MONSTERS } from "../js/data/monsters.ts";
 
 const SAVE_KEY = "emojimon_save_v2";
 const SAVE_BACKUP_KEY = "emojimon_save_v2_backup";
+const SAVE_TEMP_KEY = "emojimon_save_v2_tmp";
 
 function createLocalStorageMock() {
   const store = new Map();
@@ -108,6 +109,41 @@ describe("gameState map weather", () => {
 
     expect(loaded).toBe(true);
     expect(gameState.playerName).toBe("構造検証の復旧元");
+  });
+
+  it("メインセーブ未完成時は一時セーブから復旧できる", () => {
+    globalThis.localStorage.setItem(SAVE_TEMP_KEY, JSON.stringify({
+      playerName: "一時セーブ復旧",
+      playerPosition: { x: 9, y: 9 },
+      party: [],
+      inventory: [],
+      money: 100,
+      storyFlags: {},
+    }));
+
+    const loaded = gameState.load();
+    expect(loaded).toBe(true);
+    expect(gameState.playerName).toBe("一時セーブ復旧");
+  });
+
+  it("容量上限エラー時に保存失敗コードを保持する", () => {
+    const originalSetItem = globalThis.localStorage.setItem.bind(globalThis.localStorage);
+    globalThis.localStorage.setItem = (key, value) => {
+      if (key === SAVE_KEY) {
+        const quotaError = new Error("quota exceeded");
+        (quotaError as Error & { name: string }).name = "QuotaExceededError";
+        throw quotaError;
+      }
+      return originalSetItem(key, value);
+    };
+
+    try {
+      const ok = gameState.save();
+      expect(ok).toBe(false);
+      expect(gameState.getLastSaveErrorCode()).toBe("QUOTA_EXCEEDED");
+    } finally {
+      globalThis.localStorage.setItem = originalSetItem;
+    }
   });
 
   it("ロード時にストーリー進行フラグを欠落なく復元する", () => {

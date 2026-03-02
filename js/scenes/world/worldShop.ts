@@ -106,7 +106,8 @@ const SHOP_INVENTORY_BY_MAP = {
 const DEFAULT_SHOP_INVENTORY = SHOP_INVENTORY_BY_MAP.TOWN_SHOP;
 
 export function getShopInventory(mapKey = "TOWN_SHOP") {
-  return [...(SHOP_INVENTORY_BY_MAP[mapKey] || DEFAULT_SHOP_INVENTORY)];
+  const source = SHOP_INVENTORY_BY_MAP[mapKey] || DEFAULT_SHOP_INVENTORY;
+  return source.map((shopItem) => ({ ...shopItem }));
 }
 
 function getMoneyText() {

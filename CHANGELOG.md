@@ -1,5 +1,40 @@
 # CHANGELOG
 
+## [2.1.10] - 2026-03-03
+
+### Note
+- 優先度と対応工数のバランスを重視し、A〜I の TODO から15件（`A-11` / `A-13` / `B-14` / `D-23` / `E-07` / `E-08` / `E-14` / `E-16` / `E-19` / `E-32` / `E-33` / `F-21` / `H-01` / `H-02` / `H-05`）を完了した。
+- ユーザー指定に従い、TODO完了後に `lint -> typecheck -> test -> build` の順で検証を実施した。
+
+### Added
+- `tests/battleItems.test.ts` を追加し、バトル中アイテム効果（HP回復・状態異常治癒・捕獲ボール分岐）の回帰テストを追加。
+- `tests/storyFlags.test.ts` を追加し、`STORY_FLAG_KEYS` と `sanitizeStoryFlags` の整合テストを追加。
+- `tests/worldShop.test.ts` を追加し、ショップ在庫の地域差分・フォールバック・参照分離テストを追加。
+- `tests/uiHelper.test.ts` を追加し、`UIHelper` の描画スモーク/明るさ適用テストを追加。
+- `tests/menuViews.test.ts` を追加し、メニュー主要ビューのディスパッチ/描画スモークテストを追加。
+
+### Changed
+- `js/state/gameState.ts` で保存処理を一時キー経由に変更し、`SAVE_KEY -> SAVE_TEMP_KEY -> SAVE_BACKUP_KEY` の順で復旧を試行するよう改善。
+- `js/scenes/BootScene.ts` で起動時データ検証失敗時にJSON再読込リトライ（1回）を追加。
+- `js/state/storyFlags.ts` に `STORY_FLAG_KEYS` を追加し、フラグキーの列挙参照を導入。
+- `js/data/moves.ts` の初期化を `MOVE_DEFAULTS + spread` 構成へ変更し、項目追加時の取りこぼしを抑制。
+- `js/scenes/MenuScene.ts` / `js/state/gameState.ts` でメニュー再オープン時に前回タブ位置を復元する仕様を追加。
+- `js/audio/AudioManager.ts` を含む `js/**` の空 `catch` を診断ログ付きへ統一し、障害解析性を改善。
+- `tests/gameKeyboard.test.ts` / `tests/worldInputGuards.test.ts` / `tests/dataValidation.test.ts` / `tests/moves.test.ts` / `tests/gameState.test.ts` を拡張。
+- `GAME_DESIGN.md` にセーブ復旧経路（tmp復旧/容量上限通知）とメニュー前回タブ復元仕様を追記。
+- `TODO.md` から完了済み15件を削除し、統計サマリーを更新。
+- `package.json` / `package-lock.json` のバージョンを `2.1.9` から `2.1.10` に更新。
+
+### Fixed
+- セーブ途中中断時にメイン・バックアップの双方が不整合になるリスクを軽減。
+- 初回ロード時の一時的なJSON読込失敗で起動不能になるケースを再読込で自己回復。
+- セーブ失敗時に成功音が鳴る誤挙動を修正し、容量上限時に明確な失敗メッセージを表示。
+- 例外握りつぶしにより原因追跡が困難だった箇所を診断ログ化して改善。
+
+### Prompt
+- User: `優先度と対応工数のバランスを考えてA~IのTODOを15完了してください。lint/typecheck/test/buildは全てのTODOを完了した後に実施してください。`
+- Assistant（対応方針）: A〜I から高優先かつ小〜中工数の15件を最小差分で実装し、TODO/仕様書/版数/変更履歴を同期した後に `lint/typecheck/test/build` を順次実施する。
+
 ## [2.1.9] - 2026-03-03
 
 ### Note

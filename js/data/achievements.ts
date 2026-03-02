@@ -394,8 +394,8 @@ export function checkNewAchievements(unlockedIds: string[]): string[] {
       if (achievement.check()) {
         newlyUnlocked.push(achievement.id);
       }
-    } catch {
-      // チェック中のエラーは無視
+    } catch (error) {
+      console.warn(`achievements: 実績チェックに失敗 (${achievement.id})`, error);
     }
   }
 
