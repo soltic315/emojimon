@@ -31,6 +31,31 @@ export {
 
 export const TYPES = ["NORMAL", "FIRE", "WATER", "GRASS", "ELECTRIC", "ICE"];
 export const MAX_MOVE_SLOTS = 4;
+export const MONSTER_MAX_STAMINA = 10;
+
+export function getMonsterMaxStamina() {
+  return MONSTER_MAX_STAMINA;
+}
+
+export function normalizeMonsterStamina(monsterEntry) {
+  if (!monsterEntry) return 0;
+  const maxStamina = getMonsterMaxStamina(monsterEntry);
+  const current = Number.isFinite(monsterEntry.stamina)
+    ? Math.floor(monsterEntry.stamina)
+    : maxStamina;
+  monsterEntry.stamina = Math.min(maxStamina, Math.max(0, current));
+  return monsterEntry.stamina;
+}
+
+export function recoverMonsterStamina(monsterEntry, amount = 1) {
+  if (!monsterEntry) return 0;
+  const maxStamina = getMonsterMaxStamina(monsterEntry);
+  const safeAmount = Number.isFinite(amount) ? Math.max(0, Math.floor(amount)) : 0;
+  const before = normalizeMonsterStamina(monsterEntry);
+  const after = Math.min(maxStamina, before + safeAmount);
+  monsterEntry.stamina = after;
+  return after - before;
+}
 
 // 特性マスタ（8種）
 const DEFAULT_ABILITIES = {
@@ -319,20 +344,6 @@ export function syncMonsterMoves(monsterEntry) {
   const levelMoveIds = levelMoves.map((move) => move.id);
   const levelMoveIdSet = new Set(levelMoveIds);
   const prevMoveIds = Array.isArray(monsterEntry.moveIds) ? monsterEntry.moveIds : [];
-  const prevPp = Array.isArray(monsterEntry.pp) ? monsterEntry.pp : [];
-
-  const ppById = new Map();
-  if (prevMoveIds.length > 0) {
-    prevMoveIds.forEach((moveId, index) => {
-      if (typeof prevPp[index] === "number") ppById.set(moveId, prevPp[index]);
-    });
-  } else {
-    (monsterEntry.species.learnset || []).forEach((move, index) => {
-      if (move?.id && typeof prevPp[index] === "number") {
-        ppById.set(move.id, prevPp[index]);
-      }
-    });
-  }
 
   const nextMoveIds = prevMoveIds
     .filter((moveId) => typeof moveId === "string" && levelMoveIdSet.has(moveId))
@@ -344,18 +355,8 @@ export function syncMonsterMoves(monsterEntry) {
     nextMoveIds.push(moveId);
   });
 
-  const moveById = new Map(levelMoves.map((move) => [move.id, move]));
   monsterEntry.moveIds = nextMoveIds;
-  monsterEntry.pp = nextMoveIds.map((moveId) => {
-    const move = moveById.get(moveId);
-    if (!move) return 1;
-    const prev = ppById.get(move.id);
-    const maxPp = Math.max(1, move.pp || 10);
-    if (typeof prev === "number") {
-      return Math.min(maxPp, Math.max(0, Math.floor(prev)));
-    }
-    return maxPp;
-  });
+  normalizeMonsterStamina(monsterEntry);
 
   return levelMoves;
 }

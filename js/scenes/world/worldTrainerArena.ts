@@ -2,6 +2,7 @@ import { gameState, PARTY_CAPACITY } from "../../state/gameState.ts";
 import {
   getArenaOpponent,
   calcStats,
+  getMonsterMaxStamina,
   MONSTERS,
   rollMonsterAbilityId,
   syncMonsterMoves,
@@ -132,7 +133,7 @@ export function buildTrainerOpponent(battleKey, level) {
     abilityId: rollMonsterAbilityId(species),
     rewardMoney: 50 + level * 15,
     moveIds: [],
-    pp: (species.learnset || []).map(m => m.pp || 10),
+    stamina: getMonsterMaxStamina({ species, level }),
   };
   syncMonsterMoves(trainerMon);
   return trainerMon;
@@ -587,7 +588,7 @@ export function addEternaToParty() {
     defenseStage: 0,
     abilityId: rollMonsterAbilityId(eterna),
     moveIds: [],
-    pp: (eterna.learnset || []).map(m => m.pp || 10),
+    stamina: getMonsterMaxStamina({ species: eterna, level }),
   };
   syncMonsterMoves(eternaEntry);
 

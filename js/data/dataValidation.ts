@@ -9,6 +9,7 @@ const moveSchema = z.object({
   power: z.number().min(0).optional(),
   accuracy: z.number().min(0).max(1).optional(),
   category: moveCategorySchema.optional(),
+  staminaCost: z.number().int().min(1).max(9).optional(),
   pp: z.number().int().min(0).optional(),
   description: z.string().optional(),
   priority: z.number().int().optional(),

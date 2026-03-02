@@ -12,7 +12,7 @@ function createValidData() {
           power: 40,
           accuracy: 1,
           category: "physical",
-          pp: 35,
+          staminaCost: 1,
         },
       ],
     },

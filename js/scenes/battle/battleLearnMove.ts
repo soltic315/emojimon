@@ -111,9 +111,6 @@ export function confirmLearnMoveReplaceSelection(scene) {
     const forgetMoveId = currentMoveIds[scene.selectedLearnReplaceIndex];
     const forgetMove = MOVES[forgetMoveId];
     currentMoveIds[scene.selectedLearnReplaceIndex] = move.id;
-    const pp = Array.isArray(monster.pp) ? monster.pp : [];
-    pp[scene.selectedLearnReplaceIndex] = Math.max(1, move.pp || 10);
-    monster.pp = pp;
     scene.enqueueMessage(`${monster.species.name}は ${forgetMove?.name || "わざ"}を わすれた！`);
     scene.enqueueMessage(`${monster.species.name}は ${move.name}を おぼえた！`);
   }

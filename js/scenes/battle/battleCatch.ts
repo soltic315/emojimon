@@ -1,8 +1,7 @@
 // バトル捕獲ロジック
 import { gameState } from "../../state/gameState.ts";
-import { calcStats, syncMonsterMoves } from "../../data/monsters.ts";
+import { calcStats, getMonsterMaxStamina, syncMonsterMoves } from "../../data/monsters.ts";
 import { getItemById } from "../../data/items.ts";
-import { MOVES } from "../../data/moves.ts";
 import { audioManager } from "../../audio/AudioManager.ts";
 import { FONT } from "../../ui/UIHelper.ts";
 import { BattleState, PARTY_MAX, StatusCondition } from "./battleConstants.ts";
@@ -216,7 +215,7 @@ function completeCatchSuccess(scene, ballText, opponent) {
     attackStage: 0,
     defenseStage: 0,
     moveIds: [],
-    pp: (opponent.species.learnset || []).map(m => MOVES[m]?.pp || 10),
+    stamina: getMonsterMaxStamina({ species: opponent.species, level: opponent.level }),
   };
   syncMonsterMoves(newMon);
 

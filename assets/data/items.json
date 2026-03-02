@@ -306,7 +306,7 @@
       "id": "ETHER",
       "name": "エーテル",
       "emoji": "🫙",
-      "description": "モンスター1体のすべての技のPPを10回復する。",
+      "description": "モンスター1体のスタミナを10回復する。",
       "battleUsable": true,
       "price": 200,
       "effect": {
@@ -318,7 +318,7 @@
       "id": "MAX_ELIXIR",
       "name": "マックスエリクサー",
       "emoji": "🧫",
-      "description": "モンスター1体のすべての技のPPを完全に回復する。",
+      "description": "モンスター1体のスタミナを完全に回復する。",
       "battleUsable": true,
       "price": 600,
       "effect": {
@@ -330,7 +330,7 @@
       "id": "MEGA_ETHER",
       "name": "メガエーテル",
       "emoji": "🔮",
-      "description": "モンスター1体のすべての技のPPを20回復する。",
+      "description": "モンスター1体のスタミナを20回復する。",
       "battleUsable": true,
       "price": 420,
       "effect": {

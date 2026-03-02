@@ -2,8 +2,10 @@ import { gameState } from "../state/gameState.ts";
 import {
   MAX_MOVE_SLOTS,
   calcStats,
+  getMonsterMaxStamina,
   getMonsterMoves,
 } from "../data/monsters.ts";
+import { getMoveStaminaCost } from "../data/moves.ts";
 import { WEATHER } from "../data/mapRules.ts";
 import { audioManager } from "../audio/AudioManager.ts";
 import { TouchControls } from "../ui/TouchControls.ts";
@@ -826,10 +828,13 @@ export class BattleScene extends Phaser.Scene {
       audioManager.playConfirm();
       const selectedMove = getMonsterMoves(this.battle.player)[this.selectedMoveIndex];
       if (selectedMove) this.lastSelectedMoveId = selectedMove.id || selectedMove.name;
-      // PP チェック
-      const ppArr = this.battle.player.pp;
-      if (ppArr && ppArr[this.selectedMoveIndex] !== undefined && ppArr[this.selectedMoveIndex] <= 0) {
-        this.enqueueMessage("この わざは もう つかえない…");
+      const staminaCost = getMoveStaminaCost(selectedMove);
+      const maxStamina = getMonsterMaxStamina(this.battle.player);
+      const currentStamina = Number.isFinite(this.battle.player?.stamina)
+        ? Math.floor(this.battle.player.stamina)
+        : maxStamina;
+      if (currentStamina < staminaCost) {
+        this.enqueueMessage("スタミナが たりない…");
         return;
       }
       this.performPlayerMove();

@@ -12,7 +12,7 @@ describe("moves data", () => {
           power: 40,
           accuracy: 0.95,
           category: MOVE_CATEGORY.SPECIAL,
-          pp: 25,
+          staminaCost: 1,
         },
       ],
     });

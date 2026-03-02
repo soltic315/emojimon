@@ -1,6 +1,12 @@
 // バトルターン進行ロジック
 import { gameState } from "../../state/gameState.ts";
-import { calcStats, getMonsterMoves } from "../../data/monsters.ts";
+import {
+  calcStats,
+  getMonsterMoves,
+  getMonsterMaxStamina,
+  recoverMonsterStamina,
+} from "../../data/monsters.ts";
+import { getMoveStaminaCost } from "../../data/moves.ts";
 import { audioManager } from "../../audio/AudioManager.ts";
 import { setMonsterEmoji } from "../../ui/UIHelper.ts";
 import {
@@ -9,6 +15,7 @@ import {
   RUN_SUCCESS_RATE,
   RUN_RATE_MIN,
   RUN_RATE_MAX,
+  STAMINA_RECOVERY_PER_TURN,
 } from "./battleConstants.ts";
 import {
   flashSuperHit,
@@ -90,10 +97,15 @@ export function performPlayerMove(scene) {
 
   scene.clearMenuTexts();
 
-  // PP 消費
-  if (player.pp && player.pp[scene.selectedMoveIndex] !== undefined) {
-    player.pp[scene.selectedMoveIndex] = Math.max(0, player.pp[scene.selectedMoveIndex] - 1);
+  const staminaCost = getMoveStaminaCost(move);
+  const currentStamina = Number.isFinite(player.stamina)
+    ? Math.floor(player.stamina)
+    : getMonsterMaxStamina(player);
+  if (currentStamina < staminaCost) {
+    scene.enqueueMessage("スタミナが たりない…");
+    return;
   }
+  player.stamina = Math.max(0, currentStamina - staminaCost);
 
   const order = scene._determineSpeedOrder(move);
 
@@ -208,6 +220,8 @@ export function executeOpponentTurnAfterPlayer(scene) {
     return;
   }
 
+  recoverMonsterStamina(opponent, STAMINA_RECOVERY_PER_TURN);
+
   const statusResult = scene.processTurnStartStatus(opponent);
   if (statusResult === "fainted") {
     scene.handleVictory();
@@ -240,6 +254,11 @@ export function executeOpponentAttackDirect(scene, opponent, player, move, onCom
     return;
   }
   opponent.lastMoveType = move?.type || null;
+  const staminaCost = getMoveStaminaCost(move);
+  const currentStamina = Number.isFinite(opponent.stamina)
+    ? Math.floor(opponent.stamina)
+    : getMonsterMaxStamina(opponent);
+  opponent.stamina = Math.max(0, currentStamina - staminaCost);
 
   if (!scene.isMoveHit(move, opponent)) {
     const label = scene._getOpponentLabel();
@@ -336,6 +355,8 @@ export function startOpponentTurn(scene) {
     return;
   }
 
+  recoverMonsterStamina(opponent, STAMINA_RECOVERY_PER_TURN);
+
   scene.setBattleState(BattleState.OPPONENT_TURN);
 
   const statusResult = scene.processTurnStartStatus(opponent);
@@ -384,11 +405,11 @@ export function chooseOpponentMove(scene, opponent, player) {
       const isStatus = move.category === "status";
       const basePower = move.power || 0;
 
-      const moveIndex = moves.indexOf(move);
-      const currentPp = Array.isArray(opponent.pp) && opponent.pp[moveIndex] !== undefined
-        ? opponent.pp[moveIndex]
-        : (move.pp || 10);
-      if (currentPp <= 0) return { move, score: -1 };
+      const currentStamina = Number.isFinite(opponent.stamina)
+        ? Math.floor(opponent.stamina)
+        : getMonsterMaxStamina(opponent);
+      const staminaCost = getMoveStaminaCost(move);
+      if (currentStamina < staminaCost) return { move, score: -1 };
 
       let score = 0;
       if (isStatus) {
@@ -448,6 +469,7 @@ export function chooseOpponentMove(scene, opponent, player) {
 
       score *= accuracy;
       if (isBossLevel) score *= 1.15;
+      score -= staminaCost * 1.5;
 
       return { move, score };
     })
@@ -473,6 +495,8 @@ export function startPlayerTurn(scene) {
     scene.handleDefeat();
     return;
   }
+
+  recoverMonsterStamina(player, STAMINA_RECOVERY_PER_TURN);
 
   scene._tickWeather();
 

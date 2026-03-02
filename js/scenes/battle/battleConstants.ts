@@ -70,6 +70,8 @@ export const FREEZE_THAW_RATE = 0.20;
 export const SLEEP_WAKE_RATE = 0.33;
 /** やけど時の物理攻撃威力倍率 */
 export const BURN_ATTACK_MULTIPLIER = 0.75;
+/** ターン開始時スタミナ回復量 */
+export const STAMINA_RECOVERY_PER_TURN = 1;
 
 export const StatusCondition = {
   NONE: "NONE",

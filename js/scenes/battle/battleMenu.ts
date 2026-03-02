@@ -1,5 +1,6 @@
 import { gameState } from "../../state/gameState.ts";
-import { calcStats, getMonsterMoves } from "../../data/monsters.ts";
+import { calcStats, getMonsterMoves, getMonsterMaxStamina } from "../../data/monsters.ts";
+import { getMoveStaminaCost } from "../../data/moves.ts";
 import { getItemById } from "../../data/items.ts";
 import { FONT, COLORS } from "../../ui/UIHelper.ts";
 import { BattleState } from "./battleConstants.ts";
@@ -210,34 +211,36 @@ export function showMoveMenu(scene, reset = true) {
     ICE: "#67e8f9",
   };
 
-  const ppArr = scene.battle.player.pp || [];
+  const maxStamina = getMonsterMaxStamina(scene.battle.player);
+  const currentStamina = Number.isFinite(scene.battle.player?.stamina)
+    ? Math.floor(scene.battle.player.stamina)
+    : maxStamina;
   const moveRowWidth = Math.min(360, Math.max(260, layout.leftColumnWidth - 10));
   const moveRowX = layout.leftColumnLeft + moveRowWidth * 0.5;
 
   moves.forEach((move, index) => {
     const y = layout.panelY + 36 + index * 26;
     const selected = index === scene.selectedMoveIndex;
-    const currentPP = ppArr[index] !== undefined ? ppArr[index] : (move.pp || "?");
-    const maxPP = move.pp || "?";
-    const noPP = typeof currentPP === "number" && currentPP <= 0;
+    const staminaCost = getMoveStaminaCost(move);
+    const noStamina = currentStamina < staminaCost;
 
     const typeColor = typeColors[move.type] || "#9ca3af";
     const powerStr = move.power > 0 ? `威力${move.power}` : "変化";
-    const ppStr = `PP${currentPP}/${maxPP}`;
+    const staminaStr = `消費ST${staminaCost}`;
     const label = `${move.name} [${move.type}]`;
-    const displayColor = noPP ? "#4b5563" : (selected ? typeColor : "#e2e8f0");
+    const displayColor = noStamina ? "#4b5563" : (selected ? typeColor : "#e2e8f0");
     addMenuRow(scene, scene.moveTextGroup, {
       x: moveRowX,
       y,
       width: moveRowWidth,
       height: 24,
       label,
-      rightLabel: `${powerStr}  ${ppStr}`,
+      rightLabel: `${powerStr}  ${staminaStr}`,
       selected,
       fontSize: 13,
       selectedTextColor: displayColor,
       textColor: displayColor,
-      rightTextColor: noPP ? "#4b5563" : "#93c5fd",
+      rightTextColor: noStamina ? "#4b5563" : "#93c5fd",
     });
   });
 
@@ -252,13 +255,20 @@ export function showMoveMenu(scene, reset = true) {
     const priority = Number.isFinite(currentMove.priority) ? currentMove.priority : 0;
     const priorityStr = `優先度:${priority >= 0 ? "+" : ""}${priority}`;
     const effectStr = scene.getMoveEffectLabel(currentMove);
-    const detailLines = [catStr, accStr, effectivenessStr, priorityStr, effectStr];
+    const detailLines = [
+      `スタミナ:${currentStamina}/${maxStamina}`,
+      catStr,
+      accStr,
+      effectivenessStr,
+      priorityStr,
+      effectStr,
+    ];
     const detailWidth = Math.min(220, Math.max(156, layout.rightColumnWidth - 16));
     const detailSizer = scene.rexUI?.add.sizer({
       x: layout.rightColumnLeft + detailWidth * 0.5,
       y: layout.panelY + 87,
       width: detailWidth,
-      height: 106,
+      height: 122,
       orientation: "y",
       space: {
         left: 10,

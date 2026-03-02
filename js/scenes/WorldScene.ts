@@ -3,8 +3,8 @@ import {
   getGymBossMonster,
   getGymBoss2Monster,
   calcStats,
+  getMonsterMaxStamina,
   MONSTERS,
-  getMonsterMoves,
   rollMonsterAbilityId,
   syncMonsterMoves,
 } from "../data/monsters.ts";
@@ -1599,9 +1599,9 @@ export class WorldScene extends Phaser.Scene {
               // calcStats を使用して正しい最大HPを算出
               const stats = calcStats(m.species, m.level);
               m.currentHp = stats.maxHp;
-              // PP全回復
+              // スタミナ全回復
               syncMonsterMoves(m);
-              m.pp = getMonsterMoves(m).map((mv) => mv.pp || 10);
+              m.stamina = getMonsterMaxStamina(m);
               // 状態異常回復
               m.statusCondition = "NONE";
             }
@@ -2302,7 +2302,7 @@ export class WorldScene extends Phaser.Scene {
       defenseStage: 0,
       abilityId: rollMonsterAbilityId(starter),
       moveIds: [],
-      pp: (starter.learnset || []).map(m => m.pp || 10),
+      stamina: getMonsterMaxStamina({ species: starter, level }),
     };
     syncMonsterMoves(mon);
     gameState.party = [mon];
@@ -2780,7 +2780,7 @@ export class WorldScene extends Phaser.Scene {
         attackStage: 0,
         defenseStage: 0,
         abilityId: rollMonsterAbilityId(eternia),
-        pp: (eternia.learnset || []).map(m => m.pp || 10),
+        stamina: getMonsterMaxStamina({ species: eternia, level }),
       };
       const activeMon = gameState.getFirstAlive();
       if (!activeMon) {

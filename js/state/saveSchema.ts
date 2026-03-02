@@ -3,7 +3,14 @@
  * Zodを使ったセーブデータの型検証とサニタイズ処理
  */
 import { z } from "zod";
-import { MONSTERS, calcStats, rollMonsterAbilityId, syncMonsterMoves } from "../data/monsters.ts";
+import {
+  MONSTERS,
+  calcStats,
+  rollMonsterAbilityId,
+  syncMonsterMoves,
+  normalizeMonsterStamina,
+  getMonsterMaxStamina,
+} from "../data/monsters.ts";
 
 // ── 定数 ──
 export const SAVE_KEY = "emojimon_save_v2";
@@ -39,6 +46,7 @@ const serializedMonsterSchema = z.object({
   bond: z.number().finite().optional(),
   nickname: z.string().nullable().optional(),
   moveIds: z.array(z.string()).optional(),
+  stamina: z.number().finite().optional(),
   pp: z.array(z.number().finite()).optional(),
 }).passthrough();
 
@@ -190,13 +198,16 @@ export function buildLoadedMonster(saved) {
     moveIds: Array.isArray(saved?.moveIds)
       ? saved.moveIds.filter((moveId) => typeof moveId === "string")
       : [],
-    pp: Array.isArray(saved?.pp) ? saved.pp : [],
+    stamina: Number.isFinite(saved?.stamina)
+      ? Math.floor(saved.stamina)
+      : getMonsterMaxStamina({ species, level }),
     nickname: typeof saved?.nickname === "string" && saved.nickname.trim().length > 0
       ? saved.nickname.trim().slice(0, 12)
       : null,
   };
 
   syncMonsterMoves(loaded);
+  normalizeMonsterStamina(loaded);
   loaded.currentHp = clampInt(loaded.currentHp, 0, maxHp, maxHp);
   return loaded;
 }

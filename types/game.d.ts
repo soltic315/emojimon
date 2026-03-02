@@ -56,7 +56,7 @@ export interface Move {
   type: MonsterType;
   power: number;
   accuracy: number;
-  pp: number;
+  staminaCost: number;
   category: "physical" | "special" | "status";
   priority?: number;
   description?: string;
@@ -150,7 +150,7 @@ export interface MonsterInstance {
   defenseStage: number;
   abilityId?: string;
   moveIds: string[];
-  pp: number[];
+  stamina: number;
   statusCondition?: StatusConditionType;
   /** やけどダメージ半減フラグ等 */
   _sleepTurns?: number;

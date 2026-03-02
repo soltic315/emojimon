@@ -92,7 +92,6 @@ export function processVictoryRewards(scene, opponent, leader) {
         }
         if ((leader.moveIds || []).length < MAX_MOVE_SLOTS) {
           leader.moveIds = [...(leader.moveIds || []), move.id].slice(0, MAX_MOVE_SLOTS);
-          leader.pp = [...(leader.pp || []), Math.max(1, move.pp || 10)].slice(0, MAX_MOVE_SLOTS);
           knownMoveIds.add(move.id);
           scene.enqueueMessage(`${leader.species.name}は ${move.name}を おぼえた！`);
           return;

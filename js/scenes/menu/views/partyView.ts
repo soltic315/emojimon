@@ -1,6 +1,7 @@
 // パーティ画面ビュー
 import { gameState } from "../../../state/gameState.ts";
-import { calcStats, getMonsterMoves } from "../../../data/monsters.ts";
+import { calcStats, getMonsterMoves, getMonsterMaxStamina } from "../../../data/monsters.ts";
+import { getMoveStaminaCost } from "../../../data/moves.ts";
 import { FONT, drawPanel, drawSelection } from "../../../ui/UIHelper.ts";
 import { SUB_PANEL_WIDTH_OFFSET } from "../menuViewsShared.ts";
 
@@ -145,6 +146,7 @@ export function renderPartyView(scene) {
       `ATK: ${stats.attack}   DEF: ${stats.defense}`,
       `SPD: ${stats.speed}   キズナ: ${selectedMon.bond || 0}`,
       `EXP: ${selectedMon.exp || 0}/${selectedMon.nextLevelExp}`,
+      `ST: ${Number.isFinite(selectedMon.stamina) ? Math.floor(selectedMon.stamina) : getMonsterMaxStamina(selectedMon)}/${getMonsterMaxStamina(selectedMon)}`,
       "",
       "わざ",
     ];
@@ -159,11 +161,8 @@ export function renderPartyView(scene) {
 
     const knownMoves = getMonsterMoves(selectedMon);
     if (knownMoves.length > 0) {
-      const moveLines = knownMoves.map((move, moveIndex) => {
-        const cur = (selectedMon.pp && selectedMon.pp[moveIndex] !== undefined)
-          ? selectedMon.pp[moveIndex]
-          : (move.pp || 10);
-        return `・${move.name}  PP ${cur}/${move.pp || 10}`;
+      const moveLines = knownMoves.map((move) => {
+        return `・${move.name}  消費ST ${getMoveStaminaCost(move)}`;
       });
       const moveText = scene.add.text(detailX + 12, panelY + 250, moveLines.join("\n"), {
         fontFamily: FONT.UI,

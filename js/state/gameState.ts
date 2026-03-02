@@ -2,7 +2,9 @@ import {
   MONSTERS,
   calcStats,
   getFusionRecipeResult,
+  getMonsterMaxStamina,
   getLearnedMovesByLevelUp,
+  normalizeMonsterStamina,
   rollMonsterAbilityId,
   syncMonsterMoves,
 } from "../data/monsters.ts";
@@ -261,6 +263,14 @@ class GameState {
     const mapWeather = this.getMapWeather(this.currentMap);
     if (mapWeather && !battlePayload.weather) {
       battlePayload.weather = mapWeather;
+    }
+    if (battlePayload.player) {
+      syncMonsterMoves(battlePayload.player);
+      normalizeMonsterStamina(battlePayload.player);
+    }
+    if (battlePayload.opponent) {
+      syncMonsterMoves(battlePayload.opponent);
+      normalizeMonsterStamina(battlePayload.opponent);
     }
     this.activeBattle = battlePayload;
     this.lastBattleResult = null;
@@ -739,7 +749,9 @@ class GameState {
           bond: m.bond || 0,
           nickname: m.nickname || null,
           moveIds: m.moveIds || [],
-          pp: m.pp || [],
+          stamina: Number.isFinite(m.stamina)
+            ? Math.floor(m.stamina)
+            : getMonsterMaxStamina(m),
         })),
         box: (this.box || []).map((m) => ({
           speciesId: m.species ? m.species.id : null,
@@ -753,7 +765,9 @@ class GameState {
           bond: m.bond || 0,
           nickname: m.nickname || null,
           moveIds: m.moveIds || [],
-          pp: m.pp || [],
+          stamina: Number.isFinite(m.stamina)
+            ? Math.floor(m.stamina)
+            : getMonsterMaxStamina(m),
         })),
         inventory: this.inventory.map((it) => ({ ...it })),
         money: this.money,

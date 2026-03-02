@@ -2,7 +2,7 @@
  * 野生モンスターエンカウント管理
  * エリア別出現テーブル・ジムボス・闘技場対戦相手の生成
  */
-import { calcStats, rollMonsterAbilityId, MONSTERS } from "./monsters.ts";
+import { calcStats, rollMonsterAbilityId, MONSTERS, getMonsterMaxStamina } from "./monsters.ts";
 import { pickByWeight } from "./weightedRandom.ts";
 
 // ── 内部ユーティリティ ──
@@ -28,7 +28,7 @@ function createMonsterEntry(base, level, extra = {}) {
     attackStage: 0,
     defenseStage: 0,
     abilityId: rollMonsterAbilityId(base),
-    pp: (base.learnset || []).map((m) => m.pp || 10),
+    stamina: getMonsterMaxStamina({ species: base, level }),
     ...extra,
   };
 }

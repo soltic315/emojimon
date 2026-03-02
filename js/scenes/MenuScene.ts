@@ -4,7 +4,7 @@
  */
 import { gameState, PARTY_CAPACITY } from "../state/gameState.ts";
 import { getItemById } from "../data/items.ts";
-import { calcStats, getMonsterMoves } from "../data/monsters.ts";
+import { calcStats, getMonsterMaxStamina, getMonsterMoves } from "../data/monsters.ts";
 import { audioManager } from "../audio/AudioManager.ts";
 import { applyCanvasBrightness } from "../ui/UIHelper.ts";
 import { NAV_REPEAT_INITIAL_DELAY_MS, NAV_REPEAT_INTERVAL_MS } from "../ui/inputConstants.ts";
@@ -541,7 +541,7 @@ export class MenuScene extends Phaser.Scene {
     const item = getItemById(entry.itemId);
     if (!item) return;
 
-    // フィールドで使えるのは回復系・リバイブ系・PP回復系
+    // フィールドで使えるのは回復系・リバイブ系・スタミナ回復系
     const canUseInField = item.effect && (
       item.effect.type === "heal" ||
       item.effect.type === "revive" ||
@@ -605,26 +605,20 @@ export class MenuScene extends Phaser.Scene {
       this._showBagMessage(`${target.species.name}が ふっかつした！`);
       used = true;
     } else if (item.effect.type === "healAllPP") {
-      // エーテル・マックスエリクサー: 全技のPPを回復
       const moves = getMonsterMoves(target);
-      if (!Array.isArray(target.pp)) target.pp = [];
-      let ppHealed = false;
-      moves.forEach((move, i) => {
-        const maxPp = move.pp || 10;
-        const current = (target.pp[i] !== undefined) ? target.pp[i] : maxPp;
-        const restoreAmount = item.effect.amount < 0 ? maxPp : (item.effect.amount || 10);
-        const newPp = Math.min(maxPp, current + restoreAmount);
-        if (newPp > current) {
-          target.pp[i] = newPp;
-          ppHealed = true;
-        }
-      });
-      if (!ppHealed) {
-        this._showBagMessage("PPは まんたんだ！");
+      const maxStamina = getMonsterMaxStamina(target);
+      const currentStamina = Number.isFinite(target.stamina)
+        ? Math.floor(target.stamina)
+        : maxStamina;
+      const restoreAmount = item.effect.amount < 0 ? maxStamina : (item.effect.amount || maxStamina);
+      const nextStamina = Math.min(maxStamina, currentStamina + Math.max(0, restoreAmount));
+      if (moves.length === 0 || nextStamina <= currentStamina) {
+        this._showBagMessage("スタミナは まんたんだ！");
         return;
       }
+      target.stamina = nextStamina;
       audioManager.playHeal();
-      this._showBagMessage(`${target.species.name}の わざの PPが かいふくした！`);
+      this._showBagMessage(`${target.species.name}の スタミナが かいふくした！`);
       used = true;
     }
 

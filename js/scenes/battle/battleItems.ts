@@ -1,6 +1,6 @@
 // バトル中アイテム使用ロジック
 import { gameState } from "../../state/gameState.ts";
-import { calcStats, getMonsterMoves } from "../../data/monsters.ts";
+import { calcStats, getMonsterMaxStamina, getMonsterMoves } from "../../data/monsters.ts";
 import { audioManager } from "../../audio/AudioManager.ts";
 import { BattleState, StatusCondition } from "./battleConstants.ts";
 
@@ -162,28 +162,21 @@ export function performUseItem(scene) {
       scene.enqueueMessage("しかし これいじょう あがらない！");
     }
   } else if (def.effect.type === "healAllPP") {
-    // エーテル・マックスエリクサー: 全技のPPを回復
     const moves = getMonsterMoves(player);
-    let ppHealed = false;
-    if (moves.length > 0) {
-      if (!Array.isArray(player.pp)) player.pp = [];
-      moves.forEach((move, i) => {
-        const maxPp = move.pp || 10;
-        const current = (player.pp[i] !== undefined) ? player.pp[i] : maxPp;
-        const restoreAmount = def.effect.amount < 0 ? maxPp : (def.effect.amount || 10);
-        const newPp = Math.min(maxPp, current + restoreAmount);
-        if (newPp > current) {
-          player.pp[i] = newPp;
-          ppHealed = true;
-        }
-      });
-    }
-    if (ppHealed) {
+    const maxStamina = getMonsterMaxStamina(player);
+    const currentStamina = Number.isFinite(player.stamina)
+      ? Math.floor(player.stamina)
+      : maxStamina;
+    const restoreAmount = def.effect.amount < 0 ? maxStamina : (def.effect.amount || maxStamina);
+    const nextStamina = Math.min(maxStamina, currentStamina + Math.max(0, restoreAmount));
+
+    if (moves.length > 0 && nextStamina > currentStamina) {
+      player.stamina = nextStamina;
       audioManager.playHeal();
-      scene.enqueueMessage(`${def.name}で ${player.species.name}の わざの PPが かいふくした！`);
+      scene.enqueueMessage(`${def.name}で ${player.species.name}の スタミナが かいふくした！`);
       itemConsumed = true;
     } else {
-      scene.enqueueMessage("しかし PPは まんたんだ！");
+      scene.enqueueMessage("しかし スタミナは まんたんだ！");
     }
   } else {
     scene.enqueueMessage("しかし なにも おきなかった…");

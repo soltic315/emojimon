@@ -1,5 +1,31 @@
 # CHANGELOG
 
+## [1.20.0] - 2026-03-02
+
+### Note
+- バトルリソースを技ごとのPPからモンスター共通のスタミナへ移行し、毎ターン回復するシンプルな運用へ統一した。
+
+### Added
+- `js/data/monsters.ts` にモンスター共通スタミナ管理（最大値・正規化・ターン回復）ユーティリティを追加。
+- `js/data/moves.ts` に `getMoveStaminaCost()` を追加し、技ごとのスタミナ消費コストを解決する処理を追加。
+
+### Changed
+- `js/scenes/battle/battleTurnFlow.ts` / `js/scenes/BattleScene.ts` / `js/scenes/battle/battleMenu.ts` を更新し、技使用時の判定をPP残量からスタミナ消費へ変更。あわせてプレイヤー/相手のターン開始時にスタミナを1回復する仕様へ変更。
+- `js/scenes/battle/battleItems.ts` と `js/scenes/MenuScene.ts` の `healAllPP` 効果を、PP回復からスタミナ回復へ変更。
+- `js/data/wildEncounters.ts` / `js/scenes/WorldScene.ts` / `js/scenes/world/worldTrainerArena.ts` / `js/scenes/battle/battleCatch.ts` のモンスター初期化を `pp` から `stamina` へ移行。
+- `js/state/saveSchema.ts` / `js/state/gameState.ts` を更新し、セーブデータの保持値を `pp` 配列から `stamina` 数値へ移行（旧 `pp` はロード互換として受理）。
+- `types/game.d.ts` / `js/data/dataValidation.ts` / `tests/moves.test.ts` / `tests/dataValidation.test.ts` を更新し、技定義を `staminaCost` 基準へ移行。
+- `assets/data/items.json` / `js/scenes/menu/menuConstants.ts` / `GAME_DESIGN.md` の文言・仕様記述をPP表現からスタミナ表現へ同期。
+- `package.json` と `package-lock.json` のバージョンを `1.19.0` から `1.20.0` に更新。
+
+### Fixed
+- 技ごとのPP管理が複数箇所に分散し、UI・AI・回復処理の整合が取りづらかった問題を、モンスター共通スタミナへ統一して解消。
+
+### Prompt
+- User: `システムのシンプル化のために技のPPを廃止してスタミナに移行してください`
+- User: `スタミナはターンごとに回復します`
+- Assistant（対応方針）: バトル/AI/回復アイテム/生成/セーブ/UI/仕様書を一括で最小差分移行し、スタミナをターン開始時に回復する共通ルールへ統一する。
+
 ## [1.19.0] - 2026-03-02
 
 ### Note
