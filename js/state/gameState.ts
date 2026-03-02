@@ -768,7 +768,7 @@ class GameState {
           moveIds: m.moveIds || [],
           stamina: Number.isFinite(m.stamina)
             ? Math.floor(m.stamina)
-            : getMonsterMaxStamina(m),
+            : getMonsterMaxStamina(),
         })),
         box: (this.box || []).map((m) => ({
           speciesId: m.species ? m.species.id : null,
@@ -784,7 +784,7 @@ class GameState {
           moveIds: m.moveIds || [],
           stamina: Number.isFinite(m.stamina)
             ? Math.floor(m.stamina)
-            : getMonsterMaxStamina(m),
+            : getMonsterMaxStamina(),
         })),
         inventory: this.inventory.map((it) => ({ ...it })),
         money: this.money,

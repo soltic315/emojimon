@@ -299,8 +299,14 @@ export function tickWeather(scene: any) {
     updateWeatherDisplay(scene);
     scene.enqueueMessage(`${oldWeather.emoji} ${oldWeather.label}が おさまった！`);
   } else if (scene.weather === WEATHER.NONE && Math.random() < 0.08) {
-    const candidates = [WEATHER.SUNNY, WEATHER.RAINY, WEATHER.WINDY, WEATHER.SNOWY];
-    scene.weather = candidates[Math.floor(Math.random() * candidates.length)];
+    let nextWeather = rollWeatherForMap(gameState.currentMap);
+    if (nextWeather === WEATHER.NONE) {
+      nextWeather = rollWeatherForMap(gameState.currentMap);
+    }
+    if (nextWeather === WEATHER.NONE) {
+      return;
+    }
+    scene.weather = nextWeather;
     scene.weatherTurnCounter = 0;
     scene.weatherDuration = 3 + Math.floor(Math.random() * 3);
     gameState.setMapWeather(gameState.currentMap, scene.weather);

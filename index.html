@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <title>EMOJIMON - ブラウザRPG</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' ws: wss: https: http:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+    />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="theme-color" content="#050511" />
@@ -11,6 +15,15 @@
       name="description"
       content="絵文字モンスターを育成してバトル！ブラウザで遊べるポケモン風RPG『EMOJIMON』"
     />
+    <meta property="og:title" content="EMOJIMON - ブラウザRPG" />
+    <meta
+      property="og:description"
+      content="絵文字モンスターを育成してバトル！ブラウザで遊べるポケモン風RPG『EMOJIMON』"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:image" content="/assets/og-image.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
     <!-- Google Fonts: 上質感重視の和文サンセリフ/セリフ -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -178,6 +191,11 @@
     <script type="module" src="./js/main.ts"></script>
   </head>
   <body>
+    <noscript>
+      <div style="padding: 16px; color: #fff; background: #111827; font-family: sans-serif; line-height: 1.6;">
+        JavaScriptが無効のため、EMOJIMONを起動できません。ブラウザ設定でJavaScriptを有効化してください。
+      </div>
+    </noscript>
     <div id="game-container">
       <div id="game-frame" class="game-frame">
         <div id="loading-screen">

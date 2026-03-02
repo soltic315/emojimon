@@ -130,10 +130,11 @@ export function buildTrainerOpponent(battleKey, level) {
     currentHp: stats.maxHp,
     attackStage: 0,
     defenseStage: 0,
+    speedStage: 0,
     abilityId: rollMonsterAbilityId(species),
     rewardMoney: 50 + level * 15,
     moveIds: [],
-    stamina: getMonsterMaxStamina({ species, level }),
+    stamina: getMonsterMaxStamina(),
   };
   syncMonsterMoves(trainerMon);
   return trainerMon;
@@ -586,9 +587,10 @@ export function addEternaToParty() {
     currentHp: stats.maxHp,
     attackStage: 0,
     defenseStage: 0,
+    speedStage: 0,
     abilityId: rollMonsterAbilityId(eterna),
     moveIds: [],
-    stamina: getMonsterMaxStamina({ species: eterna, level }),
+    stamina: getMonsterMaxStamina(),
   };
   syncMonsterMoves(eternaEntry);
 

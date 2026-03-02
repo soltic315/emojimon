@@ -76,6 +76,16 @@ export function showNextMessage(scene: any) {
       scene.endBattle();
     } else if (scene.state === BattleState.OPPONENT_TURN) {
       scene.startPlayerTurn();
+    } else if (scene.state === BattleState.PLAYER_SELECT_MOVE) {
+      scene.showMoveMenu(false);
+    } else if (scene.state === BattleState.PLAYER_SELECT_ITEM) {
+      scene.showItemMenu(false);
+    } else if (scene.state === BattleState.PLAYER_SELECT_SWITCH) {
+      scene.showSwitchMenu(false);
+    } else if (scene.state === BattleState.PLAYER_SELECT_LEARN_REPLACE) {
+      scene._renderLearnMoveReplaceMenu();
+    } else if (scene.state === BattleState.PLAYER_TURN) {
+      scene.showMainMenu(false);
     }
     return;
   }

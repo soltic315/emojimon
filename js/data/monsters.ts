@@ -39,7 +39,7 @@ export function getMonsterMaxStamina() {
 
 export function normalizeMonsterStamina(monsterEntry) {
   if (!monsterEntry) return 0;
-  const maxStamina = getMonsterMaxStamina(monsterEntry);
+  const maxStamina = getMonsterMaxStamina();
   const current = Number.isFinite(monsterEntry.stamina)
     ? Math.floor(monsterEntry.stamina)
     : maxStamina;
@@ -49,7 +49,7 @@ export function normalizeMonsterStamina(monsterEntry) {
 
 export function recoverMonsterStamina(monsterEntry, amount = 1) {
   if (!monsterEntry) return 0;
-  const maxStamina = getMonsterMaxStamina(monsterEntry);
+  const maxStamina = getMonsterMaxStamina();
   const safeAmount = Number.isFinite(amount) ? Math.max(0, Math.floor(amount)) : 0;
   const before = normalizeMonsterStamina(monsterEntry);
   const after = Math.min(maxStamina, before + safeAmount);

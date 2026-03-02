@@ -828,7 +828,7 @@ export class BattleScene extends Phaser.Scene {
       const selectedMove = getMonsterMoves(this.battle.player)[this.selectedMoveIndex];
       if (selectedMove) this.lastSelectedMoveId = selectedMove.id || selectedMove.name;
       const staminaCost = getMoveStaminaCost(selectedMove);
-      const maxStamina = getMonsterMaxStamina(this.battle.player);
+      const maxStamina = getMonsterMaxStamina();
       const currentStamina = Number.isFinite(this.battle.player?.stamina)
         ? Math.floor(this.battle.player.stamina)
         : maxStamina;

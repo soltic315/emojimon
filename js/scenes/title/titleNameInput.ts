@@ -207,11 +207,23 @@ function bindNameInputElement(scene: TitleSceneLike): void {
     }
   });
 
-  scene._nameInputCleanup = () => {
+  let cleaned = false;
+  const cleanup = () => {
+    if (cleaned) return;
+    cleaned = true;
     input.removeEventListener("input", onInput);
     input.removeEventListener("keydown", onKeyDown);
+    scene.events.off("shutdown", cleanup);
+    scene.events.off("destroy", cleanup);
     input.blur();
     input.remove();
+  };
+
+  scene.events.once("shutdown", cleanup);
+  scene.events.once("destroy", cleanup);
+
+  scene._nameInputCleanup = () => {
+    cleanup();
   };
 }
 

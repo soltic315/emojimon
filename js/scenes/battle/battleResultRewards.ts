@@ -18,6 +18,39 @@ import {
 } from "./battleConstants.ts";
 import { flashVictory } from "../../ui/FXHelper.ts";
 
+const GYM_REWARD_BY_NUMBER = {
+  1: {
+    apply: () => {
+      gameState.gymCleared = true;
+    },
+    message: "ジムバッジを てにいれた！ おめでとう！ 🏆",
+  },
+  2: {
+    apply: () => {
+      gameState.storyFlags.frozenPeakGymCleared = true;
+    },
+    message: "アイスバッジを てにいれた！ おめでとう！ 🏆❄️",
+  },
+};
+
+function applyGymClearReward(scene, gymNumber) {
+  const safeGymNumber = Math.max(1, Math.floor(gymNumber || 1));
+  const reward = GYM_REWARD_BY_NUMBER[safeGymNumber];
+  if (reward) {
+    reward.apply();
+    scene.enqueueMessage(reward.message);
+    return;
+  }
+
+  const fallbackFlag = `gym${safeGymNumber}Cleared`;
+  if (Object.prototype.hasOwnProperty.call(gameState.storyFlags || {}, fallbackFlag)) {
+    gameState.storyFlags[fallbackFlag] = true;
+  } else {
+    gameState.gymCleared = true;
+  }
+  scene.enqueueMessage(`${safeGymNumber}つめの ジムバッジを てにいれた！ おめでとう！ 🏆`);
+}
+
 /** 勝利処理 */
 export function handleVictory(scene) {
   scene.resultType = "win";
@@ -41,14 +74,7 @@ export function handleVictory(scene) {
 
   // ジムクリアフラグ
   if (scene.isBoss) {
-    const gymNum = scene.battle.gymNumber || 1;
-    if (gymNum === 2) {
-      gameState.storyFlags.frozenPeakGymCleared = true;
-      scene.enqueueMessage("アイスバッジを てにいれた！ おめでとう！ 🏆❄️");
-    } else {
-      gameState.gymCleared = true;
-      scene.enqueueMessage("ジムバッジを てにいれた！ おめでとう！ 🏆");
-    }
+    applyGymClearReward(scene, scene.battle.gymNumber);
   }
 }
 

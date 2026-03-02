@@ -1,5 +1,62 @@
 # CHANGELOG
 
+## [2.1.4] - 2026-03-02
+
+### Note
+- 優先度と対応工数のバランスを重視し、進行リスク/堅牢性/UI崩れ系のTODOを7件完了した。
+
+### Added
+- なし
+
+### Changed
+- `js/data/monsters.ts` と関連呼び出し群で `getMonsterMaxStamina()` を無引数呼び出しへ統一。
+- `js/scenes/title/titleNameInput.ts` で、隠し入力要素をシーン `shutdown/destroy` 時にもクリーンアップするよう変更。
+- `js/state/saveSchema.ts` / `js/data/wildEncounters.ts` / `js/scenes/WorldScene.ts` / `js/scenes/world/worldTrainerArena.ts` / `js/scenes/battle/battleCatch.ts` で、生成モンスターの `speedStage` 初期値を `0` に統一。
+- `js/scenes/menu/views/partyView.ts` のわざ表示Y座標を固定値から動的計算へ変更。
+- `js/scenes/battle/battleResultRewards.ts` のジム報酬分岐を、`gymNumber===2` 固定分岐から報酬マップ + フォールバック方式に変更。
+- `js/scenes/battle/battleMessageFlow.ts` のキュー消化後遷移を `PLAYER_SELECT_MOVE/ITEM/SWITCH/LEARN_REPLACE` に拡張。
+- `js/scenes/battle/battleVisuals.ts` の `tickWeather` をマップ別天候ロールベースへ変更。
+- `TODO.md` から完了済みの `A-21` / `A-22` / `A-24` / `B-22` / `F-25` / `H-16` / `H-17` を削除し、統計サマリーを更新。
+- `package.json` と `package-lock.json` のバージョンを `2.1.3` から `2.1.4` に更新。
+
+### Fixed
+- マップテーマに不整合な天候が戦闘中に発生しうる問題を修正。
+- タイトル名入力の隠しDOM要素がシーン破棄時に残留しうる問題を修正。
+- 生成モンスターで `speedStage` 初期化漏れに `|| 0` フォールバック依存していた問題を修正。
+- パーティ詳細画面で技リストが詳細テキスト量次第で重なりうる問題を修正。
+- ジム報酬分岐の将来拡張性が低い固定条件分岐を改善。
+- 戦闘メッセージキュー終了後の遷移フォールスルーを改善。
+
+### Prompt
+- User: `優先度と対応工数のバランスを考えてA~IのTODOを5~10個を完了してください。lint/typecheck/test/buildは全てのTODOを完了した後に実施してください。`
+- Assistant（対応方針）: A〜Iから高優先度かつ小〜中工数の7件を最小差分で実装し、TODO/版数/変更履歴を同期したうえで最後に `lint/typecheck/test/build` を順次実行して検証する。
+
+## [2.1.3] - 2026-03-02
+
+### Note
+- 優先度と対応工数のバランスを重視し、セキュリティ/運用/ドキュメント系を中心にTODOを6件完了した。
+
+### Added
+- `assets/og-image.svg` を追加し、SNS共有時のプレビュー用画像を用意。
+- `TODO.md` に「TODO運用ルール（未着手/着手中/保留/完了）」を追記。
+- `GAME_DESIGN.md` にテスト方針（単体/統合/手動確認範囲・実行順序）を追記。
+
+### Changed
+- `index.html` に `Content-Security-Policy` メタタグを追加。
+- `index.html` に Open Graph / Twitter Card メタタグを追加。
+- `index.html` に `<noscript>` フォールバック文言を追加。
+- `js/scenes/title/titleVisuals.ts` の版数表示を `__APP_VERSION__` の防御参照へ変更（未定義時は `dev`）。
+- `TODO.md` から完了済みの `F-28` / `H-19` / `H-20` / `H-21` / `J-07` / `K-13` を削除し、統計サマリーを更新。
+- `package.json` と `package-lock.json` のバージョンを `2.1.2` から `2.1.3` に更新。
+
+### Fixed
+- JavaScript無効時に白画面で何も表示されない問題を改善。
+- Vite外環境で `__APP_VERSION__` が未定義の場合に版数描画で例外化しうる問題を改善。
+
+### Prompt
+- User: `優先度と対応工数のバランスを考えてTODOを5~10個を完了してください。lint/typecheck/test/buildは全てのTODOを完了した後に実施してください。`
+- Assistant（対応方針）: 高優先度に直結する低〜中工数タスクを6件選定して最小差分で実装・文書反映し、最後に `lint/typecheck/test/build` を一括実行して検証する。
+
 ## [2.1.2] - 2026-03-02
 
 ### Note

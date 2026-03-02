@@ -606,7 +606,7 @@ export class MenuScene extends Phaser.Scene {
       used = true;
     } else if (item.effect.type === "healAllPP") {
       const moves = getMonsterMoves(target);
-      const maxStamina = getMonsterMaxStamina(target);
+      const maxStamina = getMonsterMaxStamina();
       const currentStamina = Number.isFinite(target.stamina)
         ? Math.floor(target.stamina)
         : maxStamina;

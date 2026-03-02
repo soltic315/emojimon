@@ -1610,7 +1610,7 @@ export class WorldScene extends Phaser.Scene {
               m.currentHp = stats.maxHp;
               // スタミナ全回復
               syncMonsterMoves(m);
-              m.stamina = getMonsterMaxStamina(m);
+              m.stamina = getMonsterMaxStamina();
               // 状態異常回復
               m.statusCondition = "NONE";
             }
@@ -2309,9 +2309,10 @@ export class WorldScene extends Phaser.Scene {
       currentHp: stats.maxHp,
       attackStage: 0,
       defenseStage: 0,
+      speedStage: 0,
       abilityId: rollMonsterAbilityId(starter),
       moveIds: [],
-      stamina: getMonsterMaxStamina({ species: starter, level }),
+      stamina: getMonsterMaxStamina(),
     };
     syncMonsterMoves(mon);
     gameState.party = [mon];
@@ -2788,8 +2789,9 @@ export class WorldScene extends Phaser.Scene {
         nextLevelExp: 10 + 8 * level,
         attackStage: 0,
         defenseStage: 0,
+        speedStage: 0,
         abilityId: rollMonsterAbilityId(eternia),
-        stamina: getMonsterMaxStamina({ species: eternia, level }),
+        stamina: getMonsterMaxStamina(),
       };
       const activeMon = gameState.getFirstAlive();
       if (!activeMon) {

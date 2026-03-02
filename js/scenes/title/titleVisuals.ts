@@ -8,6 +8,7 @@ const FLOATING_EMOJIS = ["🧸", "💧", "🍃", "⭐", "🔥", "🐢", "💎", 
 
 export function createTitleVisuals(scene: TitleSceneLike): void {
   const { width, height } = scene.scale;
+  const appVersion = typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "dev";
 
   const bg = scene.add.graphics();
   bg.fillGradientStyle(0x080d18, 0x1a2335, 0x03060f, 0x0b1320, 1);
@@ -142,7 +143,7 @@ export function createTitleVisuals(scene: TitleSceneLike): void {
     ease: "sine.inOut",
   });
 
-  scene.add.text(width - 16, 8, `v${__APP_VERSION__}`, {
+  scene.add.text(width - 16, 8, `v${appVersion}`, {
     fontFamily: FONT.MONO,
     fontSize: 11,
     color: "#374151",

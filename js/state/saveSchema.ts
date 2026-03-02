@@ -191,6 +191,7 @@ export function buildLoadedMonster(saved) {
     bond: clampInt(saved?.bond, 0, 100, 0),
     attackStage: 0,
     defenseStage: 0,
+    speedStage: 0,
     abilityId: typeof saved?.abilityId === "string" && saved.abilityId.length > 0
       ? saved.abilityId
       : rollMonsterAbilityId(species),
@@ -199,7 +200,7 @@ export function buildLoadedMonster(saved) {
       : [],
     stamina: Number.isFinite(saved?.stamina)
       ? Math.floor(saved.stamina)
-      : getMonsterMaxStamina({ species, level }),
+      : getMonsterMaxStamina(),
     nickname: typeof saved?.nickname === "string" && saved.nickname.trim().length > 0
       ? saved.nickname.trim().slice(0, 12)
       : null,

@@ -214,8 +214,9 @@ function completeCatchSuccess(scene, ballText, opponent) {
     currentHp: calcStats(opponent.species, opponent.level).maxHp,
     attackStage: 0,
     defenseStage: 0,
+    speedStage: 0,
     moveIds: [],
-    stamina: getMonsterMaxStamina({ species: opponent.species, level: opponent.level }),
+    stamina: getMonsterMaxStamina(),
   };
   syncMonsterMoves(newMon);
 

@@ -146,7 +146,7 @@ export function renderPartyView(scene) {
       `ATK: ${stats.attack}   DEF: ${stats.defense}`,
       `SPD: ${stats.speed}   キズナ: ${selectedMon.bond || 0}`,
       `EXP: ${selectedMon.exp || 0}/${selectedMon.nextLevelExp}`,
-      `ST: ${Number.isFinite(selectedMon.stamina) ? Math.floor(selectedMon.stamina) : getMonsterMaxStamina(selectedMon)}/${getMonsterMaxStamina(selectedMon)}`,
+      `ST: ${Number.isFinite(selectedMon.stamina) ? Math.floor(selectedMon.stamina) : getMonsterMaxStamina()}/${getMonsterMaxStamina()}`,
       "",
       "わざ",
     ];
@@ -164,7 +164,8 @@ export function renderPartyView(scene) {
       const moveLines = knownMoves.map((move) => {
         return `・${move.name}  消費ST ${getMoveStaminaCost(move)}`;
       });
-      const moveText = scene.add.text(detailX + 12, panelY + 250, moveLines.join("\n"), {
+      const moveStartY = detailText.y + detailText.height + 8;
+      const moveText = scene.add.text(detailX + 12, moveStartY, moveLines.join("\n"), {
         fontFamily: FONT.UI,
         fontSize: 13,
         color: "#cbd5e1",
