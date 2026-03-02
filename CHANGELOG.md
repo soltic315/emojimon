@@ -1,5 +1,29 @@
 # CHANGELOG
 
+## [2.1.5] - 2026-03-02
+
+### Note
+- 優先度と対応工数のバランスを重視し、A〜I の TODO から型乖離の高優先5件を完了した。
+
+### Added
+- なし
+
+### Changed
+- `types/game.d.ts` の `Move` 型で `pp` を受理し、`staminaCost` をオプショナル化して `moves.json` との名称差異を吸収。
+- `types/game.d.ts` の `Item` 型に `battleUsable` と `effect`（ネスト構造）を追加し、実データ構造へ同期。
+- `types/game.d.ts` に `ItemEffect` を追加し、`heal/revive/healAllPP/cureStatus/evolution` 等の実在エフェクト型を定義。
+- `types/game.d.ts` の `InventoryItem` を `id/count` から `itemId/quantity` へ変更し、実装と一致させた。
+- `types/game.d.ts` の `MonsterSpecies` を `sub_emoji` / `abilityRates` / `learnsetLevels` 等へ対応し、JSON/ランタイム双方の表現差を吸収。
+- `TODO.md` から完了済みの `B-19` / `B-20` / `B-25` / `B-26` / `B-27` を削除し、統計サマリーを更新。
+- `package.json` と `package-lock.json` のバージョンを `2.1.4` から `2.1.5` に更新。
+
+### Fixed
+- 型定義と実データの構造不一致により参照エラーや見落としが発生しうる問題を改善。
+
+### Prompt
+- User: `優先度と対応工数のバランスを考えてA~IのTODOを5~10個を完了してください。lint/typecheck/test/buildは全てのTODOを完了した後に実施してください。`
+- Assistant（対応方針）: A〜Iのうち高優先かつ小工数で完了可能な型乖離5件（B-19/B-20/B-25/B-26/B-27）を最小差分で実装し、TODO/版数/変更履歴を同期した後に `lint/typecheck/test/build` を順次実行して検証する。
+
 ## [2.1.4] - 2026-03-02
 
 ### Note

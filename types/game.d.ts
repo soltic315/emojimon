@@ -56,7 +56,8 @@ export interface Move {
   type: MonsterType;
   power: number;
   accuracy: number;
-  staminaCost: number;
+  staminaCost?: number;
+  pp?: number;
   category: "physical" | "special" | "status";
   priority?: number;
   description?: string;
@@ -124,16 +125,20 @@ export interface MonsterSpecies {
   name: string;
   emoji: string;
   subEmoji?: MonsterSubEmoji[];
+  sub_emoji?: MonsterSubEmoji[];
   primaryType: MonsterType;
   secondaryType?: MonsterType | null;
-  ability: MonsterAbilityDef[];
+  ability?: MonsterAbilityDef[];
+  abilityId?: string;
+  abilityRates?: MonsterAbilityDef[];
   spawnRate?: number;
   baseExpYield: number;
   heldItems: MonsterHeldItem[];
   sizeScale: number;
   recipe?: [MonsterRecipeMaterial, MonsterRecipeMaterial][];
   baseStats: BaseStats;
-  learnset: MonsterLearnsetEntry[];
+  learnset: Array<MonsterLearnsetEntry | Move>;
+  learnsetLevels?: number[];
   description: string;
   catchRate: number;
   evolution: EvolutionDef | null;
@@ -168,26 +173,35 @@ export interface MonsterInstance {
 // ── アイテム ──
 
 /** アイテム定義 */
+export type ItemEffect =
+  | { type: "heal"; amount: number }
+  | { type: "revive"; amount: number }
+  | { type: "healAllPP"; amount: number }
+  | { type: "fullRestore" }
+  | { type: "buffAttack"; stages: number }
+  | { type: "buffDefense"; stages: number }
+  | { type: "buffSpeed"; stages: number }
+  | { type: "buffAttackSpeed"; stages: number }
+  | { type: "buffDefenseHeal"; stages: number; healPercent: number }
+  | { type: "cureStatus"; status: StatusConditionType }
+  | { type: "evolution" }
+  | Record<string, unknown>;
+
 export interface Item {
   id: string;
   name: string;
   emoji: string;
   price: number;
   description: string;
-  healAmount?: number;
-  healStatus?: StatusConditionType;
-  fullRestore?: boolean;
-  revive?: boolean;
-  attackStage?: number;
-  defenseStage?: number;
-  speedStage?: number;
+  battleUsable?: boolean;
+  effect?: ItemEffect | null;
   catchBonus?: number;
 }
 
 /** インベントリアイテム */
 export interface InventoryItem {
-  id: string;
-  count: number;
+  itemId: string;
+  quantity: number;
 }
 
 // ── バトル ──
