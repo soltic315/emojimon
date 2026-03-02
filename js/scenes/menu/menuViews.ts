@@ -17,7 +17,7 @@ export { renderTrainerView } from "./views/trainerView.ts";
 export { renderQuestView } from "./views/questView.ts";
 export { renderGlobalMapView } from "./views/globalMapView.ts";
 export { renderGuideTocView, renderGuideView } from "./views/guideView.ts";
-export { renderSettingsView } from "./views/settingsView.ts";
+export { renderSettingsView, detachSettingsKeyHandlers } from "./views/settingsView.ts";
 export { renderAchievementsView } from "./views/achievementsView.ts";
 
 // ── 個別ビュー関数（dispatch用ローカルインポート） ──
@@ -29,7 +29,7 @@ import { renderTrainerView } from "./views/trainerView.ts";
 import { renderQuestView } from "./views/questView.ts";
 import { renderGlobalMapView } from "./views/globalMapView.ts";
 import { renderGuideTocView, renderGuideView } from "./views/guideView.ts";
-import { renderSettingsView } from "./views/settingsView.ts";
+import { renderSettingsView, detachSettingsKeyHandlers } from "./views/settingsView.ts";
 import { renderAchievementsView } from "./views/achievementsView.ts";
 
 // ── メインメニュー描画 ──
@@ -87,6 +87,7 @@ export function renderMainMenu(scene) {
 
 export function renderSubMenu(scene) {
   scene.subPanel.removeAll(true);
+  detachSettingsKeyHandlers(scene);
   switch (scene.subMenuType) {
     case "party":
       renderPartyView(scene);

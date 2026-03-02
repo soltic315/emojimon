@@ -1,7 +1,7 @@
 import { gameState } from "../../state/gameState.ts";
 import { audioManager } from "../../audio/AudioManager.ts";
 import { FONT, TEXT_COLORS, drawSelection } from "../../ui/UIHelper.ts";
-import { truncateKeyboardText } from "../../ui/gameKeyboard.ts";
+import { sanitizeKeyboardText, truncateKeyboardText } from "../../ui/gameKeyboard.ts";
 
 type MenuSceneLike = Phaser.Scene & Record<string, any>;
 
@@ -25,7 +25,7 @@ export function openNicknameKeyboard(scene: MenuSceneLike, monster: any) {
 
   scene.nicknameInputActive = true;
   scene.nicknameTargetMonster = monster;
-  scene.nicknameInput = truncateKeyboardText(monster.nickname || "", 12);
+  scene.nicknameInput = truncateKeyboardText(sanitizeKeyboardText(monster.nickname || ""), 12);
 
   if (scene.nicknameInputOverlay) {
     scene.nicknameInputOverlay.destroy(true);
@@ -114,7 +114,7 @@ export function handleNicknameDirectInput(scene: MenuSceneLike, event: KeyboardE
   if (event.key === "Process") return;
   if (event.key.length !== 1) return;
 
-  const nextValue = truncateKeyboardText(`${scene.nicknameInput || ""}${event.key}`, 12);
+  const nextValue = truncateKeyboardText(sanitizeKeyboardText(`${scene.nicknameInput || ""}${event.key}`), 12);
   if (nextValue === (scene.nicknameInput || "")) return;
   scene.nicknameInput = nextValue;
   audioManager.playCursor();
@@ -134,7 +134,7 @@ function bindNicknameInputElement(scene: MenuSceneLike): void {
   input.style.pointerEvents = "none";
 
   const syncValue = () => {
-    const trimmed = truncateKeyboardText(input.value || "", 12);
+    const trimmed = truncateKeyboardText(sanitizeKeyboardText(input.value || ""), 12);
     if (trimmed !== input.value) {
       input.value = trimmed;
     }
@@ -191,7 +191,7 @@ export function updateNicknameKeyboardDisplay(scene: MenuSceneLike) {
 
 export function closeNicknameKeyboard(scene: MenuSceneLike, applyChanges: boolean) {
   const mon = scene.nicknameTargetMonster;
-  const normalized = (scene.nicknameInput || "").trim().slice(0, 12);
+  const normalized = sanitizeKeyboardText(scene.nicknameInput || "").trim().slice(0, 12);
 
   if (applyChanges && mon && mon.species) {
     mon.nickname = normalized.length > 0 ? normalized : null;

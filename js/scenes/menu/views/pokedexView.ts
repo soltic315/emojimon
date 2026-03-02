@@ -83,6 +83,23 @@ export function renderPokedexView(scene) {
     scene.subPanel.add(markText);
   }
 
+  if (scrollStart > 0) {
+    const upHint = scene.add.text(panelX + panelW - 26, panelY + 42, "▲", {
+      fontFamily: FONT.UI,
+      fontSize: 11,
+      color: "#93c5fd",
+    });
+    scene.subPanel.add(upHint);
+  }
+  if (scrollStart + visibleCount < allMons.length) {
+    const downHint = scene.add.text(panelX + panelW - 26, detailPanelTop - 20, "▼", {
+      fontFamily: FONT.UI,
+      fontSize: 11,
+      color: "#93c5fd",
+    });
+    scene.subPanel.add(downHint);
+  }
+
   const detailBg = scene.add.graphics();
   drawPanel(detailBg, panelX + 10, detailPanelTop, panelW - 20, 156, { radius: 8, headerHeight: 22 });
   scene.subPanel.add(detailBg);
@@ -159,7 +176,7 @@ export function renderPokedexView(scene) {
   scene.subPanel.add(evoText);
 
   const learnset = Array.isArray(selectedMon.learnset) ? selectedMon.learnset : [];
-  const moveLines = learnset.slice(0, 6).map((move, idx) => {
+  const moveLines = learnset.map((move, idx) => {
     const level = Array.isArray(selectedMon.learnsetLevels)
       ? (selectedMon.learnsetLevels[idx] ?? (1 + idx * 2))
       : (1 + idx * 2);

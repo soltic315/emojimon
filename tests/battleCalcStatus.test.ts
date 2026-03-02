@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { calculateDamage } from "../js/scenes/battle/battleCalcStatus.ts";
+import { calculateDamage, getEffectiveness } from "../js/scenes/battle/battleCalcStatus.ts";
 import { StatusCondition } from "../js/scenes/battle/battleConstants.ts";
 
 function createSpecies(primaryType: string) {
@@ -136,5 +136,66 @@ describe("battle damage calculation", () => {
     const burn = calculateDamage({ weather: "NONE", battle: { player: attackerBurn } }, attackerBurn, defender, move);
 
     expect(burn.damage).toBeLessThan(normal.damage);
+  });
+
+  it("タイプ相性倍率を正しく計算する", () => {
+    expect(getEffectiveness("FIRE", "GRASS", null)).toBe(2);
+    expect(getEffectiveness("FIRE", "WATER", null)).toBe(0.5);
+    expect(getEffectiveness("WATER", "FIRE", "GRASS")).toBe(1);
+  });
+
+  it("やけど時でも特殊技カテゴリは減衰しない", () => {
+    mockPhaser(1);
+    vi.spyOn(Math, "random").mockReturnValue(0.99);
+
+    const attackerNormal = {
+      species: createSpecies("NORMAL"),
+      level: 10,
+      statusCondition: StatusCondition.NONE,
+      abilityId: null,
+    };
+    const attackerBurn = {
+      ...attackerNormal,
+      statusCondition: StatusCondition.BURN,
+    };
+    const defender = {
+      species: createSpecies("NORMAL"),
+      level: 10,
+      abilityId: null,
+    };
+    const move = { power: 50, type: "NORMAL", category: "special" };
+
+    const normal = calculateDamage({ weather: "NONE", battle: { player: attackerNormal } }, attackerNormal, defender, move);
+    const burn = calculateDamage({ weather: "NONE", battle: { player: attackerBurn } }, attackerBurn, defender, move);
+
+    expect(burn.damage).toBe(normal.damage);
+  });
+
+  it("防御ステージ上昇時はダメージが低下する", () => {
+    mockPhaser(1);
+    vi.spyOn(Math, "random").mockReturnValue(0.99);
+
+    const attacker = {
+      species: createSpecies("NORMAL"),
+      level: 10,
+      statusCondition: StatusCondition.NONE,
+      abilityId: null,
+    };
+    const defenderNeutral = {
+      species: createSpecies("NORMAL"),
+      level: 10,
+      defenseStage: 0,
+      abilityId: null,
+    };
+    const defenderBuffed = {
+      ...defenderNeutral,
+      defenseStage: 3,
+    };
+    const move = { power: 50, type: "NORMAL", category: "physical" };
+
+    const neutral = calculateDamage({ weather: "NONE", battle: { player: attacker } }, attacker, defenderNeutral, move);
+    const buffed = calculateDamage({ weather: "NONE", battle: { player: attacker } }, attacker, defenderBuffed, move);
+
+    expect(buffed.damage).toBeLessThan(neutral.damage);
   });
 });

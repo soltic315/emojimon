@@ -22,6 +22,7 @@ import {
   renderTrainerView,
   renderGuideView,
   renderSettingsView,
+  detachSettingsKeyHandlers,
 } from "./menu/menuViews.ts";
 import { handleVerticalRepeatInput } from "./menu/menuSceneInput.ts";
 import {
@@ -257,6 +258,7 @@ export class MenuScene extends Phaser.Scene {
     if (this.subMenuActive) {
       this.subMenuActive = false;
       this.subMenuType = null;
+      detachSettingsKeyHandlers(this);
       this.subPanel.removeAll(true);
       return;
     }
@@ -264,6 +266,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   closeMenu() {
+    detachSettingsKeyHandlers(this);
     this.scene.stop();
     this.scene.resume(this.fromScene);
   }
@@ -623,8 +626,7 @@ export class MenuScene extends Phaser.Scene {
     }
 
     if (used) {
-      entry.quantity = Math.max(0, entry.quantity - 1);
-      gameState.inventory = gameState.inventory.filter((it) => it.quantity > 0);
+      gameState.removeItem(entry.itemId, 1);
       // 使用後にバッグ画面に戻す
       this.time.delayedCall(800, () => {
         this.subMenuType = "bag";

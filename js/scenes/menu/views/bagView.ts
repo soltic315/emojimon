@@ -3,7 +3,7 @@ import { gameState, getMonsterDisplayName } from "../../../state/gameState.ts";
 import { getItemById } from "../../../data/items.ts";
 import { calcStats } from "../../../data/monsters.ts";
 import { FONT, drawPanel, drawSelection } from "../../../ui/UIHelper.ts";
-import { SUB_PANEL_WIDTH_OFFSET } from "../menuViewsShared.ts";
+import { SUB_PANEL_WIDTH_OFFSET, showTransientMenuMessage } from "../menuViewsShared.ts";
 
 export function renderBagView(scene) {
   const { width, height } = scene.scale;
@@ -41,11 +41,19 @@ export function renderBagView(scene) {
   }
 
   scene.subMenuIndex = Math.min(scene.subMenuIndex, inventory.length - 1);
+  const listTop = panelY + 44;
+  const rowHeight = 32;
+  const descPanelTop = height - 100;
+  const visibleCount = Math.max(1, Math.floor((descPanelTop - listTop - 8) / rowHeight));
+  const scrollStart = Math.max(0, Math.min(scene.subMenuIndex - Math.floor(visibleCount / 2), inventory.length - visibleCount));
 
-  inventory.forEach((entry, index) => {
+  for (let visibleIndex = 0; visibleIndex < visibleCount; visibleIndex++) {
+    const index = scrollStart + visibleIndex;
+    if (index >= inventory.length) break;
+    const entry = inventory[index];
     const item = getItemById(entry.itemId);
-    if (!item) return;
-    const y = panelY + 44 + index * 32;
+    if (!item) continue;
+    const y = listTop + visibleIndex * rowHeight;
     const selected = index === scene.subMenuIndex;
 
     if (selected) {
@@ -62,17 +70,35 @@ export function renderBagView(scene) {
       color: selected ? "#fbbf24" : "#e5e7eb",
     });
     scene.subPanel.add(text);
-  });
+  }
+
+  if (scrollStart > 0) {
+    scene.subPanel.add(scene.add.text(panelX + panelW - 22, listTop, "▲", {
+      fontFamily: FONT.UI,
+      fontSize: 11,
+      color: "#93c5fd",
+    }));
+  }
+  if (scrollStart + visibleCount < inventory.length) {
+    scene.subPanel.add(scene.add.text(panelX + panelW - 22, descPanelTop - 18, "▼", {
+      fontFamily: FONT.UI,
+      fontSize: 11,
+      color: "#93c5fd",
+    }));
+  }
 
   const selectedEntry = inventory[scene.subMenuIndex];
+  const descBg = scene.add.graphics();
+  drawPanel(descBg, panelX + 10, descPanelTop, panelW - 20, 44, { radius: 8, headerHeight: 0 });
+  scene.subPanel.add(descBg);
   if (selectedEntry) {
     const item = getItemById(selectedEntry.itemId);
     if (item && item.description) {
-      const desc = scene.add.text(panelX + 16, height - 60, item.description, {
+      const desc = scene.add.text(panelX + 18, descPanelTop + 8, item.description, {
         fontFamily: FONT.UI,
         fontSize: 12,
         color: "#9ca3af",
-        wordWrap: { width: panelW - 32 },
+        wordWrap: { width: panelW - 40 },
       });
       scene.subPanel.add(desc);
     }
@@ -150,14 +176,5 @@ export function renderBagTargetView(scene) {
 }
 
 export function showBagMessage(scene, text) {
-  const { width, height } = scene.scale;
-  const msg = scene.add.text(width / 2 - 110, height / 2, text, {
-    fontFamily: FONT.UI,
-    fontSize: 14,
-    color: "#fde68a",
-    backgroundColor: "#0f172a",
-    padding: { x: 12, y: 8 },
-  }).setDepth(100);
-  msg.setStroke("#000000", 2);
-  scene.time.delayedCall(1200, () => msg.destroy());
+  showTransientMenuMessage(scene, text, -110);
 }

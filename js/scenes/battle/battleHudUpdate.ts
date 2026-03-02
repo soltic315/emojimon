@@ -93,8 +93,14 @@ export function updateHud(scene, animate = false) {
   const opponentLabel = `${prefix}${opponent.species.emoji || ""} ${opponent.species.name} Lv.${opponent.level}`;
   scene.opponentNameText.setText(truncateLabel(opponentLabel, 16));
   scene.opponentHpText.setText(`${opponent.currentHp}/${oppStats.maxHp}`);
+  const oppAtkStg = opponent.attackStage || 0;
+  const oppDefStg = opponent.defenseStage || 0;
   const opponentStatus = getStatusLabel(opponent.statusCondition);
-  scene.opponentStatusText.setText(opponentStatus ? `状:${opponentStatus}` : "");
+  let opponentStageStr = "";
+  if (oppAtkStg !== 0) opponentStageStr += `攻${oppAtkStg > 0 ? "+" : ""}${oppAtkStg} `;
+  if (oppDefStg !== 0) opponentStageStr += `防${oppDefStg > 0 ? "+" : ""}${oppDefStg}`;
+  if (opponentStatus) opponentStageStr += `${opponentStageStr ? " " : ""}状:${opponentStatus}`;
+  scene.opponentStatusText.setText(opponentStageStr.trim());
 
   // 相手タイプバッジ
   const oType = opponent.species.primaryType || "NORMAL";

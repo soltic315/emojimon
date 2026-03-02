@@ -1,6 +1,6 @@
 import { audioManager } from "../../audio/AudioManager.ts";
 import { FONT, drawPanel, drawSelection } from "../../ui/UIHelper.ts";
-import { formatKeyboardText, truncateKeyboardText } from "../../ui/gameKeyboard.ts";
+import { formatKeyboardText, sanitizeKeyboardText, truncateKeyboardText } from "../../ui/gameKeyboard.ts";
 
 type TitleSceneLike = Phaser.Scene & Record<string, any>;
 
@@ -90,7 +90,7 @@ export function formatNameForDisplay(value: string, chunkSize: number): string {
 
 export function confirmName(scene: TitleSceneLike): void {
   if (!scene._nameActive) return;
-  const normalized = (scene._nameInput || "").trim();
+  const normalized = sanitizeKeyboardText(scene._nameInput || "").trim();
   const name = normalized.length > 0 ? normalized : "ユウ";
   audioManager.playConfirm();
   scene._doStartNewGame(name);
@@ -140,7 +140,7 @@ export function handleNameDirectInput(scene: TitleSceneLike, event: KeyboardEven
   if (event.key === "Process") return;
   if (event.key.length !== 1) return;
 
-  const nextValue = truncateKeyboardText(`${scene._nameInput || ""}${event.key}`, 8);
+  const nextValue = truncateKeyboardText(sanitizeKeyboardText(`${scene._nameInput || ""}${event.key}`), 8);
   if (nextValue === (scene._nameInput || "")) return;
   scene._nameInput = nextValue;
   audioManager.playCursor();
@@ -160,7 +160,7 @@ function bindNameInputElement(scene: TitleSceneLike): void {
   input.style.pointerEvents = "none";
 
   const syncValue = () => {
-    const trimmed = truncateKeyboardText(input.value || "", 8);
+    const trimmed = truncateKeyboardText(sanitizeKeyboardText(input.value || ""), 8);
     if (trimmed !== input.value) {
       input.value = trimmed;
     }

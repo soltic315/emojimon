@@ -26,6 +26,17 @@ export function truncateKeyboardText(value: string, maxLength: number): string {
   return Array.from(value || "").slice(0, maxLength).join("");
 }
 
+export function sanitizeKeyboardText(value: string): string {
+  const raw = String(value || "");
+  const withoutControl = Array.from(raw)
+    .filter((char) => {
+      const code = char.charCodeAt(0);
+      return !((code >= 0 && code <= 31) || (code >= 127 && code <= 159));
+    })
+    .join("");
+  return withoutControl.replace(/[<>\\]/g, "");
+}
+
 export function formatKeyboardText(value: string, chunkSize: number): string {
   const chars = Array.from(value || "");
   if (chars.length <= chunkSize) return chars.join("");

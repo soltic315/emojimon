@@ -3,7 +3,7 @@ import { gameState } from "../../../state/gameState.ts";
 import { calcStats, getMonsterMoves, getMonsterMaxStamina } from "../../../data/monsters.ts";
 import { getMoveStaminaCost } from "../../../data/moves.ts";
 import { FONT, TEXT_COLORS, drawPanel, drawSelection } from "../../../ui/UIHelper.ts";
-import { SUB_PANEL_WIDTH_OFFSET } from "../menuViewsShared.ts";
+import { SUB_PANEL_WIDTH_OFFSET, showTransientMenuMessage } from "../menuViewsShared.ts";
 
 export function renderPartyView(scene) {
   const { width, height } = scene.scale;
@@ -183,14 +183,5 @@ export function renderPartyView(scene) {
 }
 
 export function showPartyMessage(scene, text) {
-  const { width, height } = scene.scale;
-  const msg = scene.add.text(width / 2 - 130, height / 2, text, {
-    fontFamily: FONT.UI,
-    fontSize: 14,
-    color: "#fde68a",
-    backgroundColor: "#0f172a",
-    padding: { x: 12, y: 8 },
-  }).setDepth(100);
-  msg.setStroke("#000000", 2);
-  scene.time.delayedCall(1200, () => msg.destroy());
+  showTransientMenuMessage(scene, text, -130);
 }

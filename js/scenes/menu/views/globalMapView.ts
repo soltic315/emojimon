@@ -217,6 +217,23 @@ export function renderGlobalMapView(scene) {
     scene.subPanel.add(rowText);
   }
 
+  if (scrollStart > 0) {
+    const upHint = scene.add.text(panelX + listAreaW - 12, listTop - 6, "▲", {
+      fontFamily: FONT.UI,
+      fontSize: 10,
+      color: "#93c5fd",
+    }).setOrigin(1, 0);
+    scene.subPanel.add(upHint);
+  }
+  if (scrollStart + visibleCount < mapKeys.length) {
+    const downHint = scene.add.text(panelX + listAreaW - 12, listTop + listHeight - 12, "▼", {
+      fontFamily: FONT.UI,
+      fontSize: 10,
+      color: "#93c5fd",
+    }).setOrigin(1, 0);
+    scene.subPanel.add(downHint);
+  }
+
   const divider = scene.add.graphics();
   divider.fillStyle(0x334155, 0.65);
   divider.fillRoundedRect(panelX + 12, panelY + 286, panelW - 24, 2, 1);

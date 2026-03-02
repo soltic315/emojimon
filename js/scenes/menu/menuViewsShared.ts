@@ -1,4 +1,5 @@
 // メニュービュー共通定数・ヘルパー
+import { FONT } from "../../ui/UIHelper.ts";
 
 /** メインメニューパネル幅 */
 export const MAIN_MENU_PANEL_WIDTH = 236;
@@ -29,4 +30,17 @@ export function fitLabelToWidth(textObj, original: string, maxWidth: number): vo
     if (textObj.width <= maxWidth) return;
     cut -= 1;
   }
+}
+
+export function showTransientMenuMessage(scene, text, xOffset = -130) {
+  const { width, height } = scene.scale;
+  const msg = scene.add.text(width / 2 + xOffset, height / 2, text, {
+    fontFamily: FONT.UI,
+    fontSize: 14,
+    color: "#fde68a",
+    backgroundColor: "#0f172a",
+    padding: { x: 12, y: 8 },
+  }).setDepth(100);
+  msg.setStroke("#000000", 2);
+  scene.time.delayedCall(1200, () => msg.destroy());
 }

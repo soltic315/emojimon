@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { MONSTERS } from "../js/data/monsters.ts";
 import { checkEvolution, checkItemEvolution } from "../js/data/evolution.ts";
+import { evolveMonster, syncMonsterMoves } from "../js/data/monsters.ts";
 
 describe("evolution checks", () => {
   beforeEach(() => {
@@ -81,5 +82,60 @@ describe("evolution checks", () => {
 
     const result = checkItemEvolution({ species: base, level: 1 }, "ICE_CRYSTAL");
     expect(result).toBeNull();
+  });
+
+  it("evolveMonsterは種を更新しHPを全回復する", () => {
+    const oldSpecies = {
+      id: "OLD_MON",
+      name: "まえ",
+      baseStats: { maxHp: 20, attack: 10, defense: 10, speed: 10 },
+      learnset: [],
+      learnsetLevels: [],
+    };
+    const newSpecies = {
+      id: "NEW_MON",
+      name: "あと",
+      baseStats: { maxHp: 40, attack: 20, defense: 20, speed: 20 },
+      learnset: [],
+      learnsetLevels: [],
+    };
+    const monsterEntry = {
+      species: oldSpecies,
+      level: 5,
+      currentHp: 1,
+      moveIds: [],
+    } as any;
+
+    const oldName = evolveMonster(monsterEntry, newSpecies as any);
+
+    expect(oldName).toBe("まえ");
+    expect(monsterEntry.species).toBe(newSpecies);
+    expect(monsterEntry.currentHp).toBeGreaterThan(1);
+  });
+
+  it("syncMonsterMovesは現在レベルで覚える技を最大4件まで同期する", () => {
+    const species = {
+      id: "SYNC_MON",
+      name: "どうき",
+      learnset: [
+        { id: "M1", name: "わざ1" },
+        { id: "M2", name: "わざ2" },
+        { id: "M3", name: "わざ3" },
+        { id: "M4", name: "わざ4" },
+        { id: "M5", name: "わざ5" },
+      ],
+      learnsetLevels: [1, 3, 5, 7, 9],
+      baseStats: { maxHp: 20, attack: 10, defense: 10, speed: 10 },
+    };
+    const monsterEntry = {
+      species,
+      level: 10,
+      moveIds: ["M1", "UNKNOWN"],
+      stamina: 10,
+    } as any;
+
+    syncMonsterMoves(monsterEntry);
+
+    expect(monsterEntry.moveIds).toEqual(["M1", "M2", "M3", "M4"]);
   });
 });

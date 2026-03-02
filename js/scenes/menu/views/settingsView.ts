@@ -4,6 +4,17 @@ import { FONT, drawPanel, drawSelection } from "../../../ui/UIHelper.ts";
 import { buildUnifiedSettingsRows } from "../settingsShared.ts";
 import { SUB_PANEL_WIDTH_OFFSET } from "../menuViewsShared.ts";
 
+export function detachSettingsKeyHandlers(scene) {
+  if (scene._settingsLeftHandler) {
+    scene.input.keyboard.off("keydown-LEFT", scene._settingsLeftHandler);
+    scene._settingsLeftHandler = null;
+  }
+  if (scene._settingsRightHandler) {
+    scene.input.keyboard.off("keydown-RIGHT", scene._settingsRightHandler);
+    scene._settingsRightHandler = null;
+  }
+}
+
 export function renderSettingsView(scene) {
   const { width, height } = scene.scale;
   const panelW = width - SUB_PANEL_WIDTH_OFFSET;
@@ -51,12 +62,7 @@ export function renderSettingsView(scene) {
   });
   scene.subPanel.add(hint);
 
-  if (scene._settingsLeftHandler) {
-    scene.input.keyboard.off("keydown-LEFT", scene._settingsLeftHandler);
-  }
-  if (scene._settingsRightHandler) {
-    scene.input.keyboard.off("keydown-RIGHT", scene._settingsRightHandler);
-  }
+  detachSettingsKeyHandlers(scene);
   scene._settingsLeftHandler = () => scene._adjustVolume(-0.05);
   scene._settingsRightHandler = () => scene._adjustVolume(0.05);
   scene.input.keyboard.on("keydown-LEFT", scene._settingsLeftHandler);

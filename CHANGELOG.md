@@ -1,5 +1,43 @@
 # CHANGELOG
 
+## [2.1.8] - 2026-03-02
+
+### Note
+- 優先度と対応工数のバランスを重視し、A〜I の TODO から15件（`A-23` / `B-28` / `C-22` / `C-23` / `D-25` / `E-22` / `E-23` / `E-24` / `E-27` / `E-28` / `E-30` / `F-24` / `F-27` / `G-15` / `H-04`）を完了した。
+- ユーザー指定に従い、TODO完了後に `lint -> typecheck -> test -> build` の順で検証を実施した（`build` は実行環境上の操作で完了ログ取得をスキップ）。
+
+### Added
+- `tests/battleMessageFlow.test.ts` を追加し、メッセージキュー処理・速度倍率・自動送り・長押し高速送りの回帰テストを追加。
+- `tests/gameKeyboard.test.ts` を追加し、入力文字サニタイズ（制御文字/禁止文字除去）と文字数制限のテストを追加。
+
+### Changed
+- `js/scenes/menu/views/settingsView.ts` / `js/scenes/menu/menuViews.ts` / `js/scenes/MenuScene.ts` で設定画面の左右キー専用ハンドラ解除を共通化し、画面切替・メニュー終了時に確実に解放するよう変更。
+- `js/scenes/menu/views/pokedexView.ts` でわざ一覧の `slice(0, 6)` 制限を撤廃し、習得わざ全件を表示するよう変更。
+- `js/scenes/battle/battleHudUpdate.ts` で相手HUDにも攻撃/防御ステージ変化を表示するよう変更。
+- `js/scenes/menu/views/boxView.ts` / `js/scenes/menu/views/pokedexView.ts` / `js/scenes/menu/views/globalMapView.ts` にスクロールインジケータを追加。
+- `js/scenes/menu/views/bagView.ts` で一覧スクロールと下部固定説明パネルを導入し、説明テキスト重なりを防止。
+- `js/scenes/menu/menuViewsShared.ts` に一時メッセージ表示ヘルパー `showTransientMenuMessage` を追加し、`partyView`/`boxView`/`bagView` の重複実装を統合。
+- `js/scenes/battle/battleVisuals.ts` の天候パーティクル更新を固定33msタイマーからフレーム同期更新へ変更。
+- `js/scenes/world/worldMapData.ts` の毒沼ダメージコメントを実装仕様（生存中のパーティ全員）へ一致させた。
+- `js/ui/gameKeyboard.ts` に `sanitizeKeyboardText` を追加し、`js/scenes/title/titleNameInput.ts` / `js/scenes/menu/menuSceneNickname.ts` で入力名サニタイズを適用。
+- `js/state/gameState.ts` に `removeItem` を追加し、`js/scenes/MenuScene.ts` のバッグ消費処理を集約。
+- `tests/battleResultRewards.test.ts` / `tests/battleCalcStatus.test.ts` / `tests/evolution.test.ts` / `tests/gameState.test.ts` を拡張。
+- `GAME_DESIGN.md` にメニュー一覧のスクロールインジケータ仕様・バッグ説明欄仕様・名前入力フィルタ仕様を追記。
+- `TODO.md` から完了済み15件を削除し、統計サマリーを更新。
+- `package.json` と `package-lock.json` のバージョンを `2.1.7` から `2.1.8` に更新。
+
+### Fixed
+- 設定画面の左右キー入力が他ビューへリークする問題を修正。
+- 図鑑で7件以上のわざが確認できない問題を修正。
+- バトルHUDで相手のステージ変化が見えない問題を修正。
+- バッグ説明文がリスト末尾と重なりうる表示崩れを修正。
+- 天候パーティクルがフレームレートと非同期でちらつく問題を軽減。
+- 入力名で制御文字/禁止文字が保存されうる問題を修正。
+
+### Prompt
+- User: `優先度と対応工数のバランスを考えてA~IのTODOを15完了してください。lint/typecheck/test/buildは全てのTODOを完了した後に実施してください。`
+- Assistant（対応方針）: 高優先かつ小〜中工数の15件をA〜Iから選定して最小差分で実装し、TODO/仕様書/版数/変更履歴を同期した後に検証を実施する。
+
 ## [2.1.6] - 2026-03-02
 
 ### Note

@@ -144,30 +144,32 @@ export function createWeatherParticles(scene: any, width: number, height: number
       });
     }
     rainGfx.setDepth(5);
-    const rainTimer = scene.time.addEvent({
-      delay: 33,
-      loop: true,
-      callback: () => {
-        rainGfx.clear();
-        for (const drop of drops) {
-          drop.y += drop.speed;
-          drop.x -= drop.speed * 0.3;
-          if (drop.y > battleFieldHeight) {
-            drop.y = -drop.length;
-            drop.x = Math.random() * (width + 100);
-          }
-          if (drop.x < -20) {
-            drop.x = width + 10;
-          }
-          rainGfx.lineStyle(1.5, 0x88bbff, drop.alpha);
-          rainGfx.lineBetween(drop.x, drop.y, drop.x - drop.speed * 0.3, drop.y + drop.length);
+    const updateRain = (_time: number, delta: number) => {
+      const scale = Math.max(0.35, Math.min(2.5, delta / 16.6667));
+      rainGfx.clear();
+      for (const drop of drops) {
+        drop.y += drop.speed * scale;
+        drop.x -= drop.speed * 0.3 * scale;
+        if (drop.y > battleFieldHeight) {
+          drop.y = -drop.length;
+          drop.x = Math.random() * (width + 100);
         }
-      },
-    });
+        if (drop.x < -20) {
+          drop.x = width + 10;
+        }
+        rainGfx.lineStyle(1.5, 0x88bbff, drop.alpha);
+        rainGfx.lineBetween(drop.x, drop.y, drop.x - drop.speed * 0.3, drop.y + drop.length);
+      }
+    };
+    scene.events.on("update", updateRain);
 
     const rainOverlay = scene.add.rectangle(width / 2, battleFieldHeight / 2, width, battleFieldHeight, 0x2244aa, 0.06);
     rainOverlay.setDepth(4);
-    scene._weatherParticles.push(rainGfx, rainOverlay, { destroy: () => rainTimer.destroy() });
+    scene._weatherParticles.push(rainGfx, rainOverlay, {
+      destroy: () => {
+        scene.events.off("update", updateRain);
+      },
+    });
 
   } else if (scene.weather === WEATHER.SUNNY) {
     const sunGfx = scene.add.graphics();
@@ -206,31 +208,35 @@ export function createWeatherParticles(scene: any, width: number, height: number
         wobble: Math.random() * Math.PI * 2,
       });
     }
-    const windTimer = scene.time.addEvent({
-      delay: 33,
-      loop: true,
-      callback: () => {
-        windGfx.clear();
-        for (const leaf of leaves) {
-          leaf.x += leaf.speedX;
-          leaf.y += leaf.speedY + Math.sin(leaf.wobble) * 0.8;
-          leaf.wobble += 0.1;
-          if (leaf.x > width + 20) {
-            leaf.x = -10;
-            leaf.y = Math.random() * battleFieldHeight;
-          }
-          windGfx.fillStyle(0x6dbd6d, leaf.alpha);
-          windGfx.fillEllipse(leaf.x, leaf.y, leaf.size * 2, leaf.size);
+    let windPhase = 0;
+    const updateWind = (_time: number, delta: number) => {
+      const scale = Math.max(0.35, Math.min(2.5, delta / 16.6667));
+      windPhase += 0.2 * scale;
+      windGfx.clear();
+      for (const leaf of leaves) {
+        leaf.x += leaf.speedX * scale;
+        leaf.y += (leaf.speedY + Math.sin(leaf.wobble) * 0.8) * scale;
+        leaf.wobble += 0.1 * scale;
+        if (leaf.x > width + 20) {
+          leaf.x = -10;
+          leaf.y = Math.random() * battleFieldHeight;
         }
-        windGfx.lineStyle(1, 0xcccccc, 0.08);
-        for (let i = 0; i < 3; i++) {
-          const wy = 30 + i * 60;
-          const phase = (Date.now() * 0.002 + i) % (width + 200) - 100;
-          windGfx.lineBetween(phase, wy, phase + 80, wy - 2);
-        }
+        windGfx.fillStyle(0x6dbd6d, leaf.alpha);
+        windGfx.fillEllipse(leaf.x, leaf.y, leaf.size * 2, leaf.size);
+      }
+      windGfx.lineStyle(1, 0xcccccc, 0.08);
+      for (let i = 0; i < 3; i++) {
+        const wy = 30 + i * 60;
+        const phase = (windPhase + i * 45) % (width + 200) - 100;
+        windGfx.lineBetween(phase, wy, phase + 80, wy - 2);
+      }
+    };
+    scene.events.on("update", updateWind);
+    scene._weatherParticles.push(windGfx, {
+      destroy: () => {
+        scene.events.off("update", updateWind);
       },
     });
-    scene._weatherParticles.push(windGfx, { destroy: () => windTimer.destroy() });
 
   } else if (scene.weather === WEATHER.SNOWY) {
     const snowGfx = scene.add.graphics();
@@ -247,28 +253,30 @@ export function createWeatherParticles(scene: any, width: number, height: number
         wobble: Math.random() * Math.PI * 2,
       });
     }
-    const snowTimer = scene.time.addEvent({
-      delay: 33,
-      loop: true,
-      callback: () => {
-        snowGfx.clear();
-        for (const flake of flakes) {
-          flake.y += flake.speed;
-          flake.x += Math.sin(flake.wobble) * 0.6;
-          flake.wobble += 0.04;
-          if (flake.y > battleFieldHeight) {
-            flake.y = -flake.size;
-            flake.x = Math.random() * width;
-          }
-          snowGfx.fillStyle(0xffffff, flake.alpha);
-          snowGfx.fillCircle(flake.x, flake.y, flake.size);
+    const updateSnow = (_time: number, delta: number) => {
+      const scale = Math.max(0.35, Math.min(2.5, delta / 16.6667));
+      snowGfx.clear();
+      for (const flake of flakes) {
+        flake.y += flake.speed * scale;
+        flake.x += Math.sin(flake.wobble) * 0.6 * scale;
+        flake.wobble += 0.04 * scale;
+        if (flake.y > battleFieldHeight) {
+          flake.y = -flake.size;
+          flake.x = Math.random() * width;
         }
-      },
-    });
+        snowGfx.fillStyle(0xffffff, flake.alpha);
+        snowGfx.fillCircle(flake.x, flake.y, flake.size);
+      }
+    };
+    scene.events.on("update", updateSnow);
 
     const snowOverlay = scene.add.rectangle(width / 2, battleFieldHeight / 2, width, battleFieldHeight, 0x93c5fd, 0.05);
     snowOverlay.setDepth(4);
-    scene._weatherParticles.push(snowGfx, snowOverlay, { destroy: () => snowTimer.destroy() });
+    scene._weatherParticles.push(snowGfx, snowOverlay, {
+      destroy: () => {
+        scene.events.off("update", updateSnow);
+      },
+    });
   }
 }
 

@@ -1868,5 +1868,5 @@ export const TELEPORT_PADS = {
   ],
 };
 
-// 毒沼のダメージ設定（歩くたびにパーティ先頭のHPを減算）
+// 毒沼のダメージ設定（歩くたびにパーティ全員の生存モンスターHPを減算）
 export const POISON_SWAMP_DAMAGE = 3;

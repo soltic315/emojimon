@@ -541,6 +541,18 @@ class GameState {
     }
   }
 
+  /** インベントリからアイテムを消費（不足時はfalse） */
+  removeItem(itemId, quantity = 1) {
+    if (!itemId || quantity <= 0) return false;
+    const existing = this.inventory.find((entry) => entry.itemId === itemId);
+    if (!existing || existing.quantity < quantity) return false;
+    existing.quantity -= quantity;
+    if (existing.quantity <= 0) {
+      this.inventory = this.inventory.filter((entry) => entry.quantity > 0);
+    }
+    return true;
+  }
+
   /** 指定額を支払えれば true を返す */
   spendMoney(amount) {
     if ((this.money || 0) >= amount) {

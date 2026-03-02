@@ -2,7 +2,7 @@
 import { gameState, PARTY_CAPACITY } from "../../../state/gameState.ts";
 import { calcStats } from "../../../data/monsters.ts";
 import { FONT, TEXT_COLORS, drawPanel, drawSelection } from "../../../ui/UIHelper.ts";
-import { SUB_PANEL_WIDTH_OFFSET } from "../menuViewsShared.ts";
+import { SUB_PANEL_WIDTH_OFFSET, showTransientMenuMessage } from "../menuViewsShared.ts";
 
 // ── ボックス画面共通ヘルパー ──
 function _drawMonRow(scene, mon, index, selected, panelX, panelW, y) {
@@ -88,6 +88,21 @@ export function renderBoxView(scene) {
     _drawMonRow(scene, box[index], index, index === scene.subMenuIndex, panelX, panelW, panelY + 44 + vi * rowH);
   }
 
+  if (scrollStart > 0) {
+    scene.subPanel.add(scene.add.text(panelX + panelW - 24, panelY + 44, "▲", {
+      fontFamily: FONT.UI,
+      fontSize: 11,
+      color: "#93c5fd",
+    }));
+  }
+  if (scrollStart + visibleCount < box.length) {
+    scene.subPanel.add(scene.add.text(panelX + panelW - 24, height - 52, "▼", {
+      fontFamily: FONT.UI,
+      fontSize: 11,
+      color: "#93c5fd",
+    }));
+  }
+
   const actionHint = partyCount < PARTY_CAPACITY
     ? "Z:パーティに加える  X:もどる"
     : "Z:パーティと交換  X:もどる";
@@ -129,14 +144,5 @@ export function renderBoxSwapView(scene) {
 }
 
 export function showBoxMessage(scene, text) {
-  const { width, height } = scene.scale;
-  const msg = scene.add.text(width / 2 - 130, height / 2, text, {
-    fontFamily: FONT.UI,
-    fontSize: 14,
-    color: "#fde68a",
-    backgroundColor: "#0f172a",
-    padding: { x: 12, y: 8 },
-  }).setDepth(100);
-  msg.setStroke("#000000", 2);
-  scene.time.delayedCall(1200, () => msg.destroy());
+  showTransientMenuMessage(scene, text, -130);
 }

@@ -196,4 +196,25 @@ describe("gameState map weather", () => {
     expect(gameState.money).toBe(afterFirstMoney);
     expect(gameState.inventory.find((entry) => entry.itemId === "EMO_BALL")?.quantity || 0).toBe(afterFirstEmoBall);
   });
+
+  it("同一アイテム追加時は在庫が統合される", () => {
+    gameState.inventory = [];
+    gameState.addItem("POTION", 2);
+    gameState.addItem("POTION", 3);
+
+    expect(gameState.inventory).toEqual([{ itemId: "POTION", quantity: 5 }]);
+  });
+
+  it("removeItemは在庫不足なら失敗し、十分なら削除できる", () => {
+    gameState.inventory = [{ itemId: "POTION", quantity: 2 }];
+
+    expect(gameState.removeItem("POTION", 3)).toBe(false);
+    expect(gameState.inventory).toEqual([{ itemId: "POTION", quantity: 2 }]);
+
+    expect(gameState.removeItem("POTION", 1)).toBe(true);
+    expect(gameState.inventory).toEqual([{ itemId: "POTION", quantity: 1 }]);
+
+    expect(gameState.removeItem("POTION", 1)).toBe(true);
+    expect(gameState.inventory).toEqual([]);
+  });
 });
