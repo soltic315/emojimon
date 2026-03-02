@@ -7,6 +7,7 @@ import { getItemById } from "../data/items.ts";
 import { calcStats, getMonsterMoves } from "../data/monsters.ts";
 import { audioManager } from "../audio/AudioManager.ts";
 import { applyCanvasBrightness } from "../ui/UIHelper.ts";
+import { GAME_KEYBOARD_COLS } from "../ui/gameKeyboard.ts";
 import { NAV_REPEAT_INITIAL_DELAY_MS, NAV_REPEAT_INTERVAL_MS } from "../ui/inputConstants.ts";
 import { MENU_ITEMS, GUIDE_PAGES } from "./menu/menuConstants.ts";
 import {
@@ -77,7 +78,7 @@ export class MenuScene extends Phaser.Scene {
     this.nicknameTargetMonster = null;
     this.nicknameInput = "";
     this.nicknameKeyboardIndex = 0;
-    this.nicknameKeyboardCols = 6;
+    this.nicknameKeyboardCols = GAME_KEYBOARD_COLS;
     this.nicknameKeyboardKeys = [];
     this.nicknameKeyboardButtons = [];
     this.nicknamePanel = null;

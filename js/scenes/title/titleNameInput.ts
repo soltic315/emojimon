@@ -1,18 +1,8 @@
 import { audioManager } from "../../audio/AudioManager.ts";
 import { FONT, drawPanel, drawSelection } from "../../ui/UIHelper.ts";
+import { applyKeyboardInput, formatKeyboardText, GAME_KEYBOARD_COLS, GAME_KEYBOARD_KEYS, getNextKeyboardIndex, truncateKeyboardText } from "../../ui/gameKeyboard.ts";
 
 type TitleSceneLike = Phaser.Scene & Record<string, any>;
-
-const NAME_KEYBOARD_KEYS = [
-  "あ", "い", "う", "え", "お", "か",
-  "き", "く", "け", "こ", "さ", "し",
-  "す", "せ", "そ", "た", "ち", "つ",
-  "て", "と", "な", "に", "ぬ", "ね",
-  "の", "ま", "み", "む", "め", "も",
-  "や", "ゆ", "よ", "ん", "けす", "おわる",
-];
-
-const NAME_KEYBOARD_COLS = 6;
 
 export function showNameSelect(scene: TitleSceneLike): void {
   const { width, height } = scene.scale;
@@ -58,31 +48,31 @@ export function showNameSelect(scene: TitleSceneLike): void {
   }).setOrigin(0.5, 0);
   scene.namePanel.add(guide);
 
-  const controls = scene.add.text(width / 2, panelY + 150, "Z/Enter: 入力  けす: 1文字削除", {
+  const controls = scene.add.text(width / 2, panelY + 150, "Z/Enter/Space: 入力  けす: 1文字削除", {
     fontFamily: FONT.UI,
     fontSize: 13,
     color: "#94a3b8",
   }).setOrigin(0.5, 0);
   scene.namePanel.add(controls);
 
-  const confirmHint = scene.add.text(width / 2, panelY + 176, "おわる: けってい  X: もどる", {
+  const confirmHint = scene.add.text(width / 2, panelY + 176, "ぜんけし: 全削除  おわる: けってい  X: もどる", {
     fontFamily: FONT.UI,
     fontSize: 13,
     color: "#94a3b8",
   }).setOrigin(0.5, 0);
   scene.namePanel.add(confirmHint);
 
-  scene._nameKeyboardKeys = [...NAME_KEYBOARD_KEYS];
-  scene._nameKeyboardCols = NAME_KEYBOARD_COLS;
+  scene._nameKeyboardKeys = [...GAME_KEYBOARD_KEYS];
+  scene._nameKeyboardCols = GAME_KEYBOARD_COLS;
   scene._nameKeyboardIndex = 0;
   scene._nameKeyboardButtons = [];
 
-  const keyStartX = width / 2 - 186;
+  const keyStartX = width / 2 - 193;
   const keyStartY = panelY + 204;
-  const keyW = 54;
-  const keyH = 30;
-  const keyGapX = 10;
-  const keyGapY = 8;
+  const keyW = 50;
+  const keyH = 28;
+  const keyGapX = 6;
+  const keyGapY = 6;
 
   scene._nameKeyboardKeys.forEach((label: string, index: number) => {
     const col = index % scene._nameKeyboardCols;
@@ -119,15 +109,7 @@ export function updateNameDisplay(scene: TitleSceneLike): void {
 }
 
 export function formatNameForDisplay(value: string, chunkSize: number): string {
-  const chars = Array.from(value || "");
-  if (chars.length <= chunkSize) return chars.join("");
-
-  const lines = [];
-  for (let i = 0; i < chars.length; i += chunkSize) {
-    lines.push(chars.slice(i, i + chunkSize).join(""));
-  }
-
-  return lines.join("\n");
+  return formatKeyboardText(value, chunkSize);
 }
 
 export function confirmName(scene: TitleSceneLike): void {
@@ -135,20 +117,15 @@ export function confirmName(scene: TitleSceneLike): void {
   const key = scene._nameKeyboardKeys?.[scene._nameKeyboardIndex];
   if (!key) return;
 
-  if (key === "けす") {
-    deleteNameChar(scene);
-    return;
-  }
-
-  if (key === "おわる") {
+  const result = applyKeyboardInput(scene._nameInput || "", key, 8);
+  if (result.submitted) {
     const normalized = (scene._nameInput || "").trim();
     const name = normalized.length > 0 ? normalized : "ユウ";
     scene._doStartNewGame(name);
     return;
   }
 
-  const next = `${scene._nameInput || ""}${key}`;
-  scene._nameInput = truncateName(next, 8);
+  scene._nameInput = result.value;
   audioManager.playCursor();
   updateNameDisplay(scene);
 }
@@ -159,20 +136,14 @@ export function handleNameKeyboardNavigation(scene: TitleSceneLike): void {
   const cols = scene._nameKeyboardCols || 1;
   if (keyCount === 0) return;
 
-  let moved = false;
-  if (Phaser.Input.Keyboard.JustDown(scene.cursors.left)) {
-    scene._nameKeyboardIndex = (scene._nameKeyboardIndex - 1 + keyCount) % keyCount;
-    moved = true;
-  } else if (Phaser.Input.Keyboard.JustDown(scene.cursors.right)) {
-    scene._nameKeyboardIndex = (scene._nameKeyboardIndex + 1) % keyCount;
-    moved = true;
-  } else if (Phaser.Input.Keyboard.JustDown(scene.cursors.up)) {
-    scene._nameKeyboardIndex = (scene._nameKeyboardIndex - cols + keyCount) % keyCount;
-    moved = true;
-  } else if (Phaser.Input.Keyboard.JustDown(scene.cursors.down)) {
-    scene._nameKeyboardIndex = (scene._nameKeyboardIndex + cols) % keyCount;
-    moved = true;
-  }
+  const nextIndex = getNextKeyboardIndex(scene._nameKeyboardIndex, keyCount, cols, {
+    left: Phaser.Input.Keyboard.JustDown(scene.cursors.left),
+    right: Phaser.Input.Keyboard.JustDown(scene.cursors.right),
+    up: Phaser.Input.Keyboard.JustDown(scene.cursors.up),
+    down: Phaser.Input.Keyboard.JustDown(scene.cursors.down),
+  });
+  const moved = nextIndex !== scene._nameKeyboardIndex;
+  scene._nameKeyboardIndex = nextIndex;
 
   if (moved) {
     audioManager.playCursor();
@@ -195,16 +166,15 @@ export function updateNameKeyboardDisplay(scene: TitleSceneLike): void {
 
 export function deleteNameChar(scene: TitleSceneLike): void {
   if (!scene._nameActive) return;
-  const chars = Array.from(scene._nameInput || "");
-  if (chars.length === 0) return;
-  chars.pop();
-  scene._nameInput = chars.join("");
+  const result = applyKeyboardInput(scene._nameInput || "", "けす", 8);
+  if (result.value === (scene._nameInput || "")) return;
+  scene._nameInput = result.value;
   audioManager.playCursor();
   updateNameDisplay(scene);
 }
 
 export function truncateName(value: string, maxLength: number): string {
-  return Array.from(value).slice(0, maxLength).join("");
+  return truncateKeyboardText(value, maxLength);
 }
 
 export function closeNameSelect(scene: TitleSceneLike): void {

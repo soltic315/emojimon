@@ -1,6 +1,7 @@
 import { gameState } from "../../state/gameState.ts";
 import { audioManager } from "../../audio/AudioManager.ts";
 import { FONT, COLORS, TEXT_COLORS, drawPanel, drawSelection } from "../../ui/UIHelper.ts";
+import { applyKeyboardInput, GAME_KEYBOARD_COLS, GAME_KEYBOARD_KEYS, getNextKeyboardIndex } from "../../ui/gameKeyboard.ts";
 
 type MenuSceneLike = Phaser.Scene & Record<string, any>;
 
@@ -20,14 +21,8 @@ export function openNicknameKeyboard(scene: MenuSceneLike, monster: any) {
   scene.nicknameTargetMonster = monster;
   scene.nicknameInput = (monster.nickname || "").slice(0, 12);
   scene.nicknameKeyboardIndex = 0;
-  scene.nicknameKeyboardKeys = [
-    "あ", "い", "う", "え", "お", "か",
-    "き", "く", "け", "こ", "さ", "し",
-    "す", "せ", "そ", "た", "ち", "つ",
-    "て", "と", "な", "に", "ぬ", "ね",
-    "の", "ま", "み", "む", "め", "も",
-    "や", "ゆ", "よ", "ん", "けす", "おわる",
-  ];
+  scene.nicknameKeyboardCols = GAME_KEYBOARD_COLS;
+  scene.nicknameKeyboardKeys = [...GAME_KEYBOARD_KEYS];
   scene.nicknameKeyboardButtons = [];
 
   if (scene.nicknamePanel) {
@@ -78,19 +73,19 @@ export function openNicknameKeyboard(scene: MenuSceneLike, monster: any) {
   }).setOrigin(0.5, 0);
   scene.nicknamePanel.add(guide);
 
-  const controls = scene.add.text(width / 2, panelY + 126, "Z/Enter: 決定  X: キャンセル", {
+  const controls = scene.add.text(width / 2, panelY + 126, "Z/Enter/Space: 入力  ぜんけし: 全削除  X: キャンセル", {
     fontFamily: FONT.UI,
     fontSize: 12,
     color: "#94a3b8",
   }).setOrigin(0.5, 0);
   scene.nicknamePanel.add(controls);
 
-  const keyStartX = width / 2 - 186;
+  const keyStartX = width / 2 - 193;
   const keyStartY = panelY + 154;
-  const keyW = 54;
-  const keyH = 30;
-  const keyGapX = 10;
-  const keyGapY = 8;
+  const keyW = 50;
+  const keyH = 28;
+  const keyGapX = 6;
+  const keyGapY = 6;
 
   scene.nicknameKeyboardKeys.forEach((label: string, index: number) => {
     const col = index % scene.nicknameKeyboardCols;
@@ -119,20 +114,14 @@ export function handleNicknameKeyboardNavigation(scene: MenuSceneLike) {
   const cols = scene.nicknameKeyboardCols || 1;
   if (keyCount === 0) return;
 
-  let moved = false;
-  if (Phaser.Input.Keyboard.JustDown(scene.cursors.left)) {
-    scene.nicknameKeyboardIndex = (scene.nicknameKeyboardIndex - 1 + keyCount) % keyCount;
-    moved = true;
-  } else if (Phaser.Input.Keyboard.JustDown(scene.cursors.right)) {
-    scene.nicknameKeyboardIndex = (scene.nicknameKeyboardIndex + 1) % keyCount;
-    moved = true;
-  } else if (Phaser.Input.Keyboard.JustDown(scene.cursors.up)) {
-    scene.nicknameKeyboardIndex = (scene.nicknameKeyboardIndex - cols + keyCount) % keyCount;
-    moved = true;
-  } else if (Phaser.Input.Keyboard.JustDown(scene.cursors.down)) {
-    scene.nicknameKeyboardIndex = (scene.nicknameKeyboardIndex + cols) % keyCount;
-    moved = true;
-  }
+  const nextIndex = getNextKeyboardIndex(scene.nicknameKeyboardIndex, keyCount, cols, {
+    left: Phaser.Input.Keyboard.JustDown(scene.cursors.left),
+    right: Phaser.Input.Keyboard.JustDown(scene.cursors.right),
+    up: Phaser.Input.Keyboard.JustDown(scene.cursors.up),
+    down: Phaser.Input.Keyboard.JustDown(scene.cursors.down),
+  });
+  const moved = nextIndex !== scene.nicknameKeyboardIndex;
+  scene.nicknameKeyboardIndex = nextIndex;
 
   if (moved) {
     audioManager.playCursor();
@@ -145,27 +134,21 @@ export function confirmNicknameInput(scene: MenuSceneLike) {
   const key = scene.nicknameKeyboardKeys?.[scene.nicknameKeyboardIndex];
   if (!key) return;
 
-  if (key === "けす") {
-    deleteNicknameChar(scene);
-    return;
-  }
-
-  if (key === "おわる") {
+  const result = applyKeyboardInput(scene.nicknameInput || "", key, 12);
+  if (result.submitted) {
     closeNicknameKeyboard(scene, true);
     return;
   }
 
-  const next = `${scene.nicknameInput || ""}${key}`;
-  scene.nicknameInput = Array.from(next).slice(0, 12).join("");
+  scene.nicknameInput = result.value;
   audioManager.playCursor();
   updateNicknameInputDisplay(scene);
 }
 
 export function deleteNicknameChar(scene: MenuSceneLike) {
-  const chars = Array.from(scene.nicknameInput || "");
-  if (chars.length === 0) return;
-  chars.pop();
-  scene.nicknameInput = chars.join("");
+  const result = applyKeyboardInput(scene.nicknameInput || "", "けす", 12);
+  if (result.value === (scene.nicknameInput || "")) return;
+  scene.nicknameInput = result.value;
   audioManager.playCursor();
   updateNicknameInputDisplay(scene);
 }
