@@ -1005,6 +1005,27 @@ export class WorldScene extends Phaser.Scene {
       });
     }
 
+    for (let i = 0; i < 26; i++) {
+      const mote = this.add.circle(
+        Math.random() * worldWidth,
+        Math.random() * worldHeight,
+        1 + Math.random() * 1.8,
+        i % 3 === 0 ? 0xc4b5fd : 0xbfdbfe,
+        0.05 + Math.random() * 0.09,
+      ).setBlendMode(Phaser.BlendModes.ADD);
+      ambientLayer.add(mote);
+      this.tweens.add({
+        targets: mote,
+        y: mote.y - (8 + Math.random() * 18),
+        x: mote.x + (Math.random() - 0.5) * 14,
+        alpha: 0.02,
+        duration: 2400 + Math.random() * 2200,
+        yoyo: true,
+        repeat: -1,
+        ease: "sine.inOut",
+      });
+    }
+
     this.timeTintOverlay = this.add.rectangle(width / 2, height / 2, width, height, 0xf8fafc, 0)
       .setScrollFactor(0)
       .setDepth(5)
@@ -1013,6 +1034,16 @@ export class WorldScene extends Phaser.Scene {
     this.weatherTintOverlay = this.add.rectangle(width / 2, height / 2, width, height, 0x94a3b8, 0)
       .setScrollFactor(0)
       .setDepth(5);
+
+    const vignette = this.add.graphics()
+      .setScrollFactor(0)
+      .setDepth(6)
+      .setBlendMode(Phaser.BlendModes.MULTIPLY);
+    vignette.fillStyle(0x0b1120, 0.12);
+    vignette.fillRect(0, 0, width, 28);
+    vignette.fillRect(0, height - 34, width, 34);
+    vignette.fillRect(0, 0, 18, height);
+    vignette.fillRect(width - 18, 0, 18, height);
 
   }
 

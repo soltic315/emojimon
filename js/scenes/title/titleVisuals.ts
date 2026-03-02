@@ -27,6 +27,25 @@ export function createTitleVisuals(scene: TitleSceneLike): void {
     deco.lineBetween(0, height * 0.08 + i * 36, width, height * 0.03 + i * 36);
   }
 
+  for (let i = 0; i < 34; i++) {
+    const star = scene.add.circle(
+      Math.random() * width,
+      Math.random() * (height * 0.62),
+      0.8 + Math.random() * 1.6,
+      i % 4 === 0 ? 0xfef9c3 : 0xe2e8f0,
+      0.16 + Math.random() * 0.22,
+    ).setBlendMode(Phaser.BlendModes.ADD);
+    scene.tweens.add({
+      targets: star,
+      alpha: 0.04 + Math.random() * 0.08,
+      scale: 0.8 + Math.random() * 0.4,
+      duration: 1400 + Math.random() * 2200,
+      yoyo: true,
+      repeat: -1,
+      ease: "sine.inOut",
+    });
+  }
+
   const shine = scene.add.rectangle(-120, height * 0.28, 170, height * 0.9, 0xf8fafc, 0.07)
     .setAngle(-24)
     .setBlendMode(Phaser.BlendModes.ADD);
@@ -60,6 +79,18 @@ export function createTitleVisuals(scene: TitleSceneLike): void {
     radius: 132,
     alpha: 0.035,
     duration: 2000,
+    yoyo: true,
+    repeat: -1,
+    ease: "sine.inOut",
+  });
+
+  const foregroundMist = scene.add.ellipse(width / 2, height * 0.92, width * 0.92, height * 0.26, 0xb6d4ff, 0.05)
+    .setBlendMode(Phaser.BlendModes.SCREEN);
+  scene.tweens.add({
+    targets: foregroundMist,
+    alpha: 0.085,
+    scaleX: 1.04,
+    duration: 2600,
     yoyo: true,
     repeat: -1,
     ease: "sine.inOut",

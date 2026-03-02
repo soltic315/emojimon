@@ -22,6 +22,18 @@ export function createBattleAtmosphere(scene: any, width: number, height: number
   edgeGlow.fillEllipse(width * 0.82, height * 0.22, 220, 140);
   edgeGlow.setBlendMode(Phaser.BlendModes.ADD);
 
+  const ambientFog = scene.add.ellipse(width / 2, height * 0.42, width * 1.05, height * 0.7, tint, 0.03)
+    .setBlendMode(Phaser.BlendModes.ADD);
+  scene.tweens.add({
+    targets: ambientFog,
+    alpha: 0.065,
+    scaleX: 1.06,
+    duration: 2600,
+    yoyo: true,
+    repeat: -1,
+    ease: "sine.inOut",
+  });
+
   for (let i = 0; i < 10; i++) {
     const orb = scene.add.circle(
       60 + i * (width / 10),
@@ -36,6 +48,27 @@ export function createBattleAtmosphere(scene: any, width: number, height: number
       alpha: 0.14,
       y: orb.y + 16,
       duration: 1800 + (i % 5) * 260,
+      yoyo: true,
+      repeat: -1,
+      ease: "sine.inOut",
+    });
+  }
+
+  for (let i = 0; i < 18; i++) {
+    const spark = scene.add.circle(
+      Math.random() * width,
+      height * 0.12 + Math.random() * (height * 0.48),
+      1.1 + Math.random() * 2.2,
+      tint,
+      0.05 + Math.random() * 0.11,
+    ).setBlendMode(Phaser.BlendModes.ADD);
+
+    scene.tweens.add({
+      targets: spark,
+      y: spark.y - (12 + Math.random() * 24),
+      x: spark.x + (Math.random() - 0.5) * 26,
+      alpha: 0.02,
+      duration: 1800 + Math.random() * 1800,
       yoyo: true,
       repeat: -1,
       ease: "sine.inOut",
@@ -410,4 +443,23 @@ export function drawBattleBackground(scene: any, width: number, height: number) 
   horizonGlow.fillStyle(0xf8fafc, 0.06);
   horizonGlow.fillEllipse(width / 2, height * 0.66, width * 0.85, 120);
   horizonGlow.setBlendMode(Phaser.BlendModes.ADD);
+
+  const cinematicVignette = scene.add.graphics();
+  cinematicVignette.fillStyle(0x020617, 0.16);
+  cinematicVignette.fillRect(0, 0, width, 34);
+  cinematicVignette.fillRect(0, height - 40, width, 40);
+  cinematicVignette.fillRect(0, 0, 22, height);
+  cinematicVignette.fillRect(width - 22, 0, 22, height);
+  cinematicVignette.setBlendMode(Phaser.BlendModes.MULTIPLY);
+
+  const floorShimmer = scene.add.ellipse(width / 2, height * 0.74, width * 0.72, 68, 0xffffff, 0.05)
+    .setBlendMode(Phaser.BlendModes.ADD);
+  scene.tweens.add({
+    targets: floorShimmer,
+    alpha: 0.08,
+    duration: 1700,
+    yoyo: true,
+    repeat: -1,
+    ease: "sine.inOut",
+  });
 }
