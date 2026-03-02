@@ -83,6 +83,23 @@ export const TEXT_COLORS = {
   ICE: "#67e8f9",
 };
 
+// ── 共通UIレイアウト/タイポトークン ──
+export const UI_LAYOUT = {
+  SAFE_MARGIN: 14,
+  PANEL_GAP: 10,
+  MESSAGE_PANEL_HEIGHT: 62,
+  WEATHER_PANEL_WIDTH: 248,
+  WEATHER_PANEL_HEIGHT: 38,
+};
+
+export const UI_FONT_SIZE = {
+  TITLE: 18,
+  BODY: 16,
+  BODY_SM: 14,
+  CAPTION: 13,
+  MICRO: 12,
+};
+
 /**
  * 設定値に応じてゲームキャンバスの明るさを適用する
  * @param {Phaser.Scene|Phaser.Game} target

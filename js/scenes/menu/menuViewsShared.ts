@@ -1,13 +1,15 @@
 // メニュービュー共通定数・ヘルパー
 
 /** メインメニューパネル幅 */
-export const MAIN_MENU_PANEL_WIDTH = 220;
+export const MAIN_MENU_PANEL_WIDTH = 236;
 /** メインメニュー右マージン */
-export const MAIN_MENU_RIGHT_MARGIN = 10;
+export const MAIN_MENU_RIGHT_MARGIN = 14;
+/** メインメニュー上マージン */
+export const MAIN_MENU_TOP_MARGIN = 14;
 /** サブパネル左マージン */
-export const SUB_PANEL_LEFT_MARGIN = 10;
+export const SUB_PANEL_LEFT_MARGIN = 14;
 /** メイン–サブパネル間ギャップ */
-export const MAIN_SUB_PANEL_GAP = 10;
+export const MAIN_SUB_PANEL_GAP = 12;
 /** サブパネル左端オフセット（＝メイン幅+各マージン合計） */
 export const SUB_PANEL_WIDTH_OFFSET =
   MAIN_MENU_PANEL_WIDTH + MAIN_MENU_RIGHT_MARGIN + SUB_PANEL_LEFT_MARGIN + MAIN_SUB_PANEL_GAP;

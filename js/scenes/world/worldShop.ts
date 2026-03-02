@@ -1,7 +1,7 @@
 import { gameState } from "../../state/gameState.ts";
 import { getItemById } from "../../data/items.ts";
 import { audioManager } from "../../audio/AudioManager.ts";
-import { FONT, drawPanel, drawSelection } from "../../ui/UIHelper.ts";
+import { FONT, UI_LAYOUT, UI_FONT_SIZE, drawPanel, drawSelection } from "../../ui/UIHelper.ts";
 import { NAV_REPEAT_INITIAL_DELAY_MS, NAV_REPEAT_INTERVAL_MS } from "../../ui/inputConstants.ts";
 
 const SHOP_MODE = {
@@ -235,66 +235,75 @@ export function renderShopMenu(scene) {
   const startIndex = Math.max(0, Math.min(scene.shopSelectedIndex - halfWindow, maxStartIndex));
   const endIndex = startIndex + visibleEntries;
 
-  const panelH = (visibleEntries + 3) * 26 + 20;
-  const panelY = height - 54 - panelH;
+  const panelW = Math.min(380, width - UI_LAYOUT.SAFE_MARGIN * 2);
+  const panelX = Math.floor((width - panelW) / 2);
+  const rowH = 30;
+  const listTopOffset = 48;
+  const footerH = totalEntries > visibleEntries ? 26 : 12;
+  const panelH = listTopOffset + visibleEntries * rowH + footerH;
+  const messageTop = height - UI_LAYOUT.SAFE_MARGIN - UI_LAYOUT.MESSAGE_PANEL_HEIGHT;
+  const panelY = Math.max(UI_LAYOUT.SAFE_MARGIN, messageTop - UI_LAYOUT.PANEL_GAP - panelH);
+
   const bg = scene.add.graphics();
-  drawPanel(bg, width / 2 - 160, panelY, 320, panelH, { radius: 10 });
+  drawPanel(bg, panelX, panelY, panelW, panelH, { radius: 12, headerHeight: 30 });
   scene.shopContainer.add(bg);
 
-  const titleText = scene.add.text(width / 2, panelY + 10, getShopTitle(scene), {
+  const titleText = scene.add.text(panelX + 16, panelY + 8, getShopTitle(scene), {
     fontFamily: FONT.UI,
-    fontSize: 16,
+    fontSize: UI_FONT_SIZE.TITLE,
     color: "#fbbf24",
-  }).setOrigin(0.5, 0);
+    fontStyle: "700",
+  }).setOrigin(0, 0);
   scene.shopContainer.add(titleText);
 
-  const moneyText = scene.add.text(width - 56, panelY + 12, getMoneyText(), {
+  const moneyText = scene.add.text(panelX + panelW - 16, panelY + 12, getMoneyText(), {
     fontFamily: FONT.UI,
-    fontSize: 12,
+    fontSize: UI_FONT_SIZE.CAPTION,
     color: "#f8fafc",
   }).setOrigin(1, 0);
   scene.shopContainer.add(moneyText);
 
   let row = 0;
   for (let i = startIndex; i < endIndex; i++) {
-    const y = panelY + 60 + row * 26;
+    const y = panelY + listTopOffset + row * rowH;
     const selected = i === scene.shopSelectedIndex;
     const rowEntry = entries[i];
     const label = rowEntry?.label || "";
 
     if (selected) {
       const selBg = scene.add.graphics();
-      drawSelection(selBg, width / 2 - 145, y - 2, 290, 24, { radius: 4 });
+      drawSelection(selBg, panelX + 10, y - 2, panelW - 20, rowH - 3, { radius: 6 });
       scene.shopContainer.add(selBg);
     }
 
-    const text = scene.add.text(width / 2, y, selected ? `▶ ${label}` : `  ${label}`, {
+    const text = scene.add.text(panelX + 18, y + 2, selected ? `▶ ${label}` : `   ${label}`, {
       fontFamily: FONT.UI,
-      fontSize: 14,
+      fontSize: UI_FONT_SIZE.BODY,
       color: selected ? "#fbbf24" : "#d1d5db",
-    }).setOrigin(0.5, 0);
+      fontStyle: selected ? "700" : "400",
+    }).setOrigin(0, 0);
     scene.shopContainer.add(text);
     row += 1;
   }
 
   if (totalEntries > visibleEntries) {
-    const topHint = scene.add.text(width / 2 + 140, panelY + 38, startIndex > 0 ? "▲" : " ", {
+    const topHint = scene.add.text(panelX + panelW - 16, panelY + 34, startIndex > 0 ? "▲" : " ", {
       fontFamily: FONT.UI,
-      fontSize: 12,
+      fontSize: UI_FONT_SIZE.MICRO,
       color: "#94a3b8",
     }).setOrigin(1, 0);
     scene.shopContainer.add(topHint);
 
-    const bottomHint = scene.add.text(width / 2 + 140, panelY + panelH - 18, endIndex < totalEntries ? "▼" : " ", {
+    const bottomHint = scene.add.text(panelX + panelW - 16, panelY + panelH - 18, endIndex < totalEntries ? "▼" : " ", {
       fontFamily: FONT.UI,
-      fontSize: 12,
+      fontSize: UI_FONT_SIZE.MICRO,
       color: "#94a3b8",
     }).setOrigin(1, 0);
     scene.shopContainer.add(bottomHint);
 
-    const scrollHint = scene.add.text(width / 2, panelY + panelH - 16, "↑↓でスクロール", {
+    const scrollHint = scene.add.text(panelX + panelW / 2, panelY + panelH - 18, "↑↓でスクロール", {
       fontFamily: FONT.UI,
-      fontSize: 11,
+      fontSize: UI_FONT_SIZE.MICRO,
       color: "#94a3b8",
     }).setOrigin(0.5, 0);
     scene.shopContainer.add(scrollHint);

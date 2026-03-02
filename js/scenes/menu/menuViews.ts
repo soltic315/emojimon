@@ -4,6 +4,7 @@ import { MENU_ITEMS } from "./menuConstants.ts";
 import {
   MAIN_MENU_PANEL_WIDTH,
   MAIN_MENU_RIGHT_MARGIN,
+  MAIN_MENU_TOP_MARGIN,
   fitLabelToWidth,
 } from "./menuViewsShared.ts";
 
@@ -36,25 +37,26 @@ export function renderMainMenu(scene) {
   const { width } = scene.scale;
   const panelW = MAIN_MENU_PANEL_WIDTH;
   const panelX = width - panelW - MAIN_MENU_RIGHT_MARGIN;
-  const panelY = 10;
-  const panelH = MENU_ITEMS.length * 36 + 20;
+  const panelY = MAIN_MENU_TOP_MARGIN;
+  const rowH = 38;
+  const panelH = MENU_ITEMS.length * rowH + 24;
 
   const bg = scene.add.graphics();
   drawPanel(bg, panelX, panelY, panelW, panelH, { radius: 12, headerHeight: 22 });
   scene.menuPanel.add(bg);
 
   MENU_ITEMS.forEach((item, index) => {
-    const y = panelY + 14 + index * 36;
+    const y = panelY + 16 + index * rowH;
     const selected = index === scene.menuIndex;
 
     const rowShadow = scene.rexUI?.add
-      .roundRectangle(panelX + panelW / 2 + 2, y + 14, panelW - 18, 28, 8, 0x000000, selected ? 0.34 : 0.2);
+      .roundRectangle(panelX + panelW / 2 + 2, y + 15, panelW - 18, 30, 8, 0x000000, selected ? 0.34 : 0.2);
     if (rowShadow) {
       scene.menuPanel.add(rowShadow);
     }
 
     const rowCard = scene.rexUI?.add
-      .roundRectangle(panelX + panelW / 2, y + 14, panelW - 18, 28, 8, selected ? 0x162338 : 0x0e1726, selected ? 0.9 : 0.72)
+      .roundRectangle(panelX + panelW / 2, y + 15, panelW - 18, 30, 8, selected ? 0x162338 : 0x0e1726, selected ? 0.9 : 0.72)
       .setStrokeStyle(selected ? 1.8 : 1, selected ? 0xfbbf24 : 0x3f516b, selected ? 0.95 : 0.72);
     if (rowCard) {
       scene.menuPanel.add(rowCard);
@@ -62,7 +64,7 @@ export function renderMainMenu(scene) {
 
     if (selected) {
       const selBg = scene.add.graphics();
-      drawSelection(selBg, panelX + 8, y - 2, panelW - 16, 32, { radius: 7 });
+      drawSelection(selBg, panelX + 8, y - 1, panelW - 16, 32, { radius: 7 });
       scene.menuPanel.add(selBg);
     }
 
@@ -70,7 +72,7 @@ export function renderMainMenu(scene) {
     const rawText = selected ? `▶ ${label}` : `  ${label}`;
     const text = scene.add.text(panelX + 20, y, rawText, {
       fontFamily: FONT.UI,
-      fontSize: selected ? 16.5 : 16,
+      fontSize: selected ? 17 : 16,
       color: selected ? "#fde68a" : "#dbe5f3",
       fontStyle: selected ? "700" : "500",
     });

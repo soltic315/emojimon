@@ -15,6 +15,8 @@ import {
   FONT,
   COLORS,
   TEXT_COLORS,
+  UI_LAYOUT,
+  UI_FONT_SIZE,
   drawPanel,
   drawSelection,
   createMonsterEmojiDisplay,
@@ -1175,15 +1177,21 @@ export class WorldScene extends Phaser.Scene {
     this.uiContainer = this.add.container(0, 0).setScrollFactor(0).setDepth(30);
 
     const { width, height } = this.scale;
+    const safeMargin = UI_LAYOUT.SAFE_MARGIN;
+    const panelGap = UI_LAYOUT.PANEL_GAP;
+    const messagePanelH = UI_LAYOUT.MESSAGE_PANEL_HEIGHT;
+    const messagePanelX = safeMargin;
+    const messagePanelW = width - safeMargin * 2;
+    const messagePanelY = height - safeMargin - messagePanelH;
 
     // ── 一時メッセージ（通常時は非表示） ──
     const bottomBg = this.rexUI?.add?.roundRectangle
-      ? this.rexUI.add.roundRectangle(8, height - 66, width - 16, 58, 12, COLORS.PANEL_BG, 0.95)
+      ? this.rexUI.add.roundRectangle(messagePanelX, messagePanelY, messagePanelW, messagePanelH, 12, COLORS.PANEL_BG, 0.95)
         .setOrigin(0, 0)
         .setStrokeStyle(2, COLORS.PANEL_BORDER, 0.85)
       : this.add.graphics();
     if (bottomBg instanceof Phaser.GameObjects.Graphics) {
-      drawPanel(bottomBg, 8, height - 66, width - 16, 58, {
+      drawPanel(bottomBg, messagePanelX, messagePanelY, messagePanelW, messagePanelH, {
         radius: 12,
         headerHeight: 20,
         bgAlpha: 0.95,
@@ -1196,34 +1204,39 @@ export class WorldScene extends Phaser.Scene {
 
     this.infoText = this.rexUI?.add?.label
       ? this.rexUI.add.label({
-        x: 20,
-        y: height - 54,
+        x: messagePanelX + 14,
+        y: messagePanelY + 12,
         text: this.add.text(0, 0, "", {
           fontFamily: FONT.UI,
-          fontSize: 14,
+          fontSize: UI_FONT_SIZE.BODY,
           color: "#f1f5f9",
-          wordWrap: { width: width - 36 },
+          wordWrap: { width: messagePanelW - 28 },
           lineSpacing: 2,
         }).setOrigin(0, 0),
         align: "left",
       }).layout()
-      : this.add.text(20, height - 54, "", {
+      : this.add.text(messagePanelX + 14, messagePanelY + 12, "", {
         fontFamily: FONT.UI,
-        fontSize: 14,
+        fontSize: UI_FONT_SIZE.BODY,
         color: "#f1f5f9",
-        wordWrap: { width: width - 36 },
+        wordWrap: { width: messagePanelW - 28 },
         lineSpacing: 2,
       });
     this.infoText.setVisible(false);
     this.uiContainer.add(this.infoText);
 
+    const namePanelW = 176;
+    const namePanelH = 36;
+    const namePanelX = safeMargin;
+    const namePanelY = messagePanelY - panelGap - namePanelH;
+
     const nameBg = this.rexUI?.add?.roundRectangle
-      ? this.rexUI.add.roundRectangle(12, height - 104, 160, 34, 10, COLORS.PANEL_BG, 0.96)
+      ? this.rexUI.add.roundRectangle(namePanelX, namePanelY, namePanelW, namePanelH, 10, COLORS.PANEL_BG, 0.96)
         .setOrigin(0, 0)
         .setStrokeStyle(2, COLORS.BLUE_LIGHT, 0.85)
       : this.add.graphics();
     if (nameBg instanceof Phaser.GameObjects.Graphics) {
-      drawPanel(nameBg, 12, height - 104, 160, 34, {
+      drawPanel(nameBg, namePanelX, namePanelY, namePanelW, namePanelH, {
         radius: 10,
         headerHeight: 0,
         bgAlpha: 0.96,
@@ -1237,20 +1250,20 @@ export class WorldScene extends Phaser.Scene {
 
     this.speakerNameText = this.rexUI?.add?.label
       ? this.rexUI.add.label({
-        x: 92,
-        y: height - 87,
+        x: namePanelX + namePanelW / 2,
+        y: namePanelY + namePanelH / 2,
         text: this.add.text(0, 0, "", {
           fontFamily: FONT.UI,
-          fontSize: 14,
+          fontSize: UI_FONT_SIZE.BODY_SM,
           color: TEXT_COLORS.INFO,
           fontStyle: "700",
           align: "center",
         }).setOrigin(0.5),
         align: "center",
       }).layout()
-      : this.add.text(92, height - 87, "", {
+      : this.add.text(namePanelX + namePanelW / 2, namePanelY + namePanelH / 2, "", {
         fontFamily: FONT.UI,
-        fontSize: 14,
+        fontSize: UI_FONT_SIZE.BODY_SM,
         color: TEXT_COLORS.INFO,
         fontStyle: "700",
         align: "center",
@@ -1258,17 +1271,18 @@ export class WorldScene extends Phaser.Scene {
     this.speakerNameText.setVisible(false);
     this.uiContainer.add(this.speakerNameText);
 
-    const weatherPanelWidth = 230;
-    const weatherPanelX = width - weatherPanelWidth - 12;
-    const weatherPanelY = 10;
+    const weatherPanelWidth = UI_LAYOUT.WEATHER_PANEL_WIDTH;
+    const weatherPanelHeight = UI_LAYOUT.WEATHER_PANEL_HEIGHT;
+    const weatherPanelX = width - weatherPanelWidth - safeMargin;
+    const weatherPanelY = safeMargin;
 
     this.timeWeatherPanel = this.rexUI?.add?.roundRectangle
-      ? this.rexUI.add.roundRectangle(weatherPanelX, weatherPanelY, weatherPanelWidth, 34, 10, COLORS.PANEL_BG, 0.92)
+      ? this.rexUI.add.roundRectangle(weatherPanelX, weatherPanelY, weatherPanelWidth, weatherPanelHeight, 10, COLORS.PANEL_BG, 0.92)
         .setOrigin(0, 0)
         .setStrokeStyle(2, COLORS.BLUE_LIGHT, 0.85)
       : this.add.graphics();
     if (this.timeWeatherPanel instanceof Phaser.GameObjects.Graphics) {
-      drawPanel(this.timeWeatherPanel, weatherPanelX, weatherPanelY, weatherPanelWidth, 34, {
+      drawPanel(this.timeWeatherPanel, weatherPanelX, weatherPanelY, weatherPanelWidth, weatherPanelHeight, {
         radius: 10,
         headerHeight: 0,
         bgAlpha: 0.92,
@@ -1281,18 +1295,18 @@ export class WorldScene extends Phaser.Scene {
     this.timeWeatherText = this.rexUI?.add?.label
       ? this.rexUI.add.label({
         x: weatherPanelX + 12,
-        y: weatherPanelY + 10,
+        y: weatherPanelY + 11,
         text: this.add.text(0, 0, "", {
           fontFamily: FONT.UI,
-          fontSize: 12,
+          fontSize: UI_FONT_SIZE.CAPTION,
           color: "#e2e8f0",
           fontStyle: "700",
         }).setOrigin(0, 0),
         align: "left",
       }).layout()
-      : this.add.text(weatherPanelX + 12, weatherPanelY + 10, "", {
+      : this.add.text(weatherPanelX + 12, weatherPanelY + 11, "", {
         fontFamily: FONT.UI,
-        fontSize: 12,
+        fontSize: UI_FONT_SIZE.CAPTION,
         color: "#e2e8f0",
         fontStyle: "700",
       });
@@ -2055,10 +2069,11 @@ export class WorldScene extends Phaser.Scene {
     }
     this.starterChoiceContainer.removeAll(true);
 
-    const panelX = width - 184;
-    const panelY = height - 146;
-    const panelW = 172;
-    const panelH = 74;
+    const panelW = 198;
+    const panelH = 86;
+    const panelX = width - UI_LAYOUT.SAFE_MARGIN - panelW;
+    const messageTop = height - UI_LAYOUT.SAFE_MARGIN - UI_LAYOUT.MESSAGE_PANEL_HEIGHT;
+    const panelY = messageTop - UI_LAYOUT.PANEL_GAP - panelH;
 
     const panel = this.add.graphics();
     drawPanel(panel, panelX, panelY, panelW, panelH, {
@@ -2071,23 +2086,23 @@ export class WorldScene extends Phaser.Scene {
     this.starterChoiceContainer.add(panel);
 
     const options = ["はい", "いいえ"];
-    const rowH = 24;
+    const rowH = 30;
     options.forEach((label, idx) => {
-      const rowY = panelY + 20 + idx * rowH;
+      const rowY = panelY + 18 + idx * rowH;
       if (this._starterChoiceIndex === idx) {
         const focus = this.add.graphics();
         drawSelection(focus, panelX + 8, rowY, panelW - 16, rowH - 2, { radius: 8 });
         this.starterChoiceContainer.add(focus);
       }
 
-      const marker = this.add.text(panelX + 16, rowY + 3, this._starterChoiceIndex === idx ? "▶" : " ", {
+      const marker = this.add.text(panelX + 16, rowY + 4, this._starterChoiceIndex === idx ? "▶" : " ", {
         fontFamily: FONT.UI,
-        fontSize: 14,
+        fontSize: UI_FONT_SIZE.BODY,
         color: this._starterChoiceIndex === idx ? TEXT_COLORS.ACCENT : TEXT_COLORS.SECONDARY,
       });
-      const text = this.add.text(panelX + 34, rowY + 3, label, {
+      const text = this.add.text(panelX + 38, rowY + 4, label, {
         fontFamily: FONT.UI,
-        fontSize: 15,
+        fontSize: UI_FONT_SIZE.BODY,
         color: this._starterChoiceIndex === idx ? TEXT_COLORS.WHITE : "#cbd5e1",
         fontStyle: this._starterChoiceIndex === idx ? "700" : "400",
       });
