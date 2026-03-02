@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## [2.1.1] - 2026-03-02
+
+### Note
+- 戦闘画面のレイアウト生成で発生する `drawPanel is not defined` 例外を解消し、バトル開始時のクラッシュを防止した。
+
+### Added
+- なし
+
+### Changed
+- `js/scenes/BattleScene.ts` の `UIHelper` import に `drawPanel` を追加。
+- `package.json` と `package-lock.json` のバージョンを `2.1.0` から `2.1.1` に更新。
+
+### Fixed
+- 戦闘画面で `buildLayout()` 実行時に `drawPanel` が未定義となり、シーン生成時にクラッシュする問題を修正。
+
+### Prompt
+- User: `戦闘画面で以下のエラーが発生します index-CIl_KzgB.js:254 Uncaught ReferenceError: drawPanel is not defined`
+- Assistant（対応方針）: `BattleScene` の import 漏れを最小差分で補正し、必須の `lint/typecheck/test/build` を実行してから版数と変更履歴を同期する。
+
 ## [2.1.0] - 2026-03-02
 
 ### Note

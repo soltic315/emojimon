@@ -14,6 +14,7 @@ import {
   createMonsterEmojiDisplay,
   setMonsterEmoji,
   applyCanvasBrightness,
+  drawPanel,
 } from "../ui/UIHelper.ts";
 import {
   BattleState,
