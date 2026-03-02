@@ -5,11 +5,11 @@ export const MENU_ITEMS = [
   { label: "ずかん", icon: "📖", action: "pokedex" },
   { label: "実績", icon: "🏆", action: "achievements" },
   { label: "トレーナー", icon: "👤", action: "trainer" },
+  { label: "クエスト", icon: "📜", action: "quest" },
   { label: "グローバルマップ", icon: "🗺️", action: "globalMap" },
   { label: "ガイド", icon: "🧭", action: "guide" },
   { label: "セーブ", icon: "💾", action: "save" },
   { label: "設定", icon: "⚙️", action: "settings" },
-  { label: "とじる", icon: "✖️", action: "close" },
 ];
 
 export const GUIDE_PAGES = [
@@ -103,7 +103,8 @@ export const GUIDE_PAGES = [
       "パーティ: 並び替え(Z) / 合成(C)",
       "ボックス: 保管モンスターの出し入れ",
       "バッグ: フィールドで回復・復活・PP回復アイテムを使用",
-      "トレーナー: 戦績と日替わりチャレンジ進捗を確認",
+      "トレーナー: 冒険記録・図鑑・闘技場記録を確認",
+      "クエスト: ストーリー/サブクエストの進捗を確認",
       "設定: 音量・速度・演出短縮・エモスキップ・明るさ",
     ],
   },

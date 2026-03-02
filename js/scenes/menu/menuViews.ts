@@ -14,6 +14,7 @@ export { renderBoxView, renderBoxSwapView, showBoxMessage } from "./views/boxVie
 export { renderBagView, renderBagTargetView, showBagMessage } from "./views/bagView.ts";
 export { renderPokedexView } from "./views/pokedexView.ts";
 export { renderTrainerView } from "./views/trainerView.ts";
+export { renderQuestView } from "./views/questView.ts";
 export { renderGlobalMapView } from "./views/globalMapView.ts";
 export { renderGuideTocView, renderGuideView } from "./views/guideView.ts";
 export { renderSettingsView } from "./views/settingsView.ts";
@@ -25,6 +26,7 @@ import { renderBoxView, renderBoxSwapView } from "./views/boxView.ts";
 import { renderBagView, renderBagTargetView } from "./views/bagView.ts";
 import { renderPokedexView } from "./views/pokedexView.ts";
 import { renderTrainerView } from "./views/trainerView.ts";
+import { renderQuestView } from "./views/questView.ts";
 import { renderGlobalMapView } from "./views/globalMapView.ts";
 import { renderGuideTocView, renderGuideView } from "./views/guideView.ts";
 import { renderSettingsView } from "./views/settingsView.ts";
@@ -109,6 +111,9 @@ export function renderSubMenu(scene) {
       break;
     case "trainer":
       renderTrainerView(scene);
+      break;
+    case "quest":
+      renderQuestView(scene);
       break;
     case "globalMap":
       renderGlobalMapView(scene);

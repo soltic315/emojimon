@@ -182,6 +182,9 @@ export class MenuScene extends Phaser.Scene {
       case "trainer":
         this.openSubMenu("trainer");
         break;
+      case "quest":
+        this.openSubMenu("quest");
+        break;
       case "globalMap":
         this.openSubMenu("globalMap");
         break;
@@ -201,9 +204,6 @@ export class MenuScene extends Phaser.Scene {
       }
       case "settings":
         this.openSubMenu("settings");
-        break;
-      case "close":
-        this.closeMenu();
         break;
     }
   }

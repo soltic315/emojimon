@@ -28,7 +28,6 @@ export function renderTrainerView(scene) {
 
   const allMons = getAllMonsters();
   const gymStatus = gameState.gymCleared ? "✅ クリア済み" : "❌ 未クリア";
-  const dailyLines = gameState.getDailyChallengeSummaryLines();
 
   const info = [
     `名前　 : ${gameState.playerName}`,
@@ -48,12 +47,6 @@ export function renderTrainerView(scene) {
     "",
     `── 闘技場 ──`,
     `最高記録　 : ${gameState.arenaHighScore || 0}連勝`,
-    "",
-    `── 日替わりチャレンジ ──`,
-    ...dailyLines,
-    "",
-    `── クエスト ──`,
-    `スターライト : ${gameState.starQuestDone ? "✅ 完了" : "📋 進行中"}`,
   ];
 
   const lineH = 22;
