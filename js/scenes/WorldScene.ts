@@ -11,6 +11,7 @@ import {
 import { createWildMonsterForEncounter, rollWeatherForMapByHour } from "../data/mapRules.ts";
 import { audioManager } from "../audio/AudioManager.ts";
 import { TouchControls } from "../ui/TouchControls.ts";
+import { NAV_REPEAT_INTERVAL_MS } from "../ui/inputConstants.ts";
 import {
   FONT,
   COLORS,
@@ -141,6 +142,7 @@ export class WorldScene extends Phaser.Scene {
     // タッチコントロール
     this.touchControls = new TouchControls(this);
     this.touchControls.create();
+    this._touchStarterChoiceNavCooldown = 0;
 
     // キー入力
     const interactAction = () => {
@@ -152,6 +154,7 @@ export class WorldScene extends Phaser.Scene {
     };
     this.keys.Z.on("down", interactAction);
     this.keys.ENTER.on("down", interactAction);
+    this.keys.SPACE.on("down", interactAction);
 
     // メニューキー（X / ESC）
     this.keys.X.on("down", () => {
@@ -1441,18 +1444,25 @@ export class WorldScene extends Phaser.Scene {
 
     // タッチ操作のconfirm/cancel
     if (this.touchControls && this.touchControls.visible) {
-      if (this.touchControls.justPressedConfirm()) {
-        if (!this.isMoving && !this.shopActive && !this.isEncounterTransitioning
-          && !this._dialogActive && !this._starterChoiceActive && !this._trainerBattlePending) {
-          this.checkNpcInteraction();
+      const touchConfirm = this.touchControls.justPressedConfirm();
+      const touchCancel = this.touchControls.justPressedCancel();
+
+      if (this._dialogActive) {
+        if (touchConfirm) this._showNextDialog();
+      } else if (this._starterChoiceActive) {
+        this._handleStarterChoiceTouchInput(delta, touchConfirm, touchCancel);
+      } else {
+        if (touchConfirm) {
+          if (!this.isMoving && !this.shopActive && !this.isEncounterTransitioning && !this._trainerBattlePending) {
+            this.checkNpcInteraction();
+          }
         }
-      }
-      if (this.touchControls.justPressedCancel()) {
-        if (!this.shopActive && !this.isMoving && !this.isEncounterTransitioning && !this._trainerBattlePending
-          && !this._dialogActive && !this._starterChoiceActive) {
-          this.openMenu();
-        } else if (this.shopActive) {
-          this.closeShopMenu();
+        if (touchCancel) {
+          if (!this.shopActive && !this.isMoving && !this.isEncounterTransitioning && !this._trainerBattlePending) {
+            this.openMenu();
+          } else if (this.shopActive) {
+            this.closeShopMenu();
+          }
         }
       }
     }
@@ -1725,7 +1735,7 @@ export class WorldScene extends Phaser.Scene {
   // ═══════════════════════════════════════════
 
   /**
-   * 複数行の会話を順番に表示する。Zキーで次へ進む。
+   * 複数行の会話を順番に表示する。決定キー（Z/Enter/Space）で次へ進む。
    * @param {string[]} lines - 会話行の配列
    * @param {Function} [onComplete] - 全行表示後に呼ばれるコールバック
    */
@@ -1739,13 +1749,14 @@ export class WorldScene extends Phaser.Scene {
     this._dialogActive = true;
     this._showNextDialog();
 
-    // Z/Enterキー（1回分の追加リスナー）
+    // 決定キー（1回分の追加リスナー）
     this._dialogAdvanceListener = () => {
       if (!this._dialogActive) return;
       this._showNextDialog();
     };
     this.keys.Z.on("down", this._dialogAdvanceListener);
     this.keys.ENTER.on("down", this._dialogAdvanceListener);
+    this.keys.SPACE.on("down", this._dialogAdvanceListener);
   }
 
   _showNextDialog() {
@@ -1763,6 +1774,7 @@ export class WorldScene extends Phaser.Scene {
     if (this._dialogAdvanceListener) {
       this.keys.Z.off("down", this._dialogAdvanceListener);
       this.keys.ENTER.off("down", this._dialogAdvanceListener);
+      this.keys.SPACE.off("down", this._dialogAdvanceListener);
       this._dialogAdvanceListener = null;
     }
     this.updateDefaultInfoMessage();
@@ -2175,27 +2187,63 @@ export class WorldScene extends Phaser.Scene {
     }
 
     if (confirm) {
-      const data = this._starterChoiceData;
-      if (!data) return;
-      if (this._starterChoiceIndex === 0) {
-        audioManager.playConfirm();
-        this._closeStarterChoiceWindow();
-        this._confirmStarterChoice(data.speciesId, data.starter, data.calcStats);
-      } else {
-        audioManager.playCancel();
-        this._closeStarterChoiceWindow();
-        this.updateDefaultInfoMessage();
-      }
+      this._confirmStarterChoiceByCurrentSelection();
       return;
     }
 
     const cancel = Phaser.Input.Keyboard.JustDown(this.keys.X)
       || Phaser.Input.Keyboard.JustDown(this.keys.ESC);
     if (cancel) {
-      audioManager.playCancel();
-      this._closeStarterChoiceWindow();
-      this.updateDefaultInfoMessage();
+      this._cancelStarterChoiceSelection();
     }
+  }
+
+  _handleStarterChoiceTouchInput(delta, confirmPressed, cancelPressed) {
+    const inputGuardActive = Number.isFinite(this._starterChoiceInputGuardUntil)
+      && this.time.now < this._starterChoiceInputGuardUntil;
+    if (inputGuardActive) return;
+
+    if (confirmPressed) {
+      this._confirmStarterChoiceByCurrentSelection();
+      return;
+    }
+
+    if (cancelPressed) {
+      this._cancelStarterChoiceSelection();
+      return;
+    }
+
+    if (this._touchStarterChoiceNavCooldown > 0) {
+      this._touchStarterChoiceNavCooldown -= delta;
+      return;
+    }
+
+    if (this.touchControls.isNavUp() || this.touchControls.isNavDown()) {
+      this._starterChoiceIndex = this._starterChoiceIndex === 0 ? 1 : 0;
+      this._touchStarterChoiceNavCooldown = NAV_REPEAT_INTERVAL_MS;
+      audioManager.playCursor();
+      this._renderStarterChoiceWindow();
+    }
+  }
+
+  _confirmStarterChoiceByCurrentSelection() {
+    const data = this._starterChoiceData;
+    if (!data) return;
+
+    if (this._starterChoiceIndex === 0) {
+      audioManager.playConfirm();
+      this._closeStarterChoiceWindow();
+      this._confirmStarterChoice(data.speciesId, data.starter, data.calcStats);
+      return;
+    }
+
+    this._cancelStarterChoiceSelection();
+  }
+
+  _cancelStarterChoiceSelection() {
+    audioManager.playCancel();
+    this._closeStarterChoiceWindow();
+    this.updateDefaultInfoMessage();
   }
 
   _confirmStarterChoice(speciesId, starter, calcStats) {
