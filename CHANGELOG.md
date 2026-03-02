@@ -1,5 +1,45 @@
 # CHANGELOG
 
+## [1.18.6] - 2026-03-02
+
+### Note
+- テスト基盤の将来互換性と依存整合性のため、`Vitest` を `4.x` へ更新した。
+
+### Added
+- なし
+
+### Changed
+- `package.json` の `devDependencies` にある `vitest` を `^4.0.18` へ更新。
+- `package.json` と `package-lock.json` のバージョンを `1.18.5` から `1.18.6` に更新。
+
+### Fixed
+- なし
+
+### Prompt
+- User: `Vitest を 4.x に上げて`
+- Assistant（対応方針）: `Vitest` を 4系へ最小差分で更新し、`lint/typecheck/test/build` の順で成功を確認して版数・履歴を同期する。
+
+## [1.18.5] - 2026-03-02
+
+### Note
+- ビルド高速化のため、ビルド基盤を `Vite 8（Rolldown）` へ移行した。
+
+### Added
+- なし
+
+### Changed
+- `package.json` の `devDependencies` にある `vite` を `^8.0.0-beta.16` へ更新。
+- `README.md` の技術スタック表記を `Vite 8（Rolldown）` に更新。
+- `AGENTS.md` の技術スタック表記を `Vite 8（Rolldown）` に更新。
+- `package.json` と `package-lock.json` のバージョンを `1.18.4` から `1.18.5` に更新。
+
+### Fixed
+- なし
+
+### Prompt
+- User: `ビルド高速化のためにVite 8（Rolldown）に移行してください`
+- Assistant（対応方針）: npm 上で利用可能な `Vite 8 beta` へ最小差分で移行し、関連ドキュメント・版数・検証コマンド結果を同期する。
+
 ## [1.18.4] - 2026-03-02
 
 ### Note

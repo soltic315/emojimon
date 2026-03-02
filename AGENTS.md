@@ -23,11 +23,11 @@
 1. 変更対象と依存ファイルを確認する。
 2. 最小差分で実装する。正式リリース前なので既存のセーブデータとの互換性は維持しなくてもよい。
 3. 必要に応じて`GAME_DESIGN.md`を更新する。
-4. コードの変更があった場合、以下のコマンドでBuild成功まで確認する。
-  - `npm run lint && echo "__LINT_OK__"`
-  - `npm run typecheck && echo "__TYPECHECK_OK__"`
-  - `npm run test && echo "__TEST_OK__"`
-  - `npm run build && echo "__BUILD_OK__"`
+4. コードの変更があった場合、以下のコマンドの成功を確認する。全ての実行ログを確認しなくてもよい
+  - `npm run lint >/dev/null 2>&1 && echo "__LINT_OK__" || echo "__LINT_ERROR__"`
+  - `npm run typecheck >/dev/null 2>&1 && echo "__TYPECHECK_OK__" || echo "__TYPECHECK_ERROR__"`
+  - `npm run test >/dev/null 2>&1 && echo "__TEST_OK__" || echo "__TEST_ERROR__"`
+  - `npm run build >/dev/null 2>&1 && echo "__BUILD_OK__" || echo "__BUILD_ERROR__"`
 5. コードの変更があった場合、セマンティックバージョニングの原則に従い、変更の種類に応じて適切なバージョン番号を更新する。
 6. コードの変更があった場合、AIとのチャット完了後に `CHANGELOG.md` を更新する。
 
@@ -56,7 +56,7 @@
 
 - TypeScript（ES Modules）
 - Phaser 3
-- Vite
+- Vite 8（Rolldown）
 - oxlint / tsgo / Vitest
 - データ定義: `assets/data/*.json`
 

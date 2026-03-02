@@ -4,7 +4,7 @@
 
 # Emojimon
 
-Emojimon は TypeScript + Phaser 3 + Vite で開発しているブラウザゲームプロジェクトです。  
+Emojimon は TypeScript + Phaser 3 + Vite 8（Rolldown）で開発しているブラウザゲームプロジェクトです。  
 この README は **セットアップ・開発手順・運用情報** のみを扱います。  
 ゲーム仕様は `GAME_DESIGN.md` を参照してください。
 
@@ -29,7 +29,7 @@ Emojimon は TypeScript + Phaser 3 + Vite で開発しているブラウザゲ�
 - [Phaser 3](https://phaser.io/) — ゲームエンジン
 - [Tone.js](https://tonejs.github.io/) — プロシージャルオーディオ合成（BGM・SE）
 - [GSAP](https://gsap.com/) — アニメーション
-- [Vite](https://vitejs.dev/) — ビルドツール
+- [Vite 8（Rolldown）](https://vite.dev/) — ビルドツール
 - [oxlint](https://oxc.rs/docs/guide/usage/linter.html) — Lint
 - [TypeScript Native Preview (tsgo)](https://www.npmjs.com/package/@typescript/native-preview) — Type check
 
