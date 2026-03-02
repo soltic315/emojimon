@@ -30,6 +30,8 @@ Emojimon は TypeScript + Phaser 3 + Vite で開発しているブラウザゲ�
 - [Tone.js](https://tonejs.github.io/) — プロシージャルオーディオ合成（BGM・SE）
 - [GSAP](https://gsap.com/) — アニメーション
 - [Vite](https://vitejs.dev/) — ビルドツール
+- [oxlint](https://oxc.rs/docs/guide/usage/linter.html) — Lint
+- [TypeScript Native Preview (tsgo)](https://www.npmjs.com/package/@typescript/native-preview) — Type check
 
 ---
 
@@ -50,7 +52,7 @@ npm run dev
 # Lint
 npm run lint
 
-# Type check
+# Type check（tsgo）
 npm run typecheck
 
 # Unit test

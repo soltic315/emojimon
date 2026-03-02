@@ -2,7 +2,6 @@ import { initAbilitiesFromJson, initMonstersFromJson } from "../data/monsters.ts
 import { initItemsFromJson } from "../data/items.ts";
 import { initMovesFromJson } from "../data/moves.ts";
 import { validateGameData } from "../data/dataValidation.ts";
-import { audioManager } from "../audio/AudioManager.ts";
 import { FONT, COLORS, createAmbientParticles } from "../ui/UIHelper.ts";
 
 export class BootScene extends Phaser.Scene {

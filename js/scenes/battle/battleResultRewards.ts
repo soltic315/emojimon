@@ -1,18 +1,14 @@
 // バトル結果・報酬処理
 import { gameState } from "../../state/gameState.ts";
 import {
-  calcStats,
   checkEvolution,
   evolveMonster,
   syncMonsterMoves,
-  getMonsterMoves,
   MAX_MOVE_SLOTS,
 } from "../../data/monsters.ts";
 import { getItemById } from "../../data/items.ts";
-import { MOVES } from "../../data/moves.ts";
 import { audioManager } from "../../audio/AudioManager.ts";
 import {
-  StatusCondition,
   EXP_MULT_WILD,
   EXP_MULT_ARENA,
   EXP_MULT_GYM,

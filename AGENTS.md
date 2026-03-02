@@ -57,7 +57,7 @@
 - TypeScript（ES Modules）
 - Phaser 3
 - Vite
-- ESLint / TypeScript / Vitest
+- oxlint / tsgo / Vitest
 - データ定義: `assets/data/*.json`
 
 ---

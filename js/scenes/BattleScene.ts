@@ -1,62 +1,26 @@
 import { gameState } from "../state/gameState.ts";
 import {
-  TYPE_EFFECTIVENESS,
   MAX_MOVE_SLOTS,
   calcStats,
-  checkEvolution,
-  evolveMonster,
-  getAbilityById,
   getMonsterMoves,
-  syncMonsterMoves,
 } from "../data/monsters.ts";
-import { getItemById } from "../data/items.ts";
-import { MOVES } from "../data/moves.ts";
 import { WEATHER } from "../data/mapRules.ts";
 import { audioManager } from "../audio/AudioManager.ts";
 import { TouchControls } from "../ui/TouchControls.ts";
 import {
   FONT,
-  COLORS,
-  TEXT_COLORS,
-  drawPanel,
-  drawSelection,
-  drawHpBar,
-  drawExpBar,
   createMonsterEmojiDisplay,
   setMonsterEmoji,
   applyCanvasBrightness,
 } from "../ui/UIHelper.ts";
 import {
   BattleState,
-  TYPE_PARTICLE,
   StatusCondition,
   WEATHER_INFO,
   clampStageValue,
   getStatusLabel,
-  getStatusEmoji,
-  getStatusColor,
-  RUN_SUCCESS_RATE,
-  RUN_RATE_MIN,
-  RUN_RATE_MAX,
-  CRITICAL_HIT_RATE,
-  CRITICAL_HIT_MULTIPLIER,
-  DAMAGE_RANDOM_MIN,
-  DAMAGE_RANDOM_MAX,
-  STAB_BONUS,
-  PARTY_MAX,
-  EXP_MULT_WILD,
-  EXP_MULT_ARENA,
-  EXP_MULT_GYM,
-  EXP_MULT_TRAINER,
-  SHARED_EXP_RATIO,
   EMO_SKIP_LEVEL_GAP,
   EMO_SKIP_HOLD_MS,
-  BURN_DAMAGE_RATIO,
-  POISON_DAMAGE_RATIO,
-  PARALYSIS_SKIP_RATE,
-  FREEZE_THAW_RATE,
-  SLEEP_WAKE_RATE,
-  BURN_ATTACK_MULTIPLIER,
   getMoveEffectLabel,
   formatMoveAccuracy,
   getEffectivenessLabel,
@@ -96,12 +60,6 @@ import {
 import { gsap } from "gsap";
 import {
   addCameraBloom,
-  flashDamage,
-  flashSuperHit,
-  flashLevelUp,
-  flashVictory,
-  createParticleBurst,
-  createTypeHitEffect,
 } from "../ui/FXHelper.ts";
 
 
@@ -995,7 +953,7 @@ export class BattleScene extends Phaser.Scene {
   _initializeElementStates() { initializeElementStatesFn(this); }
 
 
-  _updateElementStatesAtTurnStart(monster) { /* battleCalcStatus内で直接呼出済み */ }
+  _updateElementStatesAtTurnStart(_monster) { /* battleCalcStatus内で直接呼出済み */ }
 
 
   isMoveHit(move, user = null) { return isMoveHitFn(move, user); }

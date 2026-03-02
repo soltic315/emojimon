@@ -824,7 +824,7 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /** 砂地エンカウント（通常より低確率＋メッセージ） */
-  _handleSandEncounter(tileX, tileY) {
+  _handleSandEncounter(_tileX, _tileY) {
     this.stepsSinceLastEncounter = (this.stepsSinceLastEncounter || 0) + 1;
     const baseChance = 0.08; // 砂地は低確率
     const pityBonus = Math.min(0.15, this.stepsSinceLastEncounter * 0.008);

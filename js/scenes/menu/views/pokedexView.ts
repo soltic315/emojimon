@@ -1,6 +1,6 @@
 // 図鑑画面ビュー
 import { gameState } from "../../../state/gameState.ts";
-import { getAllMonsters, calcStats } from "../../../data/monsters.ts";
+import { getAllMonsters } from "../../../data/monsters.ts";
 import { FONT, drawPanel, drawSelection } from "../../../ui/UIHelper.ts";
 import { SUB_PANEL_WIDTH_OFFSET } from "../menuViewsShared.ts";
 

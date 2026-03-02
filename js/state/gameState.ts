@@ -725,7 +725,7 @@ class GameState {
         currentMap: this.currentMap,
         lastHealPoint: this.getLastHealPoint(),
         visitedMapIds: [...new Set(Array.isArray(this.visitedMapIds) ? this.visitedMapIds : ["EMOJI_TOWN"])],
-        mapWeatherByMap: { ...(this.mapWeatherByMap || {}) },
+        mapWeatherByMap: { ...this.mapWeatherByMap },
         fieldTimeMinutes: this.getFieldTimeMinutes(),
         party: this.party.map((m) => ({
           speciesId: m.species ? m.species.id : null,
@@ -773,7 +773,7 @@ class GameState {
         dailyChallenge: this.getDailyChallenge(),
         audioSettings: { ...this.audioSettings },
         gameplaySettings: sanitizeGameplaySettings(this.gameplaySettings),
-        storyFlags: { ...(this.storyFlags || {}) },
+        storyFlags: { ...this.storyFlags },
         savedAt: Date.now(),
       };
       const serialized = JSON.stringify(data);

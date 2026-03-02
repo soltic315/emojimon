@@ -1,7 +1,7 @@
 {
   "name": "emojimon",
-  "version": "1.18.0",
-  "description": "ブラウザで遊べるポケモン風ターン制バトルゲーム（絵文字モンスター）",
+  "version": "1.18.4",
+  "description": "ブラウザで遊べる某モンスター風ターン制バトルゲーム",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,8 +9,8 @@
     "start": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint .",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "oxlint js tests vite.config.ts",
+    "typecheck": "tsgo -p tsconfig.json --noEmit",
     "test": "vitest run"
   },
   "keywords": [
@@ -30,12 +30,9 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@eslint/js": "^9.21.0",
     "@types/node": "^25.3.2",
-    "@typescript-eslint/parser": "^8.56.1",
-    "eslint": "^9.21.0",
-    "globals": "^15.15.0",
-    "typescript": "^5.8.2",
+    "@typescript/native-preview": "^7.0.0-dev.20260302.1",
+    "oxlint": "^1.50.0",
     "vite": "^5.4.14",
     "vitest": "^2.1.9"
   }

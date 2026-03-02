@@ -1545,7 +1545,7 @@ export const DOOR_TRANSITIONS = {
     { doorCheck: (x, y) => y === 6 && x === 9, target: "HOUSE1", startX: 6, startY: 8 },
     { doorCheck: (x, y) => y === 6 && x === 20, target: "TOWN_SHOP", startX: 6, startY: 8 },
     { doorCheck: (x, y) => y === 6 && x === 29, target: "LAB", startX: 7, startY: 8 },
-    { doorCheck: (x, y) => x === 35, target: "FOREST", startX: 1, startY: 25 },
+    { doorCheck: (x, _y) => x === 35, target: "FOREST", startX: 1, startY: 25 },
   ],
   HOUSE1: [
     { doorCheck: () => true, target: "EMOJI_TOWN", startX: 9, startY: 7 },

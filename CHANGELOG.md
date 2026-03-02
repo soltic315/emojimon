@@ -1,5 +1,70 @@
 # CHANGELOG
 
+## [1.18.4] - 2026-03-02
+
+### Note
+- `oxlint` の warning を全解消し、lint 実行結果を `0 warnings` へ統一した。
+
+### Added
+- なし
+
+### Changed
+- `js/scenes/BattleScene.ts` の未使用 import と未使用引数を整理。
+- `js/scenes/battle/battleResultRewards.ts` / `js/scenes/battle/battleHudUpdate.ts` / `js/scenes/battle/battleMessageFlow.ts` の未使用 import・未使用引数を整理。
+- `js/scenes/BootScene.ts` / `js/scenes/WorldScene.ts` / `js/scenes/world/worldMapData.ts` / `js/scenes/menu/views/pokedexView.ts` の未使用 import・未使用引数を整理。
+- `package.json` と `package-lock.json` のバージョンを `1.18.3` から `1.18.4` に更新。
+
+### Fixed
+- `npm run lint` 実行時に `no-unused-vars` warning が多数発生していた状態を解消。
+
+### Prompt
+- User: `lintのWarningを解消して`
+- Assistant（対応方針）: warning 発生箇所を集計し、未使用 import / 未使用引数を最小差分で削除して `oxlint` warning を 0 件にする。
+
+## [1.18.3] - 2026-03-02
+
+### Note
+- TypeScript の実行基盤を安定版 `tsc` から、プレリリースの `tsgo`（TypeScript 7 preview）へ移行した。
+
+### Added
+- `package.json` の `devDependencies` に `@typescript/native-preview`（`tsgo`）を追加。
+
+### Changed
+- `package.json` の `typecheck` を `tsc -p tsconfig.json --noEmit` から `tsgo -p tsconfig.json --noEmit` へ変更。
+- `package.json` の `devDependencies` から `typescript` を削除。
+- `AGENTS.md` の技術スタック表記を `oxlint / TypeScript / Vitest` から `oxlint / tsgo / Vitest` へ更新。
+- `README.md` の主要依存ライブラリへ `TypeScript Native Preview (tsgo)` を追記し、Type check コマンド表記を `tsgo` 前提へ更新。
+- `package.json` と `package-lock.json` のバージョンを `1.18.2` から `1.18.3` に更新。
+
+### Fixed
+- 非安定版 TypeScript 系ツールチェーンへ移行する際に、`typecheck` が `tsc` 固定になっていた運用上の不整合を解消。
+
+### Prompt
+- User: `安定版ではなくてもいいです ESLint/tscはやめてoxlint/tsgoにしてください`
+- Assistant（対応方針）: `oxlint` を維持しつつ、`typecheck` 実行基盤を `tsgo` へ置換し、依存・ドキュメント・版数・履歴を最小差分で同期する。
+
+## [1.18.2] - 2026-03-02
+
+### Note
+- Lint ツールを `ESLint` から `oxlint` へ移行し、Lint 実行の高速化と設定の簡素化を行った。
+
+### Added
+- なし
+
+### Changed
+- `package.json` の `lint` を `eslint .` から `oxlint js tests vite.config.ts` へ変更。
+- `package.json` の `devDependencies` を更新し、`eslint` 系依存（`eslint/@eslint/js/@typescript-eslint/parser/globals`）を削除して `oxlint` を追加。
+- `AGENTS.md` の技術スタック表記を `ESLint` から `oxlint` へ更新。
+- `README.md` の主要依存ライブラリへ `oxlint` を追記。
+- `package.json` と `package-lock.json` のバージョンを `1.18.0` から `1.18.2` に更新。
+
+### Fixed
+- Lint 実行が `eslint` 前提の構成に固定されていたため、`oxlint` ベースの高速運用へ切り替えづらい問題を解消。
+
+### Prompt
+- User: `ESlintを辞めてoxlintに移行してください`
+- Assistant（対応方針）: `lint` 実行基盤を `oxlint` へ最小差分で置換し、依存関係・運用ドキュメント・版数・履歴を同期する。
+
 ## [1.18.0] - 2026-03-02
 
 ### Note

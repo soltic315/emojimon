@@ -2,7 +2,6 @@
 import { calcStats } from "../../data/monsters.ts";
 import {
   FONT,
-  drawPanel,
 } from "../../ui/UIHelper.ts";
 import {
   getStatusLabel,

@@ -1,7 +1,7 @@
 import { BattleState } from "./battleConstants.ts";
 import { gameState } from "../../state/gameState.ts";
 
-export function resolveBattleSpeedMultiplier(scene: any) {
+export function resolveBattleSpeedMultiplier(_scene: any) {
   const speed = gameState.gameplaySettings?.battleSpeed;
   if (speed === "FAST") return 1.3;
   if (speed === "TURBO") return 1.65;
