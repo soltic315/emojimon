@@ -21,16 +21,7 @@
 
 ## B. データ・型定義の乖離 🔴
 
-- [ ] **B-01** `types/game.d.ts` の `Move.category` が `"attack" | "status"` で実装（`physical/special/status`）と不一致
-- [ ] **B-02** `types/game.d.ts` の `selfHealRatio` と実装側 `selfHealPercent` が不一致
-- [ ] **B-03** `types/game.d.ts` の `MonsterSpecies.learnset` が `Move[]` のまま（実データは `{ move, level }[]`）
-- [ ] **B-04** `types/game.d.ts` の `MapKey` が現行マップ群を網羅していない
-- [ ] **B-05** `types/game.d.ts` の `TileCode` が 0-7 までで、実装タイル（毒沼/転送/氷床/暗闇/砂地）を未包含
-- [ ] **B-06** `types/game.d.ts` の `NpcDef` 構造が現行 `worldMapData` のNPC実データと揃っていない
-- [ ] **B-07** `types/game.d.ts` に旧設計の `abilityId/abilityRates` が残り、現行の `ability` 配列設計と乖離
-- [ ] **B-08** `GAME_DESIGN.md` の基本操作表で決定キーが `Z / Space` になっており、実装・作業規約（`Z / Enter / Space`）と不一致
-- [ ] **B-09** `dataValidation.ts` のプール検証対象が新規6プール（`swamp/coral/sandValley/shadowGrove/library/basin`）を未包含
-- [ ] **B-10** `audio` のエリアBGMルーティング仕様が `mapRules` 側テーマ定義と二重管理で、整合崩れを起こしやすい
+- （対応済み）
 
 ---
 
@@ -168,7 +159,7 @@
 | カテゴリ | 件数 | 優先度 |
 |---|---:|---|
 | A. 重大バグ・進行リスク | 0件 | 🔴 高 |
-| B. データ・型定義の乖離 | 10件 | 🔴 高 |
+| B. データ・型定義の乖離 | 0件 | 🔴 高 |
 | C. 未実装・機能不足（優先高） | 10件 | 🔴 高 |
 | D. コード構造・保守性 | 12件 | 🟡 中 |
 | E. テスト強化 | 12件 | 🟡 中 |
@@ -178,4 +169,4 @@
 | I. バランス・コンテンツ拡張 | 8件 | 🟡 中 |
 | J. 開発体験・運用 | 7件 | 🟢 低 |
 | K. ドキュメント同期タスク | 5件 | 🟡 中 |
-| **合計** | **94件** | |
+| **合計** | **84件** | |

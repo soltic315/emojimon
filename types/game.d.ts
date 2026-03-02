@@ -57,7 +57,7 @@ export interface Move {
   power: number;
   accuracy: number;
   pp: number;
-  category: "attack" | "status";
+  category: "physical" | "special" | "status";
   priority?: number;
   description?: string;
   /** 攻撃ステージ変動（自分） */
@@ -69,7 +69,7 @@ export interface Move {
   /** 相手防御ステージ変動 */
   targetDefenseStage?: number;
   /** 自己回復割合 */
-  selfHealRatio?: number;
+  selfHealPercent?: number;
   /** 状態異常付与タイプ */
   inflictStatus?: StatusConditionType;
   /** 状態異常付与確率 */
@@ -85,9 +85,14 @@ export interface MonsterSubEmoji {
   size?: number;
 }
 
-export interface MonsterAbilityRate {
+export interface MonsterAbilityDef {
   abilityId: string;
   acquisitionRate: number;
+}
+
+export interface MonsterLearnsetEntry {
+  move: string;
+  level: number;
 }
 
 export interface MonsterRecipeMaterial {
@@ -121,16 +126,14 @@ export interface MonsterSpecies {
   subEmoji?: MonsterSubEmoji[];
   primaryType: MonsterType;
   secondaryType?: MonsterType | null;
-  abilityId: string;
-  abilityRates?: MonsterAbilityRate[];
+  ability: MonsterAbilityDef[];
   spawnRate?: number;
   baseExpYield: number;
   heldItems: MonsterHeldItem[];
   sizeScale: number;
   recipe?: [MonsterRecipeMaterial, MonsterRecipeMaterial][];
   baseStats: BaseStats;
-  learnset: Move[];
-  learnsetLevels?: number[];
+  learnset: MonsterLearnsetEntry[];
   description: string;
   catchRate: number;
   evolution: EvolutionDef | null;
@@ -226,27 +229,52 @@ export interface AbilityDamageModifier {
 // ── マップ ──
 
 /** マップキー */
-export type MapKey = "TOWN" | "HOME" | "FOREST" | "CAVE" | "VOLCANO" | "RUINS" | "LAB";
+export type MapKey =
+  | "EMOJI_TOWN"
+  | "HOUSE1"
+  | "LAB"
+  | "TOWN_SHOP"
+  | "FOREST"
+  | "FOREST_GYM"
+  | "CRYSTAL_CAVE"
+  | "VOLCANIC_PASS"
+  | "VOLCANO_SHOP"
+  | "SKY_RUINS"
+  | "DARK_TOWER"
+  | "FROZEN_PEAK"
+  | "FROZEN_GYM"
+  | "FROZEN_SHOP"
+  | "CELESTIAL_GARDEN"
+  | "GARDEN_SHOP"
+  | "MISTY_SWAMP"
+  | "SWAMP_SHOP"
+  | "CORAL_REEF"
+  | "SAND_VALLEY"
+  | "SAND_VALLEY_SHOP"
+  | "SHADOW_GROVE"
+  | "ANCIENT_LIBRARY"
+  | "STARFALL_BASIN"
+  | "BASIN_SHOP";
 
 /** タイルコード */
-export type TileCode = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type TileCode = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 
 /** NPC定義 */
 export interface NpcDef {
   x: number;
   y: number;
-  emoji?: string;
+  text?: string | null;
   texture?: string;
-  dialog: string | string[];
-  shopkeeper?: boolean;
-  healer?: boolean;
-  quest?: boolean;
-  arenaHost?: boolean;
-  rivalBattle?: {
-    party: Array<{ speciesId: string; level: number }>;
-    trainerName: string;
-    storyFlag: string;
-  };
+  story?: string;
+  shop?: boolean;
+  heal?: boolean;
+  quest?: string;
+  gymLeader?: boolean;
+  arena?: boolean;
+  rivalBattle?: string;
+  trainerName?: string;
+  rivalLevel?: number;
+  preBattleText?: string;
 }
 
 /** ドア遷移定義 */

@@ -104,6 +104,12 @@ const monstersDataSchema = z.object({
   darkTowerPoolIds: z.array(z.string().min(1)).optional(),
   frozenPeakPoolIds: z.array(z.string().min(1)).optional(),
   gardenPoolIds: z.array(z.string().min(1)).optional(),
+  swampPoolIds: z.array(z.string().min(1)).optional(),
+  coralPoolIds: z.array(z.string().min(1)).optional(),
+  sandValleyPoolIds: z.array(z.string().min(1)).optional(),
+  shadowGrovePoolIds: z.array(z.string().min(1)).optional(),
+  libraryPoolIds: z.array(z.string().min(1)).optional(),
+  basinPoolIds: z.array(z.string().min(1)).optional(),
   gymBoss: z.object({
     id: z.string().min(1),
     level: z.number().int().positive(),
@@ -228,6 +234,12 @@ function collectReferenceIntegrityErrors(validated) {
     ["darkTowerPoolIds", validated.monsters.darkTowerPoolIds || []],
     ["frozenPeakPoolIds", validated.monsters.frozenPeakPoolIds || []],
     ["gardenPoolIds", validated.monsters.gardenPoolIds || []],
+    ["swampPoolIds", validated.monsters.swampPoolIds || []],
+    ["coralPoolIds", validated.monsters.coralPoolIds || []],
+    ["sandValleyPoolIds", validated.monsters.sandValleyPoolIds || []],
+    ["shadowGrovePoolIds", validated.monsters.shadowGrovePoolIds || []],
+    ["libraryPoolIds", validated.monsters.libraryPoolIds || []],
+    ["basinPoolIds", validated.monsters.basinPoolIds || []],
   ];
 
   pools.forEach(([poolName, poolIds]) => {

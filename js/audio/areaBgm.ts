@@ -1,3 +1,5 @@
+import { AREA_THEME, getAreaTheme } from "../data/mapRules.ts";
+
 export type AreaBgmKey = "title" | "field" | "battle" | "forest" | "cave" | "dark" | "volcano" | "ice" | "ruins";
 
 /**
@@ -8,34 +10,24 @@ export function resolveAreaBgmKey(mapKey: string): AreaBgmKey {
   const key = typeof mapKey === "string" ? mapKey : "";
 
   switch (key) {
-    case "FOREST":
-    case "MISTY_SWAMP":
-    case "CORAL_REEF":
     case "EMOJI_FOREST":
       return "forest";
-    case "CRYSTAL_CAVE":
-    case "DARK_TOWER":
-    case "SHADOW_GROVE":
     case "CAVE":
       return "cave";
-    case "VOLCANIC_PASS":
-    case "VOLCANO_SHOP":
     case "MAGMA_PASS":
       return "volcano";
-    case "FROZEN_PEAK":
-    case "FROZEN_GYM":
-    case "FROZEN_SHOP":
-      return "ice";
-    case "SKY_RUINS":
-    case "CELESTIAL_GARDEN":
-    case "ANCIENT_LIBRARY":
-    case "STARFALL_BASIN":
     case "RUINS":
     case "GARDEN":
       return "ruins";
     case "DARK_TOWER_INNER":
       return "dark";
-    default:
-      return "field";
   }
+
+  const areaTheme = getAreaTheme(key);
+  if (areaTheme === AREA_THEME.FOREST) return "forest";
+  if (areaTheme === AREA_THEME.CAVE) return "cave";
+  if (areaTheme === AREA_THEME.VOLCANO) return "volcano";
+  if (areaTheme === AREA_THEME.ICE) return "ice";
+  if (areaTheme === AREA_THEME.RUINS) return "ruins";
+  return "field";
 }

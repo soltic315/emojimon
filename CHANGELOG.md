@@ -1,5 +1,32 @@
 # CHANGELOG
 
+## [1.16.3] - 2026-03-02
+
+### Note
+- データ・型定義の乖離（Bカテゴリ）を優先解消し、型定義・データ検証・BGMルーティング・設計書・TODOを実装基準へ同期。
+
+### Added
+- `js/data/mapRules.ts` に `AREA_THEME` / `getAreaTheme()` を追加し、マップテーマ解決を共通化。
+- `tests/dataValidation.test.ts` に新規プール検証（`swampPoolIds`）の回帰テストを追加。
+
+### Changed
+- `types/game.d.ts` を更新し、`Move.category` / `selfHealPercent` / `MonsterSpecies.learnset` / `MapKey` / `TileCode` / `NpcDef` を現行実装へ同期。
+- `types/game.d.ts` のモンスター特性定義を旧 `abilityId/abilityRates` から現行 `ability` 配列仕様へ更新。
+- `js/data/dataValidation.ts` のモンスタープール検証対象に `swamp/coral/sandValley/shadowGrove/library/basin` を追加。
+- `js/audio/areaBgm.ts` のエリアBGM解決を `mapRules` の共通テーマ参照に変更し、マップテーマの二重管理を解消。
+- `GAME_DESIGN.md` の基本操作表を `Z / Enter / Space` に同期。
+- `TODO.md` の B-01〜B-10 を対応済みへ更新し、統計サマリー件数を更新。
+- `package.json` と `package-lock.json` のバージョンを `1.16.2` から `1.16.3` に更新。
+
+### Fixed
+- 型定義が実データと一致しないことによる参照ミス・保守負荷の増大を改善。
+- `dataValidation` が新規6プールを検証対象外にしていた不整合を修正。
+- エリアBGM解決仕様が `audio` と `mapRules` に分散していた状態を是正し、整合崩れリスクを低減。
+
+### Prompt
+- User: `データ・型定義の乖離の課題を解消して`
+- Assistant（対応方針）: TODOのBカテゴリ（B-01〜B-10）を最小差分で一括修正し、コード・テスト・設計書・TODO・版数・履歴を同期する。
+
 ## [1.16.2] - 2026-03-02
 
 ### Note

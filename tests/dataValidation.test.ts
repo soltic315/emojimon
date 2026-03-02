@@ -103,4 +103,11 @@ describe("data validation", () => {
 
     expect(() => validateGameData(raw)).toThrowError(/abilityId/);
   });
+
+  it("新規プールが存在しないモンスターIDを参照した場合はエラーを投げる", () => {
+    const raw = createValidData();
+    raw.monsters.swampPoolIds = ["UNKNOWN_MONSTER"];
+
+    expect(() => validateGameData(raw)).toThrowError(/swampPoolIds/);
+  });
 });
