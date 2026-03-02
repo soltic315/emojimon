@@ -2,6 +2,8 @@
  * TouchControls - モバイル向け仮想コントローラー
  * D-pad（十字キー）と A/B ボタンをタッチ操作で提供する
  */
+import { FONT } from "./UIHelper.ts";
+
 export class TouchControls {
   constructor(scene) {
     this.scene = scene;
@@ -180,7 +182,7 @@ export class TouchControls {
         y,
         text: this.scene.add.text(0, 0, label, {
           fontSize: 18,
-          fontFamily: "'M PLUS Rounded 1c', 'Segoe UI', system-ui, sans-serif",
+          fontFamily: FONT.UI,
           color: "#ffffff",
           fontStyle: "bold",
         }).setOrigin(0.5),
@@ -188,7 +190,7 @@ export class TouchControls {
       }).layout()
       : this.scene.add.text(x, y, label, {
         fontSize: 18,
-        fontFamily: "'M PLUS Rounded 1c', 'Segoe UI', system-ui, sans-serif",
+        fontFamily: FONT.UI,
         color: "#ffffff",
         fontStyle: "bold",
       }).setOrigin(0.5);

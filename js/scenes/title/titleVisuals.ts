@@ -10,16 +10,24 @@ export function createTitleVisuals(scene: TitleSceneLike): void {
   const { width, height } = scene.scale;
 
   const bg = scene.add.graphics();
-  bg.fillGradientStyle(0x0b1222, 0x1e293b, 0x020617, 0x0a1020, 1);
+  bg.fillGradientStyle(0x080d18, 0x1a2335, 0x03060f, 0x0b1320, 1);
   bg.fillRect(0, 0, width, height);
 
+  const vignette = scene.add.graphics();
+  vignette.fillStyle(0x02040a, 0.38);
+  vignette.fillEllipse(width / 2, height / 2 + 28, width * 1.2, height * 1.08);
+
+  const topGlow = scene.add.graphics();
+  topGlow.fillStyle(0xfde68a, 0.04);
+  topGlow.fillEllipse(width / 2, height * 0.16, width * 0.72, height * 0.26);
+
   const deco = scene.add.graphics();
-  deco.lineStyle(1, 0x1e293b, 0.3);
-  for (let i = 0; i < 12; i++) {
-    deco.lineBetween(0, height * 0.1 + i * 40, width, height * 0.05 + i * 40);
+  deco.lineStyle(1, 0x334155, 0.26);
+  for (let i = 0; i < 14; i++) {
+    deco.lineBetween(0, height * 0.08 + i * 36, width, height * 0.03 + i * 36);
   }
 
-  const shine = scene.add.rectangle(-120, height * 0.28, 170, height * 0.9, 0xf8fafc, 0.05)
+  const shine = scene.add.rectangle(-120, height * 0.28, 170, height * 0.9, 0xf8fafc, 0.07)
     .setAngle(-24)
     .setBlendMode(Phaser.BlendModes.ADD);
   scene.tweens.add({
@@ -37,7 +45,8 @@ export function createTitleVisuals(scene: TitleSceneLike): void {
     const y = Math.random() * height;
     const text = scene.add.text(x, y, emoji, {
       fontSize: 14 + Math.random() * 18,
-    }).setAlpha(0.1 + Math.random() * 0.15);
+      fontFamily: FONT.EMOJI,
+    }).setAlpha(0.08 + Math.random() * 0.13);
     scene.floatingEmojis.push({
       text,
       speedX: (Math.random() - 0.5) * 0.3,
@@ -45,35 +54,35 @@ export function createTitleVisuals(scene: TitleSceneLike): void {
     });
   }
 
-  const glow = scene.add.circle(width / 2, height * 0.22, 100, 0xfbbf24, 0.06);
+  const glow = scene.add.circle(width / 2, height * 0.22, 112, 0xfbbf24, 0.07);
   scene.tweens.add({
     targets: glow,
-    radius: 120,
-    alpha: 0.03,
+    radius: 132,
+    alpha: 0.035,
     duration: 2000,
     yoyo: true,
     repeat: -1,
     ease: "sine.inOut",
   });
 
-  const titleShadow = scene.add.text(width / 2 + 3, height * 0.22 + 3, "EMOJIMON", {
+  const titleShadow = scene.add.text(width / 2 + 3, height * 0.22 + 4, "EMOJIMON", {
     fontFamily: FONT.TITLE,
-    fontSize: 64,
+    fontSize: 68,
     fontStyle: "800",
     color: "#000000",
   }).setOrigin(0.5).setAlpha(0.5);
 
   const title = scene.add.text(width / 2, height * 0.22, "EMOJIMON", {
     fontFamily: FONT.TITLE,
-    fontSize: 64,
+    fontSize: 68,
     fontStyle: "800",
     color: "#fde68a",
-    stroke: "#92400e",
-    strokeThickness: 6,
-    shadow: { offsetX: 0, offsetY: 4, color: "#000000", blur: 16, fill: true },
+    stroke: "#7c2d12",
+    strokeThickness: 5,
+    shadow: { offsetX: 0, offsetY: 4, color: "#000000", blur: 18, fill: true },
   }).setOrigin(0.5);
 
-  addGlow(title, { color: 0xfbbf24, outerStrength: 6, innerStrength: 2 });
+  addGlow(title, { color: 0xfbbf24, outerStrength: 7, innerStrength: 2.2 });
   addShine(title, { speed: 0.3, lineWidth: 0.4, gradient: 4 });
   addCameraBloom(scene.cameras.main, { strength: 1.0, blurStrength: 0.6, steps: 3 });
 
@@ -88,9 +97,9 @@ export function createTitleVisuals(scene: TitleSceneLike): void {
 
   const subtitle = scene.add.text(width / 2, height * 0.35, "〜 絵文字モンスターの世界へようこそ 〜", {
     fontFamily: FONT.UI,
-    fontSize: 15,
+    fontSize: 14,
     fontStyle: "500",
-    color: "#94a3b8",
+    color: "#a7b6c8",
     align: "center",
   }).setOrigin(0.5);
   scene.tweens.add({
@@ -119,14 +128,14 @@ export function createTitleVisuals(scene: TitleSceneLike): void {
   scene.menuBgs = [];
   scene.menuCards = [];
   const menuStartY = height * 0.5;
-  const menuSpacing = 44;
+  const menuSpacing = 48;
 
   scene.menuOptions.forEach((opt: { label: string }, i: number) => {
     const y = menuStartY + i * menuSpacing;
 
     const menuCard = scene.rexUI?.add
-      .roundRectangle(width / 2, y, 320, 40, 12, 0x0f172a, 0.62)
-      .setStrokeStyle(1, 0x334155, 0.75);
+      .roundRectangle(width / 2, y, 344, 42, 12, 0x0b1220, 0.72)
+      .setStrokeStyle(1.2, 0x475569, 0.78);
     if (menuCard) {
       scene.menuCards.push(menuCard);
     }
@@ -136,10 +145,10 @@ export function createTitleVisuals(scene: TitleSceneLike): void {
 
     const text = scene.add.text(width / 2, y, opt.label, {
       fontFamily: FONT.UI,
-      fontSize: 21,
+      fontSize: 20,
       fontStyle: "700",
       color: "#e5e7eb",
-      padding: { x: 24, y: 8 },
+      padding: { x: 26, y: 8 },
     }).setOrigin(0.5);
     scene.menuTexts.push(text);
   });
@@ -148,8 +157,8 @@ export function createTitleVisuals(scene: TitleSceneLike): void {
 
   scene.hintText = scene.add.text(width / 2, height - 62, "↑↓：えらぶ  Z/Enter：けってい", {
     fontFamily: FONT.UI,
-    fontSize: 13,
-    color: "#94a3b8",
+    fontSize: 12,
+    color: "#9aa8ba",
   }).setOrigin(0.5);
 
   scene.tweens.add({
@@ -161,7 +170,7 @@ export function createTitleVisuals(scene: TitleSceneLike): void {
   });
 
   scene.add.text(width / 2, height - 22, "© 2026 EMOJIMON Project", {
-    fontFamily: "system-ui, sans-serif",
+    fontFamily: FONT.UI,
     fontSize: 11,
     color: "#64748b",
   }).setOrigin(0.5);
@@ -186,7 +195,7 @@ export function updateTitleMenuDisplay(scene: TitleSceneLike): void {
   scene.menuTexts.forEach((text: Phaser.GameObjects.Text, i: number) => {
     const selected = i === scene.selectedIndex;
     text.setColor(selected ? "#fde68a" : "#e5e7eb");
-    text.setFontSize(selected ? 23 : 21);
+    text.setFontSize(selected ? 22 : 20);
 
     const label = scene.menuOptions[i].label;
     text.setText(selected ? `▶ ${label}` : `  ${label}`);
@@ -200,12 +209,12 @@ export function updateTitleMenuDisplay(scene: TitleSceneLike): void {
 
     const menuCard = scene.menuCards?.[i];
     if (menuCard) {
-      menuCard.setFillStyle(selected ? 0x1f2937 : 0x0f172a, selected ? 0.92 : 0.62);
-      menuCard.setStrokeStyle(selected ? 2 : 1, selected ? 0xfbbf24 : 0x334155, selected ? 0.95 : 0.75);
+      menuCard.setFillStyle(selected ? 0x192638 : 0x0b1220, selected ? 0.95 : 0.72);
+      menuCard.setStrokeStyle(selected ? 2 : 1.2, selected ? 0xfbbf24 : 0x475569, selected ? 0.98 : 0.78);
       gsap.killTweensOf(menuCard);
       gsap.to(menuCard, {
-        scaleX: selected ? 1.03 : 1,
-        scaleY: selected ? 1.03 : 1,
+        scaleX: selected ? 1.04 : 1,
+        scaleY: selected ? 1.04 : 1,
         duration: 0.18,
         ease: "power2.out",
       });
@@ -213,7 +222,7 @@ export function updateTitleMenuDisplay(scene: TitleSceneLike): void {
 
     scene.menuBgs[i].clear();
     if (selected) {
-      drawSelection(scene.menuBgs[i], width / 2 - 156, text.y - 18, 312, 40, { radius: 10 });
+      drawSelection(scene.menuBgs[i], width / 2 - 170, text.y - 19, 340, 42, { radius: 11 });
     }
   });
 }

@@ -85,9 +85,12 @@ export class MenuScene extends Phaser.Scene {
     applyCanvasBrightness(this, gameState.gameplaySettings?.screenBrightness);
 
     // 半透明オーバーレイ
-    this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.5);
+    this.add.rectangle(width / 2, height / 2, width, height, 0x02040a, 0.62);
+    const overlayGradient = this.add.graphics();
+    overlayGradient.fillGradientStyle(0x0b1220, 0x0f172a, 0x02040a, 0x030712, 0.28);
+    overlayGradient.fillRect(0, 0, width, height);
     const overlayGlow = this.add.graphics();
-    overlayGlow.fillStyle(0x0f172a, 0.22);
+    overlayGlow.fillStyle(0x1a2638, 0.2);
     overlayGlow.fillCircle(width / 2, height / 2, Math.max(width, height) * 0.62);
     overlayGlow.setBlendMode(Phaser.BlendModes.ADD);
 

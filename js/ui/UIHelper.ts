@@ -6,21 +6,23 @@
 // ── フォント定義 ──
 export const FONT = {
   /** タイトルロゴ用（太字・装飾的） */
-  TITLE: "'M PLUS Rounded 1c', 'Segoe UI', system-ui, sans-serif",
+  TITLE: "'Noto Serif JP', 'Yu Mincho', 'Hiragino Mincho ProN', serif",
   /** UI全般（メニュー、メッセージ、ラベル） */
-  UI: "'M PLUS Rounded 1c', 'Segoe UI', system-ui, sans-serif",
+  UI: "'Noto Sans JP', 'Segoe UI', system-ui, sans-serif",
   /** 数値・ステータス表示用モノスペース */
   MONO: "'JetBrains Mono', 'Fira Code', 'Courier New', monospace",
+  /** 絵文字表示専用（環境差分を抑える） */
+  EMOJI: "'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Twemoji Mozilla', emoji",
 };
 
 // ── カラーパレット ──
 export const COLORS = {
   // パネル背景
-  PANEL_BG: 0x0d1117,
-  PANEL_BG_ALT: 0x161b22,
-  PANEL_HEADER: 0x1c2333,
-  PANEL_BORDER: 0x30363d,
-  PANEL_BORDER_LIGHT: 0x484f58,
+  PANEL_BG: 0x0b111d,
+  PANEL_BG_ALT: 0x121b2a,
+  PANEL_HEADER: 0x1a2638,
+  PANEL_BORDER: 0x2f3f56,
+  PANEL_BORDER_LIGHT: 0x5f7698,
 
   // アクセント
   GOLD: 0xf59e0b,
@@ -64,7 +66,7 @@ export const COLORS = {
 // ── テキストカラー（CSS文字列） ──
 export const TEXT_COLORS = {
   PRIMARY: "#f0f6fc",
-  SECONDARY: "#8b949e",
+  SECONDARY: "#9aa8ba",
   ACCENT: "#fbbf24",
   GOLD: "#fde68a",
   MUTED: "#636e7b",
@@ -108,7 +110,7 @@ export function applyCanvasBrightness(target, brightnessPercent = 100) {
  */
 export function drawPanel(g, x, y, w, h, opts = {}) {
   const {
-    radius = 14,
+    radius = 12,
     bgAlpha = 0.97,
     headerHeight = 0,
     shadow = true,
@@ -120,32 +122,45 @@ export function drawPanel(g, x, y, w, h, opts = {}) {
 
   // ドロップシャドウ（二重で柔らかく）
   if (shadow) {
-    g.fillStyle(0x000000, 0.45);
-    g.fillRoundedRect(x + 5, y + 5, w, h, radius);
-    g.fillStyle(0x000000, 0.2);
-    g.fillRoundedRect(x + 2, y + 2, w + 1, h + 1, radius);
+    g.fillStyle(0x000000, 0.48);
+    g.fillRoundedRect(x + 6, y + 7, w, h, radius);
+    g.fillStyle(0x0a0f18, 0.24);
+    g.fillRoundedRect(x + 3, y + 3, w + 1, h + 1, radius);
   }
 
   // メイン背景
   g.fillStyle(bgColor, bgAlpha);
   g.fillRoundedRect(x, y, w, h, radius);
 
+  // 上部のガラス質感
+  g.fillStyle(0xffffff, 0.022);
+  g.fillRoundedRect(x + 1, y + 1, w - 2, Math.max(8, Math.floor(h * 0.24)), {
+    tl: Math.max(0, radius - 1),
+    tr: Math.max(0, radius - 1),
+    bl: 0,
+    br: 0,
+  });
+
   // ヘッダーグラデーション
   if (headerHeight > 0) {
-    g.fillStyle(COLORS.PANEL_HEADER, 0.45);
+    g.fillStyle(COLORS.PANEL_HEADER, 0.52);
     g.fillRoundedRect(x, y, w, headerHeight, { tl: radius, tr: radius, bl: 0, br: 0 });
     // ヘッダー下のセパレータライン
-    g.lineStyle(1, COLORS.PANEL_BORDER, 0.35);
+    g.lineStyle(1, COLORS.PANEL_BORDER_LIGHT, 0.32);
     g.lineBetween(x + radius, y + headerHeight, x + w - radius, y + headerHeight);
   } else {
     // ヘッダーが無い場合でも上部を少し明るく
-    g.fillStyle(COLORS.PANEL_HEADER, 0.25);
+    g.fillStyle(COLORS.PANEL_HEADER, 0.28);
     g.fillRoundedRect(x, y, w, Math.min(h, h * 0.12), { tl: radius, tr: radius, bl: 0, br: 0 });
   }
 
   // インナーハイライト（上端の光沢）
-  g.lineStyle(1, 0xffffff, 0.06);
+  g.lineStyle(1, 0xffffff, 0.1);
   g.strokeRoundedRect(x + 1, y + 1, w - 2, h - 2, Math.max(0, radius - 1));
+
+  // 下辺の落ち着いた締まり
+  g.lineStyle(1, 0x000000, 0.35);
+  g.lineBetween(x + radius, y + h - 1, x + w - radius, y + h - 1);
 
   // オプション：アクセントグロウ
   if (glow) {
@@ -154,7 +169,7 @@ export function drawPanel(g, x, y, w, h, opts = {}) {
   }
 
   // メインボーダー
-  g.lineStyle(borderWidth, borderColor, 0.85);
+  g.lineStyle(borderWidth, borderColor, 0.9);
   g.strokeRoundedRect(x, y, w, h, radius);
 }
 
@@ -435,7 +450,7 @@ function resolveSubEmojiOffset(point, fontSize) {
  */
 export function createMonsterEmojiDisplay(scene, x, y, emoji, opts = {}) {
   const {
-    fontFamily = "system-ui, emoji",
+    fontFamily = FONT.EMOJI,
     fontSize = 56,
     color,
     subEmojis = null,

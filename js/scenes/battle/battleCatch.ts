@@ -4,6 +4,7 @@ import { calcStats, syncMonsterMoves } from "../../data/monsters.ts";
 import { getItemById } from "../../data/items.ts";
 import { MOVES } from "../../data/moves.ts";
 import { audioManager } from "../../audio/AudioManager.ts";
+import { FONT } from "../../ui/UIHelper.ts";
 import { BattleState, PARTY_MAX } from "./battleConstants.ts";
 import { gsap } from "gsap";
 
@@ -82,7 +83,7 @@ function playCatchAnimation(scene, ball, success, opponent) {
   const targetY = scene.opponentEmojiText.y;
 
   const ballText = scene.add.text(startX, startY, ballEmoji, {
-    fontFamily: "system-ui, emoji",
+    fontFamily: FONT.EMOJI,
     fontSize: 28,
   }).setOrigin(0.5).setDepth(20);
 
@@ -164,7 +165,7 @@ function completeCatchSuccess(scene, ballText, opponent) {
       ballText.x + (Math.random() - 0.5) * 60,
       ballText.y + (Math.random() - 0.5) * 40,
       sparkles[Math.floor(Math.random() * sparkles.length)],
-      { fontFamily: "system-ui, emoji", fontSize: 16 + Math.random() * 12 }
+      { fontFamily: FONT.EMOJI, fontSize: 16 + Math.random() * 12 }
     ).setOrigin(0.5).setDepth(21);
 
     gsap.to(spark, {

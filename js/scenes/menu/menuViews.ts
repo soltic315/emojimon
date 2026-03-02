@@ -47,9 +47,22 @@ export function renderMainMenu(scene) {
     const y = panelY + 14 + index * 36;
     const selected = index === scene.menuIndex;
 
+    const rowShadow = scene.rexUI?.add
+      .roundRectangle(panelX + panelW / 2 + 2, y + 14, panelW - 18, 28, 8, 0x000000, selected ? 0.34 : 0.2);
+    if (rowShadow) {
+      scene.menuPanel.add(rowShadow);
+    }
+
+    const rowCard = scene.rexUI?.add
+      .roundRectangle(panelX + panelW / 2, y + 14, panelW - 18, 28, 8, selected ? 0x162338 : 0x0e1726, selected ? 0.9 : 0.72)
+      .setStrokeStyle(selected ? 1.8 : 1, selected ? 0xfbbf24 : 0x3f516b, selected ? 0.95 : 0.72);
+    if (rowCard) {
+      scene.menuPanel.add(rowCard);
+    }
+
     if (selected) {
       const selBg = scene.add.graphics();
-      drawSelection(selBg, panelX + 8, y - 2, panelW - 16, 32, { radius: 6 });
+      drawSelection(selBg, panelX + 8, y - 2, panelW - 16, 32, { radius: 7 });
       scene.menuPanel.add(selBg);
     }
 
@@ -57,8 +70,9 @@ export function renderMainMenu(scene) {
     const rawText = selected ? `▶ ${label}` : `  ${label}`;
     const text = scene.add.text(panelX + 20, y, rawText, {
       fontFamily: FONT.UI,
-      fontSize: 16,
-      color: selected ? "#fde68a" : "#e5e7eb",
+      fontSize: selected ? 16.5 : 16,
+      color: selected ? "#fde68a" : "#dbe5f3",
+      fontStyle: selected ? "700" : "500",
     });
     fitLabelToWidth(text, rawText, panelW - 30);
     scene.menuPanel.add(text);

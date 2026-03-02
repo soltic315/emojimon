@@ -528,7 +528,7 @@ export class BattleScene extends Phaser.Scene {
       this.playerGround.y - 44,
       player.species.emoji || "❓",
       {
-        fontFamily: "system-ui, emoji",
+        fontFamily: FONT.EMOJI,
         fontSize: 56,
         subEmojis: player.species.subEmoji,
       }
@@ -548,7 +548,7 @@ export class BattleScene extends Phaser.Scene {
       this.opponentGround.y - 48,
       opponent.species.emoji || "❓",
       {
-        fontFamily: "system-ui, emoji",
+        fontFamily: FONT.EMOJI,
         fontSize: 60,
         subEmojis: opponent.species.subEmoji,
       }

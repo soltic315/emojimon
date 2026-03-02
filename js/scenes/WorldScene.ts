@@ -324,15 +324,19 @@ export class WorldScene extends Phaser.Scene {
 
     // 背景
     const bg = this.add.graphics();
-    bg.fillStyle(0x1e293b, 0.95);
-    bg.fillRoundedRect(0, 0, toastW, toastH, 8);
-    bg.lineStyle(2, 0xfbbf24, 0.8);
-    bg.strokeRoundedRect(0, 0, toastW, toastH, 8);
+    drawPanel(bg, 0, 0, toastW, toastH, {
+      radius: 8,
+      bgAlpha: 0.98,
+      borderColor: COLORS.GOLD,
+      borderWidth: 2,
+      shadow: true,
+      glow: true,
+    });
     container.add(bg);
 
     // テキスト
     const icon = this.add.text(10, toastH / 2, achievementDef.icon, {
-      fontFamily: "system-ui, emoji",
+      fontFamily: FONT.EMOJI,
       fontSize: 20,
     }).setOrigin(0, 0.5);
     container.add(icon);
