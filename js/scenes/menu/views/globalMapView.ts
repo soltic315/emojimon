@@ -19,6 +19,39 @@ const GLOBAL_MAP_HIDDEN_KEYS = new Set([
   "BASIN_SHOP",
 ]);
 
+const GLOBAL_MAP_KEYS = Object.keys(MAPS).filter((mapKey) => !GLOBAL_MAP_HIDDEN_KEYS.has(mapKey));
+
+function buildGlobalMapConnections() {
+  const edges = [];
+  const targetsBySource = {};
+  const edgeKeys = new Set();
+  GLOBAL_MAP_KEYS.forEach((source) => {
+    const transitions = DOOR_TRANSITIONS[source] || [];
+    const uniqueTargets = [];
+    const uniqueTargetSet = new Set();
+
+    transitions.forEach((transition) => {
+      const target = transition.target;
+      if (!GLOBAL_MAP_KEYS.includes(target)) return;
+
+      if (!uniqueTargetSet.has(target)) {
+        uniqueTargetSet.add(target);
+        uniqueTargets.push(target);
+      }
+
+      const edgeKey = [source, target].sort().join("__");
+      if (edgeKeys.has(edgeKey)) return;
+      edgeKeys.add(edgeKey);
+      edges.push({ source, target });
+    });
+
+    targetsBySource[source] = uniqueTargets;
+  });
+  return { edges, targetsBySource };
+}
+
+const GLOBAL_MAP_CONNECTIONS = buildGlobalMapConnections();
+
 export function renderGlobalMapView(scene) {
   const { width, height } = scene.scale;
   const panelW = width - SUB_PANEL_WIDTH_OFFSET;
@@ -41,7 +74,7 @@ export function renderGlobalMapView(scene) {
   });
   scene.subPanel.add(title);
 
-  const mapKeys = Object.keys(MAPS).filter((mapKey) => !GLOBAL_MAP_HIDDEN_KEYS.has(mapKey));
+  const mapKeys = GLOBAL_MAP_KEYS;
   const currentMapKey = gameState.currentMap || "EMOJI_TOWN";
   const fallbackOutdoorKey = (DOOR_TRANSITIONS[currentMapKey] || []).find((transition) => mapKeys.includes(transition.target))?.target;
   const effectiveCurrentMapKey = mapKeys.includes(currentMapKey)
@@ -112,17 +145,8 @@ export function renderGlobalMapView(scene) {
   });
   scene.subPanel.add(mapLegend);
 
-  const edgeKeys = new Set();
-  mapKeys.forEach((source) => {
-    const transitions = DOOR_TRANSITIONS[source] || [];
-    transitions.forEach((transition) => {
-      const target = transition.target;
-      if (!mapKeys.includes(target)) return;
-      if (!nodeCenters[target]) return;
-      const edgeKey = [source, target].sort().join("__");
-      if (edgeKeys.has(edgeKey)) return;
-      edgeKeys.add(edgeKey);
-
+  GLOBAL_MAP_CONNECTIONS.edges.forEach(({ source, target }) => {
+      if (!nodeCenters[source] || !nodeCenters[target]) return;
       const from = nodeCenters[source];
       const to = nodeCenters[target];
       const isFocused = source === selectedMapKey || target === selectedMapKey;
@@ -134,7 +158,6 @@ export function renderGlobalMapView(scene) {
       edge.lineTo(to.x, to.y);
       edge.strokePath();
       scene.subPanel.add(edge);
-    });
   });
 
   mapKeys.forEach((mapKey) => {
@@ -208,12 +231,11 @@ export function renderGlobalMapView(scene) {
   });
   scene.subPanel.add(connectionTitle);
 
-  const targets = Array.from(new Set((DOOR_TRANSITIONS[selectedMapKey] || [])
-    .filter((transition) => mapKeys.includes(transition.target))
-    .map((transition) => {
-      const targetVisited = visitedSet.has(transition.target);
-      return targetVisited ? (MAPS[transition.target]?.name || transition.target) : "？？？";
-    })));
+  const targets = (GLOBAL_MAP_CONNECTIONS.targetsBySource[selectedMapKey] || [])
+    .map((targetKey) => {
+      const targetVisited = visitedSet.has(targetKey);
+      return targetVisited ? (MAPS[targetKey]?.name || targetKey) : "？？？";
+    });
 
   const connectionLines = targets.length > 0
     ? targets.map((name) => `・${name}`)

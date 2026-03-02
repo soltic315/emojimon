@@ -23,14 +23,23 @@ export function showHelp(scene: TitleSceneLike): void {
   scene.helpPanel.add(helpTitle);
 
   const helpContent = [
+    "【タイトル/メニュー】",
+    "  ↑↓   : えらぶ",
+    "  Z/Enter/Space : けってい",
+    "  X/ESC : もどる",
+    "",
     "【フィールド】",
     "  ←↑→↓ : いどう",
     "  Z     : はなす / アクション",
+    "  ↑↓ 長押し : リスト高速いどう",
     "",
     "【バトル】",
     "  ↑↓   : コマンド・わざをえらぶ",
     "  Z     : けってい",
     "  X     : キャンセル",
+    "",
+    "【タッチ】",
+    "  画面ボタン: けってい / もどる / いどう",
     "",
     "【ヒント】",
     "  草むらを歩くとモンスターに出会うよ！",

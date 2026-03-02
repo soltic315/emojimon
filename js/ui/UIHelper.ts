@@ -83,6 +83,16 @@ export const TEXT_COLORS = {
   ICE: "#67e8f9",
 };
 
+// ── タイプバッジ配色（背景/文字） ──
+export const TYPE_BADGE_COLORS = {
+  FIRE: { bg: "#7c2d12", text: TEXT_COLORS.FIRE },
+  WATER: { bg: "#1e3a5f", text: TEXT_COLORS.WATER },
+  GRASS: { bg: "#14532d", text: TEXT_COLORS.GRASS },
+  NORMAL: { bg: "#374151", text: TEXT_COLORS.NORMAL },
+  ELECTRIC: { bg: "#713f12", text: TEXT_COLORS.ELECTRIC },
+  ICE: { bg: "#164e63", text: TEXT_COLORS.ICE },
+};
+
 // ── 共通UIレイアウト/タイポトークン ──
 export const UI_LAYOUT = {
   SAFE_MARGIN: 14,

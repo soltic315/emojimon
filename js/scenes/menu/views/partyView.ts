@@ -2,7 +2,7 @@
 import { gameState } from "../../../state/gameState.ts";
 import { calcStats, getMonsterMoves, getMonsterMaxStamina } from "../../../data/monsters.ts";
 import { getMoveStaminaCost } from "../../../data/moves.ts";
-import { FONT, drawPanel, drawSelection } from "../../../ui/UIHelper.ts";
+import { FONT, TEXT_COLORS, drawPanel, drawSelection } from "../../../ui/UIHelper.ts";
 import { SUB_PANEL_WIDTH_OFFSET } from "../menuViewsShared.ts";
 
 export function renderPartyView(scene) {
@@ -85,8 +85,7 @@ export function renderPartyView(scene) {
     });
     scene.subPanel.add(nameText);
 
-    const typeColors = { FIRE: "#f97316", WATER: "#3b82f6", GRASS: "#22c55e", NORMAL: "#9ca3af", ELECTRIC: "#fbbf24", ICE: "#67e8f9" };
-    const typeColor = typeColors[mon.species.primaryType] || "#9ca3af";
+    const typeColor = TEXT_COLORS[mon.species.primaryType] || TEXT_COLORS.NORMAL;
     const typeLabel = mon.species.secondaryType
       ? `${mon.species.primaryType}/${mon.species.secondaryType}`
       : mon.species.primaryType;

@@ -2,6 +2,7 @@
 import { calcStats } from "../../data/monsters.ts";
 import {
   FONT,
+  TYPE_BADGE_COLORS,
 } from "../../ui/UIHelper.ts";
 import {
   getStatusLabel,
@@ -24,16 +25,6 @@ export function updateHud(scene, animate = false) {
   const playerStats = calcStats(player.species, player.level || 1);
   const oppStats = calcStats(opponent.species, opponent.level || 1);
 
-  // タイプバッジ色マップ
-  const typeBadgeColors = {
-    FIRE: { bg: "#7c2d12", text: "#fb923c" },
-    WATER: { bg: "#1e3a5f", text: "#60a5fa" },
-    GRASS: { bg: "#14532d", text: "#4ade80" },
-    NORMAL: { bg: "#374151", text: "#d1d5db" },
-    ELECTRIC: { bg: "#713f12", text: "#facc15" },
-    ICE: { bg: "#164e63", text: "#67e8f9" },
-  };
-
   // プレイヤー情報
   const playerLabel = `${player.species.emoji || ""} ${player.species.name} Lv.${player.level}`;
   scene.playerNameText.setText(truncateLabel(playerLabel, 16));
@@ -42,7 +33,7 @@ export function updateHud(scene, animate = false) {
   // プレイヤータイプバッジ
   const pType = player.species.primaryType || "NORMAL";
   const pSecType = player.species.secondaryType || null;
-  const pBadge = typeBadgeColors[pType] || typeBadgeColors.NORMAL;
+  const pBadge = TYPE_BADGE_COLORS[pType] || TYPE_BADGE_COLORS.NORMAL;
   const pTypeLabel = pSecType ? `${pType}/${pSecType}` : pType;
   scene.playerTypeBadge.setText(pTypeLabel);
   if (scene.playerTypeBadge.getElement) {
@@ -108,7 +99,7 @@ export function updateHud(scene, animate = false) {
   // 相手タイプバッジ
   const oType = opponent.species.primaryType || "NORMAL";
   const oSecType = opponent.species.secondaryType || null;
-  const oBadge = typeBadgeColors[oType] || typeBadgeColors.NORMAL;
+  const oBadge = TYPE_BADGE_COLORS[oType] || TYPE_BADGE_COLORS.NORMAL;
   const oTypeLabel = oSecType ? `${oType}/${oSecType}` : oType;
   scene.opponentTypeBadge.setText(oTypeLabel);
   if (scene.opponentTypeBadge.getElement) {

@@ -1,5 +1,33 @@
 # CHANGELOG
 
+## [2.1.6] - 2026-03-02
+
+### Note
+- 優先度と対応工数のバランスを重視し、A〜I の TODO から5件（`B-23` / `C-24` / `D-24` / `F-23` / `G-16`）を完了した。
+
+### Added
+- `js/ui/UIHelper.ts` に `TYPE_BADGE_COLORS` を追加し、タイプバッジ配色の共通定義を導入。
+
+### Changed
+- `js/scenes/battle/battleHudUpdate.ts` のタイプバッジ配色参照をローカル定義から `TYPE_BADGE_COLORS` に統一。
+- `js/scenes/menu/views/partyView.ts` / `js/scenes/menu/views/boxView.ts` / `js/scenes/menu/views/pokedexView.ts` のタイプ色参照を `TEXT_COLORS` に統一。
+- `js/scenes/menu/views/achievementsView.ts` のスクロール計算を、`headerHeight` / `itemHeight` の差異を考慮する方式に変更。
+- `js/scenes/menu/views/globalMapView.ts` で、マップキー・接続エッジ・接続先一覧をモジュールスコープで事前構築する方式へ変更。
+- `js/scenes/title/titleHelp.ts` の操作説明に「メニュー操作」「長押し」「タッチ操作」を追記。
+- `TODO.md` から完了済みの `B-23` / `C-24` / `D-24` / `F-23` / `G-16` を削除し、統計サマリーを更新。
+- `package.json` と `package-lock.json` のバージョンを `2.1.5` から `2.1.6` に更新。
+
+### Fixed
+- 画面ごとに散在していたタイプ色定義の重複と、バトルHUD配色定義の分散を解消。
+- 実績画面でヘッダー行と項目行の高さ差により選択位置がずれる問題を修正。
+- グローバルマップ描画時の不要な `Set` 再生成と重複走査を削減。
+- タイトルヘルプに不足していた操作説明（メニュー/長押し/タッチ）を補完。
+
+### Prompt
+- User: `優先度と対応工数のバランスを考えてA~IのTODOを5~10個を完了してください。lint/typecheck/test/buildは全てのTODOを完了した後に実施してください。`
+- User: `CHANGELOGを更新して`
+- Assistant（対応方針）: A〜Iから高優先かつ小〜中工数の5件を最小差分で実装し、TODO/版数/変更履歴を同期する。
+
 ## [2.1.5] - 2026-03-02
 
 ### Note

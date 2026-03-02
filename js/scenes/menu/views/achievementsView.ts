@@ -61,7 +61,7 @@ export function renderAchievementsView(scene) {
   const visibleAreaH = height - 20 - 42;
   const itemHeight = 28;
   const headerHeight = 30;
-  const maxVisible = Math.floor(visibleAreaH / itemHeight);
+  const rowHeight = (item) => (item.type === "header" ? headerHeight : itemHeight);
 
   // subMenuIndex をクランプ
   const totalSelectable = allItems.filter((item) => item.type === "achievement").length;
@@ -79,14 +79,37 @@ export function renderAchievementsView(scene) {
     }
   });
 
-  // スクロールオフセット計算
-  const scrollOffset = Math.max(0, selectedFlatIndex - Math.floor(maxVisible / 2));
+  // スクロールオフセット計算（ヘッダー/項目の高さ差を考慮）
+  const rowTops = [];
+  let totalHeight = 0;
+  for (const item of allItems) {
+    rowTops.push(totalHeight);
+    totalHeight += rowHeight(item);
+  }
+  const selectedTop = selectedFlatIndex >= 0 ? rowTops[selectedFlatIndex] : 0;
+  const selectedHeight = selectedFlatIndex >= 0 ? rowHeight(allItems[selectedFlatIndex]) : itemHeight;
+  const selectedCenter = selectedTop + Math.floor(selectedHeight / 2);
+  const maxScrollY = Math.max(0, totalHeight - visibleAreaH);
+  const scrollY = Phaser.Math.Clamp(selectedCenter - Math.floor(visibleAreaH / 2), 0, maxScrollY);
 
-  let drawY = visibleAreaY;
-  let drawn = 0;
-  for (let i = scrollOffset; i < allItems.length && drawn < maxVisible + 2; i++) {
+  let scrollOffset = 0;
+  for (let i = 0; i < allItems.length; i++) {
+    const top = rowTops[i];
+    const bottom = top + rowHeight(allItems[i]);
+    if (bottom > scrollY) {
+      scrollOffset = i;
+      break;
+    }
+  }
+
+  const visibleBottomY = visibleAreaY + visibleAreaH;
+  let drawY = visibleAreaY - (scrollY - rowTops[scrollOffset]);
+
+  for (let i = scrollOffset; i < allItems.length; i++) {
     const item = allItems[i];
     if (!item) break;
+    const currentHeight = rowHeight(item);
+    if (drawY >= visibleBottomY) break;
 
     if (item.type === "header") {
       const headerText = scene.add.text(panelX + 16, drawY + 4, item.label, {
@@ -95,8 +118,7 @@ export function renderAchievementsView(scene) {
         color: "#94a3b8",
       });
       scene.subPanel.add(headerText);
-      drawY += headerHeight;
-      drawn++;
+      drawY += currentHeight;
       continue;
     }
 
@@ -137,7 +159,6 @@ export function renderAchievementsView(scene) {
       scene.subPanel.add(descText);
     }
 
-    drawY += itemHeight;
-    drawn++;
+    drawY += currentHeight;
   }
 }
