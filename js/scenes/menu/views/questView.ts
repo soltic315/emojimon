@@ -6,6 +6,11 @@ function formatQuestLine(label, done) {
   return `${label} : ${done ? "✅ 完了" : "📋 進行中"}`;
 }
 
+function formatQuestLineWithLock(label, done, unlocked) {
+  if (!unlocked) return `${label} : 🔒 未解放`;
+  return formatQuestLine(label, done);
+}
+
 export function renderQuestView(scene) {
   const { width, height } = scene.scale;
   const panelW = width - SUB_PANEL_WIDTH_OFFSET;
@@ -26,14 +31,37 @@ export function renderQuestView(scene) {
     { label: "伝説討伐", done: !!gameState.storyFlags.legendaryDefeated },
   ];
 
+  const regionalChainAllDone =
+    !!gameState.storyFlags.swampRemedyQuestDone
+    && !!gameState.storyFlags.coralArchivistQuestDone
+    && !!gameState.storyFlags.libraryRestorationQuestDone
+    && !!gameState.storyFlags.starResearchQuestDone;
+
   const sideQuests = [
     { label: "スターライト依頼", done: !!gameState.starQuestDone },
     { label: "氷峰アイスタイプ編成", done: !!gameState.storyFlags.frozenPeakIceQuest },
     { label: "珊瑚みずタイプ編成", done: !!gameState.storyFlags.coralWaterQuest },
-    { label: "湿地の調合依頼", done: !!gameState.storyFlags.swampRemedyQuestDone },
-    { label: "珊瑚の記録復元", done: !!gameState.storyFlags.coralArchivistQuestDone },
-    { label: "図書館文献復元", done: !!gameState.storyFlags.libraryRestorationQuestDone },
-    { label: "星降り観測最終報告", done: !!gameState.storyFlags.starResearchQuestDone },
+    { label: "湿地の調合依頼", done: !!gameState.storyFlags.swampRemedyQuestDone, unlocked: true },
+    {
+      label: "珊瑚の記録復元",
+      done: !!gameState.storyFlags.coralArchivistQuestDone,
+      unlocked: !!gameState.storyFlags.swampRemedyQuestDone,
+    },
+    {
+      label: "図書館文献復元",
+      done: !!gameState.storyFlags.libraryRestorationQuestDone,
+      unlocked: !!gameState.storyFlags.coralArchivistQuestDone,
+    },
+    {
+      label: "星降り観測最終報告",
+      done: !!gameState.storyFlags.starResearchQuestDone,
+      unlocked: !!gameState.storyFlags.libraryRestorationQuestDone,
+    },
+    {
+      label: "地域連鎖・記念報酬",
+      done: !!gameState.storyFlags.regionalQuestChainBonusClaimed,
+      unlocked: regionalChainAllDone,
+    },
   ];
 
   const storyDone = storyQuests.filter((entry) => entry.done).length;
@@ -56,7 +84,7 @@ export function renderQuestView(scene) {
     ...storyQuests.map((entry) => formatQuestLine(entry.label, entry.done)),
     "",
     "── サブクエスト ──",
-    ...sideQuests.map((entry) => formatQuestLine(entry.label, entry.done)),
+    ...sideQuests.map((entry) => formatQuestLineWithLock(entry.label, entry.done, entry.unlocked ?? true)),
   ];
 
   const lineH = 22;

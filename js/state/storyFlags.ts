@@ -64,6 +64,7 @@ export const DEFAULT_STORY_FLAGS = Object.freeze({
   coralArchivistQuestDone: false,
   libraryRestorationQuestDone: false,
   starResearchQuestDone: false,
+  regionalQuestChainBonusClaimed: false,
   forestDeepSeedFound: false,
   caveEchoStoneFound: false,
   volcanoCoreShardFound: false,

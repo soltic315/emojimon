@@ -2469,6 +2469,14 @@ export class WorldScene extends Phaser.Scene {
       return;
     }
 
+    if (!sf.swampRemedyQuestDone) {
+      this.showDialogSequence([
+        "珊瑚記録官: この依頼は連鎖調査の第2段階なんだ。",
+        "珊瑚記録官: まずは霧の湿地で『湿地の調合依頼』を完了してきて。",
+      ]);
+      return;
+    }
+
     const missing = [];
     if (!sf.coralLegendRead) missing.push("珊瑚碑の伝承を読む");
     if (!sf.coralPearlFound) missing.push("真珠の回収");
@@ -2500,6 +2508,14 @@ export class WorldScene extends Phaser.Scene {
     const sf = gameState.storyFlags;
     if (sf.libraryRestorationQuestDone) {
       this.showMessage("司書長: 失われた文書群は保存完了。次は星の観測へ向かうといい。", 2400);
+      return;
+    }
+
+    if (!sf.coralArchivistQuestDone) {
+      this.showDialogSequence([
+        "司書長: 文献復元依頼は連鎖調査の第3段階にあたる。",
+        "司書長: 先に珊瑚の浜で『珊瑚の記録復元』を完了させてくれ。",
+      ]);
       return;
     }
 
@@ -2537,6 +2553,14 @@ export class WorldScene extends Phaser.Scene {
       return;
     }
 
+    if (!sf.libraryRestorationQuestDone) {
+      this.showDialogSequence([
+        "星見研究員: 最終報告は連鎖調査の第4段階だ。",
+        "星見研究員: まずは古代図書館の『図書館文献復元』を完了してくれ。",
+      ]);
+      return;
+    }
+
     const missing = [];
     if (!sf.ruinsFinalDone) missing.push("遺跡最終決戦の突破");
     if (!sf.basinLoreRead) missing.push("星読碑の解析");
@@ -2560,6 +2584,33 @@ export class WorldScene extends Phaser.Scene {
       gameState.addItem("MASTER_BALL", 1);
       gameState.addItem("FULL_RESTORE", 2);
       gameState.addMoney(2500);
+      this._grantRegionalQuestChainBonusIfReady();
+    });
+  }
+
+  _grantRegionalQuestChainBonusIfReady() {
+    const sf = gameState.storyFlags;
+    if (
+      sf.regionalQuestChainBonusClaimed
+      || !sf.swampRemedyQuestDone
+      || !sf.coralArchivistQuestDone
+      || !sf.libraryRestorationQuestDone
+      || !sf.starResearchQuestDone
+    ) {
+      gameState.save();
+      this.createUi();
+      return;
+    }
+
+    this.showDialogSequence([
+      "連鎖調査本部: 全地域の連鎖報告を確認した。見事な達成だ！",
+      "連鎖調査本部: 記念報酬として、追加の支援物資を授与する。",
+      "★ パーフェクトケア×2 / ハイパーボール×3 / 2000G を受け取った！",
+    ], () => {
+      sf.regionalQuestChainBonusClaimed = true;
+      gameState.addItem("FULL_RESTORE", 2);
+      gameState.addItem("HYPER_BALL", 3);
+      gameState.addMoney(2000);
       gameState.save();
       this.createUi();
     });
