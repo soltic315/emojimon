@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## [1.11.0] - 2026-03-02
+
+### Note
+- 探索ポイントと地域サブクエストを大幅拡張し、フィールド周回と報告導線の遊び応えを強化。
+
+### Added
+- `js/scenes/WorldScene.ts` に未実装だった各地のロアイベント（湿地/珊瑚/砂漠/影/図書館/盆地）を追加。
+- `js/scenes/WorldScene.ts` に地域サブクエスト4本（湿地調合・珊瑚記録・図書館復元・星降り観測）を追加。
+- `js/scenes/world/worldMapData.ts` の `FIELD_HIDDEN_ITEMS` に7件の新規隠し探索ポイントを追加。
+
+### Changed
+- `js/scenes/WorldScene.ts` のNPC会話分岐を拡張し、`WATER_TRIO` クエストと新規 `story` イベントID群を処理するよう更新。
+- `js/scenes/world/worldMapData.ts` で依頼NPCを `MISTY_SWAMP` / `CORAL_REEF` / `ANCIENT_LIBRARY` / `STARFALL_BASIN` に追加。
+- `js/state/storyFlags.ts` に探索進捗・サブクエスト進捗フラグを追加し、セーブ互換を維持したまま進行状態を保持できるよう更新。
+- `GAME_DESIGN.md` に探索拡張と地域サブクエスト仕様（条件/報酬カテゴリ）を追記。
+- `package.json` と `package-lock.json` のバージョンを `1.10.2` から `1.11.0` に更新。
+
+### Fixed
+- `CORAL_REEF` に存在していた `WATER_TRIO` クエスト導線が会話処理未実装で進行できない問題を解消。
+- 複数マップに配置済みだった `story` イベントIDの一部が未実装で実質無反応になる問題を解消。
+
+### Prompt
+- User: `探索要素やサブクエストを大幅に追加して`
+- Assistant（対応方針）: 既存マップ導線を維持したまま、隠し探索ポイント増設・地域依頼NPC追加・未実装イベント補完を組み合わせて大規模拡張し、仕様書と版数を同期する。
+
 ## [1.10.2] - 2026-03-02
 
 ### Note

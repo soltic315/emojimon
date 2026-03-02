@@ -482,6 +482,7 @@ export function getMapNpcs(mapKey) {
       { x: 20, y: 24, text: "この湿地は毒の霧が立ち込めている… 紫のタイルに注意だ。", texture: "npc" },
       { x: 7, y: 11, text: null, texture: "npc-quest", story: "swamp_tablet_1" },
       { x: 29, y: 5, text: "珊瑚の浜への道は 東にある。みずタイプが多い場所だぞ。", texture: "npc" },
+      { x: 6, y: 24, text: null, texture: "npc-quest", story: "swamp_remedy_request" },
     ];
     if (!sf.swampRangerBeaten) {
       npcs.push({ x: 14, y: 14, text: "湿地の毒に耐えられるか？ レンジャーの試験だ！", texture: "npc-quest", rivalBattle: "swamp_ranger", trainerName: "湿地レンジャー カスミ", rivalLevel: 11 });
@@ -508,6 +509,7 @@ export function getMapNpcs(mapKey) {
       { x: 19, y: 22, text: "この浜は珊瑚と海に囲まれた楽園だ。みずタイプの宝庫だよ。", texture: "npc" },
       { x: 9, y: 4, text: null, texture: "npc-quest", story: "coral_legend_1" },
       { x: 29, y: 14, text: "みずタイプがいれば 浅瀬を渡って隠しアイテムが見つかるかも。", texture: "npc" },
+      { x: 32, y: 20, text: null, texture: "npc-quest", story: "coral_archivist_request" },
     ];
     if (!sf.coralDiverBeaten) {
       npcs.push({ x: 26, y: 7, text: "海の強者に挑戦だ！ 波乗りバトルいくぞ！", texture: "npc-quest", rivalBattle: "coral_diver", trainerName: "海洋ダイバー ウミト", rivalLevel: 14 });
@@ -575,6 +577,7 @@ export function getMapNpcs(mapKey) {
     const npcs = [
       { x: 8, y: 20, text: "この図書館には 太古の知識が眠っている。テレポートパッドを使って奥へ進もう。", texture: "npc" },
       { x: 25, y: 4, text: null, texture: "npc-quest", story: "library_codex_1" },
+      { x: 30, y: 21, text: null, texture: "npc-quest", story: "library_restoration_request" },
     ];
     if (!sf.libraryScholarBeaten) {
       npcs.push({ x: 17, y: 7, text: "図書館の知恵を試す！ 古代の賢者の試練だ！", texture: "npc-quest", rivalBattle: "library_scholar", trainerName: "古代の賢者 コデクス", rivalLevel: 35, isBossTrainer: true });
@@ -595,6 +598,7 @@ export function getMapNpcs(mapKey) {
       { x: 22, y: 28, text: "ここは星の光が降り注ぐ 伝説の盆地… 最強のトレーナーたちが集う場所だ。", texture: "npc" },
       { x: 12, y: 7, text: null, texture: "npc-quest", story: "basin_starfall_lore" },
       { x: 32, y: 11, text: "星降りの工房では レアなアイテムが手に入るぞ。", texture: "npc" },
+      { x: 28, y: 27, text: null, texture: "npc-quest", story: "star_research_request" },
     ];
     // ポストゲーム四天王チャレンジ
     if (sf.ruinsFinalDone) {
@@ -1686,6 +1690,17 @@ export const FIELD_HIDDEN_ITEMS = {
       flagKey: "forestSwimTreasureTaken",
       markerEmoji: "🎁",
     },
+    {
+      id: "forest_deep_seed",
+      x: 31,
+      y: 16,
+      requiredType: "GRASS",
+      itemId: "POWER_SEED",
+      quantity: 3,
+      message: "🌿 森の深部で生命の種を見つけた！ ちからのタネ×3を手に入れた！",
+      flagKey: "forestDeepSeedFound",
+      markerEmoji: "🌱",
+    },
   ],
   CRYSTAL_CAVE: [
     {
@@ -1698,6 +1713,43 @@ export const FIELD_HIDDEN_ITEMS = {
       message: "⚡ ひかりで暗闇を照らした！ 見えない宝箱からエリートボールを見つけた！",
       flagKey: "caveHiddenItemFound",
       markerEmoji: "✨",
+    },
+    {
+      id: "cave_echo_stone",
+      x: 5,
+      y: 9,
+      requiredType: "ELECTRIC",
+      itemId: "ETHER",
+      quantity: 2,
+      message: "⚡ 反響する鉱石が反応した！ エーテル×2を手に入れた！",
+      flagKey: "caveEchoStoneFound",
+      markerEmoji: "🪨",
+    },
+  ],
+  VOLCANIC_PASS: [
+    {
+      id: "volcano_core_shard",
+      x: 25,
+      y: 20,
+      requiredType: "FIRE",
+      itemId: "RAGE_CANDY",
+      quantity: 2,
+      message: "🔥 焼けた岩盤を砕くと、灼熱の欠片が出た！ げきりんキャンディ×2を手に入れた！",
+      flagKey: "volcanoCoreShardFound",
+      markerEmoji: "🔥",
+    },
+  ],
+  FROZEN_PEAK: [
+    {
+      id: "frozen_glacier_herb",
+      x: 11,
+      y: 9,
+      requiredType: "ICE",
+      itemId: "FULL_HEAL",
+      quantity: 2,
+      message: "❄️ 氷結した草を丁寧に採取した！ エリクサー×2を手に入れた！",
+      flagKey: "frozenGlacierHerbFound",
+      markerEmoji: "🧊",
     },
   ],
   MISTY_SWAMP: [
@@ -1763,6 +1815,43 @@ export const FIELD_HIDDEN_ITEMS = {
       message: "❄️ 凍結した星石を砕いた！ ダスクボール×3を見つけた！",
       flagKey: "basinStarFound",
       markerEmoji: "⭐",
+    },
+    {
+      id: "basin_meteor_shard",
+      x: 37,
+      y: 24,
+      requiredType: "ELECTRIC",
+      itemId: "DUSK_BALL",
+      quantity: 2,
+      message: "⚡ 隕石片が帯電した！ ダスクボール×2を手に入れた！",
+      flagKey: "basinMeteorShardFound",
+      markerEmoji: "☄️",
+    },
+  ],
+  ANCIENT_LIBRARY: [
+    {
+      id: "library_secret_archive",
+      x: 14,
+      y: 22,
+      requiredType: "ELECTRIC",
+      itemId: "MEGA_ETHER",
+      quantity: 1,
+      message: "⚡ 閉ざされた保管庫を開いた！ メガエーテル×1を手に入れた！",
+      flagKey: "librarySecretArchiveFound",
+      markerEmoji: "📚",
+    },
+  ],
+  CELESTIAL_GARDEN: [
+    {
+      id: "garden_skydew",
+      x: 12,
+      y: 15,
+      requiredType: "WATER",
+      itemId: "FULL_RESTORE",
+      quantity: 1,
+      message: "💧 空花の露を集めた！ パーフェクトケア×1を手に入れた！",
+      flagKey: "gardenSkydewFound",
+      markerEmoji: "🌸",
     },
   ],
 };

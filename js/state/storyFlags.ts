@@ -54,6 +54,23 @@ export const DEFAULT_STORY_FLAGS = Object.freeze({
   tutorialCatchDone: false,
   tutorialMenuDone: false,
   momFarewellDone: false,
+  swampTabletRead: false,
+  coralLegendRead: false,
+  desertObeliskRead: false,
+  shadowMemoryRead: false,
+  libraryCodexRead: false,
+  basinLoreRead: false,
+  swampRemedyQuestDone: false,
+  coralArchivistQuestDone: false,
+  libraryRestorationQuestDone: false,
+  starResearchQuestDone: false,
+  forestDeepSeedFound: false,
+  caveEchoStoneFound: false,
+  volcanoCoreShardFound: false,
+  frozenGlacierHerbFound: false,
+  librarySecretArchiveFound: false,
+  gardenSkydewFound: false,
+  basinMeteorShardFound: false,
 });
 
 export function createDefaultStoryFlags() {

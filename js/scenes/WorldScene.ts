@@ -1576,6 +1576,29 @@ export class WorldScene extends Phaser.Scene {
         return true;
       }
 
+      // 珊瑚のみずタイプ編成クエスト
+      if (npc.quest === "WATER_TRIO") {
+        if (!gameState.storyFlags.coralWaterQuest) {
+          const waterCount = gameState.party.filter((m) => m.species && (m.species.primaryType === "WATER" || m.species.secondaryType === "WATER")).length;
+          if (waterCount >= 3) {
+            gameState.storyFlags.coralWaterQuest = true;
+            gameState.addItem("DUSK_BALL", 2);
+            gameState.addMoney(700);
+            gameState.save();
+            this.showDialogSequence([
+              "すごい…みずタイプを3体も連れてきたんだね！",
+              "★ ダスクボール ×2 と 700G をもらった！",
+            ]);
+          } else {
+            this.showMessage(`みずタイプを3体連れてきてほしいな（現在 ${waterCount}体）`);
+          }
+        } else {
+          this.showMessage("海の仲間たち、これからも大切にしてあげてね！");
+        }
+        this.createUi();
+        return true;
+      }
+
       if (npc.gymLeader) {
         this.handleGymInteraction();
         return true;
@@ -1773,6 +1796,42 @@ export class WorldScene extends Phaser.Scene {
         break;
       case "garden_epilogue":
         this._doGardenEpilogueLore();
+        break;
+      case "swamp_tablet_1":
+        this._doSwampTabletLore();
+        break;
+      case "coral_legend_1":
+        this._doCoralLegendLore();
+        break;
+      case "desert_obelisk_1":
+        this._doDesertObeliskLore();
+        break;
+      case "shadow_memory_1":
+        this._doShadowMemoryLore();
+        break;
+      case "shadow_lab_discovery":
+        this._doShadowLabDiscovery();
+        break;
+      case "library_codex_1":
+        this._doLibraryCodexLore();
+        break;
+      case "library_puzzle_hint":
+        this._doLibraryPuzzleHint();
+        break;
+      case "basin_starfall_lore":
+        this._doBasinStarfallLore();
+        break;
+      case "swamp_remedy_request":
+        this._doSwampRemedyQuest();
+        break;
+      case "coral_archivist_request":
+        this._doCoralArchivistQuest();
+        break;
+      case "library_restoration_request":
+        this._doLibraryRestorationQuest();
+        break;
+      case "star_research_request":
+        this._doStarResearchQuest();
         break;
       default:
         if (npc && npc.text) this.showMessage(npc.text);
@@ -2226,6 +2285,269 @@ export class WorldScene extends Phaser.Scene {
       "花碑の詩: 『旅が終わっても、絆は次の冒険を呼ぶ』",
       "花碑の詩: 『挑戦を望むなら、花園はいつでも門を開く』",
     ]);
+  }
+
+  _doSwampTabletLore() {
+    const sf = gameState.storyFlags;
+    if (sf.swampTabletRead) {
+      this.showMessage("湿地の石板: 『毒を制する者は、霧の先へ進める』");
+      return;
+    }
+    this.showDialogSequence([
+      "湿地の石板: 『第二の巡礼地には、毒を鎮める草が眠る』",
+      "湿地の石板: 『草を見つけ、里へ持ち帰る者に祝福あり』",
+    ], () => {
+      sf.swampTabletRead = true;
+      gameState.save();
+    });
+  }
+
+  _doCoralLegendLore() {
+    const sf = gameState.storyFlags;
+    if (sf.coralLegendRead) {
+      this.showMessage("珊瑚碑: 『潮騒は古文書を守る歌』");
+      return;
+    }
+    this.showDialogSequence([
+      "珊瑚碑: 『真珠は記憶、潮は継承。三つの水が文を開く』",
+      "珊瑚碑: 『浜の記録官に届ければ、海の宝が託される』",
+    ], () => {
+      sf.coralLegendRead = true;
+      gameState.save();
+    });
+  }
+
+  _doDesertObeliskLore() {
+    const sf = gameState.storyFlags;
+    if (sf.desertObeliskRead) {
+      this.showMessage("砂碑文: 『熱と静寂を越えた者に、北路は開く』");
+      return;
+    }
+    this.showDialogSequence([
+      "砂碑文: 『砂塵に紛れし遺物は、炎で姿を現す』",
+      "砂碑文: 『焦るな、進むべきは北。氷の峰は試練の先にある』",
+    ], () => {
+      sf.desertObeliskRead = true;
+      gameState.save();
+    });
+  }
+
+  _doShadowMemoryLore() {
+    const sf = gameState.storyFlags;
+    if (sf.shadowMemoryRead) {
+      this.showMessage("影の記録: 『闇を照らす鍵は、仲間の中にある』");
+      return;
+    }
+    this.showDialogSequence([
+      "影の記録: 『実験は失敗。結晶の模倣は暴走を招いた』",
+      "影の記録: 『光の資質なき者、闇の森に囚われる』",
+    ], () => {
+      sf.shadowMemoryRead = true;
+      gameState.save();
+    });
+  }
+
+  _doShadowLabDiscovery() {
+    const sf = gameState.storyFlags;
+    if (sf.shadowLabFound) {
+      this.showMessage("研究端末: 押収済みの記録は図書館へ送られた。解析を急げ。", 2400);
+      return;
+    }
+    this.showDialogSequence([
+      "壊れた端末に、ダーク団の実験ログが残っている…",
+      "『結晶エネルギーの強制抽出を試行。被験体が暴走』",
+      "『証拠データの一部を暗号化して保管』",
+      "★ ダーク団研究ログを回収した！",
+      "★ デトックスハーブ×3を見つけた！",
+    ], () => {
+      sf.shadowLabFound = true;
+      gameState.addItem("ANTIDOTE", 3);
+      gameState.save();
+      this.createUi();
+    });
+  }
+
+  _doLibraryCodexLore() {
+    const sf = gameState.storyFlags;
+    if (sf.libraryCodexRead) {
+      this.showMessage("古代写本: 『知は力ではなく、継ぐ者への責任である』");
+      return;
+    }
+    this.showDialogSequence([
+      "古代写本: 『記録は失われても、断片は必ず世界のどこかに残る』",
+      "古代写本: 『影の記録と図書館の封庫をつなぐ者、復元者となる』",
+    ], () => {
+      sf.libraryCodexRead = true;
+      gameState.save();
+    });
+  }
+
+  _doLibraryPuzzleHint() {
+    const sf = gameState.storyFlags;
+    if (sf.libraryPuzzleSolved) {
+      this.showMessage("石版: 『順路は右上→左中→右中→左下→右下』");
+      return;
+    }
+    this.showDialogSequence([
+      "石版: 『対のパッドは交差し、中央路に収束する』",
+      "石版: 『正しい順路を踏破した。封印の一部が解除された』",
+      "★ 図書館パズルの解法を記録した！",
+    ], () => {
+      sf.libraryPuzzleSolved = true;
+      gameState.save();
+    });
+  }
+
+  _doBasinStarfallLore() {
+    const sf = gameState.storyFlags;
+    if (sf.basinLoreRead) {
+      this.showMessage("星読碑: 『落星の核は導き、選ばれし者を高みへ送る』");
+      return;
+    }
+    this.showDialogSequence([
+      "星読碑: 『流星の核は、凍結核と雷核の二相で安定する』",
+      "星読碑: 『星降り工房に届けよ。真の観測記録が完成する』",
+    ], () => {
+      sf.basinLoreRead = true;
+      gameState.save();
+    });
+  }
+
+  _doSwampRemedyQuest() {
+    const sf = gameState.storyFlags;
+    if (sf.swampRemedyQuestDone) {
+      this.showMessage("湿地研究員: 解毒調合は順調だよ。本当に助かった！");
+      return;
+    }
+
+    const missing = [];
+    if (!sf.swampTabletRead) missing.push("石板の記録を読む");
+    if (!sf.swampHerbFound) missing.push("湿地の薬草を回収する");
+    if (!sf.swampRangerBeaten) missing.push("湿地レンジャーの試験を突破する");
+
+    if (missing.length > 0) {
+      this.showDialogSequence([
+        "湿地研究員: 毒霧対策の調合に協力してほしいんだ。",
+        `湿地研究員: いま必要なのは『${missing.join(" / ")}』だよ。`,
+      ]);
+      return;
+    }
+
+    this.showDialogSequence([
+      "湿地研究員: これで解毒薬の配合が完成した！",
+      "湿地研究員: 依頼達成のお礼だ。冒険に役立ててくれ！",
+      "★ ハイヒールジェル×2 / デトックスハーブ×4 / 900G を受け取った！",
+    ], () => {
+      sf.swampRemedyQuestDone = true;
+      gameState.addItem("SUPER_POTION", 2);
+      gameState.addItem("ANTIDOTE", 4);
+      gameState.addMoney(900);
+      gameState.save();
+      this.createUi();
+    });
+  }
+
+  _doCoralArchivistQuest() {
+    const sf = gameState.storyFlags;
+    if (sf.coralArchivistQuestDone) {
+      this.showMessage("珊瑚記録官: 海の写本は無事復元されたよ。ありがとう！");
+      return;
+    }
+
+    const missing = [];
+    if (!sf.coralLegendRead) missing.push("珊瑚碑の伝承を読む");
+    if (!sf.coralPearlFound) missing.push("真珠の回収");
+    if (!sf.coralWaterQuest) missing.push("みずタイプ3体の証明");
+
+    if (missing.length > 0) {
+      this.showDialogSequence([
+        "珊瑚記録官: 潮汐写本の復元には、伝承と素材が必要なんだ。",
+        `珊瑚記録官: まずは『${missing.join(" / ")}』を済ませてきて。`,
+      ]);
+      return;
+    }
+
+    this.showDialogSequence([
+      "珊瑚記録官: 見事だ…これで失われた海図が蘇った！",
+      "珊瑚記録官: 深海探索の支援物資を受け取ってくれ。",
+      "★ ハイパーボール×2 / エーテル×2 / 1200G を受け取った！",
+    ], () => {
+      sf.coralArchivistQuestDone = true;
+      gameState.addItem("HYPER_BALL", 2);
+      gameState.addItem("ETHER", 2);
+      gameState.addMoney(1200);
+      gameState.save();
+      this.createUi();
+    });
+  }
+
+  _doLibraryRestorationQuest() {
+    const sf = gameState.storyFlags;
+    if (sf.libraryRestorationQuestDone) {
+      this.showMessage("司書長: 失われた文書群は保存完了。次は星の観測へ向かうといい。", 2400);
+      return;
+    }
+
+    const missing = [];
+    if (!sf.libraryCodexRead) missing.push("古代写本の読解");
+    if (!sf.shadowDataFound) missing.push("影の森のデータ回収");
+    if (!sf.librarySecretArchiveFound) missing.push("図書館の封庫探索");
+
+    if (missing.length > 0) {
+      this.showDialogSequence([
+        "司書長: 文献復元には、散逸した断片データが不足している。",
+        `司書長: 『${missing.join(" / ")}』を済ませたら報告してくれ。`,
+      ]);
+      return;
+    }
+
+    this.showDialogSequence([
+      "司書長: 素晴らしい。復元作業がついに完了した。",
+      "司書長: 次の探索のため、特別配給を支給しよう。",
+      "★ ハイパーボール×3 / メガエーテル×1 / 1800G を受け取った！",
+    ], () => {
+      sf.libraryRestorationQuestDone = true;
+      gameState.addItem("HYPER_BALL", 3);
+      gameState.addItem("MEGA_ETHER", 1);
+      gameState.addMoney(1800);
+      gameState.save();
+      this.createUi();
+    });
+  }
+
+  _doStarResearchQuest() {
+    const sf = gameState.storyFlags;
+    if (sf.starResearchQuestDone) {
+      this.showMessage("星見研究員: 観測計画は継続中だ。きみの報告が基礎データになっている！", 2400);
+      return;
+    }
+
+    const missing = [];
+    if (!sf.ruinsFinalDone) missing.push("遺跡最終決戦の突破");
+    if (!sf.basinLoreRead) missing.push("星読碑の解析");
+    if (!sf.basinStarFound) missing.push("星核サンプルの回収");
+    if (!sf.basinMeteorShardFound) missing.push("隕石片サンプルの回収");
+
+    if (missing.length > 0) {
+      this.showDialogSequence([
+        "星見研究員: 星降り観測の最終報告を作るため、追加データが必要だ。",
+        `星見研究員: 『${missing.join(" / ")}』を済ませてきてくれ。`,
+      ]);
+      return;
+    }
+
+    this.showDialogSequence([
+      "星見研究員: 解析完了！ きみは星降り調査隊の名誉隊員だ！",
+      "星見研究員: 最高ランクの捕獲装備を正式に支給する。",
+      "★ インフィニティボール×1 / パーフェクトケア×2 / 2500G を受け取った！",
+    ], () => {
+      sf.starResearchQuestDone = true;
+      gameState.addItem("MASTER_BALL", 1);
+      gameState.addItem("FULL_RESTORE", 2);
+      gameState.addMoney(2500);
+      gameState.save();
+      this.createUi();
+    });
   }
 
   /** 氷峰ジムイントロ */
