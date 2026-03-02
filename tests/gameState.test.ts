@@ -130,4 +130,22 @@ describe("gameState map weather", () => {
     expect(gameState.storyFlags.eliteFourFrost).toBe(true);
     expect(gameState.storyFlags.starterSpeciesId).toBe("MON_TEST");
   });
+
+  it("闘技場ラウンド状態をセーブ/ロードで復元できる", () => {
+    gameState.arenaRound = 2;
+    expect(gameState.save()).toBe(true);
+
+    gameState.arenaRound = 0;
+    const loaded = gameState.load();
+
+    expect(loaded).toBe(true);
+    expect(gameState.arenaRound).toBe(2);
+  });
+
+  it("連勝数は勝利で加算され敗北でリセットされる", () => {
+    expect(gameState.updateBattleWinStreak(true)).toBe(1);
+    expect(gameState.updateBattleWinStreak(true)).toBe(2);
+    expect(gameState.updateBattleWinStreak(false)).toBe(0);
+    expect(gameState.battleWinStreak).toBe(0);
+  });
 });

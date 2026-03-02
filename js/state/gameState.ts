@@ -57,6 +57,8 @@ class GameState {
     this.gymCleared = false;
     this.arenaWins = 0;        // 闘技場の連勝数
     this.arenaHighScore = 0;   // 闘技場の最高連勝記録
+    this.arenaRound = 0;
+    this.battleWinStreak = 0;
     // 図鑑：捕まえた or 見つけたモンスター ID
     this.caughtIds = [];
     this.seenIds = [];
@@ -108,6 +110,8 @@ class GameState {
     this.gymCleared = false;
     this.arenaWins = 0;
     this.arenaHighScore = 0;
+    this.arenaRound = 0;
+    this.battleWinStreak = 0;
     this.caughtIds = [];
     this.seenIds = [];
     this.totalBattles = 0;
@@ -268,8 +272,18 @@ class GameState {
     this.lastBattleResult = {
       isTrainer: !!result.isTrainer,
       trainerBattleKey: typeof result.trainerBattleKey === "string" ? result.trainerBattleKey : null,
+      storyBattleKey: typeof result.storyBattleKey === "string" ? result.storyBattleKey : null,
       won: !!result.won,
     };
+  }
+
+  updateBattleWinStreak(won) {
+    if (won) {
+      this.battleWinStreak = Math.max(0, (this.battleWinStreak || 0)) + 1;
+    } else {
+      this.battleWinStreak = 0;
+    }
+    return this.battleWinStreak;
   }
 
   consumeLastBattleResult() {
@@ -745,6 +759,8 @@ class GameState {
         gymCleared: this.gymCleared,
         arenaWins: this.arenaWins,
         arenaHighScore: this.arenaHighScore,
+        arenaRound: this.arenaRound,
+        battleWinStreak: this.battleWinStreak,
         caughtIds: [...this.caughtIds],
         seenIds: [...this.seenIds],
         totalBattles: this.totalBattles,
@@ -827,6 +843,8 @@ class GameState {
       this.gymCleared = !!data.gymCleared;
       this.arenaWins = clampInt(data.arenaWins, 0, MAX_COUNTER, 0);
       this.arenaHighScore = clampInt(data.arenaHighScore, 0, MAX_COUNTER, 0);
+      this.arenaRound = clampInt(data.arenaRound, 0, MAX_COUNTER, 0);
+      this.battleWinStreak = clampInt(data.battleWinStreak, 0, MAX_COUNTER, 0);
       this.caughtIds = sanitizeIdList(data.caughtIds);
       this.seenIds = sanitizeIdList(data.seenIds);
       this.totalBattles = clampInt(data.totalBattles, 0, MAX_COUNTER, 0);

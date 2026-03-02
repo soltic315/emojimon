@@ -51,10 +51,14 @@ export function renderSettingsView(scene) {
   });
   scene.subPanel.add(hint);
 
-  scene.cursors.left.removeAllListeners("down");
-  scene.cursors.right.removeAllListeners("down");
-  scene.input.keyboard.off("keydown-LEFT");
-  scene.input.keyboard.off("keydown-RIGHT");
-  scene.input.keyboard.on("keydown-LEFT", () => scene._adjustVolume(-0.05));
-  scene.input.keyboard.on("keydown-RIGHT", () => scene._adjustVolume(0.05));
+  if (scene._settingsLeftHandler) {
+    scene.input.keyboard.off("keydown-LEFT", scene._settingsLeftHandler);
+  }
+  if (scene._settingsRightHandler) {
+    scene.input.keyboard.off("keydown-RIGHT", scene._settingsRightHandler);
+  }
+  scene._settingsLeftHandler = () => scene._adjustVolume(-0.05);
+  scene._settingsRightHandler = () => scene._adjustVolume(0.05);
+  scene.input.keyboard.on("keydown-LEFT", scene._settingsLeftHandler);
+  scene.input.keyboard.on("keydown-RIGHT", scene._settingsRightHandler);
 }

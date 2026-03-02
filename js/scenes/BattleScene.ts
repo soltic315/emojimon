@@ -1268,9 +1268,11 @@ export class BattleScene extends Phaser.Scene {
 
   endBattle() {
     audioManager.stopBgm();
+    gameState.updateBattleWinStreak(this.resultType === "win");
     gameState.setLastBattleResult({
       isTrainer: !!this.isTrainer,
       trainerBattleKey: this.battle?.trainerBattleKey || null,
+      storyBattleKey: this.battle?.storyBattleKey || null,
       won: this.resultType === "win",
     });
     gameState.setBattle(null);

@@ -606,9 +606,9 @@ export function handleArenaInteraction(scene) {
     return;
   }
 
-  if (!gameState._arenaRound) gameState._arenaRound = 0;
+  if (!gameState.arenaRound) gameState.arenaRound = 0;
 
-  if (gameState._arenaRound === 0) {
+  if (gameState.arenaRound === 0) {
     const highStr = gameState.arenaHighScore > 0 ? `（最高記録: ${gameState.arenaHighScore}連勝）` : "";
     scene.showMessage(`闘技場へようこそ！ 3連戦に挑戦だ！${highStr}`);
     scene.time.delayedCall(1500, () => {
@@ -621,11 +621,11 @@ export function startArenaRound(scene, round) {
   const activeMon = gameState.getFirstAlive();
   if (!activeMon) {
     scene.showMessage("たたかえるモンスターが いない…闘技場チャレンジ終了！");
-    gameState._arenaRound = 0;
+    gameState.arenaRound = 0;
     return;
   }
 
-  gameState._arenaRound = round;
+  gameState.arenaRound = round;
   audioManager.playEncounter();
   scene.showMessage(`闘技場 第${round}戦！`);
 
@@ -648,16 +648,16 @@ export function startArenaRound(scene, round) {
 }
 
 export function checkArenaProgress(scene) {
-  if (!gameState._arenaRound || gameState._arenaRound <= 0) return;
+  if (!gameState.arenaRound || gameState.arenaRound <= 0) return;
 
-  const round = gameState._arenaRound;
+  const round = gameState.arenaRound;
   if (!gameState.isPartyWiped()) {
     if (round >= 3) {
       gameState.arenaWins++;
       gameState.arenaHighScore = Math.max(gameState.arenaHighScore, gameState.arenaWins);
       const reward = 500 + round * 100;
       gameState.addMoney(reward);
-      gameState._arenaRound = 0;
+      gameState.arenaRound = 0;
       const arenaDailyProgress = gameState.updateDailyChallengeProgress("ARENA_CLEAR", 1);
       let dailyBonusText = "";
       if (arenaDailyProgress.completedNow) {
@@ -676,7 +676,7 @@ export function checkArenaProgress(scene) {
     }
   } else {
     gameState.arenaWins = 0;
-    gameState._arenaRound = 0;
+    gameState.arenaRound = 0;
     scene.showMessage("闘技場チャレンジ失敗… また挑戦しよう！");
   }
 }

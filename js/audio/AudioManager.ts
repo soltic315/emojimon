@@ -6,6 +6,7 @@
 import * as Tone from "tone";
 import { BGM_DATA } from "./bgmData.ts";
 import type { BgmEntry } from "./bgmData.ts";
+import { resolveAreaBgmKey, type AreaBgmKey } from "./areaBgm.ts";
 
 export class AudioManager {
   isMuted: boolean;
@@ -15,6 +16,7 @@ export class AudioManager {
 
   // Tone.js ノード群
   private _initialized: boolean;
+  private _initializing: boolean;
   private _masterVol: Tone.Volume | null;
   private _masterCompressor: Tone.Compressor | null;
   private _bgmVol: Tone.Volume | null;
@@ -41,6 +43,8 @@ export class AudioManager {
   private _transportStarted: boolean;
   private _bgmSwitchTimer: number | null;
   private _bgmSwitchToken: number;
+  private _queuedBgmKey: AreaBgmKey | null;
+  private _queuedConfirmSe: boolean;
 
   // レガシー互換プロパティ（外部から参照される可能性を考慮）
   ctx: unknown;
@@ -56,6 +60,7 @@ export class AudioManager {
     this.seVolume = 0.5;
     this._currentBgm = null;
     this._initialized = false;
+    this._initializing = false;
     this._masterVol = null;
     this._masterCompressor = null;
     this._bgmVol = null;
@@ -76,6 +81,8 @@ export class AudioManager {
     this._transportStarted = false;
     this._bgmSwitchTimer = null;
     this._bgmSwitchToken = 0;
+    this._queuedBgmKey = null;
+    this._queuedConfirmSe = false;
 
     // レガシー互換
     this.ctx = null;
@@ -88,19 +95,28 @@ export class AudioManager {
 
   /** AudioContext を初期化（ユーザー操作後に呼ぶ） */
   init() {
-    if (this._initialized) return;
+    if (this._initialized || this._initializing) return;
+    this._initializing = true;
+    this.ctx = Tone.getContext();
 
-    // Tone.start() は Promise を返すが、既存呼び出し側が同期的に呼んでいるため
-    // 非同期で初期化を進め、完了後にフラグを立てる
     Tone.start().then(() => {
       this._setupSynths();
+      this._initialized = true;
+      this._initializing = false;
+
+      if (this._queuedBgmKey) {
+        const queued = this._queuedBgmKey;
+        this._queuedBgmKey = null;
+        this.playBgmByKey(queued);
+      }
+      if (this._queuedConfirmSe) {
+        this._queuedConfirmSe = false;
+        this.playConfirm();
+      }
     }).catch((e) => {
+      this._initializing = false;
       console.warn("AudioManager: Tone.js 初期化失敗", e);
     });
-
-    // 初期化フラグを先に立てて二重呼び出しを防ぐ
-    this._initialized = true;
-    this.ctx = Tone.getContext();
   }
 
   /** 内部: シンセとエフェクトチェーンを構築 */
@@ -278,7 +294,10 @@ export class AudioManager {
 
   /** 決定音 - 2音上昇 */
   playConfirm() {
-    if (!this._initialized) return;
+    if (!this._initialized) {
+      if (this._initializing) this._queuedConfirmSe = true;
+      return;
+    }
     const now = Tone.now();
     this._safeTone(this._seSynth, "C5", "16n", now, 0.5);
     this._safeTone(this._seSynth, "G5", "16n", now + 0.08, 0.6);
@@ -515,7 +534,10 @@ export class AudioManager {
   /** BGMデータからマルチレイヤーBGMを再生する（メロディ+ベース+パッド） */
   private _playBgm(key: string, data: BgmEntry) {
     if (this._currentBgm === key) return;
-    if (!this._initialized || !this._masterVol) return;
+    if (!this._initialized || !this._masterVol) {
+      if (this._initializing) this._queuedBgmKey = key as AreaBgmKey;
+      return;
+    }
 
     const runToken = ++this._bgmSwitchToken;
     const switchDelayMs = this._currentBgm ? 170 : 0;
@@ -623,36 +645,49 @@ export class AudioManager {
   /** 遺跡・花園BGM */
   playRuinsBgm() { this._playBgm("ruins", BGM_DATA.ruins); }
 
+  private playBgmByKey(key: AreaBgmKey) {
+    switch (key) {
+      case "title":
+        this.playTitleBgm();
+        break;
+      case "field":
+        this.playFieldBgm();
+        break;
+      case "battle":
+        this.playBattleBgm();
+        break;
+      case "forest":
+        this.playForestBgm();
+        break;
+      case "cave":
+        this.playCaveBgm();
+        break;
+      case "dark":
+        this.playDarkBgm();
+        break;
+      case "volcano":
+        this.playVolcanoBgm();
+        break;
+      case "ice":
+        this.playIceBgm();
+        break;
+      case "ruins":
+        this.playRuinsBgm();
+        break;
+    }
+  }
+
   /**
    * マップキーに応じたフィールドBGMを再生する。
    * 同じBGMが既に流れている場合は何もしない。
    */
   playAreaBgm(mapKey: string) {
-    switch (mapKey) {
-      case "EMOJI_FOREST":
-        this.playForestBgm();
-        break;
-      case "CAVE":
-        this.playCaveBgm();
-        break;
-      case "DARK_TOWER":
-        this.playDarkBgm();
-        break;
-      case "MAGMA_PASS":
-        this.playVolcanoBgm();
-        break;
-      case "FROZEN_PEAK":
-        this.playIceBgm();
-        break;
-      case "RUINS":
-      case "GARDEN":
-        this.playRuinsBgm();
-        break;
-      default:
-        // タウン・おうち・研究所 → 通常フィールドBGM
-        this.playFieldBgm();
-        break;
+    const resolved = resolveAreaBgmKey(mapKey);
+    if (!this._initialized) {
+      if (this._initializing) this._queuedBgmKey = resolved;
+      return;
     }
+    this.playBgmByKey(resolved);
   }
 }
 

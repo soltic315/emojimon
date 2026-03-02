@@ -82,6 +82,8 @@ const saveDataSchema = z.object({
   gymCleared: z.boolean().optional(),
   arenaWins: z.number().finite().optional(),
   arenaHighScore: z.number().finite().optional(),
+  arenaRound: z.number().finite().optional(),
+  battleWinStreak: z.number().finite().optional(),
   caughtIds: z.array(z.string()).optional(),
   seenIds: z.array(z.string()).optional(),
   totalBattles: z.number().finite().optional(),

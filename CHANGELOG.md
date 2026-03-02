@@ -1,5 +1,39 @@
 # CHANGELOG
 
+## [1.16.2] - 2026-03-02
+
+### Note
+- 重大バグ・進行リスク（Aカテゴリ）を優先修正し、進行フラグ、入力安定性、音声初期化、保存整合性の破綻要因を解消。
+
+### Added
+- `js/audio/areaBgm.ts` を追加し、マップキーからエリアBGMを解決する共通関数 `resolveAreaBgmKey` を実装。
+- `js/scenes/world/worldInputGuards.ts` を追加し、`dialog/choice/battlePending` を含む入力ロック判定を共通化。
+- `tests/areaBgm.test.ts` と `tests/worldInputGuards.test.ts` を追加し、BGMルーティングと入力ロックの回帰テストを整備。
+
+### Changed
+- `js/scenes/WorldScene.ts` のバトル結果処理を拡張し、トレーナー戦とストーリー戦（花園伝説）を復帰時に統一処理するよう変更。
+- `js/audio/AudioManager.ts` の初期化フローを見直し、非同期初期化完了後に有効化する構成へ変更（初回BGM/決定SEのキュー再生対応）。
+- `js/data/achievements.ts` の `WIN_STREAK_5/10` を累計戦闘数判定から連続勝利数判定へ変更。
+- `js/state/gameState.ts` / `js/state/saveSchema.ts` / `js/scenes/world/worldTrainerArena.ts` を更新し、闘技場ラウンド状態を正式セーブ対象 `arenaRound` として永続化。
+- `js/scenes/menu/views/bagView.ts` のバッグ対象選択表示をニックネーム優先（`getMonsterDisplayName`）へ統一。
+- `js/scenes/menu/views/settingsView.ts` の設定入力処理を `removeAllListeners("down")` 依存から、ハンドラ参照による安全な `off/on` 管理へ変更。
+- `GAME_DESIGN.md` にBGM解決仕様・連勝実績判定・伝説フラグ更新タイミング（勝利時のみ）を追記。
+- `package.json` と `package-lock.json` のバージョンを `1.16.1` から `1.16.2` に更新。
+
+### Fixed
+- 伝説イベントで `legendaryDefeated` がバトル前に立ち、敗北/逃走時に再挑戦不可になる問題を修正。
+- `AudioManager.init()` の非同期競合で初回BGM/SEが取りこぼされる問題を修正。
+- `playAreaBgm()` の旧マップキー依存により現行マップで不正なBGMになる問題を修正。
+- `settingsView.ts` の過剰なリスナー解除で他入力処理を巻き込むリスクを低減。
+- 連勝実績が命名と異なり累計戦闘数で解除される不一致を修正。
+- 闘技場ラウンドが正式セーブ対象外で復帰整合が崩れる問題を修正。
+- 入力ロック仕様の回帰テスト欠如を補い、再発検知を追加。
+- バッグ対象選択の表示名がニックネームと不一致になる問題を修正。
+
+### Prompt
+- User: `重大バグ・進行リスクのTODOを解消してください`
+- Assistant（対応方針）: A-01〜A-10を最小差分で同時修正し、進行フラグ更新タイミング・入力リスナー管理・保存整合・音声初期化を中心にコード/テスト/設計書/版数/履歴を同期する。
+
 ## [1.16.1] - 2026-03-02
 
 ### Note

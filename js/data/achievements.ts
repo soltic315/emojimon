@@ -70,19 +70,19 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   {
     id: "WIN_STREAK_5",
     name: "れんしょうの風",
-    description: "バトルを25回おこなう",
+    description: "バトルで5連勝する",
     icon: "🌪️",
     category: "BATTLE",
-    check: () => (gameState.totalBattles || 0) >= 25,
+    check: () => (gameState.battleWinStreak || 0) >= 5,
     order: 140,
   },
   {
     id: "WIN_STREAK_10",
     name: "むてきの嵐",
-    description: "バトルを75回おこなう",
+    description: "バトルで10連勝する",
     icon: "⚡",
     category: "BATTLE",
-    check: () => (gameState.totalBattles || 0) >= 75,
+    check: () => (gameState.battleWinStreak || 0) >= 10,
     order: 150,
   },
   {

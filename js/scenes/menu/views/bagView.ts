@@ -1,5 +1,5 @@
 // バッグ画面ビュー
-import { gameState } from "../../../state/gameState.ts";
+import { gameState, getMonsterDisplayName } from "../../../state/gameState.ts";
 import { getItemById } from "../../../data/items.ts";
 import { calcStats } from "../../../data/monsters.ts";
 import { FONT, drawPanel, drawSelection } from "../../../ui/UIHelper.ts";
@@ -125,7 +125,7 @@ export function renderBagTargetView(scene) {
     const alive = mon.currentHp > 0;
     const bondMarker = (mon.bond || 0) >= 80 ? "❤️" : "";
     const statusStr = alive ? `HP ${mon.currentHp}/${stats.maxHp} (${hpPct}%)` : "ひんし";
-    const nameStr = `${cursor} ${mon.species.emoji} ${mon.species.name}${bondMarker} Lv.${mon.level}`;
+    const nameStr = `${cursor} ${mon.species.emoji} ${getMonsterDisplayName(mon)}${bondMarker} Lv.${mon.level}`;
     const nameText = scene.add.text(panelX + 16, y, nameStr, {
       fontFamily: FONT.UI,
       fontSize: 14,

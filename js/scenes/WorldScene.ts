@@ -63,6 +63,7 @@ import {
   startArenaRound as runStartArenaRound,
   checkArenaProgress as runCheckArenaProgress,
 } from "./world/worldTrainerArena.ts";
+import { canInteractInWorld, canOpenWorldMenu } from "./world/worldInputGuards.ts";
 
 export class WorldScene extends Phaser.Scene {
   constructor() {
@@ -96,10 +97,6 @@ export class WorldScene extends Phaser.Scene {
     this.mapLayout = createMapLayout(this.mapKey);
     this.cursors = this.input.keyboard.createCursorKeys();
     this.keys = this.input.keyboard.addKeys("Z,ENTER,SPACE,X,P,W,A,S,D,ESC");
-    this.keys.Z.removeAllListeners("down");
-    this.keys.ENTER.removeAllListeners("down");
-    this.keys.P.removeAllListeners("down");
-    this.keys.ESC.removeAllListeners("down");
     this.isMoving = false;
     this.isEncounterTransitioning = false;
     this._trainerBattlePending = false;
@@ -145,37 +142,17 @@ export class WorldScene extends Phaser.Scene {
     this._touchStarterChoiceNavCooldown = 0;
 
     // キー入力
-    const interactAction = () => {
-      if (this._dialogActive) return; // ダイアログ表示中は NPC 会話をスキップ
-      if (this._starterChoiceActive) return;
-      if (this._trainerBattlePending) return;
-      if (this.isMoving || this.shopActive || this.isEncounterTransitioning) return;
-      this.checkNpcInteraction();
-    };
-    this.keys.Z.on("down", interactAction);
-    this.keys.ENTER.on("down", interactAction);
-    this.keys.SPACE.on("down", interactAction);
-
-    // メニューキー（X / ESC）
-    this.keys.X.on("down", () => {
-      if (this.shopActive || this.isMoving || this.isEncounterTransitioning || this._trainerBattlePending) return;
-      if (this._dialogActive || this._starterChoiceActive) return;
-      this.openMenu();
-    });
-    this.keys.ESC.on("down", () => {
-      if (this.shopActive || this.isMoving || this.isEncounterTransitioning || this._trainerBattlePending) return;
-      if (this._dialogActive || this._starterChoiceActive) return;
-      this.openMenu();
-    });
+    this._registerWorldInputHandlers();
 
     // セーブキー
-    this.keys.P.on("down", () => {
+    this._onWorldSaveDown = () => {
       if (this.shopActive) return;
       // オートセーブ通知
       const ok = gameState.save();
       audioManager.playSave();
       this.showMessage(ok ? "セーブしました！" : "セーブに失敗しました…", 2000);
-    });
+    };
+    this.keys.P.on("down", this._onWorldSaveDown);
 
     // ── 初回ナレーション自動発火 ──
     this._checkAutoIntro();
@@ -254,8 +231,8 @@ export class WorldScene extends Phaser.Scene {
     // 闘技場の進行チェック
     this._checkArenaProgress();
 
-    // トレーナーバトル結果チェック
-    this._checkTrainerBattleResult();
+    // バトル結果チェック
+    this._checkBattleResult();
 
     // 実績チェック & 通知
     this._checkAndShowAchievements();
@@ -381,15 +358,77 @@ export class WorldScene extends Phaser.Scene {
     });
   }
 
-  /** トレーナーバトル後の結果処理 */
-  _checkTrainerBattleResult() {
+  /** バトル後の結果処理 */
+  _checkBattleResult() {
     const result = gameState.consumeLastBattleResult?.();
-    if (!result?.isTrainer || !result?.trainerBattleKey) return;
+    if (!result) return;
 
-    this._handleTrainerBattleResult(result.trainerBattleKey, !!result.won);
-    this.time.delayedCall(200, () => {
-      this.createNpcSprites();
-    });
+    if (result.isTrainer && result.trainerBattleKey) {
+      this._handleTrainerBattleResult(result.trainerBattleKey, !!result.won);
+      this.time.delayedCall(200, () => {
+        this.createNpcSprites();
+      });
+      return;
+    }
+
+    if (result.storyBattleKey === "garden_legendary") {
+      const sf = gameState.storyFlags;
+      if (result.won && !sf.legendaryDefeated) {
+        sf.legendaryDefeated = true;
+        gameState.save();
+        this.showDialogSequence([
+          "✨ エテルニアの分身は光となって空へ還っていった…",
+          "✨ 花園に静寂が戻った。最深部への道が開かれていく。",
+        ]);
+      } else if (!result.won) {
+        this.showMessage("✨ 強い気配はまだ消えていない…体勢を整えて再挑戦しよう。", 2500);
+      }
+    }
+  }
+
+  _registerWorldInputHandlers() {
+    this._unbindWorldInputHandlers();
+
+    this._onWorldInteractDown = () => {
+      if (!canInteractInWorld(this)) return;
+      this.checkNpcInteraction();
+    };
+    this._onWorldMenuDown = () => {
+      if (!canOpenWorldMenu(this)) return;
+      this.openMenu();
+    };
+
+    this.keys.Z.on("down", this._onWorldInteractDown);
+    this.keys.ENTER.on("down", this._onWorldInteractDown);
+    this.keys.SPACE.on("down", this._onWorldInteractDown);
+    this.keys.X.on("down", this._onWorldMenuDown);
+    this.keys.ESC.on("down", this._onWorldMenuDown);
+  }
+
+  _unbindWorldInputHandlers() {
+    if (!this.keys) return;
+
+    if (this._onWorldInteractDown) {
+      this.keys.Z?.off("down", this._onWorldInteractDown);
+      this.keys.ENTER?.off("down", this._onWorldInteractDown);
+      this.keys.SPACE?.off("down", this._onWorldInteractDown);
+      this._onWorldInteractDown = null;
+    }
+    if (this._onWorldMenuDown) {
+      this.keys.X?.off("down", this._onWorldMenuDown);
+      this.keys.ESC?.off("down", this._onWorldMenuDown);
+      this._onWorldMenuDown = null;
+    }
+    if (this._onWorldSaveDown) {
+      this.keys.P?.off("down", this._onWorldSaveDown);
+      this._onWorldSaveDown = null;
+    }
+    if (this._dialogAdvanceListener) {
+      this.keys.Z?.off("down", this._dialogAdvanceListener);
+      this.keys.ENTER?.off("down", this._dialogAdvanceListener);
+      this.keys.SPACE?.off("down", this._dialogAdvanceListener);
+      this._dialogAdvanceListener = null;
+    }
   }
 
   openMenu() {
@@ -400,13 +439,7 @@ export class WorldScene extends Phaser.Scene {
 
   handleSceneShutdown() {
     this.events.off("resume", this.handleSceneResume, this);
-    if (this.keys) {
-      this.keys.Z.removeAllListeners("down");
-      this.keys.ENTER?.removeAllListeners("down");
-      this.keys.P.removeAllListeners("down");
-      this.keys.X?.removeAllListeners("down");
-      this.keys.ESC?.removeAllListeners("down");
-    }
+    this._unbindWorldInputHandlers();
     if (this.touchControls) {
       this.touchControls.destroy();
     }
@@ -1453,12 +1486,12 @@ export class WorldScene extends Phaser.Scene {
         this._handleStarterChoiceTouchInput(delta, touchConfirm, touchCancel);
       } else {
         if (touchConfirm) {
-          if (!this.isMoving && !this.shopActive && !this.isEncounterTransitioning && !this._trainerBattlePending) {
+          if (canInteractInWorld(this)) {
             this.checkNpcInteraction();
           }
         }
         if (touchCancel) {
-          if (!this.shopActive && !this.isMoving && !this.isEncounterTransitioning && !this._trainerBattlePending) {
+          if (canOpenWorldMenu(this)) {
             this.openMenu();
           } else if (this.shopActive) {
             this.closeShopMenu();
@@ -1748,6 +1781,13 @@ export class WorldScene extends Phaser.Scene {
     this._dialogOnComplete = onComplete || null;
     this._dialogActive = true;
     this._showNextDialog();
+
+    if (this._dialogAdvanceListener) {
+      this.keys.Z.off("down", this._dialogAdvanceListener);
+      this.keys.ENTER.off("down", this._dialogAdvanceListener);
+      this.keys.SPACE.off("down", this._dialogAdvanceListener);
+      this._dialogAdvanceListener = null;
+    }
 
     // 決定キー（1回分の追加リスナー）
     this._dialogAdvanceListener = () => {
@@ -2751,11 +2791,10 @@ export class WorldScene extends Phaser.Scene {
       gameState.setBattle({
         player: activeMon,
         opponent: legendaryMon,
+        storyBattleKey: "garden_legendary",
       });
       audioManager.stopBgm();
       audioManager.playEncounter();
-      sf.legendaryDefeated = true;
-      gameState.save();
       this.cameras.main.fadeOut(400, 0, 0, 0);
       this.cameras.main.once("camerafadeoutcomplete", () => {
         this.scene.pause();

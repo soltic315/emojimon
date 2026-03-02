@@ -586,6 +586,8 @@ nextLevelExp = 10 + 8 × level
 - SE: FM合成・ノイズ合成・メンブレン合成を組み合わせた手続き型効果音
 - エフェクトチェイン: BGMは Filter → Chorus → FeedbackDelay → Reverb → Volume、SEは Reverb → Volume、最終段でCompressorを適用
 - エリアごとに固有のBGMを定義（フィールド・バトル・森・洞窟・火山・氷峰・遺跡・ダーク・タイトル）
+- フィールドBGMの解決はマップキー基準で行う（例: `FOREST/MISTY_SWAMP/CORAL_REEF`→森、`CRYSTAL_CAVE/DARK_TOWER/SHADOW_GROVE`→洞窟、`VOLCANIC_PASS`→火山、`FROZEN_PEAK`→氷峰、`SKY_RUINS/CELESTIAL_GARDEN/ANCIENT_LIBRARY/STARFALL_BASIN`→遺跡、それ以外→通常フィールド）
+- 音声初期化は非同期完了後に有効化し、初回入力直後のBGM/決定SEは初期化中キューで取りこぼしを防止する
 - BGM切替時は約0.17秒のフェードアウト後に再生開始し、再生開始時は約0.28秒でフェードインする
 - 短い反復SE（カーソル移動・歩行）は音高/強さを微変化させ、連続操作時の聴感疲労を軽減する
 
@@ -612,6 +614,7 @@ nextLevelExp = 10 + 8 × level
 - 実績はバトル終了時・マップ遷移時・シーン復帰時に自動チェックされる
 - 解除時はワールドマップ上にトースト通知（スライドイン/アウト）を表示
 - 解除済み実績はセーブデータに永続保存される
+- 連勝系実績（`WIN_STREAK_5 / WIN_STREAK_10`）は累計戦闘数ではなく、連続勝利数（`battleWinStreak`）で判定する
 
 ### 11.2 メニュー表示
 
@@ -628,6 +631,11 @@ nextLevelExp = 10 + 8 × level
 | COLLECTION | 9 | 初捕獲、図鑑10/30/全種、パーティ満員、全アイテム所持 等 |
 | EXPLORATION | 7 | エリア訪問（3/7/12）、街ライバル勝利、ダークタワー突破、伝説撃破 等 |
 | MASTERY | 8 | 所持金10万、四天王1人撃破/全員撃破、最終ライバル勝利、日替わり達成、1時間プレイ 等 |
+
+### 11.4 進行フラグ更新規則
+
+- 進行解放に関わる主要フラグは、会話開始時ではなくバトル結果確定後に更新する。
+- 天空の花園の伝説イベント (`legendaryDefeated`) は勝利時のみ更新し、敗北/逃走時は再挑戦可能とする。
 
 ---
 
