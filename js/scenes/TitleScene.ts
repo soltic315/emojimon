@@ -1,7 +1,7 @@
 import { gameState } from "../state/gameState.ts";
 import { audioManager } from "../audio/AudioManager.ts";
 import { applyCanvasBrightness } from "../ui/UIHelper.ts";
-import { closeNameSelect, confirmName, deleteNameChar, formatNameForDisplay, handleNameKeyboardNavigation, showNameSelect, truncateName, updateNameDisplay, updateNameKeyboardDisplay } from "./title/titleNameInput.ts";
+import { closeNameSelect, confirmName, deleteNameChar, formatNameForDisplay, handleNameDirectInput, showNameSelect, truncateName, updateNameDisplay } from "./title/titleNameInput.ts";
 import { hideHelp, showHelp } from "./title/titleHelp.ts";
 import { applyAudioSettings, handleSettingsConfirm, handleSettingsNavigation, hideSettings, renderSettingsPanel, showSettings, updateSettings } from "./title/titleSettings.ts";
 import { createTitleVisuals, updateFloatingEmojis, updateTitleMenuDisplay } from "./title/titleVisuals.ts";
@@ -26,6 +26,7 @@ export class TitleScene extends Phaser.Scene {
     this.helpPanel = null;
     this.helpVisible = false;
     this.settingsPanel = null;
+    this._nameDirectInputHandler = (event) => this._handleNameDirectInput(event);
 
     this.cursors = this.input.keyboard.createCursorKeys();
     this._bindDefaultKeyboardHandlers();
@@ -41,7 +42,6 @@ export class TitleScene extends Phaser.Scene {
     }
 
     if (this._nameActive) {
-      this._handleNameKeyboardNavigation();
       return;
     }
 
@@ -66,6 +66,9 @@ export class TitleScene extends Phaser.Scene {
     this.input.keyboard.off("keydown-SPACE");
     this.input.keyboard.off("keydown-X");
     this.input.keyboard.off("keydown-ESC");
+    if (this._nameDirectInputHandler) {
+      this.input.keyboard.off("keydown", this._nameDirectInputHandler);
+    }
   }
 
   _handleDefaultCancel() {
@@ -84,11 +87,7 @@ export class TitleScene extends Phaser.Scene {
 
   _bindNameSelectKeyboardHandlers() {
     this._clearTitleKeyListeners();
-    this.input.keyboard.on("keydown-Z", () => this._confirmName());
-    this.input.keyboard.on("keydown-ENTER", () => this._confirmName());
-    this.input.keyboard.on("keydown-SPACE", () => this._confirmName());
-    this.input.keyboard.on("keydown-X", () => this._closeNameSelect());
-    this.input.keyboard.on("keydown-ESC", () => this._closeNameSelect());
+    this.input.keyboard.on("keydown", this._nameDirectInputHandler);
   }
 
   handleConfirm() {
@@ -137,12 +136,8 @@ export class TitleScene extends Phaser.Scene {
     confirmName(this);
   }
 
-  _handleNameKeyboardNavigation() {
-    handleNameKeyboardNavigation(this);
-  }
-
-  _updateNameKeyboardDisplay() {
-    updateNameKeyboardDisplay(this);
+  _handleNameDirectInput(event) {
+    handleNameDirectInput(this, event);
   }
 
   _deleteNameChar() {

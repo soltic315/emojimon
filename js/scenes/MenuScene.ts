@@ -7,7 +7,6 @@ import { getItemById } from "../data/items.ts";
 import { calcStats, getMonsterMoves } from "../data/monsters.ts";
 import { audioManager } from "../audio/AudioManager.ts";
 import { applyCanvasBrightness } from "../ui/UIHelper.ts";
-import { GAME_KEYBOARD_COLS } from "../ui/gameKeyboard.ts";
 import { NAV_REPEAT_INITIAL_DELAY_MS, NAV_REPEAT_INTERVAL_MS } from "../ui/inputConstants.ts";
 import { MENU_ITEMS, GUIDE_PAGES } from "./menu/menuConstants.ts";
 import {
@@ -28,11 +27,10 @@ import { handleVerticalRepeatInput } from "./menu/menuSceneInput.ts";
 import {
   handleNicknameShortcut,
   openNicknameKeyboard,
-  handleNicknameKeyboardNavigation,
+  handleNicknameDirectInput,
   confirmNicknameInput,
   deleteNicknameChar,
   updateNicknameInputDisplay,
-  updateNicknameKeyboardDisplay,
   closeNicknameKeyboard,
 } from "./menu/menuSceneNickname.ts";
 import {
@@ -77,11 +75,7 @@ export class MenuScene extends Phaser.Scene {
     this.nicknameInputActive = false;
     this.nicknameTargetMonster = null;
     this.nicknameInput = "";
-    this.nicknameKeyboardIndex = 0;
-    this.nicknameKeyboardCols = GAME_KEYBOARD_COLS;
-    this.nicknameKeyboardKeys = [];
-    this.nicknameKeyboardButtons = [];
-    this.nicknamePanel = null;
+    this.nicknameInputOverlay = null;
     this.nicknameInputText = null;
     applyCanvasBrightness(this, gameState.gameplaySettings?.screenBrightness);
 
@@ -104,18 +98,18 @@ export class MenuScene extends Phaser.Scene {
 
     // 入力
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.input.keyboard.on("keydown-Z", () => this.handleConfirm());
-    this.input.keyboard.on("keydown-ENTER", () => this.handleConfirm());
-    this.input.keyboard.on("keydown-SPACE", () => this.handleConfirm());
-    this.input.keyboard.on("keydown-X", () => this.handleCancel());
-    this.input.keyboard.on("keydown-ESC", () => this.handleCancel());
+    this.input.keyboard.on("keydown-Z", (event) => this.handleConfirm(event));
+    this.input.keyboard.on("keydown-ENTER", (event) => this.handleConfirm(event));
+    this.input.keyboard.on("keydown-SPACE", (event) => this.handleConfirm(event));
+    this.input.keyboard.on("keydown-X", (event) => this.handleCancel(event));
+    this.input.keyboard.on("keydown-ESC", (event) => this.handleCancel(event));
     this.input.keyboard.on("keydown-C", () => this.handlePartyFusionShortcut());
     this.input.keyboard.on("keydown-N", () => this.handleNicknameShortcut());
+    this.input.keyboard.on("keydown", (event) => this._handleNicknameDirectInput(event));
   }
 
   update() {
     if (this.nicknameInputActive) {
-      this._handleNicknameKeyboardNavigation();
       return;
     }
 
@@ -150,8 +144,9 @@ export class MenuScene extends Phaser.Scene {
     });
   }
 
-  handleConfirm() {
+  handleConfirm(event?: KeyboardEvent) {
     if (this.nicknameInputActive) {
+      if (event?.key !== "Enter") return;
       this._confirmNicknameInput();
       return;
     }
@@ -208,8 +203,9 @@ export class MenuScene extends Phaser.Scene {
     }
   }
 
-  handleCancel() {
+  handleCancel(event?: KeyboardEvent) {
     if (this.nicknameInputActive) {
+      if (event?.key !== "Escape") return;
       audioManager.playCancel();
       this._closeNicknameKeyboard(false);
       return;
@@ -457,8 +453,8 @@ export class MenuScene extends Phaser.Scene {
     openNicknameKeyboard(this, monster);
   }
 
-  _handleNicknameKeyboardNavigation() {
-    handleNicknameKeyboardNavigation(this);
+  _handleNicknameDirectInput(event) {
+    handleNicknameDirectInput(this, event);
   }
 
   _confirmNicknameInput() {
@@ -471,10 +467,6 @@ export class MenuScene extends Phaser.Scene {
 
   _updateNicknameInputDisplay() {
     updateNicknameInputDisplay(this);
-  }
-
-  _updateNicknameKeyboardDisplay() {
-    updateNicknameKeyboardDisplay(this);
   }
 
   _closeNicknameKeyboard(applyChanges) {
