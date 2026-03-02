@@ -7,6 +7,19 @@ export class PrologueScene extends Phaser.Scene {
     super("PrologueScene");
   }
 
+  _unbindKeyboardHandlers() {
+    if (!this.input?.keyboard) return;
+    if (this._onNextLine) {
+      this.input.keyboard.off("keydown-Z", this._onNextLine);
+      this.input.keyboard.off("keydown-ENTER", this._onNextLine);
+      this.input.keyboard.off("keydown-SPACE", this._onNextLine);
+    }
+    if (this._onSkipPrologue) {
+      this.input.keyboard.off("keydown-X", this._onSkipPrologue);
+      this.input.keyboard.off("keydown-ESC", this._onSkipPrologue);
+    }
+  }
+
   create() {
     const { width, height } = this.scale;
 
@@ -63,11 +76,15 @@ export class PrologueScene extends Phaser.Scene {
       ease: "sine.inOut",
     });
 
-    this.input.keyboard.on("keydown-Z", () => this.nextLine());
-    this.input.keyboard.on("keydown-ENTER", () => this.nextLine());
-    this.input.keyboard.on("keydown-SPACE", () => this.nextLine());
-    this.input.keyboard.on("keydown-X", () => this.finishPrologue());
-    this.input.keyboard.on("keydown-ESC", () => this.finishPrologue());
+    this._onNextLine = () => this.nextLine();
+    this._onSkipPrologue = () => this.finishPrologue();
+    this._unbindKeyboardHandlers();
+    this.input.keyboard.on("keydown-Z", this._onNextLine);
+    this.input.keyboard.on("keydown-ENTER", this._onNextLine);
+    this.input.keyboard.on("keydown-SPACE", this._onNextLine);
+    this.input.keyboard.on("keydown-X", this._onSkipPrologue);
+    this.input.keyboard.on("keydown-ESC", this._onSkipPrologue);
+    this.events.once("shutdown", this._unbindKeyboardHandlers, this);
 
     this.cameras.main.fadeIn(280, 0, 0, 0);
     this.renderCurrentLine();
@@ -91,6 +108,7 @@ export class PrologueScene extends Phaser.Scene {
   finishPrologue() {
     if (this._prologueFinished) return;
     this._prologueFinished = true;
+    this._unbindKeyboardHandlers();
     gameState.storyFlags.introNarrationDone = true;
     audioManager.playConfirm();
     this.cameras.main.fadeOut(380, 0, 0, 0);
