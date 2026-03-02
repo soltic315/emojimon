@@ -306,12 +306,12 @@
       "id": "ETHER",
       "name": "エーテル",
       "emoji": "🫙",
-      "description": "モンスター1体のスタミナを10回復する。",
+      "description": "モンスター1体のスタミナを4回復する。",
       "battleUsable": true,
       "price": 200,
       "effect": {
         "type": "healAllPP",
-        "amount": 10
+        "amount": 4
       }
     },
     {
@@ -330,12 +330,12 @@
       "id": "MEGA_ETHER",
       "name": "メガエーテル",
       "emoji": "🔮",
-      "description": "モンスター1体のスタミナを20回復する。",
+      "description": "モンスター1体のスタミナを8回復する。",
       "battleUsable": true,
       "price": 420,
       "effect": {
         "type": "healAllPP",
-        "amount": 20
+        "amount": 8
       }
     },
     {

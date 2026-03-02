@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { MOVES, MOVE_CATEGORY, initMovesFromJson, getMoveById } from "../js/data/moves.ts";
+import {
+  MOVES,
+  MOVE_CATEGORY,
+  initMovesFromJson,
+  getMoveById,
+  getMoveStaminaCost,
+} from "../js/data/moves.ts";
 
 describe("moves data", () => {
   it("JSONから技を初期化できる", () => {
@@ -70,5 +76,37 @@ describe("moves data", () => {
 
     const move = getMoveById("FUTURE_MOVE") as Record<string, unknown>;
     expect(move.customTag).toBe("future");
+  });
+
+  it("高威力技はスタミナコストが高く算出される", () => {
+    const cost = getMoveStaminaCost({
+      id: "TEST_BIG",
+      category: MOVE_CATEGORY.SPECIAL,
+      power: 95,
+      pp: 5,
+      accuracy: 0.8,
+    });
+
+    expect(cost).toBe(5);
+  });
+
+  it("変化技は同PP帯の攻撃技より軽いコストになる", () => {
+    const statusCost = getMoveStaminaCost({
+      id: "TEST_STATUS",
+      category: MOVE_CATEGORY.STATUS,
+      power: 0,
+      pp: 20,
+      selfDefenseStage: 1,
+    });
+    const attackCost = getMoveStaminaCost({
+      id: "TEST_ATTACK",
+      category: MOVE_CATEGORY.SPECIAL,
+      power: 60,
+      pp: 20,
+    });
+
+    expect(statusCost).toBeLessThan(attackCost);
+    expect(statusCost).toBe(1);
+    expect(attackCost).toBe(2);
   });
 });

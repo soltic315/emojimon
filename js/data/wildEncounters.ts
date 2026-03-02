@@ -29,7 +29,7 @@ function createMonsterEntry(base, level, extra = {}) {
     defenseStage: 0,
     speedStage: 0,
     abilityId: rollMonsterAbilityId(base),
-    stamina: getMonsterMaxStamina(),
+    stamina: getMonsterMaxStamina(base),
     ...extra,
   };
 }

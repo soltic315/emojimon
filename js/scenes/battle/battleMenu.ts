@@ -211,7 +211,7 @@ export function showMoveMenu(scene, reset = true) {
     ICE: "#67e8f9",
   };
 
-  const maxStamina = getMonsterMaxStamina();
+  const maxStamina = getMonsterMaxStamina(scene.battle.player);
   const currentStamina = Number.isFinite(scene.battle.player?.stamina)
     ? Math.floor(scene.battle.player.stamina)
     : maxStamina;

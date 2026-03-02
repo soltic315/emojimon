@@ -216,7 +216,7 @@ function completeCatchSuccess(scene, ballText, opponent) {
     defenseStage: 0,
     speedStage: 0,
     moveIds: [],
-    stamina: getMonsterMaxStamina(),
+    stamina: getMonsterMaxStamina(opponent.species),
   };
   syncMonsterMoves(newMon);
 

@@ -145,7 +145,7 @@ export function renderPartyView(scene) {
       `ATK: ${stats.attack}   DEF: ${stats.defense}`,
       `SPD: ${stats.speed}   キズナ: ${selectedMon.bond || 0}`,
       `EXP: ${selectedMon.exp || 0}/${selectedMon.nextLevelExp}`,
-      `ST: ${Number.isFinite(selectedMon.stamina) ? Math.floor(selectedMon.stamina) : getMonsterMaxStamina()}/${getMonsterMaxStamina()}`,
+      `ST: ${Number.isFinite(selectedMon.stamina) ? Math.floor(selectedMon.stamina) : getMonsterMaxStamina(selectedMon)}/${getMonsterMaxStamina(selectedMon)}`,
       "",
       "わざ",
     ];

@@ -200,7 +200,7 @@ export function buildLoadedMonster(saved) {
       : [],
     stamina: Number.isFinite(saved?.stamina)
       ? Math.floor(saved.stamina)
-      : getMonsterMaxStamina(),
+      : getMonsterMaxStamina(species),
     nickname: typeof saved?.nickname === "string" && saved.nickname.trim().length > 0
       ? saved.nickname.trim().slice(0, 12)
       : null,

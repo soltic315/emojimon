@@ -100,7 +100,7 @@ export function performPlayerMove(scene) {
   const staminaCost = getMoveStaminaCost(move);
   const currentStamina = Number.isFinite(player.stamina)
     ? Math.floor(player.stamina)
-    : getMonsterMaxStamina();
+    : getMonsterMaxStamina(player);
   if (currentStamina < staminaCost) {
     scene.enqueueMessage("スタミナが たりない…");
     return;
@@ -257,7 +257,12 @@ export function executeOpponentAttackDirect(scene, opponent, player, move, onCom
   const staminaCost = getMoveStaminaCost(move);
   const currentStamina = Number.isFinite(opponent.stamina)
     ? Math.floor(opponent.stamina)
-    : getMonsterMaxStamina();
+    : getMonsterMaxStamina(opponent);
+  if (currentStamina < staminaCost) {
+    scene.enqueueMessage(`${opponent.species.name}は スタミナが たりない…`);
+    if (onComplete) scene.time.delayedCall(100, onComplete);
+    return;
+  }
   opponent.stamina = Math.max(0, currentStamina - staminaCost);
 
   if (!scene.isMoveHit(move, opponent)) {
@@ -407,7 +412,7 @@ export function chooseOpponentMove(scene, opponent, player) {
 
       const currentStamina = Number.isFinite(opponent.stamina)
         ? Math.floor(opponent.stamina)
-        : getMonsterMaxStamina();
+        : getMonsterMaxStamina(opponent);
       const staminaCost = getMoveStaminaCost(move);
       if (currentStamina < staminaCost) return { move, score: -1 };
 
@@ -476,7 +481,7 @@ export function chooseOpponentMove(scene, opponent, player) {
     .filter((entry) => entry.score >= 0)
     .sort((a, b) => b.score - a.score);
 
-  if (weighted.length === 0) return moves[0] || null;
+  if (weighted.length === 0) return null;
 
   if (isBossLevel) {
     const topCount = Math.min(2, weighted.length);

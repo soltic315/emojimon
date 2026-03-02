@@ -1,5 +1,33 @@
 # CHANGELOG
 
+## [2.1.14] - 2026-03-03
+
+### Note
+- スタミナ移行後に発生していた「技コストの粗さ」「相手側のスタミナ運用不整合」「回復アイテム量の過大」を同時に調整し、テンポと駆け引きのバランスを再最適化した。
+
+### Added
+- `tests/battleTurnFlow.test.ts` に、相手がスタミナ不足で全技を使えない場合に `null` を返すAI選択テストを追加。
+- `tests/moves.test.ts` に、技スタミナコスト自動算出（高威力技高コスト/変化技軽コスト）の回帰テストを追加。
+
+### Changed
+- `js/data/moves.ts` の `getMoveStaminaCost()` を更新し、`staminaCost` 未指定時は `pp` に加えて威力・優先度・自己回復・強力補助効果・高確率状態異常を反映した 1〜5 のコスト自動算出へ変更。
+- `js/data/monsters.ts` の最大スタミナを種族基礎値由来（8〜12）に拡張し、正規化/回復処理を個体依存で計算するよう変更。
+- `js/scenes/battle/battleTurnFlow.ts` の相手行動処理を修正し、スタミナ不足技の強行使用を禁止。AI選択で使用可能技がない場合は `null` を返すよう変更。
+- `js/scenes/BattleScene.ts` / `js/scenes/battle/battleMenu.ts` / `js/scenes/battle/battleItems.ts` / `js/scenes/MenuScene.ts` / `js/scenes/menu/views/partyView.ts` のスタミナ表示・回復上限参照を個体別最大スタミナへ統一。
+- `js/data/wildEncounters.ts` / `js/scenes/WorldScene.ts` / `js/scenes/world/worldTrainerArena.ts` / `js/scenes/battle/battleCatch.ts` / `js/state/saveSchema.ts` / `js/state/gameState.ts` の生成・保存・ロード時スタミナ初期値を種族別最大スタミナへ同期。
+- `assets/data/items.json` のスタミナ回復量を調整（`ETHER: 10→4`, `MEGA_ETHER: 20→8`）。
+- `GAME_DESIGN.md` にスタミナ仕様（種族別最大値、技コスト自動算出、回復アイテム段階）を追記。
+- `package.json` / `package-lock.json` のバージョンを `2.1.13` から `2.1.14` に更新。
+
+### Fixed
+- 相手AIが「使えないはずの高コスト技」を実質的に使用できてしまうスタミナ不整合を修正。
+- エーテル系の回復量が最大スタミナ運用に対して過剰だったバランス崩れを修正。
+
+### Prompt
+- User: `直近追加されたスタミナにモンスターや技やアイテムが最適化されていないようです
+バランス調整をしてください`
+- Assistant（対応方針）: スタミナ関連の計算式・AI行動・回復アイテム値を横断調整し、種族差分の導入とテスト追加を含めて最小差分で同期する。
+
 ## [2.1.13] - 2026-03-03
 
 ### Note

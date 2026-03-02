@@ -32,14 +32,36 @@ export {
 export const TYPES = ["NORMAL", "FIRE", "WATER", "GRASS", "ELECTRIC", "ICE"];
 export const MAX_MOVE_SLOTS = 4;
 export const MONSTER_MAX_STAMINA = 10;
+export const MONSTER_MIN_STAMINA = 8;
+export const MONSTER_PEAK_STAMINA = 12;
 
-export function getMonsterMaxStamina() {
-  return MONSTER_MAX_STAMINA;
+function resolveSpeciesForStamina(entity) {
+  if (!entity || typeof entity !== "object") return null;
+  if (entity.baseStats && typeof entity.baseStats === "object") return entity;
+  if (entity.species && typeof entity.species === "object") return entity.species;
+  return null;
+}
+
+export function getMonsterMaxStamina(entity = null) {
+  const species = resolveSpeciesForStamina(entity);
+  if (!species?.baseStats) return MONSTER_MAX_STAMINA;
+
+  const hp = Number.isFinite(species.baseStats.maxHp) ? species.baseStats.maxHp : 0;
+  const speed = Number.isFinite(species.baseStats.speed) ? species.baseStats.speed : 0;
+
+  let stamina = MONSTER_MAX_STAMINA;
+  if (hp >= 72) stamina += 1;
+  else if (hp <= 44) stamina -= 1;
+
+  if (speed >= 75) stamina += 1;
+  else if (speed <= 44) stamina -= 1;
+
+  return Math.max(MONSTER_MIN_STAMINA, Math.min(MONSTER_PEAK_STAMINA, stamina));
 }
 
 export function normalizeMonsterStamina(monsterEntry) {
   if (!monsterEntry) return 0;
-  const maxStamina = getMonsterMaxStamina();
+  const maxStamina = getMonsterMaxStamina(monsterEntry);
   const current = Number.isFinite(monsterEntry.stamina)
     ? Math.floor(monsterEntry.stamina)
     : maxStamina;
@@ -49,7 +71,7 @@ export function normalizeMonsterStamina(monsterEntry) {
 
 export function recoverMonsterStamina(monsterEntry, amount = 1) {
   if (!monsterEntry) return 0;
-  const maxStamina = getMonsterMaxStamina();
+  const maxStamina = getMonsterMaxStamina(monsterEntry);
   const safeAmount = Number.isFinite(amount) ? Math.max(0, Math.floor(amount)) : 0;
   const before = normalizeMonsterStamina(monsterEntry);
   const after = Math.min(maxStamina, before + safeAmount);

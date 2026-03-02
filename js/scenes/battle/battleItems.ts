@@ -163,7 +163,7 @@ export function performUseItem(scene) {
     }
   } else if (def.effect.type === "healAllPP") {
     const moves = getMonsterMoves(player);
-    const maxStamina = getMonsterMaxStamina();
+    const maxStamina = getMonsterMaxStamina(player);
     const currentStamina = Number.isFinite(player.stamina)
       ? Math.floor(player.stamina)
       : maxStamina;
