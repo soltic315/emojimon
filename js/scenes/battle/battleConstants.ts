@@ -1,3 +1,5 @@
+import { PARTY_CAPACITY } from "../../state/gameState.ts";
+
 export const BattleState = {
   INTRO: "INTRO",
   PLAYER_TURN: "PLAYER_TURN",
@@ -41,7 +43,7 @@ export const DAMAGE_RANDOM_MAX = 1.12;
 /** STAB（タイプ一致）ボーナス */
 export const STAB_BONUS = 1.2;
 /** パーティ上限 */
-export const PARTY_MAX = 6;
+export const PARTY_MAX = PARTY_CAPACITY;
 /** 経験値倍率: 野生 */
 export const EXP_MULT_WILD = 5;
 /** 経験値倍率: 闘技場 */

@@ -2,7 +2,7 @@
  * 実績（アチーブメント）システム
  * ゲーム内の行動を追跡し、条件達成時にアンロックする
  */
-import { gameState } from "../state/gameState.ts";
+import { gameState, PARTY_CAPACITY } from "../state/gameState.ts";
 
 // ── 実績カテゴリ ──
 export type AchievementCategory = "BATTLE" | "COLLECTION" | "EXPLORATION" | "MASTERY";
@@ -292,10 +292,10 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   {
     id: "PARTY_FULL",
     name: "フルパーティ",
-    description: "パーティを6体にする",
+    description: "パーティを3体にする",
     icon: "👥",
     category: "MASTERY",
-    check: () => (gameState.party?.length || 0) >= 6,
+    check: () => (gameState.party?.length || 0) >= PARTY_CAPACITY,
     order: 420,
   },
   {

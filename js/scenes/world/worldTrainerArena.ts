@@ -1,4 +1,4 @@
-import { gameState } from "../../state/gameState.ts";
+import { gameState, PARTY_CAPACITY } from "../../state/gameState.ts";
 import {
   getArenaOpponent,
   calcStats,
@@ -591,7 +591,7 @@ export function addEternaToParty() {
   };
   syncMonsterMoves(eternaEntry);
 
-  if (gameState.party.length >= 6) {
+  if (gameState.party.length >= PARTY_CAPACITY) {
     gameState.box.push(eternaEntry);
   } else {
     gameState.party.push(eternaEntry);

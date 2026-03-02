@@ -1,5 +1,5 @@
 // ボックス画面ビュー
-import { gameState } from "../../../state/gameState.ts";
+import { gameState, PARTY_CAPACITY } from "../../../state/gameState.ts";
 import { calcStats } from "../../../data/monsters.ts";
 import { FONT, drawPanel, drawSelection } from "../../../ui/UIHelper.ts";
 import { SUB_PANEL_WIDTH_OFFSET } from "../menuViewsShared.ts";
@@ -61,7 +61,7 @@ export function renderBoxView(scene) {
   const box = gameState.box || [];
   const partyCount = (gameState.party || []).length;
   const title = scene.add.text(panelX + 16, panelY + 10,
-    `\u{1F4E6} ボックス (${box.length}体)  パーティ: ${partyCount}/6`, {
+    `\u{1F4E6} ボックス (${box.length}体)  パーティ: ${partyCount}/${PARTY_CAPACITY}`, {
       fontFamily: FONT.UI,
       fontSize: 16,
       color: "#fbbf24",
@@ -89,7 +89,7 @@ export function renderBoxView(scene) {
     _drawMonRow(scene, box[index], index, index === scene.subMenuIndex, panelX, panelW, panelY + 44 + vi * rowH);
   }
 
-  const actionHint = partyCount < 6
+  const actionHint = partyCount < PARTY_CAPACITY
     ? "Z:パーティに加える  X:もどる"
     : "Z:パーティと交換  X:もどる";
   scene.subPanel.add(scene.add.text(panelX + 16, height - 30, actionHint, {

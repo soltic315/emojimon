@@ -28,6 +28,8 @@ import {
 import { createDefaultStoryFlags, sanitizeStoryFlags } from "./storyFlags.ts";
 import { getLocalDateKey, buildDailyChallenge } from "./dailyChallenge.ts";
 
+export const PARTY_CAPACITY = 3;
+
 /** モンスターの表示名を取得（ニックネーム優先） */
 export function getMonsterDisplayName(monster) {
   if (!monster) return "？";
@@ -66,7 +68,7 @@ class GameState {
     this.totalBattles = 0;
     this.totalCatches = 0;
     this.playTimeMs = 0;
-    this.box = []; // パーティ上限(6)を超えたモンスター保管
+    this.box = []; // パーティ上限(3)を超えたモンスター保管
     this.discoveredFusionRecipes = [];
     this.dailyChallenge = null;
     this.unlockedAchievements = []; // 解除済み実績ID
@@ -533,7 +535,7 @@ class GameState {
   /** ボックスのモンスターをパーティに移動（パーティに空きがある場合） */
   moveBoxToParty(boxIndex) {
     if (boxIndex < 0 || boxIndex >= (this.box || []).length) return false;
-    if ((this.party || []).length >= 6) return false;
+    if ((this.party || []).length >= PARTY_CAPACITY) return false;
     const mon = this.box.splice(boxIndex, 1)[0];
     this.party.push(mon);
     return true;
@@ -836,6 +838,10 @@ class GameState {
       this.box = (Array.isArray(data.box) ? data.box : [])
         .map((saved) => buildLoadedMonster(saved))
         .filter(Boolean);
+      if (this.party.length > PARTY_CAPACITY) {
+        const overflow = this.party.splice(PARTY_CAPACITY);
+        this.box = [...overflow, ...this.box];
+      }
 
       this.inventory = sanitizeInventory(data.inventory);
       this.money = clampInt(data.money, 0, MAX_MONEY, 0);

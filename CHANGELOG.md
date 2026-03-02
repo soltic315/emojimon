@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## [1.18.0] - 2026-03-02
+
+### Note
+- バトル編成ルールを調整し、敵味方の持ち歩き上限を3体へ統一した。
+
+### Added
+- `js/state/gameState.ts` に `PARTY_CAPACITY` 定数を追加し、パーティ上限値を一元化。
+- `js/state/gameState.ts` のロード処理に、旧セーブで上限超過している個体をボックスへ退避する補正を追加。
+
+### Changed
+- `js/scenes/battle/battleConstants.ts` の `PARTY_MAX` を `PARTY_CAPACITY` 参照へ変更。
+- `js/scenes/MenuScene.ts` / `js/scenes/menu/views/boxView.ts` / `js/scenes/world/worldTrainerArena.ts` の上限判定を3体仕様へ更新。
+- `js/scenes/WorldScene.ts` の捕獲チュートリアル文言を3体上限に更新。
+- `js/scenes/menu/menuConstants.ts` のガイド文言を3体上限に更新。
+- `js/data/achievements.ts` の `PARTY_FULL` 実績条件と説明を3体基準へ更新。
+- `GAME_DESIGN.md` に敵味方の持ち歩き上限3体を明記。
+- `package.json` と `package-lock.json` のバージョンを `1.17.1` から `1.18.0` に更新。
+
+### Fixed
+- パーティ上限に関する判定・表示・説明文が6体基準で分散していた不整合を解消。
+
+### Prompt
+- User: `モンスターは敵味方ともに3体まで持ち歩けるようにしてください`
+- Assistant（対応方針）: 上限定数を3に統一し、捕獲/ボックス/加入処理・UI文言・実績・仕様書・版数を最小差分で同期する。
+
 ## [1.17.1] - 2026-03-02
 
 ### Note

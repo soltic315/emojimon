@@ -2,7 +2,7 @@
  * MenuScene - フィールドから呼び出せるゲーム内メニュー
  * パーティ / アイテム / ずかん / プレイヤー情報 / 設定
  */
-import { gameState } from "../state/gameState.ts";
+import { gameState, PARTY_CAPACITY } from "../state/gameState.ts";
 import { getItemById } from "../data/items.ts";
 import { calcStats, getMonsterMoves } from "../data/monsters.ts";
 import { audioManager } from "../audio/AudioManager.ts";
@@ -489,7 +489,7 @@ export class MenuScene extends Phaser.Scene {
     if (boxIndex < 0 || boxIndex >= box.length) return;
     const partyCount = (gameState.party || []).length;
 
-    if (partyCount < 6) {
+    if (partyCount < PARTY_CAPACITY) {
       // 空きがある → そのままパーティに追加
       const mon = box[boxIndex];
       const ok = gameState.moveBoxToParty(boxIndex);
