@@ -70,6 +70,7 @@ export function showNameSelect(scene: TitleSceneLike): void {
 
   updateNameDisplay(scene);
   scene._nameActive = true;
+  scene._nameInputOpenedAt = scene.time.now;
   scene._bindNameSelectKeyboardHandlers();
   bindNameInputElement(scene);
 }
@@ -115,13 +116,16 @@ export function deleteNameChar(scene: TitleSceneLike): void {
 
 export function handleNameDirectInput(scene: TitleSceneLike, event: KeyboardEvent): void {
   if (!scene._nameActive) return;
+  const justOpened = scene.time.now - (scene._nameInputOpenedAt || 0) < 160;
 
   if (event.key === "Enter") {
+    if (justOpened) return;
     confirmName(scene);
     return;
   }
 
   if (event.key === "Escape") {
+    if (justOpened) return;
     audioManager.playCancel();
     closeNameSelect(scene);
     return;
@@ -171,13 +175,22 @@ function bindNameInputElement(scene: TitleSceneLike): void {
   };
 
   const onKeyDown = (event: KeyboardEvent) => {
+    const justOpened = scene.time.now - (scene._nameInputOpenedAt || 0) < 160;
     if (event.key === "Enter") {
+      if (justOpened) {
+        event.preventDefault();
+        return;
+      }
       event.preventDefault();
       confirmName(scene);
       return;
     }
 
     if (event.key === "Escape") {
+      if (justOpened) {
+        event.preventDefault();
+        return;
+      }
       event.preventDefault();
       audioManager.playCancel();
       closeNameSelect(scene);
@@ -188,7 +201,11 @@ function bindNameInputElement(scene: TitleSceneLike): void {
   input.addEventListener("input", onInput);
   input.addEventListener("keydown", onKeyDown);
   document.body.appendChild(input);
-  input.focus();
+  scene.time.delayedCall(0, () => {
+    if (scene._nameActive) {
+      input.focus();
+    }
+  });
 
   scene._nameInputCleanup = () => {
     input.removeEventListener("input", onInput);

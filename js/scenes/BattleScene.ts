@@ -717,8 +717,6 @@ export class BattleScene extends Phaser.Scene {
 
   bindInput() {
     const handleConfirmDown = () => {
-      // エモ・スキップ有効中は通常確定を無視（自動スキップに委ねる）
-      if (this.emoSkipAvailable && !this.emoSkipTriggered && this._isEmoSkipPhase()) return;
       this.handleConfirm();
     };
     this.keys.Z.on("down", handleConfirmDown);

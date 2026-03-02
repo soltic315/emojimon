@@ -162,19 +162,21 @@ export function renderSettingsPanel(scene: TitleSceneLike): void {
 
   const rowCount = Math.max(1, scene.settingsRows.length);
   const listTop = 136;
-  const listBottom = height - 130;
-  const availableHeight = Math.max(220, listBottom - listTop);
+  const helpY = height - 60;
+  const listBottom = helpY - 30;
+  const availableHeight = Math.max(180, listBottom - listTop);
   const rowGap = rowCount > 1
-    ? Phaser.Math.Clamp(Math.floor(availableHeight / (rowCount - 1)), 30, 40)
-    : 40;
-  const rowFontSize = rowGap <= 32 ? 13 : 15;
-  const rowCardHeight = rowGap <= 32 ? 32 : 36;
+    ? Phaser.Math.Clamp(Math.floor(availableHeight / (rowCount - 1)), 24, 34)
+    : 34;
+  const rowFontSize = rowGap <= 28 ? 12 : 14;
+  const rowCardHeight = rowGap <= 28 ? 28 : 32;
+  const rowWidth = Phaser.Math.Clamp(width - 250, 300, 460);
 
   scene.settingsRows.forEach((row: { label: string }, index: number) => {
-    const y = listTop + index * rowGap;
+    const y = listTop + index * rowGap + Math.floor(rowCardHeight / 2);
     const selected = index === scene.settingsIndex;
     const rowCard = scene.rexUI?.add
-      .roundRectangle(width / 2, y + Math.floor(rowCardHeight / 2), 352, rowCardHeight, 8, selected ? 0x1f2937 : 0x0f172a, selected ? 0.92 : 0.66)
+      .roundRectangle(width / 2, y, rowWidth, rowCardHeight, 8, selected ? 0x1f2937 : 0x0f172a, selected ? 0.92 : 0.66)
       .setStrokeStyle(selected ? 2 : 1, selected ? 0xfbbf24 : 0x334155, selected ? 0.95 : 0.75);
     if (rowCard) scene.settingsPanel.add(rowCard);
 
@@ -182,11 +184,11 @@ export function renderSettingsPanel(scene: TitleSceneLike): void {
       fontFamily: FONT.UI,
       fontSize: rowFontSize,
       color: selected ? "#fde68a" : "#e2e8f0",
-    }).setOrigin(0.5, 0);
+    }).setOrigin(0.5);
     scene.settingsPanel.add(text);
   });
 
-  const help = scene.add.text(width / 2, height - 90, "↑↓:選択  ←→:変更  Z:決定  X:戻る", {
+  const help = scene.add.text(width / 2, helpY, "↑↓:選択  ←→:変更  Z:決定  X:戻る", {
     fontFamily: FONT.UI,
     fontSize: 13,
     color: "#94a3b8",

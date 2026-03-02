@@ -58,39 +58,47 @@ export function renderQuestView(scene) {
     {
       label: "ライバル初戦",
       done: !!sf.townRivalBeaten,
+      revealed: !!sf.prologueDone || !!sf.townRivalBeaten,
       steps: [{ label: "えもじタウンのライバルに挑戦", done: !!sf.townRivalBeaten, hint: "えもじタウンでライバルに話しかけよう" }],
     },
     {
       label: "森ジム制覇",
       done: !!gameState.gymCleared,
+      revealed: !!sf.townRivalBeaten || !!gameState.gymCleared,
       steps: [{ label: "森ジムをクリア", done: !!gameState.gymCleared, hint: "FOREST のジムに挑戦しよう" }],
     },
     {
       label: "ダークタワー制圧",
       done: !!sf.darkTowerVoidBeaten,
+      revealed: !!gameState.gymCleared || !!sf.darkTowerVoidBeaten,
       steps: [{ label: "ダークタワーのボスを撃破", done: !!sf.darkTowerVoidBeaten, hint: "DARK_TOWER の最深部へ進もう" }],
     },
     {
       label: "氷峰ジム制覇",
       done: !!sf.frozenPeakGymCleared,
+      revealed: !!sf.darkTowerVoidBeaten || !!sf.frozenPeakGymCleared,
       steps: [{ label: "氷峰ジムをクリア", done: !!sf.frozenPeakGymCleared, hint: "FROZEN_PEAK のジムリーダーを倒そう" }],
     },
     {
       label: "空の遺跡最終決戦",
       done: !!sf.ruinsFinalDone,
+      revealed: !!sf.frozenPeakGymCleared || !!sf.ruinsFinalDone,
       steps: [{ label: "遺跡の最終決戦に勝利", done: !!sf.ruinsFinalDone, hint: "SKY_RUINS の奥へ進もう" }],
     },
     {
       label: "星降り盆地 最終ライバル",
       done: !!sf.basinFinalRival,
+      revealed: !!sf.ruinsFinalDone || !!sf.basinFinalRival,
       steps: [{ label: "最終ライバルに勝利", done: !!sf.basinFinalRival, hint: "STARFALL_BASIN の最終戦を突破しよう" }],
     },
     {
       label: "伝説討伐",
       done: !!sf.legendaryDefeated,
+      revealed: !!sf.ruinsFinalDone || !!sf.legendaryDefeated,
       steps: [{ label: "花園の伝説を制覇", done: !!sf.legendaryDefeated, hint: "CELESTIAL_GARDEN で伝説に挑戦しよう" }],
     },
   ];
+  const visibleStoryQuests = storyQuests.filter((entry) => entry.revealed ?? true);
 
   const regionalChainAllDone =
     !!sf.swampRemedyQuestDone
@@ -251,10 +259,10 @@ export function renderQuestView(scene) {
   const visibleSideQuests = sideQuests.filter((entry) => entry.revealed ?? true);
   const visiblePostgameGoals = postgameGoals.filter((entry) => entry.revealed ?? true);
 
-  const storyDone = storyQuests.filter((entry) => entry.done).length;
+  const storyDone = visibleStoryQuests.filter((entry) => entry.done).length;
   const sideDone = visibleSideQuests.filter((entry) => entry.done).length;
   const totalDone = storyDone + sideDone;
-  const totalCount = storyQuests.length + visibleSideQuests.length;
+  const totalCount = visibleStoryQuests.length + visibleSideQuests.length;
 
   const title = scene.add.text(panelX + 16, panelY + 10, `📜 クエスト  ${totalDone}/${totalCount}`, {
     fontFamily: FONT.UI,
@@ -264,17 +272,19 @@ export function renderQuestView(scene) {
   scene.subPanel.add(title);
 
   const info = [
-    `ストーリー進捗 : ${storyDone}/${storyQuests.length}`,
+    `ストーリー進捗 : ${storyDone}/${visibleStoryQuests.length}`,
     `サブクエスト : ${sideDone}/${visibleSideQuests.length}`,
     "",
     "── ストーリークエスト ──",
-    ...storyQuests.flatMap((entry) => {
-      const progress = getQuestProgressHint(entry);
-      return [
-        formatQuestLine(entry.label, entry.done),
-        `　進捗 ${progress.doneCount}/${progress.totalCount} ｜ ヒント: ${progress.hint}`,
-      ];
-    }),
+    ...(visibleStoryQuests.length > 0
+      ? visibleStoryQuests.flatMap((entry) => {
+        const progress = getQuestProgressHint(entry);
+        return [
+          formatQuestLine(entry.label, entry.done),
+          `　進捗 ${progress.doneCount}/${progress.totalCount} ｜ ヒント: ${progress.hint}`,
+        ];
+      })
+      : ["（条件を満たすと表示されます）"]),
     "",
     "── サブクエスト ──",
     ...(visibleSideQuests.length > 0
